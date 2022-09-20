@@ -1,0 +1,119 @@
+@import 'variables';
+
+#vocabulary-practice-box {
+    position: relative;
+    display: block;
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+    font-family: notosans;
+
+    #vocabulary-practice {
+        display: block;
+        width: 100%;
+        height: 100;
+    }
+
+    #finished-box {
+        display: block;
+        height: calc(100% - 53px);
+        font-size: 16px;
+    
+        #vocabulary-practice-finished-text {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            margin: 25px auto;
+            font-size: 20px;
+            text-align: center;
+        }
+    
+        #finished-stats {
+            width: 360px;
+            margin: auto;
+            margin-bottom: 20px;
+    
+            td:nth-child(2), th {
+                text-align: center;
+            }
+        }
+    
+        #close-button {
+            display: block;
+            margin: auto;
+            width: 160px;
+        }
+    }
+
+    #finish-button {
+        display: block;
+        position: absolute;
+        right: 0px;
+        top: 5px;
+        margin: 0px;
+    }
+
+    #word-mode-button, #sentence-mode-button {
+        display: block;
+        position: absolute;
+        right: 75px;
+        top: 5px;
+        margin: 0px;
+    }
+
+    #vocabulary-counter {
+        width: 100%;
+        display: block;
+        text-align: right;
+        font-size: 18px;
+        padding-right: 125px;
+        height: 50px;
+        padding-top: 5px;
+        line-height: 38px;
+    }
+
+    #vocabulary-expression {
+        font-size: 24px;
+        line-height: 28px;
+        margin-top: 25px;
+
+        &.hide-sentence .vocabulary-word:not(.highlighted){
+            display: none;
+        }
+
+        &.hide-sentence .vocabulary-word.highlighted{
+            border-bottom: none;
+        }
+    }
+
+    .vocabulary-word {
+        display: inline-block;
+        margin-bottom: 3px;
+        
+        &.highlighted {
+            border-bottom: 2px solid $font-color;
+        }
+
+        &.space {
+            margin-left: 5px;
+        }
+    }
+
+    #vocabulary-reading {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    #vocabulary-translation {
+        font-size: 20px;
+    }
+
+    button {
+        margin-top: 20px;
+    }
+
+    #vocabulary-correct-button {
+        margin-left: 20px;
+    }
+}

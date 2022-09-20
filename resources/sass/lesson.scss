@@ -1,0 +1,876 @@
+@import 'variables';
+
+@font-face {
+    font-family: notosans;
+    src: url('/noto-sans/NotoSansJP-Regular.otf');
+}
+
+div#app>nav {
+    display: none;
+}
+
+#reader-box {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#finish-reading-button {
+    margin-top: 10px;
+    margin-bottom: 500px;
+}
+
+#toolbar {
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: 60px;
+    margin: 0px auto;
+    height: 100%;
+    padding: 0px;
+    border-radius: 8px;
+    overflow: hidden;
+
+    #back-to-lessons-button {
+        display: inline-block;
+        float: left;
+    }
+
+    #toolbar-lesson-name {
+        display: inline-block; 
+        float: left;
+        height: 27px;
+        line-height: 27px;
+        font-size: 17px;
+        margin-left: 8px;
+        margin-top: 5px;
+    }
+
+    .toolbar-button {
+        display: block;
+        border: none;
+        background-color: transparent;
+        width: 40px;
+        height: 40px;
+        margin: 8px auto;
+        outline: none;
+        color: rgb(215, 215, 215);
+        border-radius: 4px;
+        transition: .2s;
+
+        i {
+            margin: 0px;
+            font-size: 22px;
+        }
+
+        &:active, &:focus {
+            outline: none;
+        }
+
+        &:hover {
+            color: rgb(130, 130, 130);
+        }
+
+        &.selected {
+            color: darken($magenta, 20%);
+        }
+    }
+
+    #font-size {
+        font-size: 17px;
+        height: 100%;
+    }
+}
+
+#settings {
+    position: relative;
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: 0px;
+    margin: 0px;
+    height: 100%;
+    transition: .2s;
+    overflow: hidden;
+
+    &.visible {
+        width: 200px;
+        padding-top: 5px;
+    }
+}
+
+#chapters {
+    position: relative;
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: 0px;
+    margin: 0px;
+    height: 100%;
+    transition: .2s;
+    overflow: hidden;
+    overflow-y: hidden;
+    padding: 0px;
+    
+    &.visible {
+        width: 200px;
+        padding-top: 5px;
+        overflow-y: auto;
+    }
+
+    .chapter {
+        display: block;
+        height: 30px;
+        width: auto;
+        line-height: 30px;
+        padding-left: 15px;
+        margin: 2px 0px;
+        font-size: 16px;
+
+        span {
+            color: rgb(180, 180, 180);
+            cursor: pointer;
+            
+            &:hover {
+                color: rgb(50, 50, 50);
+            }
+        }
+
+        &.selected span {
+            color: $font-color;
+            font-weight: bold;
+        }
+    }
+
+    #course-name {
+        font-size: 16px;
+        border-bottom: 1px solid rgb(75, 75, 75);
+        color: $font-color;
+        font-weight: bold;
+    }
+}
+
+#floating-vocab-box {
+    position: absolute;
+    box-sizing: border-box;
+    display: block;
+    width: 320px;
+    background-color: white;
+    border: 1px solid $magenta;
+    border-radius: 4px;
+    z-index: 10;
+
+    #show-sidebar-vocab-box-button {
+        position: absolute;
+        display: block;
+        width: 24px;
+        height: 24px;
+        right: 4px;
+        top: 4px;
+        font-size: 12px;
+        line-height: 24px;
+        padding-left: 3px;
+    }
+
+    .vocab-box-line {
+        box-sizing: border-box;
+        width: 100%;
+        height: 23px;
+        line-height: 23px;
+        padding-top: 5px;
+
+        &.phrase {
+            text-align: center;
+        }
+        
+        div:nth-child(1) {
+            box-sizing: border-box;
+            display: inline-block;
+            float: left;
+            width: 50%;
+            padding-right: 5px;
+            text-align: right;
+        }
+
+        div:nth-child(2) {
+            box-sizing: border-box;
+            display: inline-block;
+            float: left;
+            box-sizing: border-box;
+            width: 50%;
+            padding-left: 5px;
+            text-align: left;
+        }
+    }
+
+    .vocab-box-translation {
+        position: absolute;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        line-height: 23px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    &:after, &:before {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: "";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+    }
+    
+    &:after {
+        border-color: rgba(0, 0, 0, 0);
+        border-bottom-color: white;
+        border-width: 10px;
+        margin-left: -10px;
+    }
+    
+    &:before {
+        border-color: rgba(0, 0, 0, 0);
+        border-bottom-color: black;
+        border-width: 11px;
+        margin-left: -11px;
+    }
+
+    &.bottom-arrow:after {
+        bottom: unset;
+        top: 100%;
+        border-bottom-color: rgba(0, 0, 0, 0);
+        border-top-color: white;
+    }
+        
+    &.bottom-arrow:before {
+        bottom: unset;
+        top: 100%;
+        border-bottom-color: rgba(0, 0, 0, 0);
+        border-top-color: black;
+    }
+}
+
+#search-box, #phrase-search-box {
+    display: block;
+    width: 100%;
+    height: calc(100% - 292px);
+    margin-top: 10px;
+    font-size: 15px;
+
+    &#phrase-search-box {
+        height: calc(100% - 515px);
+    }
+    
+    #show-all-translations {
+        display: block;
+        font-size: 15.5px;
+        font-weight: bold;
+        text-align: center;
+        margin: auto;
+        cursor: pointer;
+        color: rgba($font-color, 0.6);
+        transition: .2s;
+
+        &:hover {
+            color: $font-color;
+        }
+    }
+
+    #translations {
+        height: calc(100% - 90px);
+        overflow-y: hidden;
+
+        &.show-all {
+            height: calc(100% - 150px);
+            padding-right: 8px;
+            overflow-y: scroll;
+        }
+    }
+    
+    &#phrase-search-box #translations{
+        height: calc(100% - 90px);
+    }
+
+    input {
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        height: 28px;
+        margin-bottom: 10px;
+    }
+
+    .vocab-translation {
+        position: relative;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        height: auto;
+        padding: 4px 5px;
+        margin: 7px 0px;
+        background-color: rgb(239, 239, 239);
+        border-radius: 4px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: .2s;
+
+        &:hover {
+            background-color: rgb(215, 215, 215);
+        }
+
+        .target-language {
+            box-sizing: border-box;
+            display: block;
+            float: left;
+            width: 100px;
+            line-height: 28px;
+            font-size: 14.5px;
+            font-weight: normal;
+            overflow: hidden;
+        }
+
+        .own-language {
+            box-sizing: border-box;
+            display: block;
+            float: left;
+            width: calc(100% - 102px);
+            line-height: 28px;
+            font-size: 14.5px;
+            font-weight: normal;
+            padding-left: 5px;
+        }
+    }
+}
+
+#phrase-box {
+    position: relative;
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: 400px;
+    height: 100%;
+    overflow: hidden;
+    padding: 8px;
+    font-size: 15px;
+
+    #close-vocab-box-button {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        margin: 0px;
+        top: 8px;
+        left: 8px;
+        padding: 0px;
+        font-size: 18px;
+        font-weight: bold;
+        display: none;
+    }
+
+    #save-phrase-button, #delete-phrase-button {
+        box-sizing: border-box;
+        display: inline-block;
+        float: left;
+        margin-left: 40px;
+        margin-top: 0px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0px 12px;
+        background-color: white;
+        color: black;
+        border-color: black;
+
+        &:hover, &:focus, &:active {
+            background-color: white;
+            color: black;
+            border-color: black;
+        }
+    }
+
+    .phrase-box-line, .phrase-box-title {
+        display: block;
+        float: none;
+    }
+
+    .phrase-box-line.phrase {
+        height: 110px;
+        overflow-y: scroll;
+        border: 1px solid rgb(118, 118, 118);
+    }
+
+    .phrase-box-title {
+        display: block;
+        font-weight: bold;
+        margin-top: 30px;
+
+        &:not(.first) {
+            margin-top: 10px;
+        }
+    }
+
+    textarea.phrase-input {
+        display: block;
+        width: 100%;
+        height: 110px;
+        resize: none;
+    }
+
+    button {
+        margin-top: 10px;
+    }
+}
+
+#vocab-box {
+    position: relative;
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: 400px;
+    height: 100%;
+    overflow: hidden;
+    padding: 8px;
+    padding-top: 40px;
+    font-size: 15px;
+
+    #close-vocab-box-button {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        margin: 0px;
+        top: 8px;
+        left: 8px;
+        padding: 0px;
+        font-size: 18px;
+        font-weight: bold;
+        display: none;
+    }
+
+    #vocab-read-count {
+        position: absolute;
+        width: 70px;
+        right: 10px;
+        top: 10px;
+        text-align: right;
+    }
+
+    #vocab-lookup-count {
+        position: absolute;
+        width: 70px;
+        right: 80px;
+        top: 10px;
+        text-align: right;
+    }
+
+    #vocab-last-level-up {
+        position: absolute;
+        width: 140px;
+        right: 150px;
+        top: 10px;
+        text-align: right;
+    }
+
+    .vocab-box-line {
+        display: block;
+        width: 100%;
+        height: 30px;
+        line-height: 28px;
+
+        input, .vocab-box-line-value {
+            box-sizing: border-box;
+            display: inline-block;
+            float: right;
+            width: 240px;
+            height: 28px;
+        }
+        
+        &.translation {
+            height: 135px;
+
+            textarea {
+                display: block;
+                width: 100%;
+                height: 90px;
+                resize: none;
+            }
+        }
+    }
+
+    #vocab-box-word-last-level-up {
+        position: absolute;
+        top: 210px;
+        left: calc(50% - 56px);
+    }
+
+    #vocab-box-word-read-count {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    #vocab-box-word-lookup-count {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    #vocab-box-word-last-level-up,
+    #vocab-box-word-read-count,
+    #vocab-box-word-lookup-count {
+        top: 10px;
+        height: 25px;
+        line-height: 19px;
+        padding: 0px;
+        font-size: 14px;
+        text-align: right;
+        padding-right: 32px;
+
+        i {
+            position: absolute;
+            right: 5px;
+            font-size: 18px;
+            margin-left: 4px;
+            vertical-align: top;
+        }
+    }
+}
+
+button.btn.btn-primary.edit-stage-button {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    padding: 0px;
+    text-align: center;
+    font-size: 17px;
+    margin: 0px 1.5px;
+    font-weight: bold;
+
+    &.selected, &.selected:focus, &.selected:active {
+        background-color: darken($magenta, 10%);
+        color: white;
+    }
+
+    &:active, &:focus {
+        box-shadow: none;
+    }
+}
+
+#reader.japanese-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+
+    .word {
+        padding: 0px !important;
+        width: 22px;
+        text-align: center;
+    }
+}
+
+#reader {
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: calc(100% - 60px);
+    height: 100%;
+    line-height: 1.25;
+    line-height: 1.3;
+    margin: 0px;
+    user-select: none;
+    overflow-y: auto;
+    padding: 10px;
+    transition: .2s;
+
+    &.sidebar-opened {
+        width: calc(100% - 60px - 200px);
+    }
+
+    &.sidebar-vocab-box {
+        width: calc(100% - 60px - 400px);
+    }
+
+    &.sidebar-vocab-box.sidebar-opened {
+        width: calc(100% - 60px - 400px - 200px);
+    }
+    &.plain-text-mode {
+        user-select: text !important;
+    }
+
+    .word {
+        font-family: notosans;
+        display: inline-block;
+        cursor: pointer;
+        margin: 0px;
+        transition: .2s;
+        color: black;
+        border-radius: 4px;
+
+        border-top: 1px solid rgba(0, 0, 0, 0);
+        border-bottom: 1px solid rgba(0, 0, 0, 0);
+
+        &.space {
+            margin-left: 4px;
+        }
+
+        &[stage="-7"] {
+            background-color: rgba($green, 0.8);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &[stage="-6"] {
+            background-color: rgba($green, 0.75);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &[stage="-5"] {
+            background-color: rgba($green, 0.65);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &[stage="-4"] {
+            background-color: rgba($green, 0.55);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &[stage="-3"] {
+            background-color: rgba($green, 0.4);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &[stage="-2"] {
+            background-color: rgba($green, 0.28);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &[stage="-1"] {
+            background-color: rgba($green, 0.15);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+            padding-left: 1.5px !important;
+            padding-right: 1.5px !important;
+        }
+
+        &.no-highlight, &.plain-text-mode {
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        &.phrase {
+            border-radius: 0px;
+            background-color: rgba($green, 0.8);
+            border-top: 1px solid darken($green, 8%);
+            border-bottom: 1px solid darken($green, 8%);
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+
+            &:hover {
+                background-color: rgba($green, 0.5);
+            }
+
+            &.phrase-start {
+                border-left: 1px solid darken($green, 8%);
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                margin-left: .5px !important;
+                padding-left: 1.5px !important;
+            }
+
+            &.phrase-end {
+                border-right: 1px solid darken($green, 8%);
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                margin-right: .5px !important;
+                padding-right: 1.5px !important;
+            }
+            
+            &[phrasestage="0"] {
+                border-color: rgb(90, 90, 90) !important;
+            }
+
+            &[phrasestage="0"]:not([stage="2"]) {
+                background-color: rgba(0, 0, 0, 0);
+
+                &.highlighted {
+                    background-color: rgba(220, 220, 220, 0.75);
+                }
+            }
+
+            &.plain-text-mode, &.no-highlight {
+                background-color: rgba(0, 0, 0, 0);
+                border-color: rgba(0, 0, 0, 0);
+            }
+
+            &.highlighted, &:hover, &[phrasestage="0"]:hover {
+                background-color: rgba(220, 220, 220, 0.75);
+                border-color: rgba(150, 150, 150, 1);
+            }
+        }
+
+        &[stage="2"] {
+            background-color: rgba($purple, 0.42);
+            margin-left: .5px !important;
+            margin-right: .5px !important;
+
+            &.plain-text-mode, &.no-highlight {
+                background-color: rgba(0, 0, 0, 0);
+            }
+        }
+        
+        &.highlighted, &:hover {
+            background-color: rgba(220, 220, 220, 0.75);
+        }
+
+        &.plain-text-mode {
+            cursor: default !important;
+            &:hover {
+                color: $font-color !important;
+                user-select: text !important;
+                cursor: text !important;
+                background-color: rgba(0, 0, 0, 0);
+            }
+        }
+
+    }
+
+    #vocab-edit-box {
+        box-sizing: border-box;
+        display: none;
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        left: calc(50% - 300px);
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 2px;
+        z-index: 10;
+        padding: 10px;
+
+        .vocab-edit-box-label {
+            display: inline-block;
+            float: left;
+            width: 140px;
+            line-height: 30px;
+        }
+
+        .vocab-edit-box-input {
+            display: inline-block;
+            float: left;
+            width: calc(100% - 140px);
+        }
+
+        .vocab-edit-box-input input {
+            display: block;
+            width: 100%;
+            margin: 5px auto;
+        }
+
+        #vocab-edit-cancel-button {
+            display: inline-block;
+            float: left;
+            margin: auto;
+            width: 75px;
+            margin-right: 10px;
+            margin-left: 165px;
+            margin-top: 6px;
+        }
+
+        #vocab-edit-save-button {
+            width: 150px;
+            margin-top: 6px;
+        }
+
+        #vocab-edit-jisho-results {
+            display: block;
+            width: 100%;
+            border: 1px solid black;
+            height: calc(100% - 214px);
+            margin-bottom: 5px;
+            overflow-y: scroll;
+        }
+
+        .vocab-jisho-definition {
+            display: block;
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid $border-dark;
+            padding: 0px 3px;
+            cursor: pointer;
+
+            .vocab-jisho-definition-japanese {
+                display: inline-block;
+                float: left;
+                height: 30px;
+                line-height: 30px;
+                width: 150px;
+            }
+
+            .vocab-jisho-definition-english {
+                display: inline-block;
+                float: left;
+                height: 30px;
+                line-height: 30px;
+                width: calc(100% - 150px);
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+#finished-box {
+    display: block;
+    height: calc(100% - 53px);
+
+    #lesson-finished-text {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin: 25px auto;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    #finished-stats {
+        width: 360px;
+        margin: auto;
+        margin-bottom: 20px;
+
+        td:nth-child(2), th {
+            text-align: center;
+        }
+    }
+
+    #go-to-lessons-button.btn {
+        display: block;
+        margin: auto;
+        width: 160px;
+    }
+
+    a {
+        display: block;
+        margin: 5px auto;
+    }
+}

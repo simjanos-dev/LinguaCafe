@@ -1,0 +1,211 @@
+body {
+  background-color: white;
+}
+
+hr {
+  border-color: black;
+}
+
+nav.navbar-light {
+  border-bottom: 1px solid black;
+}
+nav.navbar-light .navbar-nav .nav-link {
+  color: black;
+}
+nav.navbar-light #vocabulary-select-dropdown a {
+  color: black;
+}
+
+#language-select-dropdown img {
+  border: 1px solid black;
+}
+
+.dropdown-menu {
+  border: 1px solid black;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:not(:disabled):not(.disabled).focus.btn-primary,
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn:hover, textarea, textarea.form-control,
+input, input.form-control, select, select.form-control, button.btn.btn-primary, #lessons .lesson,
+#courses .course, #languages > .language > a > img {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  box-shadow: none;
+}
+
+#chapters {
+  transition: 0s;
+}
+#chapters #course-name {
+  color: black;
+}
+#chapters .chapter span {
+  color: #323232;
+}
+#chapters .chapter.selected span {
+  color: black;
+  text-decoration: underline;
+}
+
+#settings {
+  transition: 0s;
+}
+
+#toolbar {
+  border: none;
+  border-radius: 0px;
+}
+#toolbar .toolbar-button {
+  color: #a5a5a5;
+  font-size: 22px;
+  transition: 0s;
+}
+#toolbar .toolbar-button:hover {
+  color: #a5a5a5;
+}
+#toolbar .toolbar-button.selected {
+  color: black;
+}
+#toolbar #font-size {
+  padding-top: 2px;
+  height: 100%;
+}
+
+#reader-box {
+  height: 100%;
+}
+#reader-box #reader {
+  width: calc(100% - 60px);
+}
+#reader-box #reader.sidebar-opened {
+  width: calc(100% - 60px - 200px);
+}
+#reader-box #floating-vocab-box {
+  border: 1px solid black;
+}
+#reader-box #show-sidebar-vocab-box-button {
+  display: block;
+  padding: 0px;
+}
+#reader-box #vocab-box, #reader-box #phrase-box {
+  left: calc(50% - 200px);
+  position: absolute;
+  height: 90%;
+  margin-top: 5%;
+  background-color: white;
+  z-index: 12;
+  border: 1px solid black;
+}
+.edit-stage-button, .edit-stage-button:hover,
+.edit-stage-button:focus, .edit-stage-button:active {
+  background-color: white !important;
+  border: 1px solid black !important;
+  color: black !important;
+}
+.edit-stage-button.selected, .edit-stage-button:hover.selected,
+.edit-stage-button:focus.selected, .edit-stage-button:active.selected {
+  background-color: black !important;
+  color: white !important;
+  border: 1px solid black !important;
+}
+
+#reader {
+  transition: 0s;
+}
+#reader .word:hover {
+  background-color: white;
+}
+#reader .word[stage="-7"], #reader .word[stage="-6"], #reader .word[stage="-5"], #reader .word[stage="-4"], #reader .word[stage="-3"], #reader .word[stage="-2"], #reader .word[stage="-1"] {
+  background-color: #afafaf;
+}
+#reader .word.phrase {
+  border-radius: 0px;
+  background-color: #afafaf;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+#reader .word.phrase:hover {
+  background-color: white;
+}
+#reader .word.phrase.phrase-start {
+  border-left: 1px solid black;
+}
+#reader .word.phrase.phrase-end {
+  border-right: 1px solid black;
+}
+#reader .word.phrase[phrasestage="0"] {
+  border-color: black !important;
+}
+#reader .word.phrase[phrasestage="0"]:not([stage="2"]) {
+  background-color: rgba(0, 0, 0, 0);
+}
+#reader .word.phrase[phrasestage="0"]:not([stage="2"]).highlighted {
+  background-color: #afafaf;
+}
+#reader .word.phrase.plain-text-mode, #reader .word.phrase.no-highlight {
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
+}
+#reader .word.phrase.highlighted {
+  background-color: #afafaf;
+  background-color: #afafaf;
+}
+#reader .word[stage="2"] {
+  background-color: rgba(0, 0, 0, 0);
+  border-bottom: 1px solid black;
+}
+#reader .word[stage="2"].plain-text-mode, #reader .word[stage="2"].no-highlight {
+  background-color: rgba(0, 0, 0, 0);
+}
+#reader .word.highlighted {
+  background-color: #afafaf;
+}
+
+#finished-box {
+  height: 100%;
+}
+#finished-box #finished-stats, #finished-box #finished-stats td, #finished-box #finished-stats th {
+  border-color: black !important;
+}
+
+#languages .language .language-info {
+  border: 1px solid black;
+  border-top: 0px;
+}
+
+#courses {
+  width: calc(100% - 16px);
+}
+
+#lessons .lesson .lesson-options .lesson-options-dropdown .lesson-option {
+  border: 1px solid black;
+}
+
+#edit-sentence-collection-form, #sentence-practice-box {
+  width: 95%;
+}
+
+.sentence-collection {
+  border: 1px solid black;
+}
+
+#vocabulary-practice {
+  display: block;
+  width: 600px;
+}
+
+#flash-card-practice-box {
+  max-width: unset;
+}
+#flash-card-practice-box #flash-card-additional-information {
+  border-color: black;
+}
+#flash-card-practice-box #flash-card-additional-information td, #flash-card-practice-box #flash-card-additional-information th {
+  border-color: black;
+}
+
+.flash-card-collection {
+  border: 1px solid black;
+}

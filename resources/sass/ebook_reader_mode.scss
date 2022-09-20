@@ -1,0 +1,249 @@
+body {
+    background-color: white;
+}
+
+hr {
+    border-color: black;
+}
+
+nav.navbar-light {
+    border-bottom: 1px solid black;
+
+    .navbar-nav .nav-link {
+        color: black;
+    }
+
+    #vocabulary-select-dropdown a {
+        color: black;
+    }
+}
+
+#language-select-dropdown img {
+    border: 1px solid black;
+}
+
+.dropdown-menu {
+    border: 1px solid black;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:not(:disabled):not(.disabled).focus.btn-primary,
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn:hover, textarea, textarea.form-control,
+input, input.form-control, select, select.form-control, button.btn.btn-primary, #lessons .lesson,
+
+#courses .course, #languages>.language>a>img{
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    box-shadow: none;
+}
+
+#chapters {
+    transition: 0s;
+
+    #course-name {
+        color: black;
+    }
+
+    .chapter span {
+        color: rgb(50, 50, 50);
+    }
+
+    .chapter.selected span{
+        color: black;
+        text-decoration: underline;
+    }
+}
+
+#settings {
+    transition: 0s;
+}
+
+#toolbar {
+    border: none;
+    border-radius: 0px;
+
+    .toolbar-button {
+        color: rgb(165, 165, 165);
+        font-size: 22px;
+        transition: 0s;
+
+        &:hover {
+            color: rgb(165, 165, 165);
+        }
+
+        &.selected {
+            color: black;
+        }
+    }
+
+    #font-size {
+        padding-top: 2px;
+        height: 100%;
+    }
+}
+
+#reader-box {
+    height: 100%;
+
+    #reader {
+        width: calc(100% - 60px);
+
+        &.sidebar-opened {
+            width: calc(100% - 60px - 200px);
+        }
+    }
+    
+    #floating-vocab-box {
+        border: 1px solid black;
+    }
+
+    #show-sidebar-vocab-box-button {
+        display: block;
+        padding: 0px;
+    }
+
+    #vocab-box, #phrase-box {
+        left: calc(50% - 200px);
+        position: absolute;
+        height: 90%;
+        margin-top: 5%;
+        background-color: white;
+        z-index: 12;
+        border: 1px solid black;
+
+        #save-phrase-button, #delete-phrase-button {
+            
+        }
+    }
+}
+
+.edit-stage-button, .edit-stage-button:hover,
+.edit-stage-button:focus, .edit-stage-button:active {
+    background-color: white !important;
+    border: 1px solid black !important;
+    color: black !important;
+
+    &.selected {
+        background-color: black !important;
+        color: white !important;
+        border: 1px solid black !important;
+    }
+}
+
+#reader {
+    transition: 0s;
+    .word {
+        &:hover {
+            background-color: white;
+        }
+        
+        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+            background-color: rgb(175, 175, 175);
+        }
+
+        &.phrase {
+            border-radius: 0px;
+            background-color: rgb(175, 175, 175);
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+
+            &:hover {
+                background-color: white;
+            }
+
+            &.phrase-start {
+                border-left: 1px solid black;
+            }
+
+            &.phrase-end {
+                border-right: 1px solid black;
+            }
+            
+            &[phrasestage="0"] {
+                border-color: black !important;
+            }
+
+            &[phrasestage="0"]:not([stage="2"]) {
+                background-color: rgba(0, 0, 0, 0);
+
+                &.highlighted {
+                    background-color: rgb(175, 175, 175);
+                }
+            }
+
+            &.plain-text-mode, &.no-highlight {
+                background-color: rgba(0, 0, 0, 0);
+                border-color: rgba(0, 0, 0, 0);
+            }
+
+            &.highlighted{
+                background-color: rgb(175, 175, 175);
+                background-color: rgb(175, 175, 175);
+            }
+        }
+
+        &[stage="2"] {
+            background-color: rgba(0, 0, 0, 0);
+            border-bottom: 1px solid black;
+
+            &.plain-text-mode, &.no-highlight {
+                background-color: rgba(0, 0, 0, 0);
+            }
+        }
+        
+        &.highlighted {
+            background-color: rgb(175, 175, 175);
+        }
+    }
+}
+
+#finished-box {
+    height: 100%;
+
+    #finished-stats, #finished-stats td, #finished-stats th{
+        border-color: black !important;
+    }
+}
+
+#languages .language .language-info {
+    border: 1px solid black;
+    border-top: 0px;
+}
+
+#courses {
+    width: calc(100% - 16px);
+}
+
+#lessons .lesson .lesson-options .lesson-options-dropdown .lesson-option {
+    border: 1px solid black;
+}
+
+#edit-sentence-collection-form, #sentence-practice-box {
+    width: 95%;
+}
+
+.sentence-collection {
+    border: 1px solid black;
+}
+
+#vocabulary-practice {
+    display: block;
+    width: 600px;
+}
+
+#flash-card-practice-box {
+    max-width: unset;
+
+    #flash-card-additional-information {
+        border-color: black;
+
+        td, th {
+            border-color: black;
+        }
+    }
+}
+
+.flash-card-collection {
+    border: 1px solid black;
+}

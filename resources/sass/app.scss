@@ -1,0 +1,178 @@
+// Fonts
+//@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+// Pages
+@import 'vocabulary_practice';
+@import 'flash_card_practice';
+@import 'flash_card_collections';
+@import 'edit_flash_card_collection';
+@import 'courses';
+@import 'create_course';
+@import 'edit_lesson';
+@import 'lessons';
+
+html, body, div#app {
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background-color: rgba(235, 235, 235, 0);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(180, 180, 180);
+    border-radius: 2px;
+}
+
+div#app {
+    height: 100%;
+    box-sizing: border-box;
+    nav {
+        margin-bottom: 20px;
+    }
+}
+
+nav .nav-item.ebook-mode-button {
+    user-select: none;
+    cursor: pointer;
+    
+    a>i {
+        color: $magenta;
+        font-size: 18px;
+    }
+}
+
+nav .nav-item.dropdown {
+    color: $black;
+    
+}
+
+.navbar-brand {
+    font-size: 40px;
+    height: 40px;
+    line-height: 42px;
+    padding-top: 0px;
+    overflow: hidden;
+    color: $magenta !important;
+}
+
+#vocabulary-select-dropdown, #language-select-dropdown {
+    img {
+        border: 1px solid $border-color;
+        margin-right: 6px;
+        margin-bottom: 3px;
+    }
+
+    a, a:active, a:focus, a:visited {
+        color: $navbar-font-color;
+        padding-left: 4px;
+        padding-right: 4px;
+        
+        &:hover, &:active, &:focus {
+            color: $font-color;
+        }
+    }
+
+    a.dropdown-item:active, a.dropdown-item:focus, a.dropdown-item:hover {
+        background-color: $border-color;
+    }
+
+    hr {
+        margin: 5px 0px !important;
+    }
+}
+
+::selection {
+    color: white;
+    background: $magenta;
+}
+
+.btn {
+    border-radius: 0px;
+    transition: .2s;
+
+    &:hover {
+        filter: brightness(94%);
+    }
+}
+
+.btn.btn-green {
+    background-color: darken($green, 10%);
+    color: $white;
+    border-radius: 3px;
+
+    &:active, &:focus {
+        box-shadow: none;
+    }
+}
+
+.btn.btn-red {
+    background-color: $red;
+    color: $white;
+    border-radius: 3px;
+    
+    &:active, &:focus {
+        box-shadow: none;
+    }
+}
+
+.btn.btn-primary {
+    border-radius: 0px;
+    color: $font-color;
+    background-color: white;
+    border-radius: 3px;
+    border-color: lighten($magenta, 16%);
+}
+
+.btn-primary:hover {
+    color: $font-color;
+    background-color: white;
+    border-color: lighten($magenta, 16%);
+    border-radius: 3px;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:not(:disabled):not(.disabled).focus.btn-primary,
+.btn-primary:not(:disabled):not(.disabled):active:focus {
+    color: darken($font-color, 10%);
+    background-color: lighten($magenta, 90%);
+    border-color: lighten($magenta, 16%);
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: $magenta;
+    box-shadow: 0px 0px 3px 0.5px rgba($magenta, 1);
+}
+
+a, a:visited,
+a.btn-link, a.btn-link:visited {
+    color: $magenta;
+    outline: none;
+}
+
+a:hover, a:focus, a:active,
+a.btn-link:hover, a.btn-link:focus, a.btn-link:active {
+    color: $magenta;
+    outline: none;
+}
+
+a.btn-link:hover, a.btn-link:focus, a.btn-link:active  {
+    box-shadow: 0px 0px 3px 0.5px rgba($magenta, 1);
+}
+
+input[type="checkbox"]:checked { /* change "blue" browser chrome to yellow */
+    filter: hue-rotate(130deg) brightness(0.93);
+  }
+  

@@ -1,0 +1,23 @@
+// Body
+$body-bg: #ffffff;
+
+// Typography
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+// Colors
+$navbar-font-color: rgba(0, 0, 0, 0.5);
+$font-color: rgb(25, 25, 25);
+$border: rgb(226, 226, 226);
+$border-dark: rgb(180, 180, 180);
+$magenta: rgb(233, 87, 131);
+$green: rgb(52, 232, 127);
+$red: rgb(250, 80, 80);
+$purple: rgb(247, 198, 0);
+$magenta: rgb(140, 140, 140);
+
+@font-face {
+    font-family: notosans;
+    src: url('/noto-sans/NotoSansJP-Regular.otf');
+}
