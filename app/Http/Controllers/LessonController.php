@@ -22,10 +22,12 @@ class LessonController extends Controller
     public function courses() {
         $selectedLanguage = Auth::user()->selected_language;
         $courses = Course::where('language', $selectedLanguage)->where('user_id', Auth::user()->id)->orderBy('updated_at', 'DESC')->get();
+        $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
 
         return view('courses', [
             'courses' => $courses,
-            'language' => $selectedLanguage
+            'language' => $selectedLanguage,
+            'words' => $words
         ]);
     }
 
@@ -54,103 +56,15 @@ class LessonController extends Controller
         return redirect('/courses');
     }
 
-    public function updateWordCounts($courseId = -1) {
-        $selectedLanguage = Auth::user()->selected_language;
-        $encounteredWords = EncounteredWord::select(['word', 'stage'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-        
-        if ($courseId !== -1) {
-            $courses = Course::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('id', $courseId)->get();
-        } else {
-            $courses = Course::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-        }
-
-        foreach ($courses as $course) {
-            $lessons = Lesson::where('user_id', Auth::user()->id)->where('course_id', $course->id)->get();
-
-            $uniqueWords = [];
-            $uniquePhraseIds = [];
-            $wordCount = 0;
-            $knownWordCount = 0;
-            $highlightedWordCount = 0;
-            $newWordCount = 0;
-
-            foreach ($lessons as $lesson) {
-                $lessonKnownWordCount = 0;
-                $lessonHighlightedWordCount = 0;
-                $lessonNewWordCount = 0;
-                $lessonUniqueWords = json_decode($lesson->unique_words);
-                $lessonUniqueWords = EncounteredWord::select(['word', 'stage'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereIn('word', $lessonUniqueWords)->get();
-                $lessonUniquePhraseIds = [];
-                $words = json_decode(gzuncompress($lesson->processed_text));
-                
-                // check for unique phrase id
-                foreach($words as $word) {
-                    foreach ($word->phraseIds as $phraseId) {
-                        if (!in_array($phraseId, $lessonUniquePhraseIds)) {
-                            array_push($lessonUniquePhraseIds, $phraseId);
-                        }
-
-                        if (!in_array($phraseId, $uniquePhraseIds)) {
-                            array_push($uniquePhraseIds, $phraseId);
-                        }
-                    }
-                }
-
-                // check for unique word
-                foreach ($lessonUniqueWords as $word) {
-                    if (!array_search(mb_strtolower($word->word), $uniqueWords, true)) {
-                        array_push($uniqueWords, mb_strtolower($word->word));
-
-                        if ($word->stage < 0) {
-                            $highlightedWordCount ++;
-                        }
-
-                        if ($word->stage == 0) {
-                            $knownWordCount ++;
-                        }
-
-                        if ($word->stage == 2) {
-                            $newWordCount ++;
-                        }
-                    }
-
-                    if ($word->stage < 0) {
-                        $lessonHighlightedWordCount ++;
-                    }
-
-                    if ($word->stage == 0) {
-                        $lessonKnownWordCount ++;
-                    }
-
-                    if ($word->stage == 2) {
-                        $lessonNewWordCount ++;
-                    }
-                }
-
-                $lesson->known_word_count = $lessonKnownWordCount;
-                $lesson->highlighted_word_count = $lessonHighlightedWordCount + count($lessonUniquePhraseIds);
-                $lesson->new_word_count = $lessonNewWordCount;
-                $lesson->save();
-                $wordCount += $lesson->word_count;
-            }
-
-            $course->unique_word_count = count($uniqueWords);
-            $course->word_count = $wordCount;
-            $course->known_word_count = $knownWordCount;
-            $course->highlighted_word_count = $highlightedWordCount +  + count($uniquePhraseIds);
-            $course->new_word_count = $newWordCount;
-            $course->touch();
-            $course->save();
-        }
-    }
-
     public function lessons($courseId) {
         $course = Course::where('id', $courseId)->where('user_id', Auth::user()->id)->first();
-        $lessons = Lesson::where('course_id', $courseId)->where('user_id', Auth::user()->id)->get();
-        
+        $lessons = Lesson::where('course_id', $courseId)->where('user_id', Auth::user()->id)->get();        
+        $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
+
         return view('lessons', [
             'course' => $course,
-            'lessons' => $lessons
+            'lessons' => $lessons,
+            'words' => $words
         ]);
     }
 
@@ -206,10 +120,6 @@ class LessonController extends Controller
                 $word->lookup_count = $encounteredWords[$wordId]->lookup_count;
                 $word->last_level_up = $encounteredWords[$wordId]->last_level_up;
                 $encounteredWords[$wordId]->read_count ++;
-            } else {
-                $word->stage = 2;
-                $word->lookup_count = 0;
-                $word->last_level_up = '';
             }
 
             $words[$wordCounter] = $word;
@@ -237,43 +147,41 @@ class LessonController extends Controller
         $phrases = json_decode($request->phrases);
         $deletedPhrases = json_decode($request->deletedPhrases);
         $today = date('Y-m-d');
-        $encounteredWordsRequest = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->select('word')->get();
-        $encounteredWordList = [];
-
-        foreach ($encounteredWordsRequest as $word) {
-            array_push($encounteredWordList, $word->word);
-        }
         
-        // save newly encountered words and edited translations
+        // update words
+        DB::beginTransaction();
         foreach ($uniqueWords as $uniqueWordData) {
-            if (in_array($uniqueWordData->word, $encounteredWordList, true)) {
-                $encounteredWord = EncounteredWord::where('word', $uniqueWordData->word)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->first();
-                $encounteredWord->stage = $uniqueWordData->stage;
+            $stage = $uniqueWordData->stage;
+            $last_level_up = $uniqueWordData->stage;
 
-                // increase word stage strength if it wasn't checked
-                if ($encounteredWord->stage < 0 && !$uniqueWordData->checked && 
-                    $uniqueWordData->last_level_up !== $today) {
-                    $encounteredWord->stage++;
-                    $encounteredWord->last_level_up = $today;
-                }
-
-                // these are words that the user sees the first time in the software,
-                // but they already know it
-                if ($encounteredWord->stage == 2) {
-                    $encounteredWord->stage = 0;
-                    $encounteredWord->last_level_up = $today;
-                }
-
-                $encounteredWord->translation = $uniqueWordData->translation;
-                $encounteredWord->reading = $uniqueWordData->reading;
-                $encounteredWord->base_word = $uniqueWordData->base_word;
-                $encounteredWord->base_word_reading = $uniqueWordData->base_word_reading;
-                $encounteredWord->example_sentence = $uniqueWordData->example_sentence;
-                $encounteredWord->lookup_count = $uniqueWordData->lookup_count;
-                $encounteredWord->read_count = $uniqueWordData->read_count;
-                $encounteredWord->save();
+            // increase word stage strength if it wasn't checked
+            if ($uniqueWordData->stage < 0 && !$uniqueWordData->checked && 
+                $uniqueWordData->last_level_up !== $today) {
+                $stage++;
+                $last_level_up = $today;
             }
+
+            // these are words that the user sees the first time in the software,
+            // but they already know it
+            if ($uniqueWordData->stage == 2) {
+                $stage = 0;
+                $last_level_up = $today;
+            }
+
+            EncounteredWord::where('id', $uniqueWordData->id)->update([
+                'translation' => $uniqueWordData->translation,
+                'reading' => $uniqueWordData->reading,
+                'base_word' => $uniqueWordData->base_word,
+                'base_word_reading' => $uniqueWordData->base_word_reading,
+                'example_sentence' => $uniqueWordData->example_sentence,
+                'lookup_count' => $uniqueWordData->lookup_count,
+                'read_count' => $uniqueWordData->read_count,
+                'last_level_up' => $last_level_up,
+                'stage' => $stage
+            ]);
         }
+
+        DB::commit();
 
         // increase lesson read count
         $lesson = Lesson::where('id', $request->lessonId)->where('user_id', Auth::user()->id)->first();
@@ -295,7 +203,7 @@ class LessonController extends Controller
             $phrase->words = json_encode($currentPhrase->words);
             $phrase->stage = intval($currentPhrase->stage);
             $phrase->reading = $currentPhrase->reading;
-            $phrase->translation = $currentPhrase->translation;            
+            $phrase->translation = $currentPhrase->translation;
             if ($phrase->stage < 0 && !$currentPhrase->checked && 
                 $phrase->last_level_up !== $today) {
                 $phrase->stage++;
@@ -337,8 +245,6 @@ class LessonController extends Controller
 
         $dailyAchivement->read_words += $lesson->word_count;
         $dailyAchivement->save();
-        shell_exec('./../tokenizer.py');
-        $this->updateWordCounts();
     }
 
     public function createLesson($courseId) {
@@ -374,7 +280,6 @@ class LessonController extends Controller
         $lesson->name = $request->name;
         $lesson->read_count = isset($request->lesson_id) ? $lesson->read_count : 0;
         $lesson->word_count = 0;
-        $lesson->unique_word_count = 0;
         $lesson->course_id = $request->course;
         $lesson->language = $selectedLanguage;
         $lesson->raw_text = str_replace("\r\n", " NEWLINE \r\n", $request->raw_text);
@@ -438,7 +343,7 @@ class LessonController extends Controller
         $lesson->word_count = $wordCount;
         $lesson->processed_text = gzcompress(json_encode($words), 1);
         $lesson->unique_words = json_encode($uniqueWords);
-        $lesson->unique_word_count = count($uniqueWords);
+        $lesson->unique_word_ids = json_encode($uniqueWordIds);
         $lesson->save();
 
         shell_exec('./../tokenizer.py');
@@ -448,7 +353,6 @@ class LessonController extends Controller
             $lesson->updatePhraseIds($phrase->id);
         }
 
-        $this->updateWordCounts($lesson->course_id);
         if (isset($request->lesson_id)) {
             return redirect('/lessons/' . $request->course);
         } else {

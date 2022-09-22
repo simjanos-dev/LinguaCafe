@@ -15,11 +15,6 @@ class ModifyLessonsTable3 extends Migration
      */
     public function up()
     {
-        // Schema::table('lessons', function (Blueprint $table) {
-        //     $table->mediumText('raw_text')->change();
-        //     $table->mediumText('processed_text')->change();
-        // });
-
         DB::statement("ALTER TABLE lessons MODIFY raw_text MEDIUMBLOB");
         DB::statement("ALTER TABLE lessons MODIFY processed_text MEDIUMBLOB");
 

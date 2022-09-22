@@ -6,6 +6,9 @@
     <br><br>
 
     @foreach ($courses as $course)
+        @php
+            $wordCounts = $course->getWordCounts($words);
+        @endphp
         <div class="course">
             <div class="image-box">
                 @if ($course->cover_image)
@@ -14,11 +17,11 @@
             </div>
             <div class="information-box">
                 <div class="name">{{ $course->name }}</div>
-                <div class="information">Words: <span>{{ $course->word_count }}</span></div>
-                <div class="information">Unique words: <span>{{ $course->unique_word_count }}</span></div>
-                <div class="information">Known words: <span>{{ $course->known_word_count }}</span></div>
-                <div class="information">Highlighted words: <span class="highlighted"><i class="fa fa-book-open"></i> {{ $course->highlighted_word_count }}</span></div>
-                <div class="information">New words: <span class="new"><i class="fa fa-eye-slash"></i> {{ $course->new_word_count }}</span></div>
+                <div class="information">Words: <span>{{ $wordCounts->total }}</span></div>
+                <div class="information">Unique words: <span>{{ $wordCounts->unique }}</span></div>
+                <div class="information">Known words: <span>{{ $wordCounts->known }}</span></div>
+                <div class="information">Highlighted words: <span class="highlighted"><i class="fa fa-book-open"></i> {{ $wordCounts->highlighted }}</span></div>
+                <div class="information">New words: <span class="new"><i class="fa fa-eye-slash"></i> {{ $wordCounts->new }}</span></div>
 
                 <div class="buttons">
                     <a href="/lessons/{{ $course->id }}">

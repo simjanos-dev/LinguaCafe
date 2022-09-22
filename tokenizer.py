@@ -14,7 +14,7 @@ mydb = mysql.connector.connect(
   host="localhost",
   user="webserver",
   password="webserver",
-  database="langapp"
+  database="langappdev"
 )
 
 mycursor = mydb.cursor()
@@ -67,53 +67,6 @@ for row in myresult:
     hiraganaFull.append(x['hira'])
   values = (''.join(hiraganaFull), row[0])
   mycursor.execute(sql, values)
-mydb.commit()
-
-# get base word readings
-mycursor.execute("SELECT id,base_word FROM encountered_words WHERE language = 'japanese' AND base_word <> '' AND base_word_reading = ''")
-myresult = mycursor.fetchall()
-
-for row in myresult:
-  result = hiraganaConverter.convert(row[1])
-  sql = "UPDATE encountered_words SET base_word_reading = %s WHERE id = %s"
-  hiraganaFull = list()
-  for x in result:
-    hiraganaFull.append(x['hira'])
-  values = (''.join(hiraganaFull), row[0])
-  mycursor.execute(sql, values)
-mydb.commit()
-
-
-
-# tokenize japanese flash cards
-mycursor.execute("SELECT id,sentence_raw FROM flash_cards WHERE sentence_processed = '' AND language = 'japanese'")
-myresult = mycursor.fetchall()
-
-for row in myresult:
-  words = tokenizer.tokenize(row[1])
-  jsonPassableWords = list()
-  reading = list()
-  for word in words:
-    jsonPassableWords.append(str(word))
-
-    #get reading
-    hiragana = hiraganaConverter.convert(str(word))
-    hiraganaFull = list()
-    for x in hiragana:
-      hiraganaFull.append(x['hira'])
-    reading.append(str(''.join(hiraganaFull)))
-    
-  #update sentence
-  jsonText = json.dumps(jsonPassableWords)
-  sql = "UPDATE flash_cards SET sentence_processed = %s WHERE id = %s"
-  values = (jsonText, row[0])
-  mycursor.execute(sql, values)
-
-  #update reading
-  sql = "UPDATE flash_cards SET reading = %s WHERE id = %s AND reading = ''"
-  values = (' '.join(reading), row[0])
-  mycursor.execute(sql, values)
-
 mydb.commit()
 
 # tokenize norwegian

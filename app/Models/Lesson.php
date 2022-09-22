@@ -17,11 +17,38 @@ class Lesson extends Model
         'name',
         'read_count',
         'word_count',
-        'unique_count',
         'language',
         'raw_text',
         'processed_text',
     ];
+
+    function getWordCounts($words) {
+        $lessons = Lesson::where('user_id', Auth::user()->id)->where('course_id', $this->id)->get();
+        $uniqueWordIds = json_decode($this->unique_word_ids);
+
+        $wordCounts = new \StdClass();
+        $wordCounts->total = $this->word_count;
+        $wordCounts->unique = count($uniqueWordIds);
+        $wordCounts->known = 0;
+        $wordCounts->highlighted = 0;
+        $wordCounts->new = 0;
+        
+        foreach($uniqueWordIds as $wordId) {
+            if ($words[$wordId]['stage'] < 0) {
+                $wordCounts->highlighted ++;
+            }
+
+            if ($words[$wordId]['stage'] == 0) {
+                $wordCounts->known ++;
+            }
+
+            if ($words[$wordId]['stage'] == 2) {
+                $wordCounts->new ++;
+            }
+        }
+
+        return $wordCounts;
+    }
 
     function updatePhraseIds($phraseId) {
         $words = json_decode(gzuncompress($this->processed_text));
