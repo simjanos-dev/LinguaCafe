@@ -336,6 +336,7 @@
             },
             startSelection: function(event, wordIndex) {
                 this.selectionOngoing = true;
+                this.showPhraseReading = false;
                 this.selectedTranslation = '';
                 this.vocabEditMode = '';
                 

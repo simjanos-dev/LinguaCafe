@@ -93,21 +93,13 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
             width: calc(100% - 60px - 200px);
         }
     }
-    
-    #floating-vocab-box {
-        border: 1px solid black;
-    }
 
     #show-sidebar-vocab-box-button {
         display: block;
         padding: 0px;
     }
 
-    #vocab-box, #phrase-box {
-        left: calc(50% - 200px);
-        position: absolute;
-        height: 90%;
-        margin-top: 5%;
+    #vocab-box{
         background-color: white;
         z-index: 12;
         border: 1px solid black;
@@ -118,21 +110,29 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
     }
 }
 
-.edit-stage-button, .edit-stage-button:hover,
-.edit-stage-button:focus, .edit-stage-button:active {
-    background-color: white !important;
-    border: 1px solid black !important;
-    color: black !important;
-
-    &.selected {
-        background-color: black !important;
-        color: white !important;
-        border: 1px solid black !important;
-    }
-}
-
-#reader {
+#reader-box {
     transition: 0s;
+    #vocab-box {
+        rt {
+            color: black !important;
+        }
+
+        .stage-buttons .stage-button{
+            background-color: rgb(200, 200, 200);
+            color: black;
+
+            &.selected, &:hover {
+                background-color: rgb(110, 110, 110);
+                color: black;
+            }
+        }
+
+        .title, .vocab-edit, .show-phrase-reading {
+            color: black;
+        }
+
+    }
+
     .word {
         &:hover {
             background-color: white;
@@ -246,4 +246,13 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
 
 .flash-card-collection {
     border: 1px solid black;
+}
+
+input[type="text"], textarea{
+    border: 1px solid rgb(100, 100, 100);
+    background-color: white;
+
+    &:focus, &:active {
+        border: 1px solid rgb(100, 100, 100);
+    }
 }
