@@ -13,8 +13,13 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .vue()
-    .sass('resources/sass/app.scss', 'public/css')
-    .sass('resources/sass/lesson.scss', 'public/css')
+    .sass('resources/sass/reader.scss', 'public/css')
     .sass('resources/sass/ebook_reader_mode.scss', 'public/css')
-    .sass('resources/sass/kanji_print.scss', 'public/css');
+    .sass('resources/sass/kanji_print.scss', 'public/css')
+    .sass('resources/sass/app.scss', 'public/css')
+    .browserSync({
+        proxy: 'langdev.com',
+        host: 'langdev.com',
+        open: 'external'
+    });
     

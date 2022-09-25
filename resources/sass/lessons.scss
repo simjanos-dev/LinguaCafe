@@ -24,6 +24,8 @@ hr {
     margin-bottom: 50px;
     padding: 0px;
     overflow: hidden;
+    background-color: #fff;
+    border-radius: 12px;
 
     .image-box {
         display: inline-block;
@@ -128,6 +130,7 @@ hr {
         font-size: 18px;
         background-color: #fff;
         color: $font-color;
+        border-radius: 12px;
 
         .name {
             display: block;

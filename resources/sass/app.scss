@@ -99,57 +99,83 @@ nav .nav-item.dropdown {
 }
 
 .btn {
-    border-radius: 0px;
+    border-radius: 30px;
     transition: .2s;
 
     &:hover {
         filter: brightness(94%);
     }
-}
 
-.btn.btn-green {
-    background-color: darken($green, 10%);
-    color: $white;
-    border-radius: 3px;
-
-    &:active, &:focus {
-        box-shadow: none;
+    &.small {
+        height: 30px;
+        line-height: 28px;
+        padding: 0px 10px;
+        font-size: 13px;
+        min-width: 60px;
     }
-}
 
-.btn.btn-red {
-    background-color: $red;
-    color: $white;
-    border-radius: 3px;
-    
     &:active, &:focus {
         box-shadow: none;
     }
 }
 
 .btn.btn-primary {
-    border-radius: 0px;
-    color: $font-color;
-    background-color: white;
-    border-radius: 3px;
-    border-color: lighten($magenta, 16%);
+    background-color: #fff;
+    color: rgb(84, 88, 113);
+    border-color: rgb(84, 88, 113);
 }
 
 .btn-primary:hover {
-    color: $font-color;
-    background-color: white;
-    border-color: lighten($magenta, 16%);
-    border-radius: 3px;
+    background-color: #fff;
+    color: rgb(84, 88, 113);
+    border-color: rgb(84, 88, 113);
 }
 
 .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:not(:disabled):not(.disabled).focus.btn-primary,
 .btn-primary:not(:disabled):not(.disabled):active:focus {
-    color: darken($font-color, 10%);
-    background-color: lighten($magenta, 90%);
-    border-color: lighten($magenta, 16%);
+    background-color: #fff;
+    color: rgb(84, 88, 113);
+    border-color: rgb(84, 88, 113);
     box-shadow: none;
 }
+
+.btn.btn-black {
+    background-color: rgb(84, 88, 113);
+    color: #fff;
+    border-color: rgb(84, 88, 113);
+}
+
+.btn-black:hover {
+    background-color: rgb(84, 88, 113);
+    color: #fff;
+    border-color: rgb(84, 88, 113);
+}
+
+.btn.btn-green {
+    background-color: rgb(45, 200, 115);
+    color: #fff;
+    border-color: rgb(45, 200, 115);
+}
+
+.btn-green:hover {
+    background-color: rgb(45, 200, 115);
+    color: #fff;
+    border-color: rgb(45, 200, 115);
+}
+
+.btn.btn-red {
+    background-color: rgb(236, 42, 42);
+    color: #fff;
+    border-color: rgb(236, 42, 42);
+}
+
+.btn-red:hover {
+    background-color: rgb(236, 42, 42);
+    color: #fff;
+    border-color: rgb(236, 42, 42);
+}
+
 
 .form-control:focus {
     border-color: $magenta;
@@ -174,5 +200,33 @@ a.btn-link:hover, a.btn-link:focus, a.btn-link:active  {
 
 input[type="checkbox"]:checked { /* change "blue" browser chrome to yellow */
     filter: hue-rotate(130deg) brightness(0.93);
-  }
+}
   
+input[type="text"] {
+    border: 1px solid rgb(230, 230, 230);
+    border-radius: 14px;
+    outline: none;
+    background: rgb(245, 245, 245);
+    padding: 0px 8px;
+
+    &:focus, &:active {
+        border: 1px solid rgb(230, 230, 230);
+        outline: none;
+        background: rgb(238, 238, 238);
+    }
+}
+
+textarea {
+    border: 1px solid rgb(230, 230, 230);
+    border-radius: 14px;
+    outline: none;
+    background: rgb(245, 245, 245);
+    padding: 8px;
+    resize: none;
+    
+    &:focus, &:active {
+        border: 1px solid rgb(230, 230, 230);
+        outline: none;
+        background: rgb(238, 238, 238);
+    }
+}
