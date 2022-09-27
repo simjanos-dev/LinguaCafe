@@ -7,6 +7,9 @@
             <button :class="{'toolbar-button': true, 'selected': sidebar == 'chapters'}" @click="toggleSidebar('chapters')" title="Chapter list">
                 <i class="fas fa-book"></i>
             </button>
+            <button :class="{'toolbar-button': true, 'selected': sidebar == 'glossary'}" @click="toggleSidebar('glossary')" title="Glossary">
+                <i class="fas fa-list"></i>
+            </button>
             <button :class="{'toolbar-button': true}" @click="settings.fontSize ++; unselectWord(); saveSettings();" title="Increase font size">
                 <i class="fa fa-search-plus"></i>
             </button>
@@ -35,6 +38,27 @@
                 v-for="(lesson, index) in _lessons" :key="index">
                 <a :href="'/lesson/' + lesson.id"><span :id="lesson.id == _lessonId ? 'selected-chapter' : ''">{{ index + '.) ' + lesson.name }}</span></a>
             </div>
+        </div>
+        <div v-if="!finished" id="glossary" :class="{'visible': sidebar == 'glossary'}">
+            <template v-for="(word, index) in glossary">
+                <div class="glossary-entry" :key="index">
+                    <template @click="word.showReading = !word.showReading">
+                        <div class="word" @click="word.showReading = !word.showReading" v-if="word.base_word == ''">
+                            <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby>
+                        </div>
+                        <div class="word" @click="word.showReading = !word.showReading" v-if="word.base_word !== ''">
+                            <ruby>{{ word.base_word }}<rt v-if="word.showReading">{{ word.base_word_reading }}</rt></ruby> 
+                            <i class="fas fa-long-arrow-alt-right"></i> 
+                            <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby> 
+                        </div>
+                    </template>
+                    <div class="translation">
+                        <ul>
+                            <li v-for="(translation, index) in word.translation.split(';')">{{ translation }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </template>
         </div>
         <div id="vocab-box" :class="{'bottom-arrow': vocabBoxPosition.arrow == 'bottom', 'editing': vocabEditMode == 'word' || vocabEditMode == 'phrase', 'new-phrase': selection.length > 1 && selectedPhrase == -1, 'translation-edit': vocabEditMode == 'translation'}" :style="{'top': vocabBoxPosition.top + 'px', 'left': vocabBoxPosition.left + 'px', 'height': vocabBoxSize.height + 'px'}" v-if="selection.length && !finished && !selectionOngoing  ">
             <div class="vocab-phrase" v-if="selection.length > 1 && vocabEditMode !== 'translation'">
@@ -129,23 +153,8 @@
                     --><div @click="setStage(1)" :class="{'stage-button': true, 'selected': selectionStage == 1}" v-if="selection.length == 1"><b>X</b></div>
                 </div>
             </div>
-            <!--
-            <div class="vocab-box-line" v-if="selection.length == 1 && uniqueWords[selection[0].uniqueWordIndex].base_word">
-                <div>{{uniqueWords[selection[0].uniqueWordIndex].base_word}}</div>
-                <div>{{uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</div>
-            </div>
-            <div class="vocab-box-translation" v-if="selection.length == 1">
-                {{uniqueWords[selection[0].uniqueWordIndex].translation}}
-            </div>
-            <div class="vocab-box-line phrase" v-if="selection.length > 1">
-                <template v-for="(word, index) in selection">{{ word.word }}</template>
-            </div>
-            <div class="vocab-box-translation" v-if="selectedPhrase !== -1">
-                {{ phrases[selectedPhrase].translation }}
-            </div>
-            -->
         </div>
-        <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'sidebar-opened': sidebar !== '', 'sidebar-vocab-box': settings.vocabBoxStyle == 'sidebar'}">
+        <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'sidebar-opened': sidebar !== '', 'sidebar-vocab-box': settings.vocabBoxStyle == 'sidebar', 'hidden': sidebar == 'glossary'}">
             <template v-for="(word, wordIndex) in words">
                 <template v-if="word.word.indexOf('NEWLINE') == -1  && _language !== 'japanese'">
                     <template v-if="spaceFreeWords.includes(word.word)">
@@ -220,6 +229,7 @@
                 newlySavedWords: 0,
                 learnedWords: 0,
                 progressedWords: 0,
+                glossary: [],
                 words: JSON.parse(this._text),
                 uniqueWords: JSON.parse(this._uniqueWords),
                 phrases: JSON.parse(this._phrases),
@@ -290,6 +300,7 @@
             document.getElementById('reader').addEventListener('mouseup', this.finishSelection);
             this.$forceUpdate();
             this.updatePhraseBorders();
+            this.updateGlossary();
         },
         methods: {
             backToChapters: function() {
@@ -307,6 +318,9 @@
                 this.unselectWord();
             },
             toggleSidebar: function(newSidebar) {
+                this.unselectWord();
+                this.updateGlossary();
+
                 if (this.sidebar == newSidebar) {
                     this.sidebar = '';
                     return;
@@ -327,6 +341,34 @@
                 }
 
                 return -1;
+            },
+            updateGlossary: function() {
+                this.glossary = [];
+                for (let i = 0; i < this.phrases.length; i++) {
+                    if (this.phrases[i].stage < 0) {
+                        this.glossary.push({
+                            word: this.phrases[i].words.join(''),
+                            reading: this.phrases[i].reading,
+                            base_word: '',
+                            base_word_reading: '',
+                            translation: this.phrases[i].translation,
+                            showReading: false,
+                        });
+                    }
+                }
+
+                for (let i = 0; i < this.uniqueWords.length; i++) {
+                    if (this.uniqueWords[i].stage < 0) {
+                        this.glossary.push({
+                            word: this.uniqueWords[i].word,
+                            reading: this.uniqueWords[i].reading,
+                            base_word: this.uniqueWords[i].base_word,
+                            base_word_reading: this.uniqueWords[i].base_word_reading,
+                            translation: this.uniqueWords[i].translation,
+                            showReading: false,
+                        });
+                    }
+                }
             },
             updateNewWord: function() {
                 this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');

@@ -84,7 +84,14 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
 }
 
 #reader-box {
-    height: 100%;
+    #glossary .glossary-entry {
+        color: black;
+
+        .word{
+            font-weight: bold;
+            background-color: white;
+        }
+    }
 
     #reader {
         width: calc(100% - 60px);

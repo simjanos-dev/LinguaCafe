@@ -102,6 +102,52 @@ div#app>nav {
     }
 }
 
+#glossary {
+    position: relative;
+    box-sizing: border-box;
+    display: none;
+    float: left;
+    width: calc(100% - 60px);
+    margin: 0px;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    padding: 12px 0px;
+    
+    
+    &.visible {
+        display: inline-block;
+    }
+
+    .glossary-entry {
+        position: relative;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        
+        rt {
+            font-size: 13.5px;
+        }
+
+        .word {
+            display: inline-block;
+            cursor: pointer;
+            //background-color: $green;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-size: 15px;
+            user-select: none;
+        }
+
+        .translation {
+            display: block;
+            width: 100%;
+            font-size: 14px;
+        }
+    }
+}
+
+
 #chapters {
     position: relative;
     box-sizing: border-box;
@@ -627,6 +673,10 @@ button.btn.btn-primary.edit-stage-button {
         user-select: text !important;
     }
 
+    &.hidden {
+        display: none;
+    }
+
     .word {
         font-family: notosans;
         display: inline-block;
@@ -813,5 +863,22 @@ button.btn.btn-primary.edit-stage-button {
     a {
         display: block;
         margin: 5px auto;
+    }
+}
+
+
+@media (max-width: 650px) {
+    #glossary .glossary-entry{
+        rt {
+            font-size: 14px;
+        }
+
+        .word {
+            font-size: 17px;
+        }
+
+        .translation {
+            font-size: 15px;
+        }
     }
 }
