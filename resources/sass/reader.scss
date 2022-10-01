@@ -209,7 +209,6 @@ div#app>nav {
     z-index: 10;
     border: 1px solid rgb(220, 220, 220);
     box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
-    overflow: hidden;
 
     .vocab-box-button {
         float: right;
@@ -289,9 +288,6 @@ div#app>nav {
         font-size: 20px;
         padding: 8px;
         overflow: hidden;
-        transition: .3s;
-
-        
 
         .vocab-word-box {
             display: block;
@@ -379,7 +375,6 @@ div#app>nav {
         border-bottom: 1px solid rgb(200, 200, 200);
         font-size: 16px;
         padding: 8px;
-        transition: .3s;
 
         &.phrase {
             height: 240px;
@@ -466,7 +461,6 @@ div#app>nav {
                     float: right;
                     font-size: 16px;
                     opacity: 0;
-                    transition: 0s;
                 }
 
                 &:hover {
@@ -484,7 +478,6 @@ div#app>nav {
         height: 100px;
         padding: 8px;
         overflow: hidden;
-        transition: .3s;
     }
 
     .stage-buttons {
@@ -540,7 +533,6 @@ div#app>nav {
         height: 0;
         width: 0;
         position: absolute;
-        pointer-events: none;
     }
     
     &:after {
