@@ -4,10 +4,10 @@
             <button :class="{'toolbar-button': true}" @click="backToChapters()" title="Back to chapters">
                 <i class="fa fa-arrow-left"></i>
             </button>
-            <button :class="{'toolbar-button': true, 'selected': sidebar == 'chapters'}" @click="toggleSidebar('chapters')" title="Chapter list">
+            <button :class="{'toolbar-button': true, 'selected': toolbar == 'chapters'}" @click="toggleToolbar('chapters')" title="Chapter list">
                 <i class="fas fa-book"></i>
             </button>
-            <button :class="{'toolbar-button': true, 'selected': sidebar == 'glossary'}" @click="toggleSidebar('glossary')" title="Glossary">
+            <button :class="{'toolbar-button': true, 'selected': toolbar == 'glossary'}" @click="toggleToolbar('glossary')" title="Glossary">
                 <i class="fas fa-list"></i>
             </button>
             <button :class="{'toolbar-button': true}" @click="settings.fontSize ++; unselectWord(); saveSettings();" title="Increase font size">
@@ -25,21 +25,21 @@
             <button :class="{'toolbar-button': true, 'selected': !settings.highlightWords}"  @click="settings.highlightWords = !settings.highlightWords; saveSettings();" title="Highlight words">
                 <i class="fa fa-underline"></i>
             </button>
-            <button :class="{'toolbar-button': true, 'selected': sidebar == 'settings'}"  @click="toggleSidebar('settings')" title="Settings">
+            <button :class="{'toolbar-button': true, 'selected': toolbar == 'settings'}"  @click="toggleToolbar('settings')" title="Settings">
                 <i class="fa fa-cog"></i>
             </button>
         </div>
-        <div v-if="!finished" id="settings" :class="{'visible': sidebar == 'settings'}">
-            
+        <div v-if="!finished" id="settings" :class="{'visible': toolbar == 'settings'}">
+            settings test
         </div>
-        <div v-if="!finished" id="chapters" :class="{'visible': sidebar == 'chapters'}">
+        <div v-if="!finished" id="chapters" :class="{'visible': toolbar == 'chapters'}">
             <div id="course-name">{{ _courseName }}</div>
             <div :class="{'chapter': true, 'selected': lesson.id == _lessonId}" 
                 v-for="(lesson, index) in _lessons" :key="index">
                 <a :href="'/lesson/' + lesson.id"><span :id="lesson.id == _lessonId ? 'selected-chapter' : ''">{{ index + '.) ' + lesson.name }}</span></a>
             </div>
         </div>
-        <div v-if="!finished" id="glossary" :class="{'visible': sidebar == 'glossary'}">
+        <div v-if="!finished" id="glossary" :class="{'visible': toolbar == 'glossary'}">
             <template v-for="(word, index) in glossary">
                 <div class="glossary-entry" :key="index">
                     <template @click="word.showReading = !word.showReading">
@@ -60,40 +60,30 @@
                 </div>
             </template>
         </div>
-        <div id="vocab-box" :class="{'bottom-arrow': vocabBoxPosition.arrow == 'bottom', 'editing': vocabEditMode == 'word' || vocabEditMode == 'phrase', 'new-phrase': selection.length > 1 && selectedPhrase == -1, 'translation-edit': vocabEditMode == 'translation'}" :style="{'top': vocabBoxPosition.top + 'px', 'left': vocabBoxPosition.left + 'px', 'height': vocabBoxSize.height + 'px'}" v-if="selection.length && !finished && !selectionOngoing  ">
-            <div class="vocab-phrase" v-if="selection.length > 1 && vocabEditMode !== 'translation'">
-                <span class="title" v-if="selection.length > 1 && vocabEditMode == ''">Phrase</span>
-                <span class="title" v-if="selection.length > 1 && vocabEditMode == 'phrase'">Phrase editing</span>
-                <span class="vocab-edit" @click="vocabEditMode = 'phrase';" v-if="vocabEditMode == '' && selectedPhrase !== -1"><i class="fa fa-pen"></i> Edit</span>
-                <span class="show-phrase-reading" @click="showPhraseReading = !showPhraseReading;" v-if="selection.length > 1 && vocabEditMode == ''">
-                    <template v-if="!showPhraseReading"><i class="fa fa-eye"></i> Show reading</template>
-                    <template v-if="showPhraseReading"><i class="fa fa-eye-slash"></i> Hide reading</template>
-                </span>
-                <div class="vocab-phrase-box">
-                    <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE' && !showPhraseReading">{{ word.word }}</template>
-                    <template v-if="showPhraseReading">{{ phraseReading }}</template>
-                </div>
 
-                <span class="title" v-if="selection.length > 1 && vocabEditMode == 'phrase'">Phrase reading</span>
-                <textarea type="text" class="phrase-reading" v-model="phraseReading" @change="updatePhrase"  v-if="selection.length > 1 && vocabEditMode == 'phrase'"></textarea>
-                <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''" v-if="vocabEditMode == 'phrase'">Close</button>
-                <button class="btn btn-red small vocab-box-button" @click="deletePhrase" v-if="vocabEditMode == 'phrase'">Delete phrase</button>
-            </div>
-
-            <button class="btn btn-green small vocab-box-button" @click="saveNewPhrase" v-if="selection.length > 1 && selectedPhrase == -1">Save new phrase</button>
-
-            <div class="vocab-word" v-if="selection.length == 1">
+        <!-- Vocab box -->
+        <div id="vocab-box" :class="{'editing': vocabEditMode == 'word' || vocabEditMode == 'phrase', 'new-phrase': selection.length > 1 && selectedPhrase == -1, 'translation-edit': vocabEditMode == 'translation'}" :style="{'top': vocabBoxPosition.top + 'px', 'left': vocabBoxPosition.left + 'px'}" v-if="selection.length && !finished && !selectionOngoing " @mouseup.stop=";">
+            <!-- Word -->
+            <div class="vocab-word-box" v-if="selection.length == 1 && (vocabEditMode == '' || vocabEditMode == 'word')">
                 <span class="title" v-if="vocabEditMode == ''">Word</span>
                 <span class="title" v-if="vocabEditMode == 'word'">Word editing</span>
-                <span class="vocab-edit" @click="vocabEditMode = 'word'" v-if="vocabEditMode == ''"><i class="fa fa-pen"></i> Edit</span>
-                <div class="vocab-word-box"  v-if="selection.length == 1 && uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
+                <template v-if="vocabEditMode == ''">
+                    <span class="vocab-edit" @click="vocabEditMode = 'word'; updateVocabBoxPosition();"><i class="fa fa-pen"></i> Edit</span>
+                </template>
+                
+                <!-- With base word-->
+                <div class="vocab-word"  v-if="uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
                     <ruby>{{uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
                     <i class="fas fa-long-arrow-alt-right"></i>
                     <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
                 </div>
-                <div class="vocab-word-box" v-if="selection.length == 1 && uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
+                
+                <!-- No base word-->
+                <div class="vocab-word" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
                     <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
                 </div>
+
+                <!-- Vocab edit fields-->
                 <div id="vocab-word-edit" v-if="vocabEditMode == 'word'">
                     <div class="vocab-word-edit-line">
                         <div class="vocab-word-edit-cell">Form</div>
@@ -117,32 +107,72 @@
                     </div>
                 </div>
             </div>
-            <div :class="{'vocab-translation': true, 'phrase': selection.length > 1}" v-if="(selection.length == 1 || selectedPhrase !== -1) && (vocabEditMode == '' || vocabEditMode == 'translation')">
-                <span class="title" v-if="vocabEditMode == ''">Translation</span>
-                <span class="title" v-if="vocabEditMode == 'translation'">Search term</span>
-                <input id="search-box" type="text" v-model="vocabSearch" @change="makeJishoRequest" v-if="vocabEditMode == 'translation'">
-                <span class="vocab-edit" @click="vocabEditMode = 'translation'" v-if="vocabEditMode == ''"><i class="fa fa-pen"></i> Edit</span>
+
+            <!-- Phrase -->
+            <div class="vocab-phrase-box" v-if="selection.length > 1 && vocabEditMode !== 'translation'">
+                <!-- Phrase text -->
+                <span class="title">Phrase</span>
+                <span class="vocab-edit" @click="vocabEditMode = 'phrase'; updateVocabBoxPosition();" v-if="vocabEditMode == '' && selectedPhrase !== -1"><i class="fa fa-pen"></i> Edit</span>
+                <span class="show-phrase-reading" @click="showPhraseReading = !showPhraseReading; updateVocabBoxPosition();" v-if="selection.length > 1 && vocabEditMode == ''">
+                    <template v-if="!showPhraseReading"><i class="fa fa-eye"></i> Show reading</template>
+                    <template v-if="showPhraseReading"><i class="fa fa-eye-slash"></i> Hide reading</template>
+                </span>
+                <div class="vocab-phrase">
+                    <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
+                </div>
+
+                <!-- Phrase reading -->
+                <template v-if="vocabEditMode == '' && showPhraseReading">
+                    <span class="title">Reading</span>
+                    <div class="vocab-phrase-reading">
+                        {{ phraseReading }}
+                    </div>
+                </template>
+
+                <!-- Phrase reading editing-->
+                <span class="title" v-if="vocabEditMode == 'phrase'">Phrase reading</span>
+                <textarea type="text" class="phrase-reading" v-model="phraseReading" @change="updatePhrase" v-if="vocabEditMode == 'phrase'"></textarea>
+
+                
+                <button class="btn btn-green small vocab-box-button" @click="saveNewPhrase" v-if="selectedPhrase == -1">Save new phrase</button>
+                <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''" v-if="vocabEditMode == 'phrase'">Close</button>
+                <button id="delete-phrase-button" class="btn btn-red small vocab-box-button" @click="deletePhrase" v-if="vocabEditMode == 'phrase'">Delete phrase</button>
+            </div>
+
+            <!-- Translations -->
+            <div :class="{'vocab-translation': true}" v-if="(selection.length == 1 || selectedPhrase !== -1) && vocabEditMode == ''">
+                <span class="title">Translation</span>
+                <span class="vocab-edit" @click="vocabEditMode = 'translation'; updateVocabBoxPosition();" v-if="vocabEditMode == ''"><i class="fa fa-pen"></i> Edit</span>
                 <ul v-if="(selectedTranslation.length > 1 || selectedTranslation[0] !== '') && vocabEditMode == ''">
                     <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
                 </ul>
-                <span class="title" v-if="vocabEditMode == 'translation'">Translation</span>
-                <textarea v-model="uniqueWords[selection[0].uniqueWordIndex].translation" @change="updateNewWord" v-if="vocabEditMode == 'translation' && selection.length == 1"></textarea>
-                <textarea v-model="phraseTranslation" @change="updatePhrase" v-if="vocabEditMode == 'translation' && selectedPhrase !== -1"></textarea>
-                <span class="title" v-if="vocabEditMode == 'translation'">Search results</span>
-                <div id="vocab-search-results" v-if="vocabEditMode == 'translation'">
+            </div>
+
+            <!-- Translation editing -->
+            <div :class="{'vocab-translation': true }" v-if="vocabEditMode == 'translation'">
+                <span class="title">Search term</span>
+                <input id="search-box" type="text" v-model="vocabSearch" @change="makeJishoRequest">
+                <span class="title">Translation</span>
+                
+                <textarea v-model="uniqueWords[selection[0].uniqueWordIndex].translation" @change="updateNewWord" v-if="selection.length == 1"></textarea>
+                <textarea v-model="phraseTranslation" @change="updatePhrase" v-if="selectedPhrase !== -1"></textarea>
+
+                <span class="title">Search results</span>
+                <div id="vocab-search-results">
                     <div class="vocab-search-result" v-for="(definition, definitionIndex) in searchResults" :key="definitionIndex" @click="addDefinitionToInput(definition.english)">
                         <div class="target-language" :title="definition.reading"><ruby>{{ definition.japanese }}<rt>{{ definition.reading }}</rt></ruby></div>
                         <div class="own-language" :title="definition.english">{{ definition.english }}</div>
                         <div class="add-result-button"><i class="fa fa-plus"></i></div>
                     </div>
                 </div>
-                <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''" v-if="vocabEditMode == 'translation'">Close</button>
+                <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''">Close</button>
             </div>
-            
+
+            <!-- Stage buttons -->
             <div class="stage-buttons-box" v-if="(selection.length == 1 || selectedPhrase !== -1) && vocabEditMode == ''">
                 <span class="title">Stage</span>
-                <div :class="{'stage-buttons': true, 'hidden-ignore-button': selection.length > 1}">
-                    <div @click="setStage(-7)" :class="{'stage-button': true, 'selected': selectionStage == -7}">7</div><!--
+                <div :class="{'stage-buttons': true, 'hidden-ignore-button': selection.length > 1}"><!--
+                    --><div @click="setStage(-7)" :class="{'stage-button': true, 'selected': selectionStage == -7}">7</div><!--
                     --><div @click="setStage(-6)" :class="{'stage-button': true, 'selected': selectionStage == -6}">6</div><!--
                     --><div @click="setStage(-5)" :class="{'stage-button': true, 'selected': selectionStage == -5}">5</div><!--
                     --><div @click="setStage(-4)" :class="{'stage-button': true, 'selected': selectionStage == -4}">4</div><!--
@@ -154,20 +184,20 @@
                 </div>
             </div>
         </div>
-        <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'sidebar-opened': sidebar !== '', 'sidebar-vocab-box': settings.vocabBoxStyle == 'sidebar', 'hidden': sidebar == 'glossary'}">
+        <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== ''}">
             <template v-for="(word, wordIndex) in words">
                 <template v-if="word.word.indexOf('NEWLINE') == -1  && _language !== 'japanese'">
                     <template v-if="spaceFreeWords.includes(word.word)">
-                        <div :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
+                        <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
                             @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex)" @mouseenter="hoverPhraseSelection(wordIndex)" @mouseleave="removePhraseHover()">{{ word.word }}</div>
                     </template><!--
                     --><template v-if="!spaceFreeWords.includes(word.word)"><!--
-                        --><div :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
+                        --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
                             @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex)" @mouseenter="hoverPhraseSelection(wordIndex)" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                     --></template>
 
                 </template><!--
-                --><div v-if="word.word.indexOf('NEWLINE') == -1 && _language == 'japanese'" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
+                --><div v-if="word.word.indexOf('NEWLINE') == -1 && _language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
                     @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex)" @mouseenter="hoverPhraseSelection(wordIndex)" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                     
                 --><br v-if="word.word == 'NEWLINE'"><!--
@@ -223,7 +253,7 @@
                     japaneseText: false,
                     fontSize: 20,
                 },
-                sidebar: '',
+                toolbar: '',
                 spaceFreeWords: ['.', ',', ':', '?', '!', '-', '*', ' ', '\r\n', '\r\n '],
                 finished: false,
                 newlySavedWords: 0,
@@ -244,12 +274,10 @@
                 },
                 vocabBoxPosition: {
                     left: 0,
-                    top: 0,
-                    arrow: 'top',
+                    top: 0
                 },
                 vocabBoxSize: {
-                    width: 400,
-                    height: 450
+                    width: 400
                 },
                 selectionOngoing: false,
                 searchResults: [],
@@ -296,8 +324,7 @@
             }
 
             this.saveSettings();
-            document.getElementById('reader').addEventListener('scroll', this.scrollEvent);
-            document.getElementById('reader').addEventListener('mouseup', this.finishSelection);
+            document.getElementById('app').addEventListener('mouseup', this.finishSelection);
             this.$forceUpdate();
             this.updatePhraseBorders();
             this.updateGlossary();
@@ -314,20 +341,17 @@
                 this.$cookie.set('japanese-text', this.settings.japaneseText, 3650);
                 this.$cookie.set('font-size', this.settings.fontSize, 3650);
             },
-            scrollEvent: function() {
-                this.unselectWord();
-            },
-            toggleSidebar: function(newSidebar) {
+            toggleToolbar: function(newToolbar) {
                 this.unselectWord();
                 this.updateGlossary();
 
-                if (this.sidebar == newSidebar) {
-                    this.sidebar = '';
+                if (this.toolbar == newToolbar) {
+                    this.toolbar = '';
                     return;
                 }
                 
-                this.sidebar = newSidebar;
-                if (newSidebar == 'chapters') {
+                this.toolbar = newToolbar;
+                if (newToolbar == 'chapters') {
                     setTimeout(() => {
                         document.getElementById('selected-chapter').scrollIntoView();
                     }, 305);
@@ -377,6 +401,10 @@
                 }
             },
             startSelection: function(event, wordIndex) {
+                if (event == undefined) {
+                    return;
+                }
+
                 this.selectionOngoing = true;
                 this.showPhraseReading = false;
                 this.selectedTranslation = '';
@@ -403,16 +431,16 @@
                     uniqueWordIndex: this.getUniqueWordIndex(event.srcElement.outerText.toLowerCase()),
                     reading: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].reading,
                     sentenceIndex: this.words[wordIndex].sentenceIndex,
+                    position: event.target.getBoundingClientRect(),
                 };
                 
                 this.ongoingSelection = [selectedWord];
                 this.words[wordIndex].selected = true;
                 this.ongoingSelectionStartingWord.wordIndex = wordIndex;
                 this.updateSelectedWordLookupCount(selectedWord.word, selectedWord.uniqueWordIndex);
-                this.updateVocabBoxPosition(event.target.getBoundingClientRect());
             },
             updateSelection: function(event, wordIndex) {
-                if (!this.ongoingSelection.length || event.buttons !== 1) {
+                if (!this.ongoingSelection.length || event == undefined || event.buttons !== 1) {
                     return;
                 }
 
@@ -447,13 +475,11 @@
                         wordIndex: i,
                         uniqueWordIndex: this.getUniqueWordIndex(this.words[i].word.toLowerCase()),
                         reading: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].reading,
-                        sentenceIndex: this.words[i].sentenceIndex,
+                        sentenceIndex: this.words[i].sentenceIndex
                     };
 
                     this.ongoingSelection.push(selectedWord);
                 }
-
-                this.updateVocabBoxPosition(event.target.getBoundingClientRect());
             },
             finishSelection: function() {
                 this.selectionOngoing = false;
@@ -518,8 +544,10 @@
                 } else if (this.selection.length == 1) {
                     this.uniqueWords[this.selection[0].uniqueWordIndex].checked = true;
                     this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');
+                    
                 }
 
+                this.updateVocabBoxPosition();
                 this.makeJishoRequest();
             },
             removePhraseHover: function() {
@@ -550,22 +578,34 @@
                 }
 
             },
-            updateVocabBoxPosition: function(positions) {
-                this.vocabBoxPosition.left = positions.right - this.vocabBoxSize.width / 2 - (positions.right - positions.left) / 2;
+            updateVocabBoxPosition: function() {
+                if (!this.selection.length) {
+                    return;
+                }
+
+                var reader = document.getElementById('reader-box').getBoundingClientRect();
+                if (this.selection.length == 1) {
+                    var positions = document.querySelector('[wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
+                } else if (this.selection.length > 1) {
+                    var positions = document.querySelector('[wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                }
+
+                this.vocabBoxPosition.left = positions.right - reader.left - this.vocabBoxSize.width / 2 - (positions.right - positions.left) / 2;
 
                 if (this.vocabBoxPosition.left < 90) {
                     this.vocabBoxPosition.left = 90;
-                } else if (this.vocabBoxPosition.left > window.innerWidth - this.vocabBoxSize.width - 30) {
-                    this.vocabBoxPosition.left = window.innerWidth - this.vocabBoxSize.width - 30;
+                } else if (this.vocabBoxPosition.left > reader.right - reader.left - this.vocabBoxSize.width - 30) {
+                    this.vocabBoxPosition.left = reader.right - reader.left - this.vocabBoxSize.width - 30;
                 }
 
-                if (positions.top > this.vocabBoxSize.height - 12) {
-                    this.vocabBoxPosition.top = positions.top - this.vocabBoxSize.height - 12;
-                    this.vocabBoxPosition.arrow = 'bottom';
-                } else {
-                    this.vocabBoxPosition.top = positions.bottom + 12;
-                    this.vocabBoxPosition.arrow = 'top';
-                }
+                this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('app').scrollTop;
+                
+                this.$nextTick(() => {
+                    var vocabBox = document.getElementById('vocab-box');
+                    if (vocabBox) {
+                        vocabBox.scrollIntoViewIfNeeded(false);
+                    }
+                });
             },
             updateSelectedWordLookupCount: function(word, uniqueWordIndex) {
                 this.uniqueWords[uniqueWordIndex].lookup_count ++;
@@ -785,6 +825,7 @@
                 this.selectedPhrase = this.getSelectedPhraseIndex();
 
                 this.updateSelectedWordStage();
+                this.updateVocabBoxPosition();
             },
             updatePhraseBorders: function() {
                 for (var i = 0; i < this.words.length; i++) {

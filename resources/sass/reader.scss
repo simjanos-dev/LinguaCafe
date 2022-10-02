@@ -9,13 +9,21 @@ div#app>nav {
     display: none;
 }
 
+#app {
+    overflow-y: scroll;
+}
+
 #reader-box {
+    position: relative;
     display: block;
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
-    margin: 0px;
+    min-height: 100%;
+    margin: 0px auto;
     padding: 0px;
+    padding-left: 60px;
+    overflow: visible;
+    scroll-behavior: smooth;
 }
 
 #finish-reading-button {
@@ -24,11 +32,12 @@ div#app>nav {
 }
 
 #toolbar {
+    position: fixed;
     box-sizing: border-box;
     display: inline-block;
-    float: left;
     width: 60px;
     margin: 0px auto;
+    margin-left: -60px;
     height: 100%;
     padding: 0px;
     border-radius: 8px;
@@ -78,35 +87,12 @@ div#app>nav {
             color: darken($magenta, 20%);
         }
     }
-
-    #font-size {
-        font-size: 17px;
-        height: 100%;
-    }
 }
 
-#settings {
-    position: relative;
-    box-sizing: border-box;
-    display: inline-block;
-    float: left;
-    width: 0px;
-    margin: 0px;
-    height: 100%;
-    transition: .2s;
-    overflow: hidden;
-
-    &.visible {
-        width: 200px;
-        padding-top: 5px;
-    }
-}
-
-#glossary {
+#glossary, #settings, #chapters {
     position: relative;
     box-sizing: border-box;
     display: none;
-    float: left;
     width: calc(100% - 60px);
     margin: 0px;
     height: 100%;
@@ -116,57 +102,38 @@ div#app>nav {
     
     
     &.visible {
-        display: inline-block;
-    }
-
-    .glossary-entry {
-        position: relative;
         display: block;
-        width: 100%;
-        box-sizing: border-box;
-        
-        rt {
-            font-size: 13.5px;
-        }
-
-        .word {
-            display: inline-block;
-            cursor: pointer;
-            //background-color: $green;
-            border-radius: 4px;
-            padding: 1px 5px;
-            font-size: 15px;
-            user-select: none;
-        }
-
-        .translation {
-            display: block;
-            width: 100%;
-            font-size: 14px;
-        }
     }
 }
 
-
-#chapters {
+#glossary .glossary-entry {
     position: relative;
+    display: block;
+    width: 100%;
     box-sizing: border-box;
-    display: inline-block;
-    float: left;
-    width: 0px;
-    margin: 0px;
-    height: 100%;
-    transition: .2s;
-    overflow: hidden;
-    overflow-y: hidden;
-    padding: 0px;
     
-    &.visible {
-        width: 200px;
-        padding-top: 5px;
-        overflow-y: auto;
+    rt {
+        font-size: 13.5px;
     }
 
+    .word {
+        display: inline-block;
+        cursor: pointer;
+        //background-color: $green;
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 15px;
+        user-select: none;
+    }
+
+    .translation {
+        display: block;
+        width: 100%;
+        font-size: 14px;
+    }
+}
+
+#chapters {
     .chapter {
         display: block;
         height: 30px;
@@ -209,11 +176,16 @@ div#app>nav {
     z-index: 10;
     border: 1px solid rgb(220, 220, 220);
     box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
+    scroll-margin: 50px;
 
     .vocab-box-button {
         float: right;
-        margin-right: 5px;
+        margin-right: 0px;
         margin-top: 5px;
+    }
+
+    #delete-phrase-button {
+        margin-right: 5px;
     }
 
     .title {
@@ -244,17 +216,19 @@ div#app>nav {
         }
     }
 
-    .vocab-phrase {
+    .vocab-phrase-box {
         display: block;
         position: relative;
         font-family: notosans;
         width: 100%;
-        height: 110px;
         padding: 8px 10px;
-        padding-bottom: 0px;
         border-bottom: 1px solid rgb(200, 200, 200);
         overflow: hidden;
         
+        button {
+            margin-right: 0px;
+        }
+
         .phrase-reading {
             display: block;
             width: 100%;
@@ -264,43 +238,42 @@ div#app>nav {
             margin-bottom: 10px;
         }
 
-        .vocab-phrase-box {
+        .vocab-phrase {
             display: block;
             width: 100%;
-            height: 75px;
-            margin-top: 25px;
+            margin-top: 22px;
+            margin-bottom: 5px;
             padding: 0px 6px;
             font-size: 18px;
+        }
 
-            rt {
-                font-size: 14px;
-                color: rgb(80, 80, 80);
-            }
+        .vocab-phrase-reading {
+            margin-top: 30px;
+            display: block;
+            width: 100%;
+            padding: 0px 6px;
+            font-size: 18px;
         }
     }
 
-    .vocab-word {
+    .vocab-word-box {
         position: relative;
         font-family: notosans;
         width: 100%;
-        height: 90px;
         border-bottom: 1px solid rgb(200, 200, 200);
         font-size: 20px;
         padding: 8px;
         overflow: hidden;
 
-        .vocab-word-box {
+        .vocab-word {
             display: block;
             width: 100%;
-            height: 55px;
-            margin-top: 25px;
             text-align: left;
             padding-left: 10px;
+            margin-top: 25px;
         }
 
         ruby {
-            line-height: 55px;
-
             rt {
                 font-size: 14px;
                 color: rgb(80, 80, 80);
@@ -314,17 +287,28 @@ div#app>nav {
             margin-top: 20px;
             font-size: 13px;
             box-sizing: border-box;
-            height: 300px;
-            
+
             .vocab-word-edit-line {
                 display: block;
                 width: 100%;
                 overflow: hidden;
+
+                &:last-child {
+                    height: 35px;
+                }
+
+                button {
+                    margin-right: 0px;
+                }
             }
 
             .vocab-word-edit-cell {
                 display: inline-block;
                 float: left;
+
+                &:nth-child(3) {
+                    text-align: right;
+                }
             }
             
             .vocab-word-edit-line, .vocab-word-edit-cell {
@@ -371,27 +355,19 @@ div#app>nav {
     .vocab-translation {
         position: relative;
         width: 100%;
-        height: 260px;
+        min-height: 50px;
         border-bottom: 1px solid rgb(200, 200, 200);
         font-size: 16px;
         padding: 8px;
 
-        &.phrase {
-            height: 240px;
-        }
-
-        .vocab-box-button {
-            margin-right: 0px;
-        }
-        
         ul {
             display: block;
             width: 100%;
-            height: 225px;
             overflow-y: auto;
             padding: 5px 0px;
             padding-left: 30px;
             margin-top: 30px;
+            margin-bottom: 0px;
         }
 
         #search-box {
@@ -414,8 +390,10 @@ div#app>nav {
             display: block;
             overflow-y: scroll;
             height: 190px;
-            margin-bottom: 10px;
+            margin-bottom: 3px;
             width: 100%;
+            background: rgb(245, 245, 245);
+            border-radius: 8px;
             
             .vocab-search-result {
                 position: relative;
@@ -475,7 +453,6 @@ div#app>nav {
 
     .stage-buttons-box {
         box-sizing: border-box;
-        height: 100px;
         padding: 8px;
         overflow: hidden;
     }
@@ -484,7 +461,7 @@ div#app>nav {
         width: 368px; 
         height: 40px;
         margin: 10px auto;
-        margin-top: 30px;
+        margin-top: 25px;
         background-color: rgb(245, 245, 245);
         border-radius: 40px;
         text-align: center;
@@ -533,6 +510,7 @@ div#app>nav {
         height: 0;
         width: 0;
         position: absolute;
+        pointer-events: none;
     }
     
     &:after {
@@ -548,24 +526,10 @@ div#app>nav {
         border-width: 15px;
         margin-left: -15px;
     }
-
-    &.bottom-arrow:after {
-        bottom: unset;
-        top: 100%;
-        border-bottom-color: rgba(0, 0, 0, 0);
-        border-top-color: white;
-    }
-        
-    &.bottom-arrow:before {
-        bottom: unset;
-        top: 100%;
-        border-bottom-color: rgba(0, 0, 0, 0);
-        border-top-color: rgb(200, 200, 200);
-    }
 }
 
 #vocab-box.new-phrase {
-    .vocab-phrase {
+    .vocab-phrase-box {
         border-bottom: 0px;
     }
 
@@ -576,39 +540,27 @@ div#app>nav {
 
 #vocab-box.editing {
     .vocab-translation, .stage-buttons-box {
-        height: 0px;
-        padding: 0px;
-        margin: 0px;
+        display: none;
+    }
+
+    .vocab-word-box, .vocab-phrase-box {
         border-bottom: 0px;
     }
 
-    .vocab-word, .vocab-phrase {
-        height: 450px;
-        border-bottom: 0px;
-    }
-
-    .vocab-phrase {
-        border-bottom: 0px;
-    }
-
-    .vocab-word-box {
-        text-align: center;
-        padding-left: 0px;
+    .show-phrase-reading {
+        right: 8px;
     }
 }
 
 #vocab-box.translation-edit {
-    .vocab-word, .stage-buttons-box {
-        height: 0px;
-        padding: 0px;
-        margin: 0px;
-        border-bottom: 0px;
+    .vocab-word-box, .stage-buttons-box {
+        display: none;
     }
 
     .vocab-translation {
         border-bottom: 0px;
-        height: 450px;
-        padding: 10px;
+        padding: 8px;
+        padding-bottom: 43px;
     }
 }
 
@@ -645,15 +597,12 @@ button.btn.btn-primary.edit-stage-button {
 
 #reader {
     box-sizing: border-box;
-    display: inline-block;
-    float: left;
-    width: calc(100% - 60px);
-    height: 100%;
+    display: block;
+    width: 100%;
     line-height: 1.25;
     line-height: 1.3;
-    margin: 0px;
+    margin: 0px auto;
     user-select: none;
-    overflow-y: auto;
     padding: 10px 10px;
     transition: .2s;
 
@@ -677,7 +626,6 @@ button.btn.btn-primary.edit-stage-button {
         transition: .2s;
         color: black;
         border-radius: 4px;
-
         border-top: 1px solid rgba(0, 0, 0, 0);
         border-bottom: 1px solid rgba(0, 0, 0, 0);
 

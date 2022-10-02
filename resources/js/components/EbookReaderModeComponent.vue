@@ -1,7 +1,7 @@
 <template>
     <li class="nav-item ebook-mode-button">
         <a v-if="ebookReaderMode == null" class="dropdown-item" @click="refresh">
-            <i class="fa fa-tablet-alt"></i>&nbsp;&nbsp;Ebook mode
+            <i class="fa fa-tablet-alt"></i>&nbsp;&nbsp;E-ink mode
         </a>
         <a v-if="ebookReaderMode !== null" class="dropdown-item" @click="refresh">
             <i class="fa fa-desktop"></i>&nbsp;&nbsp;Desktop mode
