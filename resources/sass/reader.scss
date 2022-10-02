@@ -116,20 +116,87 @@ div#app>nav {
         font-size: 13.5px;
     }
 
+    .glossary-title {
+        height: 50px;
+    }
+
+    .stage {
+        position: relative;
+        display: inline-block;
+        float: left;
+        width: 40px;
+        height: 40px;
+        margin-top: 7px;
+        overflow: hidden;
+
+        .stage-text {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            line-height: 38px;
+            font-size: 16px;
+            font-weight: bold;
+            padding-right: 4px;
+            left: 0px;
+            top: 0px;
+            text-align: center;
+            user-select: none;
+        }
+
+        &[stage="7"] {
+            background-color: $stage7;
+        }
+
+        &[stage="6"] {
+            background-color: $stage6;
+        }
+
+        &[stage="5"] {
+            background-color: $stage5;
+        }
+
+        &[stage="4"] {
+            background-color: $stage4;
+        }
+
+        &[stage="3"] {
+            background-color: $stage3;
+        }
+
+        &[stage="2"] {
+            background-color: $stage2;
+        }
+
+        &[stage="1"] {
+            background-color: $stage1;
+        }
+    }
+
     .word {
         display: inline-block;
+        float: left;
         cursor: pointer;
         //background-color: $green;
         border-radius: 4px;
         padding: 1px 5px;
         font-size: 15px;
         user-select: none;
+        height: 50px;
+        line-height: 50px;
+
+        &.reading {
+            padding-top: 8px;
+        }
     }
 
     .translation {
         display: block;
         width: 100%;
         font-size: 14px;
+        
+        ul {
+            padding-left: 70px;
+        }
     }
 }
 
@@ -392,7 +459,6 @@ div#app>nav {
             height: 190px;
             margin-bottom: 3px;
             width: 100%;
-            background: rgb(245, 245, 245);
             border-radius: 8px;
             
             .vocab-search-result {
@@ -403,8 +469,6 @@ div#app>nav {
                 padding-left: 8px;
                 height: 36px;
                 line-height: 36px;
-                // border: 1px solid rgb(230, 230, 230);
-                // background: rgb(245, 245, 245);
                 border-radius: 6px;
                 cursor: pointer;
                 user-select: none;
@@ -634,7 +698,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-7"] {
-            background-color: rgba($green, 0.8);
+            background-color: $stage7;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;
@@ -642,7 +706,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-6"] {
-            background-color: rgba($green, 0.75);
+            background-color: $stage6;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;
@@ -650,7 +714,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-5"] {
-            background-color: rgba($green, 0.65);
+            background-color: $stage5;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;
@@ -658,7 +722,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-4"] {
-            background-color: rgba($green, 0.55);
+            background-color: $stage4;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;
@@ -666,7 +730,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-3"] {
-            background-color: rgba($green, 0.4);
+            background-color: $stage3;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;
@@ -674,7 +738,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-2"] {
-            background-color: rgba($green, 0.28);
+            background-color: $stage2;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;
@@ -682,7 +746,7 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &[stage="-1"] {
-            background-color: rgba($green, 0.15);
+            background-color: $stage1;
             margin-left: .5px !important;
             margin-right: .5px !important;
             padding-left: 1.5px !important;

@@ -42,17 +42,36 @@
         <div v-if="!finished" id="glossary" :class="{'visible': toolbar == 'glossary'}">
             <template v-for="(word, index) in glossary">
                 <div class="glossary-entry" :key="index">
-                    <template @click="word.showReading = !word.showReading">
-                        <div class="word" @click="word.showReading = !word.showReading" v-if="word.base_word == ''">
-                            <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby>
-                        </div>
-                        <div class="word" @click="word.showReading = !word.showReading" v-if="word.base_word !== ''">
-                            <ruby>{{ word.base_word }}<rt v-if="word.showReading">{{ word.base_word_reading }}</rt></ruby> 
-                            <i class="fas fa-long-arrow-alt-right"></i> 
-                            <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby> 
-                        </div>
-                    </template>
-                    <div class="translation">
+                    <div class="glossary-title">
+                        <!-- Glossary entry stage -->
+                            <div class="stage">
+                                <div class="stage-text">{{ word.stage }}</div>
+                                <vue-circle
+                                    :progress="((7 - word.stage) / 7 * 100)"
+                                    :size="36"
+                                    :thickness="5"
+                                    empty-fill="rgb(230, 230, 230)"
+                                    :fill="{color: $cookie.get('ebook-reader-mode') == null ? 'rgba(52, 232, 127, 1)' : 'black'}"
+                                    :ref="'circle' + index"
+                                    :start-angle="4.71239"
+                                    :show-percent="false">
+                                </vue-circle>
+                            </div>
+                        <!-- Glossary entry word or phrase -->
+                        <template @click="word.showReading = !word.showReading">
+                            <div :class="{'word': true, 'reading': word.showReading}" @click="word.showReading = !word.showReading" v-if="word.base_word == ''">
+                                <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby>
+                            </div>
+                            <div :class="{'word': true, 'reading': word.showReading}" @click="word.showReading = !word.showReading" v-if="word.base_word !== ''">
+                                <ruby>{{ word.base_word }}<rt v-if="word.showReading">{{ word.base_word_reading }}</rt></ruby> 
+                                <i class="fas fa-long-arrow-alt-right"></i> 
+                                <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby> 
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Glossary entry translation-->
+                    <div class="translation" v-if="word.translation.length">
                         <ul>
                             <li v-for="(translation, index) in word.translation.split(';')">{{ translation }}</li>
                         </ul>
@@ -372,6 +391,7 @@
                     if (this.phrases[i].stage < 0) {
                         this.glossary.push({
                             word: this.phrases[i].words.join(''),
+                            stage: this.phrases[i].stage < 0 ? this.phrases[i].stage * -1 : this.phrases[i].stage,
                             reading: this.phrases[i].reading,
                             base_word: '',
                             base_word_reading: '',
@@ -385,6 +405,7 @@
                     if (this.uniqueWords[i].stage < 0) {
                         this.glossary.push({
                             word: this.uniqueWords[i].word,
+                            stage: this.uniqueWords[i].stage < 0 ? this.uniqueWords[i].stage * -1 : this.uniqueWords[i].stage,
                             reading: this.uniqueWords[i].reading,
                             base_word: this.uniqueWords[i].base_word,
                             base_word_reading: this.uniqueWords[i].base_word_reading,
@@ -393,6 +414,10 @@
                         });
                     }
                 }
+
+                this.glossary.sort((a, b) => {
+                    return b.stage - a.stage;
+                });
             },
             updateNewWord: function() {
                 this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');

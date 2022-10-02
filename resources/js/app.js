@@ -9,6 +9,8 @@ window.Vue = require('vue').default;
 var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
 import axios from 'axios'
+import Vue from 'vue';
+import VueCircle from 'vue2-circle-progress'
 
 /**
  * The following block of code may be used to automatically register your
@@ -20,7 +22,7 @@ import axios from 'axios'
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
+Vue.component('vue-circle', VueCircle);
 Vue.component('reader-component', require('./components/ReaderComponent.vue').default);
 Vue.component('ebook-reader-mode-component', require('./components/EbookReaderModeComponent.vue').default);
 Vue.component('vocabulary-practice-component', require('./components/VocabularyPracticeComponent.vue').default);
