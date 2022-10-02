@@ -642,6 +642,10 @@
                 }
             },
             makeJishoRequest: function() {
+                if (!this.selection.length) {
+                    return;
+                }
+
                 axios.get('/jisho-request/' + this.vocabSearch)
                 .then(function (response) {
                     this.processJishoRequest(response.data.data);
