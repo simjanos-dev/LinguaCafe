@@ -146,6 +146,7 @@ class LessonController extends Controller
         $uniqueWords = json_decode($request->uniqueWords);
         $phrases = json_decode($request->phrases);
         $deletedPhrases = json_decode($request->deletedPhrases);
+        $autoMoveWordsToKnown = boolval($request->autoMoveWordsToKnown);
         $today = date('Y-m-d');
         
         // update words
@@ -163,7 +164,7 @@ class LessonController extends Controller
 
             // these are words that the user sees the first time in the software,
             // but they already know it
-            if ($uniqueWordData->stage == 2) {
+            if ($autoMoveWordsToKnown && $uniqueWordData->stage == 2) {
                 $stage = 0;
                 $last_level_up = $today;
             }

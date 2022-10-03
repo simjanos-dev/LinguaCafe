@@ -25,12 +25,11 @@
         "sass-loader": "^11.0.1",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.8",
-        "vue-template-compiler": "^2.6.12",
-        "vue2-circle-progress": "1.2.3"
+        "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "moment": "2.29.1",
         "vue-cookie": "^1.1.4",
-        "vue2-circle-progress": "1.2.3"
+        "vue2-circle-progress": "1.2.3",
+        "vue-slider-component": "3.2.20"
     }
 }
