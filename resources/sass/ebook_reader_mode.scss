@@ -1,9 +1,30 @@
+html, body, div#app {
+    background-color: white !important;
+}
+
 body {
     background-color: white;
 }
 
 * {
     transition: 0s !important;
+}
+
+#app {
+    scroll-behavior: smooth;
+}
+
+$sliderThemeColor: black;
+@import 'slider';
+
+label.switch {
+    input:checked + .slider {
+        background-color: black !important;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px black !important;
+    }
 }
 
 hr {
@@ -30,12 +51,22 @@ nav.navbar-light {
     border: 1px solid black;
 }
 
+
+
 .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:not(:disabled):not(.disabled).focus.btn-primary,
-.btn-primary:not(:disabled):not(.disabled):active:focus, .btn:hover, textarea, textarea.form-control,
-input, input.form-control, select, select.form-control, button.btn.btn-primary, #lessons .lesson,
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn.btn-primary, .btn-primary:hover,
+.btn.btn-green, .btn-green:hover, .btn.btn-red, .btn-red:hover, .btn.btn-black, .btn.btn-secondary,
+.btn.btn-secondary:hover, .btn-secondary:active, .btn-secondary:focus, .btn-black:hover {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid black !important;
+    box-shadow: none !important;
+}
 
-#courses .course, #languages>.language>a>img{
+
+textarea, textarea.form-control, input, input.form-control, select, select.form-control, 
+#lessons .lesson, #courses .course, #languages>.language>a>img{
     background-color: white;
     color: black;
     border: 1px solid black;
@@ -49,13 +80,10 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
         color: black;
     }
 
-    .chapter span {
-        color: rgb(50, 50, 50);
-    }
-
-    .chapter.selected span{
+    .chapter .chapter-title div {
+        background-color: white;
+        border: 1px solid black;
         color: black;
-        text-decoration: underline;
     }
 }
 
@@ -69,7 +97,6 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
 
     .toolbar-button {
         color: rgb(165, 165, 165);
-        font-size: 22px;
         transition: 0s;
 
         &:hover {
@@ -88,12 +115,18 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
 }
 
 #reader-box {
+    #toolbar-header {
+        max-width: 100%;
+        font-size: 18px;
+    }
+
     #glossary .glossary-entry {
         color: black;
+        min-height: 100px;
+        padding: 0px 10px;
 
         .word{
             font-weight: bold;
-            background-color: white;
         }
     }
 
@@ -103,10 +136,6 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
 
     #reader {
         width: calc(100% - 60px);
-
-        &.sidebar-opened {
-            width: calc(100% - 60px - 200px);
-        }
     }
 
     #show-sidebar-vocab-box-button {
@@ -118,10 +147,6 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
         background-color: white;
         z-index: 12;
         border: 1px solid black;
-
-        #save-phrase-button, #delete-phrase-button {
-            
-        }
     }
 }
 
@@ -135,9 +160,14 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
             background-color: rgb(200, 200, 200);
             color: black;
 
-            &.selected, &:hover {
-                background-color: rgb(110, 110, 110);
+            &:hover {
+                background-color: rgb(200, 200, 200);
                 color: black;
+            }
+
+            &.selected{
+                background-color: rgb(110, 110, 110);
+                color: white;
             }
         }
 
@@ -148,10 +178,6 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
     }
 
     .word {
-        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], &[stage="-3"], &[stage="-2"], &[stage="-1"] {
-            background-color: rgb(175, 175, 175);
-        }   
-
         &.phrase {
             border-radius: 0px;
             background-color: rgb(175, 175, 175);
@@ -207,6 +233,11 @@ input, input.form-control, select, select.form-control, button.btn.btn-primary, 
 
         &:hover {
             background-color: white;
+            border: none;
+        }
+
+        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+            background-color: rgb(175, 175, 175);
         }
     }
 }

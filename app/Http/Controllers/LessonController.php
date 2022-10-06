@@ -79,9 +79,15 @@ class LessonController extends Controller
         $lesson = Lesson::where('id', $lessonId)->where('user_id', Auth::user()->id)->first();
         $uniqueWords = json_decode($lesson->unique_words);
         $course = Course::where('id', $lesson->course_id)->where('user_id', Auth::user()->id)->first();
-        $lessons = Lesson::select(['id', 'name', 'read_count'])->where('course_id', $course->id)->where('user_id', Auth::user()->id)->get();
+        $lessons = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('course_id', $course->id)->where('user_id', Auth::user()->id)->get();
         $encounteredWords = DB::table('encountered_words')->select(DB::raw('*, false as checked, 0 as appearance_in_text'))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereIn('word', $uniqueWords)->get();
         $words = json_decode(gzuncompress($lesson->processed_text));
+
+        // get lesson word counts
+        $uniqueWordsForWordCounts = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
+        for ($i = 0; $i < count($lessons); $i++) {
+            $lessons[$i]->wordCounts = $lessons[$i]->getWordCounts($uniqueWordsForWordCounts);
+        }
 
         // get unique phrase ids
         $phraseIds = [];

@@ -24,7 +24,6 @@ hr {
     margin-bottom: 50px;
     padding: 0px;
     overflow: hidden;
-    background-color: #fff;
     border-radius: 12px;
 
     .image-box {
@@ -95,7 +94,7 @@ hr {
                 }
 
                 &.new {
-                    background-color: rgba($purple, 0.6);
+                    background-color: $new-word;
                     text-align: left;
                     padding-left: 25px;
                 }
@@ -128,7 +127,6 @@ hr {
         margin: 24px auto;
         border: 1px solid $border;
         font-size: 18px;
-        background-color: #fff;
         color: $font-color;
         border-radius: 12px;
 
@@ -165,7 +163,7 @@ hr {
                 }
 
                 &.new {
-                    background-color: rgba($purple, 0.6);
+                    background-color: $new-word;
                     text-align: left;
                     padding-left: 25px;
                 }

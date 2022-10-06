@@ -25,7 +25,7 @@
 
                 <div class="buttons">
                     <a href="/lessons/{{ $course->id }}">
-                        <button class="btn btn-primary texts-button"><i class="fa fa-book-open"></i> Chapters</button>
+                        <button class="btn btn-secondary texts-button"><i class="fa fa-book-open"></i> Chapters</button>
                     </a>
                     <a href="{{ url('/vocabulary-practice/random/-1/' . $course->id) }}">
                         <button class="btn btn-primary texts-button"><i class="fa fa-keyboard"></i>  Practice</button>

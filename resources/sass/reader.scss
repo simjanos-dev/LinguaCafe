@@ -5,20 +5,20 @@
     src: url('/noto-sans/NotoSansJP-Regular.otf');
 }
 
-div#app>nav {
-    display: none;
-}
-
 #app {
     overflow-y: scroll;
     scroll-behavior: smooth;
+    background-color: white !important;
+}
+
+div#app>nav {
+    display: none;
 }
 
 #reader-box {
     position: relative;
     display: block;
     box-sizing: border-box;
-    width: 100%;
     min-height: 100%;
     margin: 0px auto;
     padding: 0px;
@@ -37,26 +37,23 @@ div#app>nav {
     box-sizing: border-box;
     display: inline-block;
     width: 60px;
-    margin: 0px auto;
+    margin-bottom: 10px;
     margin-left: -60px;
     height: 100%;
     padding: 0px;
     border-radius: 8px;
-    overflow: hidden;
 
-    #back-to-lessons-button {
-        display: inline-block;
-        float: left;
-    }
+    .toolbar-button-group {
+        display: block;
+        width: 100%;
+        border-radius: 14px;
+        padding: 10px 10px;
+        margin: 10px 0px;
 
-    #toolbar-lesson-name {
-        display: inline-block; 
-        float: left;
-        height: 27px;
-        line-height: 27px;
-        font-size: 17px;
-        margin-left: 8px;
-        margin-top: 5px;
+        &.menus {
+            margin-top: 0px;
+            padding-top: 3px;
+        }
     }
 
     .toolbar-button {
@@ -66,14 +63,17 @@ div#app>nav {
         width: 40px;
         height: 40px;
         margin: 8px auto;
+        padding-top: 5px;
         outline: none;
-        color: rgb(215, 215, 215);
+        color: $sidebar-button-color;
         border-radius: 4px;
         transition: .2s;
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, 0);
 
         i {
             margin: 0px;
-            font-size: 22px;
+            font-size: 18px;
         }
 
         &:active, &:focus {
@@ -81,12 +81,31 @@ div#app>nav {
         }
 
         &:hover {
-            color: rgb(130, 130, 130);
+            background-color: $tint;
         }
 
         &.selected {
-            color: darken($magenta, 20%);
+            background-color: $tint;
+            color: $blue;
         }
+    }
+}
+
+#toolbar-header {
+    display: block;
+    position: fixed;
+    height: 50px;
+    line-height: 50px;
+    padding-top: 5px;
+    max-width: calc(100% - 268px);
+    background-color: white;
+    color: $font-color;
+    font-size: 22px;
+    z-index: 10;
+
+    span {
+        float: right;
+        margin-right: 120px;
     }
 }
 
@@ -98,7 +117,7 @@ div#app>nav {
     margin: 0px;
     height: 100%;
     padding: 12px 0px;
-    
+    padding-top: 50px;
     
     &.visible {
         display: block;
@@ -109,7 +128,7 @@ div#app>nav {
     .setting {
         display: block;
         height: 50px;
-        padding-left: 20px;
+        padding-left: 10px;
 
         .setting-label {
             display: inline-block;
@@ -143,7 +162,13 @@ div#app>nav {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    
+    min-height: 100px;
+    padding: 10px;
+
+    &:nth-child(even) {
+        background-color: $light-gray;
+    }
+
     rt {
         font-size: 13.5px;
     }
@@ -157,67 +182,71 @@ div#app>nav {
         display: inline-block;
         float: left;
         width: 40px;
-        height: 40px;
-        margin-top: 7px;
+        height: 26px;
+        line-height: 26px;
+        border-radius: 8px;
+        margin-top: 12px;
+        font-size: 15px;
+        font-weight: bold;
         overflow: hidden;
+        background-color: $green;
+        text-align: center;
+        user-select: none;
 
-        .stage-text {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            line-height: 38px;
-            font-size: 16px;
-            font-weight: bold;
-            padding-right: 4px;
-            left: 0px;
-            top: 0px;
-            text-align: center;
-            user-select: none;
-        }
-
-        &[stage="7"] {
+        &[stage="-7"] {
             background-color: $stage7;
         }
 
-        &[stage="6"] {
+        &[stage="-6"] {
             background-color: $stage6;
         }
 
-        &[stage="5"] {
+        &[stage="-5"] {
             background-color: $stage5;
         }
 
-        &[stage="4"] {
+        &[stage="-4"] {
             background-color: $stage4;
         }
 
-        &[stage="3"] {
+        &[stage="-3"] {
             background-color: $stage3;
         }
 
-        &[stage="2"] {
+        &[stage="-2"] {
             background-color: $stage2;
         }
 
-        &[stage="1"] {
+        &[stage="-1"] {
             background-color: $stage1;
+        }
+
+        &[stage="2"] {
+            background-color: $new-word;
         }
     }
 
-    .word {
+    .word, .reading {
         display: inline-block;
         float: left;
-        cursor: pointer;
-        //background-color: $green;
         border-radius: 4px;
         padding: 1px 5px;
+        margin-left: 10px;
         font-size: 15px;
         user-select: none;
         height: 50px;
         line-height: 50px;
+        
+        div {
+            display: inline-block;
+        }
+
+        &.word {
+            min-width: 60px;
+        }
 
         &.reading {
-            padding-top: 8px;
+            color: lighten($font-color, 40%);
         }
     }
 
@@ -228,40 +257,94 @@ div#app>nav {
         
         ul {
             padding-left: 70px;
+            margin-top: 10px;
         }
     }
 }
 
 #chapters {
-    .chapter {
+    .chapter-connect-line {
+        position: relative;
         display: block;
-        height: 30px;
-        width: auto;
-        line-height: 30px;
-        padding-left: 15px;
-        margin: 2px 0px;
-        font-size: 16px;
+        width: 10px;
+        height: 10px;
+        margin: 20px calc(50% - 5px);
+        border-radius: 10px;
+        background-color: $blue;
+    }
 
-        span {
-            color: rgb(180, 180, 180);
-            cursor: pointer;
-            
-            &:hover {
-                color: rgb(50, 50, 50);
+    .chapter {
+        position: relative;
+        display: block;
+        width: 100%;
+        line-height: 30px;
+        padding: 10px;
+        font-size: 17px;
+        scroll-margin: 50px;
+        background-color: $light-gray;
+        border-radius: 4px;;
+
+        .chapter-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+
+            div {
+                display: inline-block;
+                height: 28px;
+                line-height: 26px;
+                float: right;
+                padding: 1px 5px;
+                background-color: $green;
+                color: white;
+                font-weight: normal;
+                border-radius: 4px;
+                font-size: 15px;
+                user-select: none;
             }
         }
 
-        &.selected span {
-            color: $font-color;
-            font-weight: bold;
-        }
-    }
+        .chapter-read, 
+        .chapter-words,
+        .chapter-unique-words,
+        .chapter-known-words,
+        .chapter-highlighted-words,
+        .chapter-new-words {
+            width: 300px;
+            display: block;
+            margin-left: 20px;
+            margin-top: 1px;
+            font-size: 14px;
+            height: 22px;
+            line-height: 22px;
 
-    #course-name {
-        font-size: 16px;
-        border-bottom: 1px solid rgb(75, 75, 75);
-        color: $font-color;
-        font-weight: bold;
+            span {
+                float: right;
+            }
+        }
+
+        .chapter-highlighted-words span{
+            width: 60px;
+            background-color: $highlighted-word;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .chapter-new-words {
+            margin-top: 2px;
+            
+            span {
+                width: 60px;
+                background-color: $new-word;
+                border-radius: 4px;
+                text-align: center;
+            }
+        }
+
+        button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
     }
 }
 
@@ -271,11 +354,10 @@ div#app>nav {
     display: block;
     width: 400px;
     background-color: white;
+    border: 1px solid $border;
     border-radius: 6px;
     z-index: 10;
-    border: 1px solid rgb(220, 220, 220);
     box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
-    scroll-margin: 50px;
 
     .vocab-box-button {
         float: right;
@@ -291,7 +373,7 @@ div#app>nav {
         display: block;
         font-family: "Nunito", sans-serif;
         font-size: 13.5px;
-        color: rgb(130, 130, 130);
+        color: $font-color-light;
         float: left;
     }
 
@@ -301,13 +383,13 @@ div#app>nav {
         right: 8px;
         top: 8px;
         font-size: 13.5px;
-        color: rgb(130, 130, 130);
+        color: $font-color-light;
         float: right;
         user-select: none;
         cursor: pointer;
 
         &:hover {
-            color: rgb(30, 30, 30);
+            color: $font-color;
         }
 
         &.show-phrase-reading {
@@ -554,46 +636,43 @@ div#app>nav {
     }
 
     .stage-buttons {
-        width: 368px; 
-        height: 40px;
+        width: 351px; 
+        height: 36px;
         margin: 10px auto;
         margin-top: 25px;
-        background-color: rgb(245, 245, 245);
-        border-radius: 40px;
+        background-color: $light-gray;
+        border: 0px solid $border;
+        border-radius: 6px;
         text-align: center;
         overflow: hidden;
 
         &.hidden-ignore-button {
-            width: 328px;
+            width: 342px; 
         }
 
         .stage-button {
+            box-sizing: border-box;
             display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
+            width: 39px;
+            height: 36px;
+            line-height: 36px;
             user-select: none;
             cursor: pointer;
             text-align: center;
             font-size: 16px;
+            font-weight: bold;
             margin: 0px;
-            
-            &:first-child {
-                width: 44px;
-                padding-left: 5px;
-            }
-
-            &:last-child {
-                width: 44px;
-                padding-right: 5px;
-            }
+            border-top: 1px solid $border;
+            border-bottom: 1px solid $border;
 
             &:hover {
-                background-color: rgb(230, 230, 230);
+                background-color: $tint;
             }
 
             &.selected {
-                background-color: rgb(220, 220, 220);
+                background-color: $theme-color;
+                border-color: $theme-color;
+                color: white;
             }
         }
     }
@@ -635,8 +714,8 @@ div#app>nav {
 }
 
 #vocab-box.editing {
-    .vocab-translation, .stage-buttons-box {
-        display: none;
+    .stage-buttons-box {
+        display: block;
     }
 
     .vocab-word-box, .vocab-phrase-box {
@@ -671,7 +750,7 @@ button.btn.btn-primary.edit-stage-button {
     font-weight: bold;
 
     &.selected, &.selected:focus, &.selected:active {
-        background-color: darken($magenta, 10%);
+        background-color: darken($green, 10%);
         color: white;
     }
 
@@ -703,10 +782,6 @@ button.btn.btn-primary.edit-stage-button {
     transition: .2s;
     overflow-x: auto;
 
-    &.sidebar-opened {
-        width: calc(100% - 60px - 200px);
-    }
-
     &.plain-text-mode {
         user-select: text !important;
     }
@@ -719,12 +794,17 @@ button.btn.btn-primary.edit-stage-button {
         font-family: notosans;
         display: inline-block;
         cursor: pointer;
-        margin: 0px;
+        margin: 1px 0px;
         transition: .2s;
         color: black;
-        border-radius: 4px;
+        border-radius: 0px;
         border-top: 1px solid rgba(0, 0, 0, 0);
         border-bottom: 1px solid rgba(0, 0, 0, 0);
+        transition: background-color 0s;
+
+        &:not(.phrase):not(.highlighted) {
+            border-radius: 6px;
+        }
 
         &.space {
             margin-left: 4px;
@@ -734,56 +814,61 @@ button.btn.btn-primary.edit-stage-button {
             background-color: $stage7;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &[stage="-6"] {
             background-color: $stage6;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &[stage="-5"] {
             background-color: $stage5;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &[stage="-4"] {
             background-color: $stage4;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &[stage="-3"] {
             background-color: $stage3;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &[stage="-2"] {
             background-color: $stage2;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &[stage="-1"] {
             background-color: $stage1;
             margin-left: .5px !important;
             margin-right: .5px !important;
-            padding-left: 1.5px !important;
-            padding-right: 1.5px !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
+        }
+
+        &[stage="2"] {
+            padding-left: 4px !important;
+            padding-right: 4px !important;
         }
 
         &.no-highlight, &.plain-text-mode {
@@ -791,42 +876,27 @@ button.btn.btn-primary.edit-stage-button {
         }
 
         &.phrase {
-            border-radius: 0px;
-            background-color: rgba($green, 0.8);
-            border-top: 1px solid darken($green, 8%);
-            border-bottom: 1px solid darken($green, 8%);
+            background-color: $stage1;
+            border-top: 1px solid darken($stage1, 8%);
+            border-bottom: 1px solid darken($stage1, 8%);
             margin-left: 0 !important;
             margin-right: 0 !important;
+            color: $font-color;
 
             &:hover {
-                background-color: rgba($green, 0.5);
-            }
-
-            &.phrase-start {
-                border-left: 1px solid darken($green, 8%);
-                border-top-left-radius: 4px;
-                border-bottom-left-radius: 4px;
-                margin-left: .5px !important;
-                padding-left: 1.5px !important;
-            }
-
-            &.phrase-end {
-                border-right: 1px solid darken($green, 8%);
-                border-top-right-radius: 4px;
-                border-bottom-right-radius: 4px;
-                margin-right: .5px !important;
-                padding-right: 1.5px !important;
+                background-color: rgba($stage1, 0.5);
             }
             
             &[phrasestage="0"] {
                 border-color: rgb(90, 90, 90) !important;
+                color: $font-color;
             }
 
             &[phrasestage="0"]:not([stage="2"]) {
                 background-color: rgba(0, 0, 0, 0);
 
                 &.highlighted {
-                    background-color: rgba(220, 220, 220, 0.75);
+                    background-color: $selected-word;
                 }
             }
 
@@ -836,13 +906,28 @@ button.btn.btn-primary.edit-stage-button {
             }
 
             &.highlighted, &:hover, &[phrasestage="0"]:hover {
-                background-color: rgba(220, 220, 220, 0.75);
-                border-color: rgba(150, 150, 150, 1);
+                background-color: $selected-word;
             }
         }
 
+        &.phrase-start {
+            border-left: 1px solid darken($stage1, 8%);
+            border-top-left-radius: 6px !important;
+            border-bottom-left-radius: 6px !important;
+            margin-left: .5px !important;
+            padding-left: 4px !important;
+        }
+
+        &.phrase-end {
+            border-right: 1px solid darken($stage1, 8%);
+            border-top-right-radius: 6px !important;
+            border-bottom-right-radius: 6px !important;
+            margin-right: .5px !important;
+            padding-right: 4px !important;
+        }
+
         &[stage="2"] {
-            background-color: rgba($purple, 0.42);
+            background-color: $new-word;
             margin-left: .5px !important;
             margin-right: .5px !important;
 
@@ -852,7 +937,8 @@ button.btn.btn-primary.edit-stage-button {
         }
         
         &.highlighted, &:hover {
-            background-color: rgba(220, 220, 220, 0.75);
+            background-color: $selected-word;
+            border-color: $selected-word !important;
         }
 
         &.plain-text-mode {
@@ -917,5 +1003,11 @@ button.btn.btn-primary.edit-stage-button {
         .translation {
             font-size: 15px;
         }
+    }
+}
+
+@media (min-width: 1201px) {
+    #toolbar #back-to-book-button {
+        display: none;
     }
 }

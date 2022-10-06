@@ -1,36 +1,49 @@
 <template>
     <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}">
         <div v-if="!finished" id="toolbar">
-            <button :class="{'toolbar-button': true}" @click="backToChapters()" title="Back to chapters">
-                <i class="fa fa-arrow-left"></i>
-            </button>
-            <button :class="{'toolbar-button': true, 'selected': toolbar == 'chapters'}" @click="toggleToolbar('chapters')" title="Chapter list">
-                <i class="fas fa-book"></i>
-            </button>
-            <button :class="{'toolbar-button': true, 'selected': toolbar == 'glossary'}" @click="toggleToolbar('glossary')" title="Glossary">
-                <i class="fas fa-list"></i>
-            </button>
-            <button :class="{'toolbar-button': true}" @click="settings.fontSize ++; unselectWord(); saveSettings();" title="Increase font size">
-                <i class="fa fa-search-plus"></i>
-            </button>
-            <button :class="{'toolbar-button': true}" @click="settings.fontSize --; unselectWord(); saveSettings();" title="Decrease font size">
-                <i class="fa fa-search-minus"></i>
-            </button>
-            <button :class="{'toolbar-button': true, 'selected': settings.plainTextMode}" @click="settings.plainTextMode = !settings.plainTextMode; unselectWord(); saveSettings();" title="Plain text mode">
-                <i class="fa fa-highlighter"></i>
-            </button>
-            <button :class="{'toolbar-button': true, 'selected': settings.japaneseText}" @click="settings.japaneseText = !settings.japaneseText; unselectWord(); saveSettings();" title="Japanese text direction">
-                <i class="fa fa-language"></i>
-            </button>
-            <button :class="{'toolbar-button': true, 'selected': settings.highlightWords}"  @click="settings.highlightWords = !settings.highlightWords; saveSettings();" title="Highlight words">
-                <i class="fa fa-underline"></i>
-            </button>
-            <button :class="{'toolbar-button': true, 'selected': toolbar == 'settings'}"  @click="toggleToolbar('settings')" title="Settings">
-                <i class="fa fa-cog"></i>
-            </button>
+            <div class="toolbar-button-group menus">
+                <button id="#back-to-book-button" class="toolbar-button" @click="backToChapters" title="Back to book">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': toolbar == 'text'}" @click="setToolbar('text')" title="Text">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': toolbar == 'chapters'}" @click="setToolbar('chapters')" title="Chapters">
+                    <i class="fas fa-book"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': toolbar == 'glossary'}" @click="setToolbar('glossary')" title="Glossary">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': toolbar == 'settings'}"  @click="setToolbar('settings')" title="Settings">
+                    <i class="fa fa-cog"></i>
+                </button>
+            </div>
+
+            <div class="toolbar-button-group">
+                <button :class="{'toolbar-button': true}" @click="settings.fontSize ++; unselectWord(); saveSettings();" title="Increase font size">
+                    <i class="fa fa-search-plus"></i>
+                </button>
+                <button :class="{'toolbar-button': true}" @click="settings.fontSize --; unselectWord(); saveSettings();" title="Decrease font size">
+                    <i class="fa fa-search-minus"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': settings.plainTextMode}" @click="settings.plainTextMode = !settings.plainTextMode; unselectWord(); saveSettings();" title="Plain text mode">
+                    <i class="fa fa-highlighter"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': settings.japaneseText}" @click="settings.japaneseText = !settings.japaneseText; unselectWord(); saveSettings();" title="Japanese text direction">
+                    <i class="fa fa-language"></i>
+                </button>
+                <button :class="{'toolbar-button': true, 'selected': settings.highlightWords}"  @click="settings.highlightWords = !settings.highlightWords; saveSettings();" title="Highlight words">
+                    <i class="fa fa-underline"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Settings -->
+        <div id="toolbar-header" v-if="toolbar !== 'text'" :style="{'width': settings.maximumTextWidth}">
+            <template v-if="toolbar == 'chapters'">Chapters<span>{{ _courseName }}</span></template>
+            <template v-if="toolbar == 'glossary'">Glossary</template>
+            <template v-if="toolbar == 'settings'">Settings</template>
+        </div>
         <div id="settings" :class="{'visible': toolbar == 'settings'}">
             <!-- Highlight words -->
             <div class="setting">
@@ -50,13 +63,10 @@
                     <vue-slider 
                         :data="{
                             '800px': '800px',
-                            '900px': '900px',
                             '1000px': '1000px',
-                            '1100px': '1100px',
                             '1200px': '1200px',
-                            '1300px': '1300px',
                             '1400px': '1400px',
-                            '1500px': '1500px',
+                            '1500px': '1600px',
                             '100%': '100%'
                         }" 
                         :marks="{'800px': 'Small', '100%': 'Full'}" 
@@ -131,41 +141,52 @@
                 </div>
             </div>
         </div>
-
+        
+        <!-- Chapters -->
         <div v-if="!finished" id="chapters" :class="{'visible': toolbar == 'chapters'}">
-            <div id="course-name">{{ _courseName }}</div>
-            <div :class="{'chapter': true, 'selected': lesson.id == _lessonId}" 
-                v-for="(lesson, index) in _lessons" :key="index">
-                <a :href="'/lesson/' + lesson.id"><span :id="lesson.id == _lessonId ? 'selected-chapter' : ''">{{ index + '.) ' + lesson.name }}</span></a>
-            </div>
+            <template v-for="(lesson, index) in _lessons">
+                <div class="chapter-connect-line" v-if="index" v-for="i in 4"></div>
+                <div :id="lesson.id == _lessonId ? 'selected-chapter' : ''" class="chapter" :key="index">
+                    <div class="chapter-title">
+                        {{ lesson.name }}
+                        <div v-if="lesson.id == _lessonId"> Current chapter</div>
+                    </div>
+                    <div class="chapter-read">Read count: <span>{{ lesson.read_count}}</span></div>
+                    <div class="chapter-words">Word count: <span>{{ lesson.wordCounts.total }}</span></div>
+                    <div class="chapter-unique-words">Unique word count: <span>{{ lesson.wordCounts.unique }}</span></div>
+                    <div class="chapter-known-words">Known word count: <span>{{ lesson.wordCounts.known }}</span></div>
+                    <div class="chapter-highlighted-words">Highlighted word count: <span class="highlighted"><i class="fa fa-book-open"></i> {{ lesson.wordCounts.highlighted }}</span></div>
+                    <div class="chapter-new-words">New word count: <span class="new"><i class="fa fa-eye-slash"></i> {{ lesson.wordCounts.new }}</span></div>
+                    <a :href="'/lesson/' + lesson.id"><button class="btn btn-secondary small" v-if="lesson.id != _lessonId">Read</button></a>
+                </div>
+            </template>
         </div>
+
+        <!-- Glossary -->
         <div v-if="!finished" id="glossary" :class="{'visible': toolbar == 'glossary'}">
             <template v-for="(word, index) in glossary">
                 <div class="glossary-entry" :key="index">
                     <div class="glossary-title">
                         <!-- Glossary entry stage -->
-                            <div class="stage">
-                                <div class="stage-text">{{ word.stage }}</div>
-                                <vue-circle
-                                    :progress="((7 - word.stage) / 7 * 100)"
-                                    :size="36"
-                                    :thickness="5"
-                                    empty-fill="rgb(230, 230, 230)"
-                                    :fill="{color: $cookie.get('ebook-reader-mode') == null ? 'rgba(52, 232, 127, 1)' : 'black'}"
-                                    :ref="'circle' + index"
-                                    :start-angle="4.71239"
-                                    :show-percent="false">
-                                </vue-circle>
+                            <div class="stage" :stage="word.stage">
+                                {{ Math.abs(word.stage) }}
                             </div>
-                        <!-- Glossary entry word or phrase -->
                         <template>
-                            <div :class="{'word': true, 'reading': settings.displayGlossaryReadings}" @click="settings.displayGlossaryReadings = !settings.displayGlossaryReadings" v-if="word.base_word == ''">
-                                <ruby>{{ word.word }}<rt v-if="settings.displayGlossaryReadings">{{ word.reading }}</rt></ruby>
+                            <div class="word" v-if="word.base_word == ''">
+                                <div>{{ word.word }}</div>
                             </div>
-                            <div :class="{'word': true, 'reading': settings.displayGlossaryReadings}" @click="settings.displayGlossaryReadings = !settings.displayGlossaryReadings" v-if="word.base_word !== ''">
-                                <ruby>{{ word.base_word }}<rt v-if="word.showReading">{{ word.base_word_reading }}</rt></ruby> 
+                            <div class="word" v-if="word.base_word !== ''">
+                                <div>{{ word.base_word }}</div> 
                                 <i class="fas fa-long-arrow-alt-right"></i> 
-                                <ruby>{{ word.word }}<rt v-if="word.showReading">{{ word.reading }}</rt></ruby> 
+                                <div>{{ word.word }}</div> 
+                            </div>
+                            <div class="reading" v-if="word.base_word == '' && settings.displayGlossaryReadings">
+                                <div>{{ word.reading }}</div>
+                            </div>
+                            <div class="reading" v-if="word.base_word !== '' && settings.displayGlossaryReadings">
+                                <div>{{ word.base_word_reading }}</div> 
+                                <i class="fas fa-long-arrow-alt-right"></i> 
+                                <div>{{ word.reading }}</div> 
                             </div>
                         </template>
                     </div>
@@ -303,21 +324,23 @@
                 </div>
             </div>
         </div>
-        <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== ''}">
+
+        <!-- Text -->
+        <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}">
             <template v-for="(word, wordIndex) in words">
                 <template v-if="word.word.indexOf('NEWLINE') == -1  && _language !== 'japanese'">
                     <template v-if="spaceFreeWords.includes(word.word)">
                         <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                            @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex)" @mouseenter="hoverPhraseSelection(wordIndex)" @mouseleave="removePhraseHover()">{{ word.word }}</div>
+                            @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div>
                     </template><!--
                     --><template v-if="!spaceFreeWords.includes(word.word)"><!--
                         --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                            @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex)" @mouseenter="hoverPhraseSelection(wordIndex)" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
+                            @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                     --></template>
 
                 </template><!--
                 --><div v-if="word.word.indexOf('NEWLINE') == -1 && _language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                    @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex)" @mouseenter="hoverPhraseSelection(wordIndex)" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
+                    @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                     
                 --><br v-if="word.word == 'NEWLINE'"><!--
             --></template>
@@ -326,7 +349,7 @@
             <br><br><br><br>
         </div>
         
-        
+        <!-- Finish -->
         <div v-if="finished" id="finished-box">
             <div id="lesson-finished-text">Congratulations! You have finished {{ _lessonName }}!</div>
 
@@ -377,7 +400,7 @@
                     displayGlossaryReadings: false,
                     autoMoveWordsToKnown: false
                 },
-                toolbar: '',
+                toolbar: 'text',
                 spaceFreeWords: ['.', ',', ':', '?', '!', '-', '*', ' ', '\r\n', '\r\n '],
                 finished: false,
                 newlySavedWords: 0,
@@ -511,20 +534,17 @@
                 this.$cookie.set('display-glossary-readings', this.settings.displayGlossaryReadings, 3650);
                 this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
             },
-            toggleToolbar: function(newToolbar) {
+            setToolbar: function(newToolbar) {
                 this.unselectWord();
                 this.updateGlossary();
-                
-                if (this.toolbar == newToolbar) {
-                    this.toolbar = '';
-                    return;
-                }
                 
                 this.toolbar = newToolbar;
                 if (newToolbar == 'chapters') {
                     setTimeout(() => {
                         document.getElementById('selected-chapter').scrollIntoView();
                     }, 305);
+                } else {
+                    document.getElementById('app').scrollTo(0, 0);
                 }
             },
             getUniqueWordIndex: function(word) {
@@ -542,7 +562,7 @@
                     if (this.phrases[i].stage < 0) {
                         this.glossary.push({
                             word: this.phrases[i].words.join(''),
-                            stage: this.phrases[i].stage < 0 ? this.phrases[i].stage * -1 : this.phrases[i].stage,
+                            stage: this.phrases[i].stage,
                             reading: this.phrases[i].reading,
                             base_word: '',
                             base_word_reading: '',
@@ -552,10 +572,10 @@
                 }
 
                 for (let i = 0; i < this.uniqueWords.length; i++) {
-                    if (this.uniqueWords[i].stage < 0) {
+                    if (this.uniqueWords[i].stage < 0 || this.uniqueWords[i].stage == 2) {
                         this.glossary.push({
                             word: this.uniqueWords[i].word,
-                            stage: this.uniqueWords[i].stage < 0 ? this.uniqueWords[i].stage * -1 : this.uniqueWords[i].stage,
+                            stage: this.uniqueWords[i].stage,
                             reading: this.uniqueWords[i].reading,
                             base_word: this.uniqueWords[i].base_word,
                             base_word_reading: this.uniqueWords[i].base_word_reading,
@@ -565,7 +585,7 @@
                 }
 
                 this.glossary.sort((a, b) => {
-                    return b.stage - a.stage;
+                    return a.stage - b.stage;
                 });
             },
             updateNewWord: function() {
@@ -722,6 +742,7 @@
 
                 this.updateVocabBoxPosition();
                 this.makeJishoRequest();
+                this.updatePhraseBorders();
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
@@ -1016,16 +1037,17 @@
 
                         this.words[i].phraseStage = lowestPhraseStage;
                     }
+                    
+                    // phrase start
+                    this.words[i].phraseStart = false;
+                    this.words[i].phraseEnd = false;
                     if (this.words[i].phraseIndexes.length && (i == 0 || !this.words[i - 1].phraseIndexes.length)) {
                         this.words[i].phraseStart = true;
-                    } else {
-                        this.words[i].phraseStart = false;
                     }
-
+                    
+                    // phrase end
                     if (this.words[i].phraseIndexes.length && (i + 1 == this.words.length || !this.words[i + 1].phraseIndexes.length)) {
                         this.words[i].phraseEnd = true;
-                    } else {
-                        this.words[i].phraseEnd = false;
                     }
                 }
             },
@@ -1059,6 +1081,9 @@
             hoverPhraseSelection: function(wordIndex) {
                 this.removePhraseHover();
                 var phraseIndexes = this.words[wordIndex].phraseIndexes;
+                if (!phraseIndexes.length) {
+                    return;
+                }
 
                 // find the first word of the phrase
                 var currentWordIndex = wordIndex;

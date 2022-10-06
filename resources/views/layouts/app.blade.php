@@ -23,6 +23,7 @@
 <body><!--
 --><div id="app"><!--
     -->@include('layouts.navbar')<!--
+    -->@include('layouts.sidebar')<!--
     -->@yield('content')<!--
 --></div><!--
 --></body></html>

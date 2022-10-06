@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-expand-sm navbar-light">
     <div class="container">
         @if (env('DB_DATABASE') !== 'langapp')
-            <span style="margin-right: 5px; font-size: 18px; font-weight: bold; background-color: #f1ad02; color: white; border-radius: 4px; padding: 0px 4px;">DEV</span>
+            <span style="margin-right: 5px; font-size: 18px; font-weight: bold; color: rgb(200, 200, 200); border-radius: 4px; padding: 0px 4px;">DEV</span>
         @endif
         <a class="navbar-brand" href="{{ url('/') }}"><i class="fa fa-language"></i></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">

@@ -53,7 +53,7 @@
                 <div class="information">New words: <span class="new"><i class="fa fa-eye-slash"></i> {{ $wordCounts->new }}</span></div>
                 <div class="buttons">
                     <a href="/lesson/{{ $lesson->id }}">
-                        <button class="btn btn-primary texts-button"><i class="fa fa-book-open"></i> Read</button>
+                        <button class="btn btn-secondary texts-button"><i class="fa fa-book-open"></i> Read</button>
                     </a>
                     <a href="{{ url('/vocabulary-practice/random/' . $lesson->id) }}">
                         <button class="btn btn-primary texts-button"><i class="fa fa-keyboard"></i>  Vocabulary</button>

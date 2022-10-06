@@ -30,7 +30,6 @@ button#sentences-button {
         margin-top: 0px;
         padding: 0px;
         overflow: hidden;
-        background-color: white;
 
         .image-box {
             display: inline-block;
@@ -83,7 +82,7 @@ button#sentences-button {
                     }
 
                     &.new {
-                        background-color: rgba($purple, 0.6);
+                        background-color: $new-word;
                         text-align: left;
                         padding-left: 25px;
                     }
@@ -104,7 +103,7 @@ button#sentences-button {
                 padding-right: 10px;
                 
                 button {
-                    width: 110px;
+                    width: 115px;
                 }
                 
                 a {
