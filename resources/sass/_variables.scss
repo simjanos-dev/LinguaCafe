@@ -5,11 +5,11 @@ $line-height-base: 1.6;
 
 // Colors
 $theme-color: #EA526F;
-$background: rgb(250, 250, 250);
+$background: rgb(246, 246, 246);
 $light-gray: rgb(240, 241, 243);
-$green: rgb(44, 216, 127);
+$green: #2cd87f;
 $red: #EA526F;
-$blue: #EA526F;
+$orange: #ff8146;
 $dark-gray: rgb(85, 85, 85);
 $tint: rgb(235, 235, 235);
 $border: rgb(235, 235, 235);
@@ -46,13 +46,19 @@ $red-button-border-color: darken($red, 5%);
 $red-button-hover-background: darken($red, 8%);
 $red-button-hover-border-color: darken($red, 10%);
 
+$orange-button-color: #fff;
+$orange-button-background: $orange;
+$orange-button-border-color: darken($orange, 5%);
+$orange-button-hover-background: darken($orange, 8%);
+$orange-button-hover-border-color: darken($orange, 10%);
+
 $black-button-color: #fff;
 $black-button-background: $dark-gray;
 $black-button-border-color: darken($dark-gray, 5%);
 $black-button-hover-background: darken($dark-gray, 12%);
 $black-button-hover-border-color: darken($dark-gray, 10%);
 
-$highlighted-word: rgb(52, 232, 127);
+$highlighted-word: #34e87f;
 $stage7: rgba($highlighted-word, 1);
 $stage6: rgba($highlighted-word, 1);
 $stage5: rgba($highlighted-word, 1);

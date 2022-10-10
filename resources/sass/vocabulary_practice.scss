@@ -1,119 +1,470 @@
 @import 'variables';
 
-#vocabulary-practice-box {
+#review-box {
     position: relative;
     display: block;
-    width: 90%;
-    max-width: 800px;
+    width: 100%;
+    height: 100%;
     margin: auto;
     text-align: center;
     font-family: notosans;
 
-    #vocabulary-practice {
-        display: block;
-        width: 100%;
-        height: 100;
+    #review-reveal-button,
+    #review-correct-button,
+    #review-wrong-button {
+        width: 150px;
+        height: 40px;
+        line-height: 38px;
+        padding: 0px;
+        box-sizing: border-box;
+
+        i {
+            font-size: 14px;
+            margin-right: 4px;
+        }
     }
 
-    #finished-box {
+    #toolbar {
+        position: absolute;
         display: block;
-        height: calc(100% - 53px);
-        font-size: 16px;
-    
-        #vocabulary-practice-finished-text {
-            width: 100%;
+        height: 280px;
+        width: 40px;
+        left: calc(50% - 280px);
+        top: 70px;
+
+        .toolbar-button {
+            display: block;
+            border: none;
+            background-color: transparent;
+            width: 40px;
             height: 40px;
-            line-height: 40px;
-            margin: 25px auto;
-            font-size: 20px;
-            text-align: center;
-        }
+            margin: 0px auto;
+            padding-top: 5px;
+            outline: none;
+            color: $sidebar-button-color;
+            border-radius: 4px;
+            transition: .2s;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0);
     
-        #finished-stats {
-            width: 360px;
-            margin: auto;
-            margin-bottom: 20px;
+            i {
+                margin: 0px;
+                font-size: 18px;
+            }
     
-            td:nth-child(2), th {
-                text-align: center;
+            &:active, &:focus {
+                outline: none;
+            }
+    
+            &:hover {
+                background-color: $tint;
+            }
+    
+            &.selected {
+                background-color: $tint;
+                color: $theme-color;
             }
         }
+    }
     
-        #close-button {
-            display: block;
-            margin: auto;
-            width: 160px;
-        }
-    }
-
-    #finish-button {
+    #review {
         display: block;
-        position: absolute;
-        right: 0px;
-        top: 5px;
-        margin: 0px;
-    }
-
-    #word-mode-button, #sentence-mode-button {
-        display: block;
-        position: absolute;
-        right: 75px;
-        top: 5px;
-        margin: 0px;
-    }
-
-    #vocabulary-counter {
         width: 100%;
+        height: 100%;
+    }
+
+    #review-progress-line {
+        position: relative; 
         display: block;
-        text-align: right;
-        font-size: 18px;
-        padding-right: 125px;
-        height: 50px;
-        padding-top: 5px;
-        line-height: 38px;
+        width: 960px;
+        height: 40px;
+        margin: 0px auto;
+        padding: 0px;
+        border-radius: 30px;
+
+        #progress-bar-correct-counter {
+            display: inline-block;
+            float: left;
+            width: 55px;
+            height: 30px;
+            line-height: 28px;
+            text-align: center;
+            font-size: 15px;
+            background-color: $highlighted-word;
+            border: 1px solid $border;
+            color: $font-color;
+            margin-right: 20px;
+            border-radius: 6px;   
+        }
+
+        #progress-bar-remaining-counter {
+            display: inline-block;
+            float: left;
+            width: 55px;
+            height: 30px;
+            line-height: 28px;
+            text-align: center;
+            font-size: 15px;
+            background-color: $white;
+            border: 1px solid $border;
+            color: $font-color;
+            margin-left: 20px;
+            border-radius: 6px;
+        }
+
+        #review-progress-bar {
+            position: relative;
+            display: inline-block;
+            float: left;
+            width: 800px;
+            height: 30px;
+            border-radius: 30px;
+            overflow-x: hidden;
+            background-color: $tint;
+            
+
+            #review-progress-bar-text {
+                display: none;
+                box-sizing: border-box;
+                position: absolute;
+                width: 100%;
+                left: 0px;
+                top: 0px;
+                height: 28px;
+                line-height: 28px;
+                margin: 0px;
+                padding: 0px;
+                text-align: center;
+                color: $font-color;
+            }
+
+            #review-progress-bar-correct, #review-progress-bar-seen {
+                display: inline-block;
+                float: left;
+                height: 100%;
+                background-color: $highlighted-word;
+                transition: ease-in .3s;
+            }
+
+            #review-progress-bar-seen {
+                background-color: lighten($highlighted-word, 20%);
+            }
+        }
     }
 
-    #vocabulary-expression {
-        font-size: 24px;
-        line-height: 28px;
+    #review-card {
+        position: relative;
+        display: block;
+        margin: 10px auto;
+        width: 460px;
+        height: 280px;
+        perspective: 800px;
         margin-top: 25px;
-
-        &.hide-sentence .vocabulary-word:not(.highlighted){
-            display: none;
-        }
-
-        &.hide-sentence .vocabulary-word.highlighted{
-            border-bottom: none;
-        }
-    }
-
-    .vocabulary-word {
-        display: inline-block;
-        margin-bottom: 3px;
+        animation: none;
         
-        &.highlighted {
-            border-bottom: 2px solid $font-color;
+        #review-card-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: 0s;
+            transform-style: preserve-3d;
         }
 
-        &.space {
-            margin-left: 5px;
+        hr {
+            margin: 12px 0px;
+        }
+
+        &.revealed #review-card-content {
+            animation: review-card-revealed-animation .4s forwards;
+        }
+
+        &.back-to-deck-animation #review-card-content {
+            animation: back-to-the-deck-animation .4s forwards;
+
+            #review-card-front,
+            #review-card-back {
+                background-color: $orange;
+                color: white;
+            }
+        }
+
+        &.into-the-correct-deck-animation #review-card-content {
+            animation: into-the-correct-deck-animation .4s forwards;
+            
+            #review-card-front,
+            #review-card-back {
+                background-color: $highlighted-word;
+                color: white;
+            }
+
+        }
+
+        &.draw-new-card-animation #review-card-content {
+            animation: review-card-new-animation .4s;
+            
+            #review-card-front,
+            #review-card-back {
+                color: white;
+            }    
+        }
+        
+        #review-card-front,
+        #review-card-back {
+            display: block;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border: 1px solid $border;
+            color: $font-color;
+            border-radius: 5px;
+            backface-visibility: hidden;
+            padding: 10px;
+            overflow: hidden;
+
+            .phrase {
+                display: block;
+                
+                .phrase-word {
+                    display: inline-block;
+                    float: left;
+                    
+                    &.highlighted {
+                        background-color: $highlighted-word;
+                        border-radius: 5px;
+                        padding: 0px 4px;
+                        margin: 0px 5px;
+                    }
+                }
+            }
+        }
+
+        #review-card-front {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            .word {
+                display: block;
+            }
+        }
+
+        #review-card-back {
+            transform: rotateY( 180deg );
+        }
+    }
+}
+
+@keyframes review-card-revealed-animation {
+    0%   {
+        
+    }
+
+    100% {
+        transform: rotateY( -180deg );
+        
+    }
+}
+
+@keyframes back-to-the-deck-animation {
+    0%   {
+        transform: rotateY( -180deg );
+    }
+    
+    100% {
+        transform: rotateY( -180deg ) translate(-450px, -175px) scale(0);
+    }
+}
+
+@keyframes into-the-correct-deck-animation {
+    0%   {
+        transform: rotateY( -180deg );
+    }
+    
+    100% {
+        transform: rotateY( -180deg ) translate(450px, -175px) scale(0);
+    }
+}
+
+@keyframes review-card-new-animation {
+    0%   {
+        transform: rotateY( -180deg ) translate(-450px, -175px) scale(0);
+    }
+    
+    100% {
+        transform: rotateY( -180deg );
+    }
+}
+
+@media (max-width: 980px) {
+    #review-box #review-progress-line {
+        width: 760px;
+
+        #review-progress-bar {
+            width: 600px;
+        }
+    }
+    
+    @keyframes back-to-the-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(-350px, -175px) scale(0);
+        }
+    }
+    
+    @keyframes into-the-correct-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(350px, -175px) scale(0);
+        }
+    }
+    
+    @keyframes review-card-new-animation {
+        0%   {
+            transform: rotateY( -180deg ) translate(-350px, -175px) scale(0);
+        }
+        
+        100% {
+            transform: rotateY( -180deg );
+        }
+    }
+}
+
+@media (max-width: 980px) {
+    #review-box #review-progress-line {
+        width: 560px;
+
+        #review-progress-bar {
+            width: 400px;
+        }
+    }
+    
+    @keyframes back-to-the-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(-250px, -175px) scale(0);
+        }
+    }
+    
+    @keyframes into-the-correct-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(250px, -175px) scale(0);
+        }
+    }
+    
+    @keyframes review-card-new-animation {
+        0%   {
+            transform: rotateY( -180deg ) translate(-250px, -175px) scale(0);
+        }
+        
+        100% {
+            transform: rotateY( -180deg );
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    #review-box {
+        #toolbar {
+            position: relative;
+            top: unset;
+            left: unset;
+            display: block;
+            width: 90%;
+            min-width: 260px;
+            max-width: 440px;
+            height: 40px;
+            margin: 4px auto;
+
+            .toolbar-button {
+                display: inline-block;
+                float: left;
+                margin: 0px 5px;
+            }
+        }
+
+        #review-reveal-button,
+        #review-correct-button,
+        #review-wrong-button {
+            width: calc(45% - 2.5px);
+            max-width: calc(220px - 2.5px);
+            min-width: calc(130px - 2.5px);
+            height: 40px;
+            line-height: 38px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+        
+        #review-card {
+            width: 90%;
+            min-width: 260px;
+            max-width: 440px;
+            margin: 0px auto;
+            margin-bottom: 10px;
+        }
+
+        #review-progress-line {
+            width: 90%;
+            min-width: 260px;
+            max-width: 440px;
+
+            #review-progress-bar {
+                width: 100%;
+                min-width: 260px;
+                
+                #review-progress-bar-text {
+                    display: block;
+                }
+            }
+
+            #progress-bar-correct-counter,
+            #progress-bar-remaining-counter {
+                display: none;
+            }
         }
     }
 
-    #vocabulary-reading {
-        font-size: 20px;
-        margin-bottom: 20px;
+    @keyframes back-to-the-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(-0px, -175px) scale(0);
+        }
     }
-
-    #vocabulary-translation {
-        font-size: 20px;
+    
+    @keyframes into-the-correct-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(0px, -175px) scale(0);
+        }
     }
-
-    button {
-        margin-top: 20px;
-    }
-
-    #vocabulary-correct-button {
-        margin-left: 20px;
+    
+    @keyframes review-card-new-animation {
+        0%   {
+            transform: rotateY( -180deg ) translate(-0px, -175px) scale(0);
+        }
+        
+        100% {
+            transform: rotateY( -180deg );
+        }
     }
 }

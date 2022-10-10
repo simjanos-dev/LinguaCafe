@@ -1,45 +1,91 @@
 <template>
-    <div v-if="currentReviewIndex !== -1" id="vocabulary-practice-box">
-        <div id="vocabulary-practice" v-if="!finished">
-            <button id="finish-button" class="btn btn-primary" @click="finished = true">Finish</button>
-            <button id="sentence-mode-button" class="btn btn-primary" @click="sentenceMode = true" v-if="!sentenceMode"><i class="fa fa-align-center"></i></button>
-            <button id="word-mode-button" class="btn btn-primary" @click="sentenceMode = false" v-if="sentenceMode"><i class="fa fa-underline"></i></button>
-            <div id="vocabulary-counter">{{ correctReviews + ' / ' + (reviews.length + finishedReviews.length)}}</div>
-            
-            <template v-if="reviews[currentReviewIndex].type == 'word'">
-                <div id="vocabulary-expression" :class="{'hide-sentence': !sentenceMode}">
-                    <div :class="{'vocabulary-word': true, 'highlighted': word.toLowerCase() == reviews[currentReviewIndex].word}" v-for="(word, index) in JSON.parse(reviews[currentReviewIndex].example_sentence)" :key="index" v-if="sentenceMode && word !== 'NEWLINE'">
-                        {{ word }}
-                    </div>
-                    <div class="vocabulary-word highlighted" v-if="!sentenceMode">
-                        {{ reviews[currentReviewIndex].word }}
-                        <span v-if="reviews[currentReviewIndex].base_word !== ''">({{ reviews[currentReviewIndex].base_word }})</span>
-                    </div>
+    <div v-if="currentReviewIndex !== -1" id="review-box">
+        <div id="review" v-if="!finished">
+            <div id="review-progress-line">
+                <div id="progress-bar-correct-counter">{{ correctReviews }}</div>
+                <div id="review-progress-bar">
+                        <div id="review-progress-bar-correct" :style="{'width': (correctReviews / totalReviews * 100) + '%'}"></div>
+                        <div id="review-progress-bar-seen" :style="{'width': (seen / totalReviews * 100) + '%'}"></div>
+                        <div id="review-progress-bar-text">{{ correctReviews }} / {{ totalReviews }}</div>
                 </div>
-                <div id="vocabulary-reading" v-if="revealed">
-                    {{ reviews[currentReviewIndex].reading }} <span v-if="reviews[currentReviewIndex].base_word_reading !== ''">({{ reviews[currentReviewIndex].base_word_reading }})</span>
-                </div>
-                <hr v-if="revealed">
-                <div id="vocabulary-translation" v-if="revealed">{{ reviews[currentReviewIndex].translation }}</div>
-            </template>
+                <div id="progress-bar-remaining-counter">{{ reviews.length + finishedReviews.length - correctReviews }}</div>
+            </div>
 
-            <!--  -->
-            <template v-if="reviews[currentReviewIndex].type == 'phrase'">
-                <div id="vocabulary-expression">
-                    <div :class="{'vocabulary-word': true}" v-for="(word, index) in JSON.parse(reviews[currentReviewIndex].words)" :key="index">
-                        {{ word }}
+            <div id="toolbar">
+                <button class="toolbar-button" @click="finished = true"><i class="fa fa-check"></i></button>
+                <button class="toolbar-button" @click="settings.sentenceMode = true; saveSettings();" v-if="!settings.sentenceMode"><i class="fa fa-align-center"></i></button>
+                <button class="toolbar-button" @click="settings.sentenceMode = false; saveSettings();" v-if="settings.sentenceMode"><i class="fa fa-underline"></i></button>
+                <button class="toolbar-button" @click="settings.fontSize ++; saveSettings();"><i class="fa fa-search-plus"></i></button>
+                <button class="toolbar-button" @click="settings.fontSize --; saveSettings();"><i class="fa fa-search-minus"></i></button>
+            </div>
+
+            <div id="review-card" :class="{'revealed': revealed, 'back-to-deck-animation': backToDeckAnimation, 'into-the-correct-deck-animation': intoTheCorrectDeckAnimation, 'draw-new-card-animation': newCardAnimation}">
+                <div id="review-card-content">
+                    <!-- Review card front -->
+                    <div id="review-card-front">
+                        
+                        <!-- Word review -->
+                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
+                            <!-- Example sentence mode -->
+                            <div class="phrase" v-if="settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <template v-for="(word, index) in JSON.parse(reviews[currentReviewIndex].example_sentence)">
+                                    <div :class="{'phrase-word': true, 'highlighted': word.toLowerCase() == reviews[currentReviewIndex].word}" v-if="word !== 'NEWLINE'" :key="index">
+                                        {{ word }}
+                                    </div>
+                                </template>
+                            </div>
+                            
+                            <!-- Single word  mode -->
+                            <div class="word" v-if="!settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <i class="fas fa-long-arrow-alt-right"></i> </template>
+                                {{ reviews[currentReviewIndex].word }}
+                            </div>
+                        </template>
+
+                        <!-- Phrase -->
+                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
+                            <div class="phrase" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Review card back -->
+                    <div id="review-card-back">
+                        <!-- Word review -->
+                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
+                            <!-- Single word  mode -->
+                            <div class="word" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <i class="fas fa-long-arrow-alt-right"></i> </template>
+                                {{ reviews[currentReviewIndex].word }}
+                            </div>
+                        </template>
+
+                        <!-- Phrase -->
+                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
+                            <div class="phrase" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                            </div>
+                        </template>
+
+                        <!-- Reading -->
+                        <div class="reading" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <hr>
+                            <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <i class="fas fa-long-arrow-alt-right"></i> </template>
+                            {{ reviews[currentReviewIndex].reading }}
+                        </div>
+                        <hr>
+                        <!-- Translation -->
+                        <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            {{ reviews[currentReviewIndex].translation }}
+                        </div>
                     </div>
                 </div>
-                <div id="vocabulary-reading" v-if="revealed">
-                    {{ reviews[currentReviewIndex].reading }}
-                </div>
-                <hr v-if="revealed">
-                <div id="vocabulary-translation" v-if="revealed">{{ reviews[currentReviewIndex].translation }}</div>
-            </template>
-            
-            <button id="vocabulary-reveal-button" class="btn btn-primary" @click="reveal" v-if="!revealed">Reveal</button>
-            <button id="vocabulary-wrong-button" class="btn btn-primary" @click="missed" v-if="revealed"><i class="fa fa-times-circle"></i></button>
-            <button id="vocabulary-correct-button" class="btn btn-primary" @click="correct" v-if="revealed"><i class="fa fa-check-circle"></i></button>
+            </div>
+
+            <button id="review-reveal-button" class="btn btn-green" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><i class="fa fa-sync"></i> Reveal</button>
+            <button id="review-wrong-button" class="btn btn-orange" @click="missed" v-if="revealed"><i class="fa fa-times"></i> Again</button>
+            <button id="review-correct-button" class="btn btn-green" @click="correct" v-if="revealed"><i class="fa fa-check"></i> I was correct</button>
         </div>
         <div id="finished-box" v-if="finished">
             <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ readSentences }} sentences!</div>
@@ -71,17 +117,27 @@
     export default {
         data: function() {
             return {
+                //card state and animations
                 revealed: false,
+                backToDeckAnimation: false,
+                intoTheCorrectDeckAnimation: false,
+                newCardAnimation: false,
+                settings: {
+                    fontSize: 20,
+                    sentenceMode: false,
+                    transitionDuration: this.$cookie.get('ebook-reader-mode') === null ? 400 : 0,
+                },
                 currentReviewIndex: -1,
                 reviews: JSON.parse(this.$props._reviews),
+                totalReviews: JSON.parse(this.$props._reviews).length,
+                seen: 0,
                 finishedReviews: [],
                 correctReviews: 0,
                 language: this.$props._language,
                 readWords: 0,
                 readSentences: 0,
                 finished: false,
-                sentenceMode: false,
-                today: new moment().format('YYYY-MM-DD'),
+                today: new moment().format('YYYY-MM-DD'), // CHANGE TO SERVER SIDE
             }
         },
         props: {
@@ -95,6 +151,18 @@
                 window.location.href = '/';
             }
 
+            this.settings.fontSize =  parseInt(this.$cookie.get('review-font-size'));
+            this.settings.sentenceMode =  this.$cookie.get('sentence-mode') == 'true';
+
+            if (this.$cookie.get('review-font-size') === null) {
+                this.settings.fontSize =  20;
+            }
+
+            if (this.settings.sentenceMode === null) {
+                this.settings.sentenceMode =  false;
+            }
+
+            this.saveSettings();
             window.addEventListener('keyup', this.hotkey);
         },
         methods: {
@@ -114,7 +182,12 @@
                 this.$emit('keyup', event);
             },
             reveal() {
+                if (this.intoTheCorrectDeckAnimation || this.backToDeckAnimation || this.newCardAnimation) {
+                    return;
+                }
+                
                 this.revealed = true;
+                this.newCardAnimation = false;
             },
             countReadWords() {
                 if (this.reviews[this.currentReviewIndex].type == 'word') {
@@ -123,7 +196,7 @@
                             '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
                             '«', '»', "'", '’', '–', 'NEWLINE'];
 
-                    if (!this.sentenceMode) {
+                    if (!this.settings.sentenceMode) {
                         this.readWords ++;
                     } else {
                         for (var i = 0; i < exampleSentence.length; i++) {
@@ -153,6 +226,9 @@
             },
             correct() {
                 this.revealed = false;
+                this.intoTheCorrectDeckAnimation = true;
+                this.backToDeckAnimation = false;
+                this.newCardAnimation = false;
 
                 if (!this.reviews[this.currentReviewIndex].levelLocked 
                     && this.reviews[this.currentReviewIndex].stage < 0
@@ -160,6 +236,10 @@
                     
                     this.reviews[this.currentReviewIndex].last_level_up = this.today;
                     this.reviews[this.currentReviewIndex].stage ++;
+                }
+
+                if (this.reviews[this.currentReviewIndex].levelLocked) {
+                    this.seen --;
                 }
 
                 this.reviews[this.currentReviewIndex].levelLocked = true;
@@ -172,19 +252,47 @@
                 }
                 
                 this.finishedReviews.push(this.reviews.splice(this.currentReviewIndex, 1)[0]);
-                this.next();
+                setTimeout(this.next, this.settings.transitionDuration);
             },
             missed() {
+                this.backToDeckAnimation = true;
+                this.intoTheCorrectDeckAnimation = false;
+                this.newCardAnimation = false;
+
                 this.revealed = false;
-                this.reviews[this.currentReviewIndex].levelLocked = true;
+                if (!this.reviews[this.currentReviewIndex].levelLocked) {
+                    this.reviews[this.currentReviewIndex].levelLocked = true;
+                    this.seen ++;
+                }
+
+                
 
                 this.countReadWords();
-                this.next();
+                setTimeout(this.next, this.settings.transitionDuration);
             },
             next() {
+                this.backToDeckAnimation = false;
+                this.intoTheCorrectDeckAnimation = false;
+                this.newCardAnimation = true;
+
+                setTimeout(() => {
+                    this.newCardAnimation = false;
+                }, this.settings.transitionDuration);
+
                 this.readSentences ++;
-                
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
+            },
+            saveSettings() {
+                if (this.settings.fontSize < 12) {
+                    this.settings.fontSize = 12;
+                }
+
+                if (this.settings.fontSize > 30) {
+                    this.settings.fontSize = 30;
+                }
+
+                this.$cookie.set('review-font-size', this.settings.fontSize, 3650);
+                this.$cookie.set('sentence-mode', this.settings.sentenceMode, 3650);
             },
             finish() {
                 var changedReviews = [];

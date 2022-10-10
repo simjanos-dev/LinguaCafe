@@ -86,7 +86,7 @@ div#app>nav {
 
         &.selected {
             background-color: $tint;
-            color: $blue;
+            color: $theme-color;
         }
     }
 }
@@ -270,7 +270,7 @@ div#app>nav {
         height: 10px;
         margin: 20px calc(50% - 5px);
         border-radius: 10px;
-        background-color: $blue;
+        background-color: $theme-color;
     }
 
     .chapter {
@@ -357,7 +357,7 @@ div#app>nav {
     border: 1px solid $border;
     border-radius: 6px;
     z-index: 10;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, .2);
 
     .vocab-box-button {
         float: right;

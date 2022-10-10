@@ -155,7 +155,7 @@ nav .nav-item.dropdown {
     line-height: 42px;
     padding-top: 0px;
     overflow: hidden;
-    color: $blue !important;
+    color: $theme-color !important;
 }
 
 #vocabulary-select-dropdown, #language-select-dropdown {
@@ -181,7 +181,7 @@ nav .nav-item.dropdown {
 
 ::selection {
     color: white;
-    background: $blue;
+    background: $theme-color;
 }
 
 .btn {
@@ -248,6 +248,18 @@ nav .nav-item.dropdown {
     background-color: $red-button-hover-background;
     color: $red-button-color;
     border-color: $red-button-hover-border-color;
+}
+
+.btn.btn-orange {
+    background-color: $orange-button-background;
+    color: $orange-button-color;
+    border-color: $orange-button-border-color;
+}
+
+.btn-orange:hover {
+    background-color: $orange-button-hover-background;
+    color: $orange-button-color;
+    border-color: $orange-button-hover-border-color;
 }
 
 .btn.btn-black {

@@ -24,7 +24,7 @@
         },
         methods: {
             refresh() {
-                if (this.ebookReaderMode == null) {
+                if (this.ebookReaderMode === null) {
                     this.$cookie.set('ebook-reader-mode', 'yes', 31);
                     
                 } else {

@@ -7,7 +7,7 @@ body {
 }
 
 * {
-    transition: 0s !important;
+    transition-duration: 0s !important;
 }
 
 #app {
@@ -56,8 +56,9 @@ nav.navbar-light {
 .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:not(:disabled):not(.disabled).focus.btn-primary,
 .btn-primary:not(:disabled):not(.disabled):active:focus, .btn.btn-primary, .btn-primary:hover,
-.btn.btn-green, .btn-green:hover, .btn.btn-red, .btn-red:hover, .btn.btn-black, .btn.btn-secondary,
-.btn.btn-secondary:hover, .btn-secondary:active, .btn-secondary:focus, .btn-black:hover {
+.btn.btn-green, .btn-green:hover, .btn.btn-red, .btn-red:hover, .btn.btn-black, .btn-black:hover, 
+.btn.btn-secondary, .btn.btn-secondary:hover, .btn-secondary:active, .btn-secondary:focus,
+.btn.btn-orange, .btn.btn-orange:hover, .btn-orange:active, .btn-orange:focus {
     background-color: white !important;
     color: black !important;
     border: 1px solid black !important;
@@ -298,5 +299,93 @@ input[type="text"], textarea{
 
     &:focus, &:active {
         border: 1px solid rgb(100, 100, 100);
+    }
+}
+
+#review-box {
+    #review-progress-line {
+        #progress-bar-correct-counter {
+            background-color: white;
+            border: 1px solid black;
+            color: black;
+        }
+
+        #progress-bar-remaining-counter {
+            background-color: white;
+            border: 1px solid black;
+            color: black;
+        }
+
+        #review-progress-bar {
+            background-color: white;
+            border: 1px solid black;
+
+
+            #review-progress-bar-text {
+                display: block;
+                background-color: rgba(0, 0, 0, 0);
+                color: black;
+            }
+
+            #review-progress-bar-correct{
+                background-color: rgb(180, 180, 180);
+            }
+
+            #review-progress-bar-seen {
+                background-color: white;
+            }
+        }
+    }
+
+    #review-card {
+        &.revealed #review-card-content {
+            animation-duration: 0s !important;
+        }
+
+        &.back-to-deck-animation #review-card-content {
+            animation-duration: 0s !important;
+
+            #review-card-front,
+            #review-card-back {
+                background-color: white;
+                color: black;
+            }
+        }
+
+        &.into-the-correct-deck-animation #review-card-content {
+            animation-duration: 0s !important;
+            
+            #review-card-front,
+            #review-card-back {
+                background-color: white;
+                color: black;
+            }
+
+        }
+
+        &.draw-new-card-animation #review-card-content {
+            animation-duration: 0s !important;
+            
+            #review-card-front,
+            #review-card-back {
+                color: white;
+            }    
+        }
+
+        #review-card-front,
+        #review-card-back {
+            box-shadow: none;
+            border: 1px solid black;
+            background-color: white;
+            
+            .phrase .phrase-word {
+                border-bottom: 2px solid rgba(0, 0, 0, 0);
+
+                &.highlighted {
+                    background-color: white;
+                    border-bottom: 2px solid black;
+                }
+            }
+        }
     }
 }
