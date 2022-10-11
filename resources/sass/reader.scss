@@ -11,8 +11,13 @@
     background-color: white !important;
 }
 
-div#app>nav {
-    display: none;
+#fullscreen-box {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    min-height: 100%;
+    width: 100%;
+    background-color: white;
 }
 
 #reader-box {

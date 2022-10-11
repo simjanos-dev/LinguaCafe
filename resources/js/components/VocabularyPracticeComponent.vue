@@ -13,6 +13,8 @@
 
             <div id="toolbar">
                 <button class="toolbar-button" @click="finished = true"><i class="fa fa-check"></i></button>
+                <button class="toolbar-button" @click="fullscreen" v-if="!settings.fullscreen"><i class="fa fa-expand"></i></button>
+                <button class="toolbar-button" @click="exitFullscreen" v-if="settings.fullscreen"><i class="fa fa-compress"></i></button>
                 <button class="toolbar-button" @click="settings.sentenceMode = true; saveSettings();" v-if="!settings.sentenceMode"><i class="fa fa-align-center"></i></button>
                 <button class="toolbar-button" @click="settings.sentenceMode = false; saveSettings();" v-if="settings.sentenceMode"><i class="fa fa-underline"></i></button>
                 <button class="toolbar-button" @click="settings.fontSize ++; saveSettings();"><i class="fa fa-search-plus"></i></button>
@@ -126,6 +128,7 @@
                     fontSize: 20,
                     sentenceMode: false,
                     transitionDuration: this.$cookie.get('ebook-reader-mode') === null ? 400 : 0,
+                    fullscreen: false,
                 },
                 currentReviewIndex: -1,
                 reviews: JSON.parse(this.$props._reviews),
@@ -180,6 +183,16 @@
                 }
 
                 this.$emit('keyup', event);
+            },
+            fullscreen() {
+                if (document.fullscreenEnabled) {
+                    document.getElementById('review-box').requestFullscreen();
+                    this.settings.fullscreen = true;
+                }
+            },
+            exitFullscreen() {
+                document.exitFullscreen();
+                this.settings.fullscreen = false;
             },
             reveal() {
                 if (this.intoTheCorrectDeckAnimation || this.backToDeckAnimation || this.newCardAnimation) {

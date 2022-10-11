@@ -73,12 +73,15 @@ div#app {
         overflow: hidden;
         color: $font-color;
         text-align: right;
-        padding-right: 0px;
+        padding-right: 55px;
 
-        img {
+        i {
             height: 40px;
             height: 40px;
             float: left;
+            font-size: 30px;
+            margin-top: 4px;
+            color: $theme-color;
         }
     }
 
