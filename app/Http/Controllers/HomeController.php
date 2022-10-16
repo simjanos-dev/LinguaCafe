@@ -135,6 +135,7 @@ class HomeController extends Controller
                         $encounteredWord->user_id = Auth::user()->id;
                         $encounteredWord->language = $selectedLanguage;
                         $encounteredWord->word = mb_strtolower($processedWords[$processedWordCount - 1]->word, 'UTF-8');
+                        $encounteredWord->lemma = $processedWords[$processedWordCount - 1]->lemma;
                         $encounteredWord->kanji = $selectedLanguage == 'japanese' ? implode('', $kanji) : '';
                         $encounteredWord->reading = $processedWords[$processedWordCount - 1]->reading;
                         $encounteredWord->base_word = mb_strtolower($processedWords[$processedWordCount - 1]->lemma, 'UTF-8');
@@ -147,6 +148,7 @@ class HomeController extends Controller
                             $encounteredWord->base_word = '';
                             $encounteredWord->base_word_reading = '';
                         }
+
                         $encounteredWord->save();
                     }
 
