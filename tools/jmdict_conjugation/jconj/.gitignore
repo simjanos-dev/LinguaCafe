@@ -1,0 +1,12 @@
+*.py[cod]
+*~
+*.orig
+*-orig
+*.rej
+\#*
+.#*
+*.log
+NOTES.org
+tmp/
+work/
+old/

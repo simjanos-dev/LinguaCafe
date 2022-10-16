@@ -11,6 +11,7 @@ use App\Models\Phrase;
 use App\Models\DailyAchivement;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class LessonController extends Controller
 {
@@ -224,6 +225,12 @@ class LessonController extends Controller
             if ($newPhrase) {
                 $lessons = Lesson::all();
                 foreach ($lessons as $currentLesson) {
+                    $phraseWords = array_unique($currentPhrase->words);
+                    $uniqueWords = json_decode($currentLesson->unique_words);
+                    if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
+                        continue;
+                    }
+
                     $currentLesson->updatePhraseIds($phrase->id);
                 }
             }
@@ -292,12 +299,15 @@ class LessonController extends Controller
         $lesson->raw_text = str_replace("\r\n", " NEWLINE \r\n", $request->raw_text);
         $lesson->processed_text = '';
         $lesson->unique_words = '';
-        $lesson->save();
         
-        shell_exec('./../tokenizer.py');
+        $requesttext = $lesson->raw_text;
+        $response = Http::post('127.0.0.1:8678/tokenizer/', [
+            'raw_text' => $requesttext,
+        ]);
 
-        $lesson = $lesson->find($lesson->id);
-        $words = json_decode($lesson->processed_text);
+        $lesson->processed_text = $response;
+
+        $words = json_decode($response);
 
         $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
                         '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
@@ -306,57 +316,96 @@ class LessonController extends Controller
         $uniqueWords = [];
         $uniqueWordIds = [];
 
+        $processedWords = [];
+        $processedWordCount = 0;
         for ($i = 0; $i < count($words); $i++) {
             $word = new \StdClass();
-            $word->word = $words[$i]->word;
-            $word->sentenceIndex = $words[$i]->sentenceIndex;
+            $word->word = $words[$i]->w;
+            $word->reading = $words[$i]->r;
+            $word->lemma = $words[$i]->l;
+            $word->lemmaReading = $words[$i]->lr;
+            $word->sentenceIndex = $words[$i]->si;
+
+
+            // if ($i < count($words) - 1 && $words[$i]->pos == 'VERB' && $words[$i + 1]->pos == 'VERB') {
+            //     $i ++;
+            //     $word->word .= $words[$i]->w;
+            //     $word->reading .= $words[$i]->r;
+            //     $word->lemma = $words[$i - 1]->w . $words[$i]->l;
+            // }
+            
+            if ($words[$i]->pos == 'VERB' && $words[$i]->w !== $words[$i]->l && $i < count($words) - 1 && $words[$i + 1]->pos == 'AUX') {
+                do {
+                    $i ++;
+                    if ($words[$i]->pos == 'AUX') {
+                        $word->word .= $words[$i]->w;
+                        $word->reading .= $words[$i]->r;
+                    } else {
+                        $i --; break;
+                    }
+                } while($words[$i]->pos == 'AUX' && $i < count($words) - 1);
+            } else if ($words[$i]->pos == 'VERB' && $words[$i]->w !== $words[$i]->l && $i < count($words) - 1 && $words[$i + 1]->pos == 'SCONJ') {
+                do {
+                    $i ++;
+                    if ($words[$i]->pos == 'SCONJ') {
+                        $word->word .= $words[$i]->w;
+                        $word->reading .= $words[$i]->r;
+                    } else {
+                        $i --; break;
+                    }
+                } while($words[$i]->pos == 'SCONJ' && $i < count($words) - 1);
+            }
+
             $word->phraseIds = [];
             
-            if (!in_array($words[$i]->word, $wordsToSkip, true)) {
+            if (!in_array($word->word, $wordsToSkip, true)) {
                 $wordCount ++;
             }
             
-            if (!in_array(mb_strtolower($words[$i]->word), $uniqueWords, true)) {
-                array_push($uniqueWords, mb_strtolower($words[$i]->word, 'UTF-8'));
-            }
+            $processedWords[$processedWordCount] = $word;
+            $processedWordCount ++;
 
-            $words[$i] = $word;
-            $encounteredWord = EncounteredWord::where('word', mb_strtolower($words[$i]->word, 'UTF-8'))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->first();
-            if (!$encounteredWord) {
-                if ($selectedLanguage == 'japanese') {
-                    $kanji = preg_replace($kanjipattern, "", $words[$i]->word);
-                    $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
+            if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {
+                array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
+
+                $encounteredWord = EncounteredWord::select('id')->where('word', mb_strtolower($processedWords[$processedWordCount - 1]->word, 'UTF-8'))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->first();
+                if (!$encounteredWord) {
+                    if ($selectedLanguage == 'japanese') {
+                        $kanji = preg_replace($kanjipattern, "", $processedWords[$processedWordCount - 1]->word);
+                        $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
+                    }
+
+                    $encounteredWord = new EncounteredWord();
+                    $encounteredWord->user_id = Auth::user()->id;
+                    $encounteredWord->language = $selectedLanguage;
+                    $encounteredWord->word = mb_strtolower($processedWords[$processedWordCount - 1]->word, 'UTF-8');
+                    $encounteredWord->base_word = $processedWords[$processedWordCount - 1]->lemma;
+                    $encounteredWord->kanji = $selectedLanguage == 'japanese' ? implode('', $kanji) : '';
+                    $encounteredWord->reading = $processedWords[$processedWordCount - 1]->reading;
+                    $encounteredWord->base_word_reading = $processedWords[$processedWordCount - 1]->lemmaReading;
+                    $encounteredWord->example_sentence = '';
+                    $encounteredWord->stage = 2;
+                    $encounteredWord->translation = '';
+                    $encounteredWord->save();
                 }
 
-                $encounteredWord = new EncounteredWord();
-                $encounteredWord->user_id = Auth::user()->id;
-                $encounteredWord->language = $selectedLanguage;
-                $encounteredWord->word = mb_strtolower($words[$i]->word, 'UTF-8');
-                $encounteredWord->base_word = '';
-                $encounteredWord->kanji = $selectedLanguage == 'japanese' ? implode('', $kanji) : '';
-                $encounteredWord->reading = '';
-                $encounteredWord->base_word_reading = '';
-                $encounteredWord->example_sentence = '';
-                $encounteredWord->stage = 2;
-                $encounteredWord->translation = '';
-                $encounteredWord->save();
-            }
-
-            if (!in_array($encounteredWord->id, $uniqueWordIds, true)) {
                 array_push($uniqueWordIds, $encounteredWord->id);
             }
         }
 
         $lesson->word_count = $wordCount;
-        $lesson->processed_text = gzcompress(json_encode($words), 1);
+        $lesson->processed_text = gzcompress(json_encode($processedWords), 1);
         $lesson->unique_words = json_encode($uniqueWords);
         $lesson->unique_word_ids = json_encode($uniqueWordIds);
         $lesson->save();
-
-        shell_exec('./../tokenizer.py');
         
         $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
         foreach($phrases as $phrase) {
+            $phraseWords = array_unique(json_decode($phrase->words));
+            if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
+                continue;
+            }
+
             $lesson->updatePhraseIds($phrase->id);
         }
 

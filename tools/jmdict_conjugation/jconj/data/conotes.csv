@@ -1,0 +1,18 @@
+id	note
+1	"Irregular conjugation.  Note that this not the same as the definition
+ of ""irregular verb"" commonly found in textbooks (typically する and
+ 来る).  It denotes okurigana that is different than other words of
+ the same class.  Thus the past tense of 行く (行った) is an irregular
+ conjugation because other く (v5k) verbs use いた as the okurigana for
+ this conjugation.  します is not an irregular conjugation because if
+ we take する to behave as a v1 verb the okurigana is the same as other
+ v1 verbs despite the sound change of the stem (す) part of the verb
+ to し."
+2	na-adjectives and nouns are usually used with the なら nara conditional, instead of with であれば de areba. なら is a contracted and more common form of ならば.
+3	では is often contracted to じゃ in colloquial speech.
+4	The (first) non-abbreviated form is obtained by applying sequentially the causative, then passive conjugations.
+5	The -まい negative form is literary and rather rare.
+6	The ら is sometimes dropped from -られる, etc. in the potential form in conversational Japanese, but it is not regarded as grammatically correct.
+7	"'n' and 'adj-na' words when used as predicates are followed by the
+ copula <a href=""entr.py?svc=jmdict&sid=&q=2089020.jmdict"">だ</a> which is what is conjugated (<a href=""conj.py?svc=jmdict&sid=&q=2089020.jmdict"">conjugations</a>)."
+8	'vs' words are followed by <a href="entr.py?svc=jmdict&sid=&q=1157170.jmdict">する</a> which is what is conjugated (<a href=""conj.py?svc=jmdict&sid=&q=1157170.jmdict"">conjugations</a>).

@@ -56,11 +56,12 @@ class Lesson extends Model
         $phrase->words = json_decode($phrase->words);
         $phraseOccurences = [];
         foreach($words as $i => $word) {
+            $lowercaseWord = mb_strtolower($word->word, 'UTF-8');
             // find all instance of the new phrase in the text       
             // check if the current word is the start of the phrase
-            if (mb_strtolower($word->word, 'UTF-8') == $phrase->words[0]) {
+            if ($lowercaseWord == $phrase->words[0]) {
                 $phraseOccurence = new \StdClass();
-                $phraseOccurence->word = mb_strtolower($words[$i]->word, 'UTF-8');
+                $phraseOccurence->word = $lowercaseWord;
                 $phraseOccurence->wordIndex = $i;
                 $phraseOccurence->newLineCount = 0;
                 array_push($phraseOccurences, array($phraseOccurence));
@@ -68,22 +69,22 @@ class Lesson extends Model
 
             // check if the current word is the continuation of a phrase
             for ($p = 0 ; $p < count($phraseOccurences); $p++) {
-                if (count($phraseOccurences[$p]) == count($phrase->words)) {
+                if (count($phraseOccurences[$p]) === count($phrase->words)) {
                     continue;
                 }
 
-                if ($phrase->words[count($phraseOccurences[$p])] == mb_strtolower($words[$i]->word) &&
-                    $i - 1 == $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->wordIndex + $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->newLineCount) {
+                if ($i - 1 === $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->wordIndex + $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->newLineCount 
+                    && $phrase->words[count($phraseOccurences[$p])] === $lowercaseWord) {
                     
                     $phraseOccurence = new \StdClass();
-                    $phraseOccurence->word = mb_strtolower($words[$i]->word);
+                    $phraseOccurence->word = $lowercaseWord;
                     $phraseOccurence->wordIndex = $i;
                     $phraseOccurence->newLineCount = 0;
                     array_push($phraseOccurences[$p], $phraseOccurence);
                 }
 
                 // count 'NEWLINE' words for comparison
-                if ($word->word == 'NEWLINE') {
+                if ($word->word === 'NEWLINE') {
                     $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->newLineCount ++;
                 }
             }
@@ -110,7 +111,6 @@ class Lesson extends Model
             $index = array_search($phraseId, $words[$i]->phraseIds);
             if ($index !== false) {
                 array_splice($words[$i]->phraseIds, $index, 1);
-                echo('deleted: '. $words[$i]->word . '<br>');
             }
         }
         

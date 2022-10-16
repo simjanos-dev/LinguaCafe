@@ -287,8 +287,13 @@
                 <div :class="{'vocab-translation': true}" v-if="(selection.length == 1 || selectedPhrase !== -1) && vocabEditMode == ''">
                     <span class="title">Translation</span>
                     <span class="vocab-edit" @click="vocabEditMode = 'translation'; updateVocabBoxPosition();" v-if="vocabEditMode == ''"><i class="fa fa-pen"></i> Edit</span>
-                    <ul v-if="(selectedTranslation.length > 1 || selectedTranslation[0] !== '') && vocabEditMode == ''">
-                        <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
+                    <ul v-if="(selectedTranslation.length > 1 || searchResults.length || selectedTranslation[0] !== '') && vocabEditMode == ''">
+                        <template v-if="selectedTranslation.length > 1 || selectedTranslation[0] !== ''">
+                            <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
+                        </template>    
+                        <template v-for="(definition, definitionIndex) in searchResults">
+                            <li class="suggestion" v-if="definitionIndex < 5">{{ definition.japanese }}: {{ definition.english }}</li>
+                        </template>
                     </ul>
                 </div>
 
@@ -748,7 +753,6 @@
                 } else if (this.selection.length == 1) {
                     this.uniqueWords[this.selection[0].uniqueWordIndex].checked = true;
                     this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');
-                    
                 }
 
                 this.updateVocabBoxPosition();
@@ -822,6 +826,7 @@
                 }
             },
             makeJishoRequest: function() {
+                this.searchResults = [];
                 if (!this.selection.length) {
                     return;
                 }
