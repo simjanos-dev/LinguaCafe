@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Lesson;
+use App\Models\Vocabulary;
+use Illuminate\Support\Facades\DB;
 
-class AdminController extends Controller
+class ToolController extends Controller
 {
     public function jmdictTextGenerator() {
         ob_implicit_flush(true);
-        $myfile = fopen(base_path() . '/tools/jmdict_text_generator/jmdict.txt', 'w');
+        $file = fopen(base_path() . '/tools/jmdict_text_generator/jmdict.txt', 'w');
         $doc = new \DOMDocument();
         $reader = new \XMLReader();
         $reader->open(base_path() . '/tools/jmdict_text_generator/JMdict_e.xml');
@@ -62,12 +64,51 @@ class AdminController extends Controller
             }
 
 
-            fwrite($myfile, $entry->word . '|' . $entry->pos . '|' . $entry->translation . "\r\n");
+            fwrite($file, $entry->word . '|' . $entry->pos . '|' . $entry->translation . "\r\n");
             $index ++;
             $reader->next('entry');
         }
 
-        fclose($myfile);
+        fclose($file);
+        echo('finished');
+        ob_implicit_flush(false);
+    }
+
+    public function jmdictImport() {
+        ob_implicit_flush(true);
+        $file = fopen(base_path() . '/tools/jmdict_conjugation/jmdict_processed.txt', 'r');
+        
+        Vocabulary::where('dictionary_name', 'jmdict')->delete();
+
+        $index = 0;
+        DB::beginTransaction();
+        while (($line = fgets($file)) !== false) {
+
+            $data = explode('|', $line);
+            
+            $vocabulary = new Vocabulary();
+            $vocabulary->dictionary_name = 'jmdict';
+            $vocabulary->word = $data[0];
+            $vocabulary->language = 'japanese';
+            $vocabulary->translation = $data[1];
+
+            if (mb_strlen($data[2]) > 2) {
+                $vocabulary->conjugations = $data[2];
+            } else {
+                $vocabulary->conjugations = '';
+            }
+
+            if ($index % 1000 == 0) {
+                echo($index . " ");
+                echo str_pad('',4096);
+            }
+
+            $vocabulary->save();
+            $index ++;
+        }    
+        DB::commit();
+
+        fclose($file);
         echo('finished');
         ob_implicit_flush(false);
     }

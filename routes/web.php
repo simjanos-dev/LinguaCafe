@@ -24,7 +24,8 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
 
     // tools
-    Route::get('/jmdict-text-generator', [App\Http\Controllers\AdminController::class, 'jmdictTextGenerator']);
+    Route::get('/jmdict-text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
+    Route::get('/jmdict-import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
 
     // images 
     Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
