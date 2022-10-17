@@ -416,6 +416,10 @@ class LessonController extends Controller
             $lesson->updatePhraseIds($phrase->id);
         }
 
+        // update course word count
+        $courseWordCount = intval(Lesson::where('user_id', Auth::user()->id)->where('course_id', $lesson->course_id)->sum('word_count'));
+        Course::where('user_id', Auth::user()->id)->where('id', $lesson->course_id)->update(['word_count' => $courseWordCount]);
+
         if (isset($request->lesson_id)) {
             return redirect('/lessons/' . $request->course);
         } else {
