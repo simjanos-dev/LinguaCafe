@@ -572,7 +572,7 @@
             margin-bottom: 10px;
         }
 
-        #vocab-search-results {
+        #search-results {
             display: block;
             overflow-y: scroll;
             height: 190px;
@@ -580,54 +580,76 @@
             width: 100%;
             border-radius: 8px;
             
-            .vocab-search-result {
+            .search-result {
                 position: relative;
                 display: block;
                 width: calc(100% - 5px);
                 margin: 0px 0px;
                 padding-left: 8px;
-                height: 36px;
+                //height: 36px;
                 line-height: 36px;
-                border-radius: 6px;
-                cursor: pointer;
-                user-select: none;
                 overflow: hidden;
 
-                div {
-                    display: inline-block;
-                    float: left;
-                    margin-right: 25px;
-                    font-size: 16px;
-                    
-                    &:nth-child(1) {
-                        width: 100px;
-                        line-height: 44px;
-                        overflow: hidden;
-                    }
-                    
-                    &:nth-child(2) {
-                        width: 170px;
-                        overflow: hidden;
-                    }
-                }
-
-                .add-result-button {
+                .search-result-title {
+                    display: block;
+                    text-align: right;
+                    background-color: rgb(116, 227, 154);
                     height: 30px;
-                    width: 26px;
-                    min-width: 26px;
-                    margin: 1px 3px;
-                    padding: 0px;
-                    text-align: center;
-                    display: inline-block;
-                    float: right;
-                    font-size: 16px;
-                    opacity: 0;
+                    line-height: 30px;
+                    padding: 0px 6px;
+                    border-radius: 6px;
+                    margin-bottom: 4px;
+
+                    &:nth-of-type(1) {
+                        margin-top: 10px;
+                    }
+
+                    .dictionary {
+                        float: left;
+                    }
                 }
 
-                &:hover {
-                    background: rgb(245, 245, 245);
-                    .add-result-button {
-                        opacity: 1;
+                .search-result-definition {
+                    display: block;
+                    position: relative;
+                    text-align: right;
+                    font-size: 15px;
+                    min-height: 30px;
+                    padding-right: 24px;
+                    border-radius: 6px;
+                    cursor: pointer;
+
+                    i {
+                        display: block;
+                        position: absolute;
+                        right: 5px;
+                        top: 11px;
+                    }
+
+                    &:hover {
+                        background-color: $tint;
+                    }
+                }
+
+                .search-result-other-forms-title {
+                    display: block;
+                    width: 100%;
+                    height: 18px;
+                    line-height: 18px;
+                    color: $font-color;
+                    font-size: 13px;
+                }
+
+                .search-result-other-forms {
+                    display: block;
+                    width: 100%;
+                    color: $font-color;
+                    font-size: 13px;
+                    line-height: 24px;
+                    .search-result-other-form {
+                        display: inline-block;
+                        float: left;
+                        margin-right: 10px;
                     }
                 }
             }

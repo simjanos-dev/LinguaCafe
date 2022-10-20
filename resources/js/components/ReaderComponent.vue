@@ -290,9 +290,8 @@
                     <ul v-if="(selectedTranslation.length > 1 || searchResults.length || selectedTranslation[0] !== '') && vocabEditMode == ''">
                         <template v-if="selectedTranslation.length > 1 || selectedTranslation[0] !== ''">
                             <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
-                        </template>    
-                        <template v-for="(definition, definitionIndex) in searchResults">
-                            <li class="suggestion" v-if="definitionIndex < 5">{{ definition.japanese }}: {{ definition.english }}</li>
+                        </template>
+                        <template v-for="(searchResult, searchResultIndex) in searchResults" v-if="settings.displaySuggestedTranslations">
                         </template>
                     </ul>
                 </div>
@@ -300,18 +299,27 @@
                 <!-- Translation editing -->
                 <div :class="{'vocab-translation': true }" v-if="vocabEditMode == 'translation'">
                     <span class="title">Search term</span>
-                    <input id="search-box" type="text" v-model="vocabSearch" @change="makeJishoRequest">
+                    <input id="search-box" type="text" v-model="vocabSearch" @change="makeSearchRequest">
                     <span class="title">Translation</span>
                     
                     <textarea v-model="uniqueWords[selection[0].uniqueWordIndex].translation" @change="updateNewWord" v-if="selection.length == 1"></textarea>
                     <textarea v-model="phraseTranslation" @change="updatePhrase" v-if="selectedPhrase !== -1"></textarea>
 
                     <span class="title">Search results</span>
-                    <div id="vocab-search-results">
-                        <div class="vocab-search-result" v-for="(definition, definitionIndex) in searchResults" :key="definitionIndex" @click="addDefinitionToInput(definition.english)">
-                            <div class="target-language" :title="definition.reading"><ruby>{{ definition.japanese }}<rt>{{ definition.reading }}</rt></ruby></div>
-                            <div class="own-language" :title="definition.english">{{ definition.english }}</div>
-                            <div class="add-result-button"><i class="fa fa-plus"></i></div>
+                    <div id="search-results">
+                        <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in searchResults" :key="searchresultIndex">
+                            <div class="search-result-title">{{ searchResult.word }} <div class="dictionary">jmdict</div></div>
+                            <div class="search-result-definition" v-for="(definition, definitionIndex) in searchResult.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
+                                {{ definition }} <i class="fa fa-plus"></i>
+                            </div>
+                            <template v-if="searchResult.otherForms.length">
+                                <div class="search-result-other-forms-title">Other forms:</div>
+                                <div class="search-result-other-forms">
+                                    <div class="search-result-other-form" v-for="(form, formIndex) in searchResult.otherForms" :key="formIndex">
+                                        {{ form }}
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
                     <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''">Close</button>
@@ -711,7 +719,12 @@
                     }
 
                     if (this.ongoingSelection.length == 1) {
-                        this.vocabSearch = this.ongoingSelection[0].word;
+                        if (this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word !== '') {
+                            this.vocabSearch = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word;
+                        } else {
+                            this.vocabSearch = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].word;
+                        }
+                        
                     }
                 }
 
@@ -756,7 +769,7 @@
                 }
 
                 this.updateVocabBoxPosition();
-                this.makeJishoRequest();
+                this.makeSearchRequest();
                 this.updatePhraseBorders();
             },
             removePhraseHover: function() {
@@ -825,15 +838,18 @@
                     }
                 }
             },
-            makeJishoRequest: function() {
+            makeSearchRequest: function() {
                 this.searchResults = [];
                 if (!this.selection.length) {
                     return;
                 }
 
-                axios.get('/jisho-request/' + this.vocabSearch)
+                axios.post('/dictionary/search', {
+                    dictionary: 'jmdict',
+                    term: this.vocabSearch
+                })
                 .then(function (response) {
-                    this.processJishoRequest(response.data.data);
+                    this.processSearchRequest(response.data);
                 }.bind(this))
                 .catch(function (error) {
                     console.log(error);
@@ -841,20 +857,16 @@
                 .then(function () {
                 });
             },
-            processJishoRequest: function(data) {
+            processSearchRequest: function(data) {
+                console.log(data);
                 this.searchResults = [];
                 for (var i = 0; i < data.length; i++) {
-                    for (var j = 0; j < data[i].senses.length; j++) {
-                        
-                        var definitions = data[i].senses[j].english_definitions;
-                        for (var k = 0; k < definitions.length; k++) {
-                            this.searchResults.push({
-                                english: definitions[k],
-                                japanese: data[i].senses[j].restrictions.length ? data[i].senses[j].restrictions[0] : data[i].slug,
-                                reading: data[i].japanese[0].reading,
-                            });
-                        }
-                    }
+                    this.searchResults.push({
+                        word: data[i].words.shift(),
+                        otherForms: data[i].words,
+                        definitions: data[i].definitions,
+                        conjugations: data[i].conjugations
+                    });
                 }
 
                 this.$nextTick(() => {

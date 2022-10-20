@@ -13,13 +13,25 @@ class CreateDictionaryTable extends Migration
      */
     public function up()
     {
-        Schema::create('dictionary', function (Blueprint $table) {
+        Schema::create('dictionary_ja_jmdict', function (Blueprint $table) {
             $table->id();
-            $table->string('language')->index();
-            $table->string('dictionary_name')->index();
-            $table->string('word')->index();
-            $table->text('translation');
+            $table->text('translations');
             $table->text('conjugations');
+            $table->timestamps();
+        });
+        
+        Schema::create('dictionary_ja_jmdict_words', function (Blueprint $table) {
+            $table->id();    
+            $table->integer('dictionary_ja_jmdict_id')->index();
+            $table->string('word')->index();
+            $table->timestamps();
+        });
+
+        Schema::create('dictionary_ja_jmdict_readings', function (Blueprint $table) {
+            $table->id();
+            $table->integer('dictionary_ja_jmdict_id')->index();
+            $table->string('reading')->index();
+            $table->text('word_restrictions');
             $table->timestamps();
         });
     }

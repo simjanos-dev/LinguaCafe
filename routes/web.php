@@ -31,6 +31,9 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
     Route::get('/images/course_covers/{name}', [App\Http\Controllers\ImageController::class, 'getCourseCoverImage']);
 
+    // dictionary
+    Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'search']);
+
     // vocabulary
     Route::get('/kanji-print', [App\Http\Controllers\VocabularyController::class, 'kanjiPrint']);
     Route::get('/vocabulary-practice/{mode?}/{lessonId?}/{courseId?}', [App\Http\Controllers\VocabularyController::class, 'vocabularyPractice']);
