@@ -167,6 +167,9 @@
 
             this.saveSettings();
             window.addEventListener('keyup', this.hotkey);
+            this.$nextTick(() => {
+                document.getElementById('review-box').addEventListener('fullscreenchange', this.updateFullscreen);
+            });
         },
         methods: {
             hotkey (event) {
@@ -193,6 +196,9 @@
             exitFullscreen() {
                 document.exitFullscreen();
                 this.settings.fullscreen = false;
+            },
+            updateFullscreen: function() {
+                this.settings.fullscreen = document.fullscreenElement !== null;
             },
             reveal() {
                 if (this.intoTheCorrectDeckAnimation || this.backToDeckAnimation || this.newCardAnimation) {

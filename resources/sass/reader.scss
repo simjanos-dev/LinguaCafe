@@ -6,8 +6,6 @@
 }
 
 #app {
-    overflow-y: scroll;
-    scroll-behavior: smooth;
     background-color: white !important;
 }
 
@@ -18,6 +16,14 @@
     min-height: 100%;
     width: 100%;
     background-color: white;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    
+    &.fullscreen-mode {
+        min-height: unset;
+        height: 100%;
+        overflow-y: auto;
+    }
 }
 
 #reader-box {

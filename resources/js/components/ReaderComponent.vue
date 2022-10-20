@@ -1,5 +1,5 @@
 <template>
-    <div id="fullscreen-box">
+    <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}">
         <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}">
             <div v-if="!finished" id="toolbar">
                 <div class="toolbar-button-group menus">
@@ -524,6 +524,7 @@
 
             this.saveSettings();
             document.getElementById('app').addEventListener('mouseup', this.finishSelection);
+            document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
             this.$forceUpdate();
             this.updatePhraseBorders();
             this.updateGlossary();
@@ -538,6 +539,9 @@
             exitFullscreen: function() {
                 document.exitFullscreen();
                 this.settings.fullscreen = false;
+            },
+            updateFullscreen: function() {
+                this.settings.fullscreen = document.fullscreenElement !== null;
             },
             saveSettings: function() {
                 if (this.settings.fontSize < 15) {
@@ -568,7 +572,7 @@
                         document.getElementById('selected-chapter').scrollIntoView();
                     }, 305);
                 } else {
-                    document.getElementById('app').scrollTo(0, 0);
+                    document.getElementById('fullscreen-box').scrollTo(0, 0);
                 }
             },
             getUniqueWordIndex: function(word) {
@@ -820,7 +824,7 @@
                     this.vocabBoxPosition.left = reader.right - reader.left - this.vocabBoxSize.width - 30;
                 }
 
-                this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('app').scrollTop;
+                this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
                 
                 this.$nextTick(() => {
                     var vocabBox = document.getElementById('vocab-box');
