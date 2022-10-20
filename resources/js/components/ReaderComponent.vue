@@ -443,7 +443,7 @@
                     top: 0
                 },
                 vocabBoxSize: {
-                    width: 400
+                    width: screen.width > 440 ? 400 : 380,
                 },
                 selectionOngoing: false,
                 searchResults: [],
@@ -818,13 +818,19 @@
 
                 this.vocabBoxPosition.left = positions.right - reader.left - this.vocabBoxSize.width / 2 - (positions.right - positions.left) / 2;
 
-                if (this.vocabBoxPosition.left < 90) {
-                    this.vocabBoxPosition.left = 90;
-                } else if (this.vocabBoxPosition.left > reader.right - reader.left - this.vocabBoxSize.width - 30) {
-                    this.vocabBoxPosition.left = reader.right - reader.left - this.vocabBoxSize.width - 30;
+                if (this.vocabBoxPosition.left < 5) {
+                    this.vocabBoxPosition.left = 5;
+                } else if (this.vocabBoxPosition.left > reader.right - reader.left - this.vocabBoxSize.width) {
+                    this.vocabBoxPosition.left = reader.right - reader.left - this.vocabBoxSize.width;
                 }
 
-                this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
+                if (this.settings.fullscreen) {
+                    this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
+                } else {
+                    console.log(document.getElementById('fullscreen-box').getBoundingClientRect().top);
+                    console.log(document.getElementById('app').scrollTop);
+                    this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
+                }
                 
                 this.$nextTick(() => {
                     var vocabBox = document.getElementById('vocab-box');

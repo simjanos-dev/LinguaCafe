@@ -16,7 +16,7 @@
     min-height: 100%;
     width: 100%;
     background-color: white;
-    overflow-y: scroll;
+    overflow-y: visible;
     scroll-behavior: smooth;
     
     &.fullscreen-mode {
@@ -34,7 +34,7 @@
     margin: 0px auto;
     padding: 0px;
     padding-left: 60px;
-    overflow: visible;
+    overflow-y: visible;
     transition: .2s;
 }
 
@@ -474,7 +474,7 @@
 
         #vocab-word-edit {
             display: block;
-            width: 380px;
+            width: calc(100% - 20px);
             margin: auto;
             margin-top: 20px;
             font-size: 13px;
@@ -811,7 +811,8 @@ button.btn.btn-primary.edit-stage-button {
     line-height: 1.3;
     margin: 0px auto;
     user-select: none;
-    padding: 10px 10px;
+    padding: 10px;
+    padding-left: 0px;
     transition: .2s;
     overflow-x: auto;
 
@@ -1022,6 +1023,12 @@ button.btn.btn-primary.edit-stage-button {
     }
 }
 
+@media (min-width: 1201px) {
+    #toolbar #back-to-book-button {
+        display: none;
+    }
+}
+
 
 @media (max-width: 650px) {
     #glossary .glossary-entry{
@@ -1037,10 +1044,49 @@ button.btn.btn-primary.edit-stage-button {
             font-size: 15px;
         }
     }
-}
+    #reader-box {
+        padding-left: 60px;
+    }
 
-@media (min-width: 1201px) {
-    #toolbar #back-to-book-button {
-        display: none;
+    #toolbar {
+        width: 60px;
+        margin-left: -60px;
+    
+        .toolbar-button-group {
+            padding: 5px 10px;
+        }
+    }
+}
+@media (max-width: 440px) {
+    #vocab-box {
+        width: 380px;
+
+        .vocab-word-box {    
+            #vocab-word-edit {
+                display: block;
+                width: calc(100% - 10px);
+                margin-top: 10px;
+    
+                .vocab-word-edit-cell:nth-child(1){
+                    width: 70px;
+                    text-align: right !important;
+                    padding-right: 20px;
+                    
+                }
+    
+                .vocab-word-edit-cell:nth-child(2){
+                    width: 135px;
+                }
+    
+                .vocab-word-edit-cell:nth-child(3){
+                    width: 135px;
+                    float: right;
+                }
+    
+                input {
+                    width: calc(100%);
+                }
+            }
+        }
     }
 }
