@@ -11,22 +11,13 @@ use App\Models\DailyAchivement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class VocabularyController extends Controller
+class ReviewController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
     }
-
-    public function kanjiPrint() {
-        $kanjiList = array_chunk(explode("\r\n", Storage::get('/public/kanji.txt')), 10);
-        $kanjiList = array_slice($kanjiList, 0, 6);
-
-        return view('kanji_print', [
-            'kanjiList' => $kanjiList
-        ]);
-    }
-
+    
     public function vocabularyPractice($mode = 'random', $lessonId = -1, $courseId = -1) {
         $selectedLanguage = Auth::user()->selected_language;
         $today = date('Y-m-d');
