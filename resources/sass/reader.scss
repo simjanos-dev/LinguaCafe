@@ -38,6 +38,16 @@
     transition: .2s;
 }
 
+#reader-box input[type="text"] {
+    border: 1px solid $border;
+    background: $light-gray;
+
+    &:focus, &:active {
+        border: 1px solid $border;
+        background: rgb(238, 238, 238);
+    }
+}
+
 #finish-reading-button {
     margin-top: 10px;
     margin-bottom: 500px;

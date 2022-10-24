@@ -9,6 +9,7 @@
 @import 'flash_card_practice';
 @import 'flash_card_collections';
 @import 'edit_flash_card_collection';
+@import 'vocabulary';
 @import 'courses';
 @import 'create_course';
 @import 'edit_lesson';
@@ -188,11 +189,12 @@ nav .nav-item.dropdown {
 }
 
 .btn {
-    box-sizing: border-box;
+    box-sizing: border-box !important;
     border-radius: 4px;
     transition: .2s;
     box-shadow: none !important;
     outline: none !important;
+    height: 38px !important;
 
     &.small {
         height: 30px;
@@ -209,6 +211,8 @@ nav .nav-item.dropdown {
 }
 
 .btn.btn-primary {
+    box-sizing: border-box !important;
+    height: 38px !important;
     color: $button-color;
     background-color: $button-background;
     border-color: $button-border-color;
@@ -311,16 +315,24 @@ a.btn-link:hover, a.btn-link:focus, a.btn-link:active  {
 }
   
 input[type="text"] {
+    box-sizing: border-box;
     border: 1px solid $border;
     border-radius: 4px;
     outline: none;
-    background: $light-gray;
+    background: white;
     padding: 0px 8px;
+    font-size: 14px;
+    height: 38px;
 
     &:focus, &:active {
         border: 1px solid $border;
         outline: none;
-        background: rgb(238, 238, 238);
+        background: white;
+    }
+
+    &.small {
+        height: 30px;
+        font-size: 12.5px;
     }
 }
 
@@ -393,6 +405,49 @@ label.switch {
     }
 }
 
+.pagination-button {
+    display: inline-block;
+    float: lefŧ;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    margin: 0px 4px;
+    border: 1px solid rgba(0, 0, 0, 0);
+    color: $font-color;
+    font-size: 15px;
+    //font-weight: bold;
+    user-select: none;
+    cursor: pointer;
+    transition: .2s;
+    border-radius: 4px;
+
+    &.basic {
+        display: none;
+
+        &.first, &.last {
+            width: 60px;
+        }
+    }
+
+    &:hover {
+        background-color: $tint;
+    }
+
+    &.selected {
+        background-color: white;
+        border: 1px solid $border-color;
+        cursor: unset;
+    }
+
+    &.dots {
+        width: auto;
+        background-color: unset;
+        margin: 0px;
+        cursor: unset;
+    }
+}
+
 @media (max-width: 1200px) {
     nav.navbar.navbar-light {
         display: block;
@@ -405,5 +460,28 @@ label.switch {
     div#app {
         width: 100%;
         margin-left: 0px;
+    }
+}
+
+@media (max-width: 800px) {
+    .pagination-button {
+        
+    }
+}
+
+@media (max-width: 600px) {
+    .pagination-button {
+        
+        margin: 0px;
+    }
+}
+
+@media (max-width: 500px) {
+    .pagination-button {
+        display:none;
+
+        &.basic {
+            display: inline-block;
+        }
     }
 }

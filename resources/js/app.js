@@ -27,6 +27,7 @@ Vue.component('vue-circle', VueCircle);
 Vue.component('vue-slider', VueSlider);
 Vue.component('reader-component', require('./components/ReaderComponent.vue').default);
 Vue.component('ebook-reader-mode-component', require('./components/EbookReaderModeComponent.vue').default);
+Vue.component('vocabulary-component', require('./components/VocabularyComponent.vue').default);
 Vue.component('vocabulary-practice-component', require('./components/VocabularyPracticeComponent.vue').default);
 Vue.component('edit-flash-card-collection-component', require('./components/EditFlashCardCollectionComponent.vue').default);
 Vue.component('flash-card-practice-component', require('./components/FlashCardPracticeComponent.vue').default);

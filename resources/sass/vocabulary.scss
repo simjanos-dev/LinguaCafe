@@ -1,0 +1,438 @@
+@import 'variables';
+
+#vocabulary {
+    width: 96%;
+    max-width: 1200px;
+    margin: 30px auto;
+
+    #small-screen-search-result-info {
+        display: none;
+    }
+
+    #search-line {
+        display: block;
+        width: 100%;
+        height: 40px;
+    }
+
+    #vocabulary-pagination {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin: 10px 0px;
+    }
+
+    #vocabulary-search-field {
+        display: block;
+        width: 100;
+        height: 40px;
+        margin-bottom: 10px;
+        
+        input {
+            border-right: none;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            float: right;
+            width: calc(100% - 90px);
+        }
+
+        button {
+            width: 90px;
+            float: right;
+            border-left: none;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            margin-bottom: 2px;
+        }
+    }
+
+    #vocabulary-filters {
+        display: block;
+        position: relative;
+        width: 100%;
+        min-height: 40px;
+        line-height: 40px;
+        margin: 5px 0px;
+
+        .vocabulary-filter {
+            display: inline-block;
+            float: left;
+            height: 40px;
+            width: auto;
+            line-height: 40px;
+            padding-right: 20px;
+            
+            &.show-filters {
+                display: none;
+                padding-right: 0px;
+            }
+
+            &.import, &.export, &.search-result-info {
+                float: right;
+                padding-right: 0px;
+                padding-left: 20px;
+            }
+
+            &.search-result-info {
+                color: lighten($font-color, 30%);
+            }
+
+            &.stage .vocabulary-filter-box .filter-popup,
+            &.import .vocabulary-filter-box .filter-popup,
+            &.export .vocabulary-filter-box .filter-popup {
+                width: 100px;
+            }
+
+            &.book .vocabulary-filter-box .filter-popup,
+            &.chapter .vocabulary-filter-box .filter-popup {
+                width: 240px;
+            }
+
+            &.translation .vocabulary-filter-box .filter-popup {
+                width: 120px;
+            }
+
+            &.phrases .vocabulary-filter-box .filter-popup {
+                width: 140px;
+            }
+
+            &.order-by .vocabulary-filter-box .filter-popup {
+                width: 120px;
+            }
+            
+            .vocabulary-filter-box {
+                box-sizing: border-box;
+                position: relative;
+                display: block;
+                width: 100%;
+                height: 100%;
+                overflow: visible;
+
+                .filter-popup {
+                    position: absolute;
+                    display: none;
+                    top: 34px;
+                    left: -2px;
+                    width: 200px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                    background: white;
+                    color: $font-color;
+                    border-radius: 4px;
+                    border: 1px solid $border;
+                    z-index: 2;
+                    text-align: center;
+                    box-shadow: 0 10px 15px rgba(0, 0, 0, .2);
+        
+                    &.visible {
+                        display: block;
+                    }
+
+                    .popup-button {
+                        display: block;
+                        width: 100%;
+                        min-height: 36px;
+                        line-height: 36px;
+                        user-select: none;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: $light-gray;
+                        }
+                    }
+                }
+
+                span {
+                    cursor: pointer;;
+                    color: lighten($font-color, 30%);
+                    user-select: none;
+    
+                    &:hover {
+                        color: $font-color;
+                    }
+                }
+            }
+
+            &.import .vocabulary-filter-box .filter-popup,
+            &.export .vocabulary-filter-box .filter-popup {
+                left: unset;
+                right: -2px;
+            }
+        }
+    }
+    
+    #vocabulary-list .vocabulary-line {
+        background-color: white;
+        border: 1px solid $border;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+
+        .vocabulary-popup {
+            position: absolute;
+            display: none;
+            top: 34px;
+            right: 28px;
+            width: 160px;
+            overflow-y: auto;
+            background: white;
+            color: $font-color;
+            border-radius: 4px;
+            border: 1px solid $border;
+            z-index: 2;
+            text-align: center;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, .2);
+
+            &.visible {
+                display: block;
+            }
+
+            .popup-button {
+                display: block;
+                width: 100%;
+                min-height: 36px;
+                line-height: 36px;
+                user-select: none;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: $light-gray;
+                }
+            }
+        }
+        
+        &:nth-child(1) {
+            height: 40px;
+            line-height: 40px;
+        }
+
+        &:not(:last-child) {
+            border-bottom: none;
+        }
+
+        &.header {
+            font-weight: bold;
+        }
+
+        .word, .reading, .word-with-reading, .stage, .translations, .actions {
+            display: inline-block;
+            float: left;
+            height: 40px;
+
+            &.word, &.reading {
+                width: 200px;
+            }
+
+            &.word-with-reading {
+                width: 200px;
+                display: none;
+            }
+
+            &.stage {
+                width: 100px;
+
+                span {
+                    display: block;
+                    margin: auto;
+                    height: 28px;
+                    line-height: 28px;
+                    margin-top: 6px;
+                    border-radius: 6px;
+                    width: 60px;
+                    background-color: $tint;
+                }
+
+                &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], 
+                &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+                    span {
+                        background-color: $highlighted-word;
+                    }
+                }
+
+                &[stage="2"] {
+                    span {
+                        background-color: $new-word;
+                    }
+                }
+            }
+            
+            &.actions {
+                position: relative;
+                width: 80px;
+                color: lighten($font-color, 30%);
+
+                i:hover {
+                    cursor: pointer;
+                    color: $font-color;
+                }
+            }
+
+            &.translations {
+                width: calc(100% - 200px - 200px - 100px - 80px);
+                overflow: hidden;
+            }
+        }
+
+    }
+}
+
+@media (max-width: 1100px) {
+    #vocabulary #vocabulary-list .vocabulary-line {
+        .word, .reading, .word-with-reading, .translations {
+            &.word, &.reading {
+                display: none;
+            }
+
+            &.word-with-reading {
+                display: inline-block;
+            }
+
+            &.translations {
+                width: calc(100% - 200px - 100px - 80px);
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+@media (max-width: 975px) {
+    #vocabulary #vocabulary-filters .vocabulary-filter.search {
+        width: 100%;
+
+        button {
+            
+        }
+
+        input {
+            width: calc(100% - 89px);
+        }
+    }
+}
+
+@media (max-width: 850px) {
+    #small-screen-search-result-info {
+        display: block;
+        color: lighten($font-color, 30%);
+    }
+
+    #vocabulary #vocabulary-list{
+        //margin-top: 50px;
+    }
+    
+    #vocabulary #vocabulary-filters {
+        margin-bottom: 40px;
+
+        .vocabulary-filter {
+            display: block;
+            float: none;
+            width: 100%;
+            height: auto;
+            min-height: 40px;            
+
+            &.import, &.export, &.search-result-info {
+                display: inline-block;
+                float: right;
+                width: auto;
+                height: 36px;
+            }
+
+            &.stage, &.book, &.chapter, &.translation, &.phrases, &.order-by {
+                padding: 0px;
+                padding-left: 0px;
+                font-weight: bold;
+
+                .vocabulary-filter-box .filter-popup {
+                    background-color: unset;
+                    border: none;
+                    position: relative;
+                    width: 100%;
+                    top: unset;
+                    left: unset;
+                    box-shadow: none;
+                    text-align: left;
+                    
+                    .popup-button {
+                        font-weight: normal;
+                        width: 100%;
+                        padding-left: 30px;
+                    }
+                }
+            }   
+        }
+    }
+
+    #vocabulary #vocabulary-filters.filters-hidden {
+        margin-bottom: 0px;
+        .vocabulary-filter {
+            display: none;
+            
+            &.import, &.export, &.search-result-info {
+                display: inline-block;
+            }
+
+            &.show-filters {
+                display: inline-block;
+                float: left;
+                width: auto;
+                height: 36px;
+            }
+        }
+    }
+
+    #vocabulary #vocabulary-filters .vocabulary-filter.show-filters {
+        display: inline-block;
+        float: left;
+        width: auto;
+        height: 36px;
+    }
+}
+
+@media (max-width: 800px) {
+    #vocabulary #vocabulary-list .vocabulary-line {
+        .word, .reading, .word-with-reading, .translations, .stage {
+            font-size: 13.8px;
+            
+            &.stage {
+                width: 50px;
+            }
+
+            &.stage span{
+                width: 100%;
+            }
+
+            &.translations {
+                width: calc(100% - 200px - 50px - 80px);
+            }
+        }
+    }
+}
+
+@media (max-width: 650px) {
+    #vocabulary #vocabulary-list .vocabulary-line {
+        .word, .reading, .word-with-reading, .translations, .stage, .actions {
+            &.word-with-reading {
+                width: calc(100% - 50px - 90px);
+            }
+
+            &.translations {
+                display: none;
+            }
+
+            &.actions {
+                width: 90px;
+            }
+        }
+    }
+}
+
+@media (max-width: 450px) {
+    #vocabulary {
+        #vocabulary-filters .vocabulary-filter.search-result-info  {
+            display: none !important;
+        }
+
+        #small-screen-search-result-info {
+            display: block;
+        }
+    }
+}

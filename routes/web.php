@@ -35,6 +35,10 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'search']);
 
     // vocabulary
+    Route::get('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);    
+
+    
+    // review
     Route::get('/vocabulary-practice/{mode?}/{lessonId?}/{courseId?}', [App\Http\Controllers\ReviewController::class, 'vocabularyPractice']);
     Route::post('/finish-vocabulary-practice', [App\Http\Controllers\ReviewController::class, 'finishVocabularyPractice']);
 

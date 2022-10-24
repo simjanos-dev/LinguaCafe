@@ -17,13 +17,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/courses') }}">Library</a>
                 </li>
-                <li id="vocabulary-select-dropdown" class="nav-item dropdown">
-                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        Vocabulary
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url('/vocabulary-practice/random') }}">Random</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('/vocabulary-practice/random') }}">Review</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/flash-card-collections') }}">Flash cards</a>
