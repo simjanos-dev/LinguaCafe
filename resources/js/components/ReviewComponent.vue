@@ -150,7 +150,7 @@
         mounted() {
             var data = {};
             if (this.$route.params.bookId !== undefined) {
-                data.courseId = this.$route.params.bookId;
+                data.bookId = this.$route.params.bookId;
             }
 
             if (this.$route.params.chapterId !== undefined) {

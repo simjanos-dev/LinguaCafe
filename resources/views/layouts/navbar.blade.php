@@ -15,7 +15,7 @@
                     <a class="nav-link" href="{{ url('/') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/courses') }}">Library</a>
+                    <a class="nav-link" href="{{ url('/books') }}">Library</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/vocabulary-practice/random') }}">Review</a>

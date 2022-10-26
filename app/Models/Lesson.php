@@ -13,7 +13,7 @@ class Lesson extends Model
 
     protected $fillable = [
         'user_id',
-        'course_id',
+        'book_id',
         'name',
         'read_count',
         'word_count',
@@ -23,7 +23,7 @@ class Lesson extends Model
     ];
 
     function getWordCounts($words) {
-        $lessons = Lesson::where('user_id', Auth::user()->id)->where('course_id', $this->id)->get();
+        $lessons = Lesson::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
         $uniqueWordIds = json_decode($this->unique_word_ids);
         $wordCounts = new \StdClass();
         $wordCounts->total = $this->word_count;

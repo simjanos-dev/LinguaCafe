@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\EncounteredWord;
-use App\Models\Course;
+use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\Phrase;
 use App\Models\DailyAchivement;
@@ -52,7 +52,7 @@ class HomeController extends Controller
             $lesson->name = $devLesson->name;
             $lesson->read_count = isset($devLesson->id) ? $lesson->read_count : 0;
             $lesson->word_count = 0;
-            $lesson->course_id = $devLesson->course_id;
+            $lesson->book_id = $devLesson->book_id;
             $lesson->language = $selectedLanguage;
             $lesson->raw_text = $devLesson->raw_text;
             $lesson->processed_text = '';

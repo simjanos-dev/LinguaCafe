@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EncounteredWord;
-use App\Models\Course;
+use App\Models\Book;
 
 class BookController extends Controller
 {
@@ -18,7 +18,7 @@ class BookController extends Controller
         $books = new \StdClass();
 
         $selectedLanguage = Auth::user()->selected_language;
-        $books = Course::where('language', $selectedLanguage)->where('user_id', Auth::user()->id)->orderBy('updated_at', 'DESC')->get();
+        $books = Book::where('language', $selectedLanguage)->where('user_id', Auth::user()->id)->orderBy('updated_at', 'DESC')->get();
         $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
 
         for ($i = 0; $i < count($books); $i++) {
@@ -30,7 +30,7 @@ class BookController extends Controller
 
     public function createBook(Request $request) {
         try {
-            $book = new Course();
+            $book = new Book();
             $book->user_id = Auth::user()->id;
             $book->name = $request->name;
             $book->cover_image = '';

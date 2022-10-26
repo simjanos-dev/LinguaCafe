@@ -20,14 +20,14 @@ class ReviewController extends Controller
     
     public function review(Request $request) {
         $lessonId = -1;
-        $courseId = -1;
+        $bookId = -1;
 
         if (isset($request->lessonId)) {
             $lessonId = $request->lessonId;
         }
 
-        if (isset($request->courseId)) {
-            $courseId = $request->courseId;
+        if (isset($request->bookId)) {
+            $bookId = $request->bookId;
         }
 
         $selectedLanguage = Auth::user()->selected_language;
@@ -57,10 +57,10 @@ class ReviewController extends Controller
                 $words = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->whereIn('word', $uniqueWords)->inRandomOrder()->get();
                 $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->whereIn('id', $uniquePhraseIds)->inRandomOrder()->get();
             }
-        } else if ($courseId !== -1) {
+        } else if ($bookId !== -1) {
             $uniqueWords = [];
             $uniquePhraseIds = [];
-            $lessons = Lesson::where('course_id', $courseId)->where('read_count', '>', 0)->where('user_id', Auth::user()->id)->get();
+            $lessons = Lesson::where('book_id', $bookId)->where('read_count', '>', 0)->where('user_id', Auth::user()->id)->get();
             foreach ($lessons as $lesson) {
                 $words = json_decode(gzuncompress($lesson->processed_text));
                 foreach ($words as $word) {

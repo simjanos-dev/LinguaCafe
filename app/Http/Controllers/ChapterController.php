@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EncounteredWord;
-use App\Models\Course;
+use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\Phrase;
 use App\Models\DailyAchivement;
@@ -22,8 +22,8 @@ class ChapterController extends Controller
 
     public function getChapters(Request $request) {
         $bookId = intval($request->bookId);
-        $book = Course::where('id', $bookId)->where('user_id', Auth::user()->id)->first();
-        $chapters = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('course_id', $bookId)->where('user_id', Auth::user()->id)->get();
+        $book = Book::where('id', $bookId)->where('user_id', Auth::user()->id)->first();
+        $chapters = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('book_id', $bookId)->where('user_id', Auth::user()->id)->get();
         $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
         $book->wordCount = $book->getWordCounts($words);
 
@@ -49,8 +49,8 @@ class ChapterController extends Controller
 
         $lesson = Lesson::where('id', $lessonId)->where('user_id', Auth::user()->id)->first();
         $uniqueWords = json_decode($lesson->unique_words);
-        $course = Course::where('id', $lesson->course_id)->where('user_id', Auth::user()->id)->first();
-        $lessons = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('course_id', $course->id)->where('user_id', Auth::user()->id)->get();
+        $book = Book::where('id', $lesson->book_id)->where('user_id', Auth::user()->id)->first();
+        $lessons = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('book_id', $book->id)->where('user_id', Auth::user()->id)->get();
         $encounteredWords = DB::table('encountered_words')->select(DB::raw('*, false as checked, 0 as appearance_in_text'))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereIn('word', $uniqueWords)->get();
         $words = json_decode(gzuncompress($lesson->processed_text));
 
@@ -113,10 +113,10 @@ class ChapterController extends Controller
         $data->words = $words;
         $data->uniqueWords = $encounteredWords;
         $data->phrases = $phrases;
-        $data->courseName = $course->name;
+        $data->bookName = $book->name;
         $data->lessonId = $lesson->id;
         $data->lessonName = $lesson->name;
-        $data->courseId = $course->id;
+        $data->bookId = $book->id;
         $data->language = $lesson->language;
         $data->lessons = $lessons;
         $data->wordCount = $lesson->word_count;
@@ -260,7 +260,7 @@ class ChapterController extends Controller
         $lesson->name = $request->name;
         $lesson->read_count = isset($request->lesson_id) ? $lesson->read_count : 0;
         $lesson->word_count = 0;
-        $lesson->course_id = $request->course;
+        $lesson->book_id = $request->book;
         $lesson->language = $selectedLanguage;
         $lesson->raw_text = $request->raw_text;
         $lesson->processed_text = '';
@@ -380,9 +380,9 @@ class ChapterController extends Controller
             $lesson->updatePhraseIds($phrase->id);
         }
 
-        // update course word count
-        $courseWordCount = intval(Lesson::where('user_id', Auth::user()->id)->where('course_id', $lesson->course_id)->sum('word_count'));
-        Course::where('user_id', Auth::user()->id)->where('id', $lesson->course_id)->update(['word_count' => $courseWordCount]);
+        // update book word count
+        $bookWordCount = intval(Lesson::where('user_id', Auth::user()->id)->where('book_id', $lesson->book_id)->sum('word_count'));
+        Book::where('user_id', Auth::user()->id)->where('id', $lesson->book_id)->update(['word_count' => $bookWordCount]);
 
         return 'success';
     }

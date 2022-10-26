@@ -2,7 +2,7 @@
     <div id="chapter-list">
         <div id="chapter-book" v-if="book !== null">
             <div class="image-box">
-                <img class="course-cover" :src="'/images/book_images/' + book.cover_image" v-if="book.cover_image !== ''">
+                <img class="book-cover" :src="'/images/book_images/' + book.cover_image" v-if="book.cover_image !== ''">
             </div>
             
             <div class="information-box">

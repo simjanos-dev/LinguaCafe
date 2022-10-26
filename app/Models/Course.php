@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Auth;
 
-class Course extends Model
+class Book extends Model
 {
     use HasFactory;
     
@@ -19,27 +19,27 @@ class Course extends Model
     ];
 
     function getWordCounts($words) {
-        $lessons = Lesson::where('user_id', Auth::user()->id)->where('course_id', $this->id)->get();
-        $courseUniqueWordIds = [];
+        $lessons = Lesson::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
+        $bookUniqueWordIds = [];
         
         foreach ($lessons as $lesson) {
             $uniqueWordIds = json_decode($lesson->unique_word_ids);
             
             foreach ($uniqueWordIds as $wordId) {
-                if (!in_array($wordId, $courseUniqueWordIds, true)) {
-                    array_push($courseUniqueWordIds, $wordId);
+                if (!in_array($wordId, $bookUniqueWordIds, true)) {
+                    array_push($bookUniqueWordIds, $wordId);
                 }
             }
         }
 
         $wordCounts = new \StdClass();
         $wordCounts->total = $this->word_count;
-        $wordCounts->unique = count($courseUniqueWordIds);
+        $wordCounts->unique = count($bookUniqueWordIds);
         $wordCounts->known = 0;
         $wordCounts->highlighted = 0;
         $wordCounts->new = 0;
         
-        foreach($courseUniqueWordIds as $wordId) {
+        foreach($bookUniqueWordIds as $wordId) {
             if ($words[$wordId]['stage'] < 0) {
                 $wordCounts->highlighted ++;
             }

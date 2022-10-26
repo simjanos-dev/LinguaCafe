@@ -57,7 +57,7 @@
                 var data = {
                     'name': this.name,
                     'raw_text': this.text,
-                    'course': this.book
+                    'book': this.book
                 };
 
                 if (this.chapter !== -1) {

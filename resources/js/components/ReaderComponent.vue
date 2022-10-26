@@ -44,7 +44,7 @@
 
             <!-- Settings -->
             <div id="toolbar-header" v-if="toolbar !== 'text'" :style="{'width': settings.maximumTextWidth}">
-                <template v-if="toolbar == 'chapters'">Chapters<span>{{ courseName }}</span></template>
+                <template v-if="toolbar == 'chapters'">Chapters<span>{{ bookName }}</span></template>
                 <template v-if="toolbar == 'glossary'">Glossary</template>
                 <template v-if="toolbar == 'settings'">Settings</template>
             </div>
@@ -399,7 +399,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <router-link class="sidebar-button" :to="'/chapters/' + courseId"> <button id="go-to-lessons-button" class="btn btn-primary">Go to lessons</button></router-link>
+                <router-link class="sidebar-button" :to="'/chapters/' + bookId"> <button id="go-to-lessons-button" class="btn btn-primary">Go to lessons</button></router-link>
                 <router-link class="sidebar-button" :to="'/chapters/read/' + nextLesson"> <button id="go-to-lessons-button" class="btn btn-primary" v-if="nextLesson !== -1">Go to next lesson</button></router-link>
             </div>
         </div>
@@ -464,11 +464,11 @@
                 words: [],
                 uniqueWords: [],
                 phrases: [],
-                courseName: null,
+                bookName: null,
                 lessonId: null,
                 wordCount: 0,
                 lessonName: null,
-                courseId: null,
+                bookId: null,
                 language: null,
                 lessons: [],
             }
@@ -483,11 +483,11 @@
                 this.words = data.words;
                 this.uniqueWords = data.uniqueWords;
                 this.phrases = data.phrases;
-                this.courseName = data.courseName;
+                this.bookName = data.bookName;
                 this.lessonId = data.lessonId;
                 this.wordCount = data.wordCount;
                 this.lessonName = data.lessonName;
-                this.courseId = data.courseId;
+                this.bookId = data.bookId;
                 this.language = data.language;
                 this.lessons = data.lessons;
 
