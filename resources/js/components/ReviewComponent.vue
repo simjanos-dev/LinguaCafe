@@ -120,6 +120,7 @@
         data: function() {
             return {
                 //card state and animations
+                language: '',
                 revealed: false,
                 backToDeckAnimation: false,
                 intoTheCorrectDeckAnimation: false,
@@ -131,8 +132,8 @@
                     fullscreen: false,
                 },
                 currentReviewIndex: -1,
-                reviews: JSON.parse(this.$props._reviews),
-                totalReviews: JSON.parse(this.$props._reviews).length,
+                reviews: [],
+                totalReviews: [],
                 seen: 0,
                 finishedReviews: [],
                 correctReviews: 0,
@@ -144,34 +145,56 @@
             }
         },
         props: {
-            _reviews: String,
-            _language: String
+            
         },
         mounted() {
-            if (this.reviews.length) {
-                this.currentReviewIndex = 0;
-            } else {
-                window.location.href = '/';
+            var data = {};
+            if (this.$route.params.bookId !== undefined) {
+                data.courseId = this.$route.params.bookId;
             }
 
-            this.settings.fontSize =  parseInt(this.$cookie.get('review-font-size'));
-            this.settings.sentenceMode =  this.$cookie.get('sentence-mode') == 'true';
-
-            if (this.$cookie.get('review-font-size') === null) {
-                this.settings.fontSize =  20;
+            if (this.$route.params.chapterId !== undefined) {
+                data.lessonId = this.$route.params.chapterId;
             }
 
-            if (this.settings.sentenceMode === null) {
-                this.settings.sentenceMode =  false;
-            }
+            axios.post('/review', data).then(function (response) {
+                var data = response.data;
+                this.reviews = data.reviews;
+                this.totalReviews = data.reviews.length;
+                this.language = data.language;
+                
+                this.afterMounted();
+            }.bind(this)).catch(function (error) {
+                
+            }).then(function () {
 
-            this.saveSettings();
-            window.addEventListener('keyup', this.hotkey);
-            this.$nextTick(() => {
-                document.getElementById('review-box').addEventListener('fullscreenchange', this.updateFullscreen);
             });
         },
         methods: {
+            afterMounted: function() {
+                if (this.reviews.length) {
+                    this.currentReviewIndex = 0;
+                } else {
+                    window.location.href = '/';
+                }
+
+                this.settings.fontSize =  parseInt(this.$cookie.get('review-font-size'));
+                this.settings.sentenceMode =  this.$cookie.get('sentence-mode') == 'true';
+
+                if (this.$cookie.get('review-font-size') === null) {
+                    this.settings.fontSize =  20;
+                }
+
+                if (this.settings.sentenceMode === null) {
+                    this.settings.sentenceMode =  false;
+                }
+
+                this.saveSettings();
+                window.addEventListener('keyup', this.hotkey);
+                this.$nextTick(() => {
+                    document.getElementById('review-box').addEventListener('fullscreenchange', this.updateFullscreen);
+                });
+            },
             hotkey (event) {
                 if (!this.finished && !this.revealed && event.which == 13) {
                     this.reveal();
@@ -337,12 +360,12 @@
                     }
                 }
 
-                axios.post('/finish-vocabulary-practice', {
+                axios.post('/review/finish', {
                     readWords: this.readWords,
                     reviewCount: this.readSentences,
                     changedReviews: JSON.stringify(changedReviews)
                 }).then(function (response) {
-                    window.location.href = '/';
+                    this.$router.push('/');
                 }.bind(this)).catch(function (error) {
                     console.log(error);
                 }).then(function () {

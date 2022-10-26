@@ -18,8 +18,8 @@ class ImageController extends Controller
         return Storage::get('/images/flags/' . $name . '.png');
     }
 
-    public function getCourseCoverImage($name)
+    public function getBookImage($name)
     {
-        return Storage::get('/images/course_images/' . $name);
+        return Storage::get('/images/book_images/' . $name);
     }
 }

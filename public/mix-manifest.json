@@ -1,7 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
-    "/css/kanji_print.css": "/css/kanji_print.css",
     "/css/ebook_reader_mode.css": "/css/ebook_reader_mode.css",
     "/css/reader.css": "/css/reader.css"
 }

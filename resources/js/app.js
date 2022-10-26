@@ -3,15 +3,16 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import axios from 'axios'
+import Vue from 'vue';
+import VueSlider from 'vue-slider-component';
+import VueRouter from 'vue-router';
 
 require('./bootstrap');
 window.Vue = require('vue').default;
 var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
-import axios from 'axios'
-import Vue from 'vue';
-import VueCircle from 'vue2-circle-progress';
-import VueSlider from 'vue-slider-component';
+window.Vue.use(VueRouter);
 
 /**
  * The following block of code may be used to automatically register your
@@ -23,14 +24,37 @@ import VueSlider from 'vue-slider-component';
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-Vue.component('vue-circle', VueCircle);
 Vue.component('vue-slider', VueSlider);
-Vue.component('reader-component', require('./components/ReaderComponent.vue').default);
-Vue.component('ebook-reader-mode-component', require('./components/EbookReaderModeComponent.vue').default);
-Vue.component('vocabulary-component', require('./components/VocabularyComponent.vue').default);
-Vue.component('vocabulary-practice-component', require('./components/VocabularyPracticeComponent.vue').default);
-Vue.component('edit-flash-card-collection-component', require('./components/EditFlashCardCollectionComponent.vue').default);
-Vue.component('flash-card-practice-component', require('./components/FlashCardPracticeComponent.vue').default);
+Vue.component('layout-component', require('./components/LayoutComponent.vue').default);
+
+
+const HomeComponent = require('./components/HomeComponent.vue').default;
+const BookListComponent = require('./components/BookListComponent.vue').default;
+const CreateBookComponent = require('./components/CreateBookComponent.vue').default;
+const ChapterListComponent = require('./components/ChapterListComponent.vue').default;
+const EditChapterComponent = require('./components/EditChapterComponent.vue').default;
+const ReaderComponent = require('./components/ReaderComponent.vue').default;
+const FlashcardCollectionListComponent = require('./components/FlashcardCollectionListComponent.vue').default;
+const FlashcardCollectionComponent = require('./components/FlashcardCollectionComponent.vue').default;
+const ReviewComponent = require('./components/ReviewComponent.vue').default;
+const VocabularyComponent = require('./components/VocabularyComponent.vue').default;
+
+const router = new VueRouter({
+    mode: 'history',
+    routes: [
+        { path: '/', component: HomeComponent },
+        { path: '/books', component: BookListComponent },
+        { path: '/books/create', component: CreateBookComponent },
+        { path: '/chapters/:bookId', component: ChapterListComponent },
+        { path: '/chapters/read/:chapterId', component: ReaderComponent },
+        { path: '/chapters/create/:bookId', component: EditChapterComponent },
+        { path: '/chapters/edit/:bookId/:chapterId', component: EditChapterComponent },
+        { path: '/flashcards', component: FlashcardCollectionListComponent },
+        { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollectionComponent },
+        { path: '/review/:bookId?/:chapterId?', component: ReviewComponent },
+        { path: '/vocabulary/search', component: VocabularyComponent },
+    ]
+})
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -39,6 +63,7 @@ Vue.component('flash-card-practice-component', require('./components/FlashCardPr
  */
 
 const app = new Vue({
+    router,
     el: '#app',
 });
 

@@ -15,7 +15,6 @@ mix.js('resources/js/app.js', 'public/js')
     .vue()
     .sass('resources/sass/reader.scss', 'public/css')
     .sass('resources/sass/ebook_reader_mode.scss', 'public/css')
-    .sass('resources/sass/kanji_print.scss', 'public/css')
     .sass('resources/sass/app.scss', 'public/css')
     .browserSync({
         proxy: 'langdev.com',

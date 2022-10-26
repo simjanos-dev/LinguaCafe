@@ -34,7 +34,7 @@
             </div>
 
             <!-- book filter -->
-            <div class="vocabulary-filter book">
+            <div class="vocabulary-filter book" v-if="books.length">
                 <div class="vocabulary-filter-box">
                     <span @click.stop="toggleFilter('book')">
                         Book 
@@ -43,7 +43,7 @@
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'book'}">
                         <div class="popup-button" @click="applyFilter('book', 'any', -1)">Any</div>
-                        <div class="popup-button" v-for="(book, index) in _books" :key="index" @click="applyFilter('book', book.id, index)">{{ book.name }}</div>
+                        <div class="popup-button" v-for="(book, index) in books" :key="index" @click="applyFilter('book', book.id, index)">{{ book.name }}</div>
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'chapter'}">
                         <div class="popup-button" @click="applyFilter('chapter', 'any')">Any</div>
-                        <div class="popup-button" v-for="(chapter, index) in _books[filters.bookIndex].chapters" :key="index" @click="applyFilter('chapter', chapter.id)">{{ chapter.name }}</div>
+                        <div class="popup-button" v-for="(chapter, index) in books[filters.bookIndex].chapters" :key="index" @click="applyFilter('chapter', chapter.id)">{{ chapter.name }}</div>
                     </div>
                 </div>
             </div>
@@ -144,7 +144,7 @@
 
             <!-- search result info -->
             <div class="vocabulary-filter search-result-info">
-                {{ _words.length }} words found
+                {{ words.length }} words found
             </div>
 
             <!-- show / hide filters -->
@@ -161,6 +161,7 @@
             </div>
         </div>
 
+        <!-- vocabulary list -->
         <div id="vocabulary-list">
             <div class="vocabulary-line header">
                 <div class="word">Word</div>
@@ -171,7 +172,7 @@
                 <div class="actions">Options</div>
             </div>    
 
-            <div class="vocabulary-line" v-for="(word, index) in _words" :key="index">
+            <div class="vocabulary-line" v-for="(word, index) in words" :key="index">
                 <div class="word">{{ word.word }}</div>
                 <div class="reading">{{ word.reading }}</div>
                 <div class="word-with-reading"><ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby></div>
@@ -188,24 +189,24 @@
 
         <!-- search result info -->
         <div id="small-screen-search-result-info">
-            {{ _words.length }} words found
+            {{ words.length }} words found
         </div>
 
         <div id="vocabulary-pagination">
             <!-- normal pagination -->
-            <div class="pagination-button" v-if="_currentPage > 4">1</div>
-            <div class="pagination-button dots" v-if="_currentPage > 5">...</div>
-            <template v-for="(page, index) in _pageCount">
-                <div :class="{'pagination-button': true, 'selected': page == _currentPage}" :key="index" v-if="page >= _currentPage - paginationLimitBefore && page <= _currentPage + paginationLimitAfter">{{ page }}</div>
+            <div class="pagination-button" v-if="currentPage > 4">1</div>
+            <div class="pagination-button dots" v-if="currentPage > 5">...</div>
+            <template v-for="(page, index) in pageCount">
+                <div :class="{'pagination-button': true, 'selected': page == currentPage}" :key="index" v-if="page >= currentPage - paginationLimitBefore && page <= currentPage + paginationLimitAfter">{{ page }}</div>
             </template>
-            <div class="pagination-button dots" v-if="_currentPage < _pageCount - 4">...</div>
-            <div class="pagination-button" v-if="_currentPage < _pageCount - 3">{{ _pageCount }}</div>
+            <div class="pagination-button dots" v-if="currentPage < pageCount - 4">...</div>
+            <div class="pagination-button" v-if="currentPage < pageCount - 3">{{ pageCount }}</div>
 
             <!-- pagination below 500px width -->
             <div class="pagination-button basic first">First</div>
-            <div class="pagination-button basic" v-if="_currentPage > 0">{{ _currentPage - 1 }}</div>
-            <div class="pagination-button basic selected">{{ _currentPage }}</div>
-            <div class="pagination-button basic" v-if="_currentPage < _pageCount - 1">{{ _currentPage + 1 }}</div>
+            <div class="pagination-button basic" v-if="currentPage > 0">{{ currentPage - 1 }}</div>
+            <div class="pagination-button basic selected">{{ currentPage }}</div>
+            <div class="pagination-button basic" v-if="currentPage < pageCount - 1">{{ currentPage + 1 }}</div>
             <div class="pagination-button basic last">Last</div>
         </div>
     </div>
@@ -220,7 +221,12 @@
                 visiblePopup: '',
                 paginationLimitBefore: 3,
                 paginationLimitAfter: 3,
-                
+                words: [],
+                books: [],
+                chapters: [],
+                pageCount: 1,
+                currentPage: 1,
+
                 filters: {
                     bookIndex: -1,
                     stage: 'any',
@@ -233,20 +239,27 @@
             }
         },
         props: {
-            _words: Array,
-            _books: Array,
-            _pageCount: Number,
-            _currentPage: Number
         },
         mounted() {
             document.getElementById('app').addEventListener('scroll', () => { this.visiblePopup = '' });
-            if (this._pageCount - this._currentPage < 3) {
-                this.paginationLimitBefore += 3 - (this._pageCount - this._currentPage);
-            }
 
-            if (this._currentPage < 4) {
-                this.paginationLimitAfter += 4 - this._currentPage;
-            }
+            axios.post('/vocabulary/search', {
+                
+            }).then(function (response) {
+                var data = response.data;
+                this.words = data.words;
+                this.books = data.books;
+                this.pageCount = data.pageCount;
+                this.currentPage = data.currentPage;
+
+                if (this.pageCount - this.currentPage < 3) {
+                    this.paginationLimitBefore += 3 - (this.pageCount - this.currentPage);
+                }
+
+                if (this.currentPage < 4) {
+                    this.paginationLimitAfter += 4 - this.currentPage;
+                }
+            }.bind(this)).catch(function (error) {}).then(function () {});
         },
         methods: {
             toggleFilter: function(newItem) {
@@ -263,8 +276,6 @@
                     this.filters.chapter = 'any';
                     this.filters.bookIndex = newBookIndex;
                 }
-
-                console.log(this.filters);
             }
         }
     }

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class VocabularyController extends Controller
 {
-    function search() {
+    public function search(Request $request) {
         $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
                             '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
                             '«', '»', "'", '’', '–', 'NEWLINE', 'newline', ' '];
@@ -32,9 +32,11 @@ class VocabularyController extends Controller
         $search = EncounteredWord::inRandomOrder()->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereNotIn('word', $wordsToSkip);
 
         $search = $search->where('translation', '<>', '')->limit(30)->get();
-        return view('vocabulary_search', [
-            'words' => $search,
-            'books' => $books
-        ]);
+        
+        $data = new \StdClass();
+        $data->words = $search;
+        $data->books = $books;
+        
+        return json_encode($data);
     }
 }

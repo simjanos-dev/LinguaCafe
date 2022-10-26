@@ -1,0 +1,14 @@
+#edit-chapter-form {
+    display: block;
+    margin: auto;
+    width: 600px;
+
+    .form-line {
+        display: block;
+        width: 100%;
+
+        input, select, textarea {
+            width: 100%;
+        }
+    }
+}

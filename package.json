@@ -30,6 +30,7 @@
     "dependencies": {
         "@popperjs/core": "^2.11.6",
         "vue-cookie": "^1.1.4",
+        "vue-router": "3.6.5",
         "vue-slider-component": "3.2.20",
         "vue2-circle-progress": "1.2.3"
     }

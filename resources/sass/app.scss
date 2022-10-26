@@ -6,14 +6,14 @@
 
 // Pages
 @import 'vocabulary_practice';
-@import 'flash_card_practice';
 @import 'flash_card_collections';
 @import 'edit_flash_card_collection';
+@import 'reader';
 @import 'vocabulary';
-@import 'courses';
-@import 'create_course';
-@import 'edit_lesson';
-@import 'lessons';
+@import 'books';
+@import 'create_book';
+@import 'edit_chapter';
+@import 'chapters';
 @import 'slider';
 
 .vue-slider-ltr .vue-slider-mark-label, 
@@ -21,7 +21,7 @@
     margin-top: 5px !important;
 }
 
-html, body, div#app {
+html, body, div#app, #page, #content {
     box-sizing: border-box;
     height: 100%;
     width: 100%;
@@ -40,6 +40,24 @@ html, body, div#app {
 ::-webkit-scrollbar-thumb {
     background: rgb(180, 180, 180);
     border-radius: 2px;
+}
+
+.text-box {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    margin: 10px 0px;
+    background-color: $light-gray;
+    border: 1px solid $border;
+    color: $font-color;
+    padding: 10px;
+    border-radius: 6px;
+
+    &.red {
+        background-color: lighten($red, 30%);
+        border: 1px solid $red;
+        color: darken($red, 30%);
+    }
 }
 
 div#app {
@@ -197,11 +215,11 @@ nav .nav-item.dropdown {
     height: 38px !important;
 
     &.small {
-        height: 30px;
-        line-height: 28px;
-        padding: 0px 10px;
-        font-size: 13px;
-        min-width: 60px;
+        height: 30px !important;
+        line-height: 28px !important;
+        padding: 0px 10px !important;
+        font-size: 13px !important;
+        min-width: 60px !important;
     }
 
     &:active, &:focus {
@@ -314,7 +332,7 @@ a.btn-link:hover, a.btn-link:focus, a.btn-link:active  {
     box-shadow: 0px 0px 3px 0.5px rgba($font-color, 1);
 }
   
-input[type="text"] {
+input[type="text"], select {
     box-sizing: border-box;
     border: 1px solid $border;
     border-radius: 4px;
@@ -325,7 +343,7 @@ input[type="text"] {
     height: 38px;
 
     &:focus, &:active {
-        border: 1px solid $border;
+        border: 1px solid darken($border, 20%);
         outline: none;
         background: white;
     }
@@ -338,16 +356,17 @@ input[type="text"] {
 
 textarea {
     border: 1px solid $border;
+    background: white;
     border-radius: 4px;
     outline: none;
-    background: $light-gray;
     padding: 8px;
     resize: none;
+    font-size: 14px;
     
     &:focus, &:active {
-        border: 1px solid $border;
+        border: 1px solid darken($border, 20%);
         outline: none;
-        background: rgb(238, 238, 238);
+        background: white;
     }
 }
 

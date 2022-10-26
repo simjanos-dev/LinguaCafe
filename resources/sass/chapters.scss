@@ -1,18 +1,4 @@
-button#lessons-back-button {
-    margin: 0px 25px;
-}
-
-button#random-lesson-button {
-    margin: 0px 25px;
-}
-
-hr {
-    width: 95%;
-    max-width: 1200px;
-    background-color: $border;
-}
-
-#course {
+#chapter-book {
     position: relative;
     display: block;
     box-sizing: border-box;
@@ -110,7 +96,7 @@ hr {
     }
 }
 
-#lessons {
+#chapters {
     display: block;
     box-sizing: border-box;
     width: 90%;
@@ -118,7 +104,7 @@ hr {
     margin: auto;
     padding-bottom: 25px;
 
-    .lesson {
+    .chapter {
         position: relative;
         display: block;
         box-sizing: border-box;

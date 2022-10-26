@@ -1,8 +1,8 @@
-button#courses-back-button {
+button#books-back-button {
     margin: 0px 25px;
 }
 
-button#create-course-button {
+button#create-book-button {
     margin-right: 25px;
 }
 
@@ -10,7 +10,7 @@ button#sentences-button {
     margin: 0px 25px;
 }
 
-#courses {
+#books {
     display: block;
     box-sizing: border-box;
     width: 90%;
@@ -18,7 +18,7 @@ button#sentences-button {
     margin: auto;
     padding-bottom: 25px;
     
-    .course {
+    .book {
         position: relative;
         display: block;
         box-sizing: border-box;

@@ -22,8 +22,6 @@
 </head>
 <body><!--
 --><div id="app"><!--
-    -->@include('layouts.navbar')<!--
-    -->@include('layouts.sidebar')<!--
-    -->@yield('content')<!--
+    --><layout-component></layout-component><!--
 --></div><!--
 --></body></html>

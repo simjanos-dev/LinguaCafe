@@ -1,11 +1,17 @@
 <template>
-    <div id="edit-flash-card-collection-form">
-        <button id="save-flash-card-collection-button" class="btn btn-primary" @click="save">Save flash card collection</button>
+    <div id="edit-flashcard-collection-form">
+        <button id="save-flashcard-collection-button" class="btn btn-primary" @click="save">Save flash card collection</button>
         <button class="btn btn-primary" @click="cancel()">Cancel</button>
-        <input id="import-file" class="form-control" type="file" ref="importFileInput" @change="importFlashCards()">
+        <input id="import-file" class="form-control" type="file" ref="importFileInput" @change="importFlashcards()">
+        <div class="text-box red" v-if="errors.save">
+            Something went wrong. Please try again.
+        </div>
         <div class="form-group">
             <label class="form-check-label" for="name">Name</label>
             <input class="form-control" type="text" name="name" v-model="name" required>
+        </div>
+        <div class="text-box red" v-if="errors.emptyName">
+            You must type in a name.
         </div>
         <div class="form-group">
             <label class="form-check-label" for="type">Type</label>
@@ -14,7 +20,7 @@
                 <option value="typing">Typing</option>
             </select>
         </div><br>
-        <table id="edit-flash-cards-table" class="table table-sm table-bordered">
+        <table id="edit-flashcards-table" class="table table-sm table-bordered">
             <thead>
                 <tr>
                     <th>#</th>
@@ -27,29 +33,29 @@
             </thead>
             <tbody>
                 <template v-for="(flashCard, index) in flashCards">
-                    <tr v-if="!flashCard.deleted && selectedFlashCard !== index" :key="index">
+                    <tr v-if="!flashCard.deleted && selectedFlashcard !== index" :key="index">
                         <td>{{ (index + 1) }}</td>
                         <td><div :title="flashCard.level">{{ flashCard.level }}</div></td>
                         <td><div :title="flashCard.sentence">{{ flashCard.sentence }}</div></td>
                         <td><div :title="flashCard.reading">{{ flashCard.reading }}</div></td>
                         <td><div :title="flashCard.translation">{{ flashCard.translation }}</div></td>
                         <td>
-                            <button class="btn btn-primary flash-card-button" @click="editFlashCard(index)"><i class="fa fa-edit"></i></button>
-                            <button class="btn btn-primary flash-card-button" @click="deleteFlashCard(index)"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-primary flashcard-button" @click="editFlashcard(index)"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-primary flashcard-button" @click="deleteFlashcard(index)"><i class="fa fa-trash"></i></button>
                         </td>
                     </tr>
-                    <tr class="edit" v-if="!flashCard.deleted && selectedFlashCard == index" :key="index">
+                    <tr class="edit" v-if="!flashCard.deleted && selectedFlashcard == index" :key="index">
                         <td>{{ '#' + (index + 1) }}</td>
                         <td>{{ flashCard.level }}</td>
                         <td><textarea class="form-control" v-model="flashCard.sentence"></textarea></td>
                         <td><textarea class="form-control" v-model="flashCard.reading"></textarea></td>
                         <td><textarea class="form-control" v-model="flashCard.translation"></textarea></td>
-                        <td><button class="btn btn-primary flash-card-button" @click="selectedFlashCard = -1"><i class="fa fa-check"></i></button></td>
+                        <td><button class="btn btn-primary flashcard-button" @click="selectedFlashcard = -1"><i class="fa fa-check"></i></button></td>
                     </tr>
                 </template>
             </tbody>
         </table>
-        <button class="btn btn-primary" @click="addFlashCard()">Add flash card</button>
+        <button class="btn btn-primary" @click="addFlashcard()">Add flash card</button>
     </div>
 </template>
 
@@ -57,54 +63,51 @@
     export default {
         data: function() {
             return {
-                language: this.$props._language,
-                id: this.$props._id,
-                name: this.$props._name,
-                type: this.$props._type,
+                errors: {
+                    save: false,
+                    emptyName: false,
+                },
+                language: '',
+                id: -1,
+                name: '',
+                type: 'normal',
                 flashCards: [],
-                selectedFlashCard: -1,
+                selectedFlashcard: -1,
             }
         },
         props: {
-            _language: {
-                type: String,
-                default: ''
-            },
-            _id: {
-                type: Number,
-                default: -1
-            },
-            _name: {
-                type: String,
-                default: ''
-            },
-            _type: {
-                type: String,
-                default: 'normal'
-            },
-            _flashCards: {
-                type: String,
-                default: '{}'
-            }
         },
         mounted() {
-            var flashCardsProp = JSON.parse(this.$props._flashCards);
-            for (var i = 0; i < flashCardsProp.length; i++) {
-                this.flashCards.push({
-                    id: flashCardsProp[i].id,
-                    level: flashCardsProp[i].level,
-                    sentence: flashCardsProp[i].sentence_raw,
-                    reading: flashCardsProp[i].reading,
-                    translation: flashCardsProp[i].translation,
-                    deleted: false
-                });
+            if (this.$route.params.flashcardCollectionId !== undefined) {
+                axios.post('/flashcards/get', {
+                    flashcardCollectionId: this.$route.params.flashcardCollectionId,
+                }).then(function (response) {
+                    var data = response.data;
+                    this.language = data.language;
+                    this.id = data.flashcardCollection.id;
+                    this.name = data.flashcardCollection.name;
+                    this.type = data.flashcardCollection.type;;
+                    
+
+                    var flashcards = data.flashcards;
+                    for (var i = 0; i < flashcards.length; i++) {
+                        this.flashCards.push({
+                            id: flashcards[i].id,
+                            level: flashcards[i].level,
+                            sentence: flashcards[i].sentence_raw,
+                            reading: flashcards[i].reading,
+                            translation: flashcards[i].translation,
+                            deleted: false
+                        });
+                    }
+                }.bind(this)).catch(function (error) {}).then(function () {});
             }
         },
         methods: {
-            editFlashCard(index) {
-                this.selectedFlashCard = index;
+            editFlashcard(index) {
+                this.selectedFlashcard = index;
             },
-            importFlashCards() {
+            importFlashcards() {
                 var reader = new FileReader();
                 reader.readAsText(this.$refs.importFileInput.files[0], "UTF-8");
                 reader.onload =  event => {
@@ -132,7 +135,7 @@
                     console.error(event);
                 }
             },
-            addFlashCard() {
+            addFlashcard() {
                 this.flashCards.push({
                     id: -1,
                     level: 1,
@@ -142,7 +145,7 @@
                     deleted: false
                 });
             },
-            deleteFlashCard(index) {
+            deleteFlashcard(index) {
                 if (this.flashCards[index].id == -1) {
                     this.flashCards.splice(index, 1);
                 } else {
@@ -150,14 +153,23 @@
                 }
             },
             save() {
-                axios.post('/save-flash-card-collection', {
+                if (this.name == '') {
+                    this.errors.emptyName = true;
+                    return;
+                }
+
+                axios.post('/flashcards/save', {
                     flashCardCollectionId: this.id,
                     name: this.name,
                     type: this.type,
                     flashCards: JSON.stringify(this.flashCards)
                 })
                 .then(function (response) {
-                    window.location.href = '/flash-card-collections';
+                    if (response.data == 'success') {
+                        this.$router.push('/flashcards');
+                    } else {
+                        this.errors.save = true;
+                    }
                 }.bind(this))
                 .catch(function (error) {
                     
@@ -167,7 +179,7 @@
                 });
             },
             cancel() {
-                window.location.href = '/flash-card-collections';
+                this.$router.push('/flashcards');
             }
         }
     }

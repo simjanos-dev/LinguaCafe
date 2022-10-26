@@ -1,8 +1,8 @@
-button#create-flash-card-collection-button {
+button#create-flashcard-collection-button {
     margin: 0px 25px;
 }
 
-.flash-card-collection {
+.flashcard-collection {
     position: relative;
     display: block;
     box-sizing: border-box;
@@ -17,14 +17,14 @@ button#create-flash-card-collection-button {
     color: $font-color;
 
 
-    .flash-card-collection-name {
+    .flashcard-collection-name {
         width: 100%;
         height: 60px;
         line-height: 80px;
         font-size: 18px;
     }
 
-    .flash-card-collection-buttons {
+    .flashcard-collection-buttons {
         width: 100%;
         height: 60px;
         text-align: right;

@@ -16,50 +16,59 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::group(['middleware' => 'web'], function () {
+    
+    // vue routes
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
-    Route::get('/jisho-request/{keyword}', [App\Http\Controllers\HomeController::class, 'jishoRequest']);
+    Route::get('/books', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/books/create', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/chapters/{id}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/chapters/read/{id}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/chapters/create/{bookId}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/chapters/edit/{bookId}/{chapterId}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/flashcards', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/flashcards/edit/{flashcardCollectionId?}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/review/{bookId?}/{chapterId?}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/vocabulary/{search?}/{chapterId?}', [App\Http\Controllers\HomeController::class, 'index']);
+
+    
+    // home
+    Route::post('/statistics', [App\Http\Controllers\HomeController::class, 'statistics']);
     Route::get('/language/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
 
     // tools
-    Route::get('/jmdict-text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
-    Route::get('/jmdict-import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
+    Route::get('/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
+    Route::get('/jmdict/import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
 
     // images 
     Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
-    Route::get('/images/course_covers/{name}', [App\Http\Controllers\ImageController::class, 'getCourseCoverImage']);
+    Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
     // dictionary
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'search']);
 
     // vocabulary
-    Route::get('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);    
+    Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);    
 
     
     // review
-    Route::get('/vocabulary-practice/{mode?}/{lessonId?}/{courseId?}', [App\Http\Controllers\ReviewController::class, 'vocabularyPractice']);
-    Route::post('/finish-vocabulary-practice', [App\Http\Controllers\ReviewController::class, 'finishVocabularyPractice']);
+    Route::post('/review', [App\Http\Controllers\ReviewController::class, 'review']);
+    Route::post('/review/finish', [App\Http\Controllers\ReviewController::class, 'finishReview']);
 
     // flash cards
-    Route::get('/flash-card-collections', [App\Http\Controllers\FlashCardController::class, 'flashCardCollections']);
-    Route::get('/create-flash-card-collection', [App\Http\Controllers\FlashCardController::class, 'createFlashCardCollection']);
-    Route::get('/edit-flash-card-collection/{flashCardCollectionId}', [App\Http\Controllers\FlashCardController::class, 'editFlashCardCollection']);
-    Route::post('/save-flash-card-collection', [App\Http\Controllers\FlashCardController::class, 'saveFlashCardCollection']);
-    Route::get('/delete-flash-card-collection/{flashCardCollectionId}', [App\Http\Controllers\FlashCardController::class, 'deleteFlashCardCollection']);
-    Route::get('/flash-card-practice/{flashCardCollectionId}', [App\Http\Controllers\FlashCardController::class, 'practiceFlashCards']);
-    Route::post('/finish-flash-card-practice', [App\Http\Controllers\FlashCardController::class, 'finishFlashCardPractice']);
+    Route::post('/flashcards', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollections']);
+    Route::post('/flashcards/delete', [App\Http\Controllers\FlashcardController::class, 'deleteFlashcardCollection']);
+    Route::post('/flashcards/get', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollection']);
+    Route::post('/flashcards/save', [App\Http\Controllers\FlashcardController::class, 'saveFlashcardCollection']);
     
-    // lessons
-    Route::get('/courses', [App\Http\Controllers\LessonController::class, 'courses']);
-    Route::get('/create-course', [App\Http\Controllers\LessonController::class, 'getCreateCourse']);
-    Route::post('/create-course', [App\Http\Controllers\LessonController::class, 'postCreateCourse']);
-    Route::get('/lessons/{courseId}', [App\Http\Controllers\LessonController::class, 'lessons']);
-    Route::get('/create-lesson/{courseId}', [App\Http\Controllers\LessonController::class, 'createLesson']);
-    Route::get('/edit-lesson/{courseId}', [App\Http\Controllers\LessonController::class, 'editLesson']);
-    Route::post('/save-lesson', [App\Http\Controllers\LessonController::class, 'saveLesson']);
-    Route::get('/lesson/{lessonId}', [App\Http\Controllers\LessonController::class, 'lesson']);
-    Route::post('/finish-lesson', [App\Http\Controllers\LessonController::class, 'finishLesson']);
-    Route::get('/delete-lesson/{lessonId}', [App\Http\Controllers\LessonController::class, 'deleteLesson']);
+    // books
+    Route::post('/books', [App\Http\Controllers\BookController::class, 'getBooks']);
+    Route::post('/books/create', [App\Http\Controllers\BookController::class, 'createBook']);
+
+    // chapters
+    Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChapters']);
+    Route::post('/chapter/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
+    Route::post('/chapter/get/edit', [App\Http\Controllers\ChapterController::class, 'getChapterForEdit']);
+    Route::post('/chapter/finish', [App\Http\Controllers\ChapterController::class, 'finishChapter']);
+    Route::post('/chapter/save', [App\Http\Controllers\ChapterController::class, 'saveChapter']);
 });

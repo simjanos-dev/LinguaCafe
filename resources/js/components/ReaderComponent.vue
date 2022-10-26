@@ -1,6 +1,6 @@
 <template>
     <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}">
-        <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}">
+        <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}" v-if="lessonId !== null">
             <div v-if="!finished" id="toolbar">
                 <div class="toolbar-button-group menus">
                     <button :class="{'toolbar-button': true, 'selected': toolbar == 'text'}" @click="setToolbar('text')" title="Text">
@@ -44,7 +44,7 @@
 
             <!-- Settings -->
             <div id="toolbar-header" v-if="toolbar !== 'text'" :style="{'width': settings.maximumTextWidth}">
-                <template v-if="toolbar == 'chapters'">Chapters<span>{{ _courseName }}</span></template>
+                <template v-if="toolbar == 'chapters'">Chapters<span>{{ courseName }}</span></template>
                 <template v-if="toolbar == 'glossary'">Glossary</template>
                 <template v-if="toolbar == 'settings'">Settings</template>
             </div>
@@ -148,20 +148,20 @@
             
             <!-- Chapters -->
             <div v-if="!finished" id="chapters" :class="{'visible': toolbar == 'chapters'}">
-                <template v-for="(lesson, index) in _lessons">
+                <template v-for="(lesson, index) in lessons">
                     <div class="chapter-connect-line" v-if="index" v-for="i in 4"></div>
-                    <div :id="lesson.id == _lessonId ? 'selected-chapter' : ''" class="chapter" :key="index">
+                    <div :id="lesson.id == lessonId ? 'selected-chapter' : ''" class="chapter" :key="index">
                         <div class="chapter-title">
                             {{ lesson.name }}
-                            <div v-if="lesson.id == _lessonId"> Current chapter</div>
+                            <div v-if="lesson.id == lessonId"> Current chapter</div>
                         </div>
                         <div class="chapter-read">Read count: <span>{{ lesson.read_count}}</span></div>
-                        <div class="chapter-words">Word count: <span>{{ lesson.wordCounts.total }}</span></div>
-                        <div class="chapter-unique-words">Unique word count: <span>{{ lesson.wordCounts.unique }}</span></div>
-                        <div class="chapter-known-words">Known word count: <span>{{ lesson.wordCounts.known }}</span></div>
-                        <div class="chapter-highlighted-words">Highlighted word count: <span class="highlighted"><i class="fa fa-book-open"></i> {{ lesson.wordCounts.highlighted }}</span></div>
-                        <div class="chapter-new-words">New word count: <span class="new"><i class="fa fa-eye-slash"></i> {{ lesson.wordCounts.new }}</span></div>
-                        <a :href="'/lesson/' + lesson.id"><button class="btn btn-secondary small" v-if="lesson.id != _lessonId">Read</button></a>
+                        <div class="chapter-words">Word count: <span>{{ lesson.wordCount.total }}</span></div>
+                        <div class="chapter-unique-words">Unique word count: <span>{{ lesson.wordCount.unique }}</span></div>
+                        <div class="chapter-known-words">Known word count: <span>{{ lesson.wordCount.known }}</span></div>
+                        <div class="chapter-highlighted-words">Highlighted word count: <span class="highlighted"><i class="fa fa-book-open"></i> {{ lesson.wordCount.highlighted }}</span></div>
+                        <div class="chapter-new-words">New word count: <span class="new"><i class="fa fa-eye-slash"></i> {{ lesson.wordCount.new }}</span></div>
+                        <router-link class="sidebar-button" :to="'/chapters/read/' + lesson.id"><button class="btn btn-secondary small" v-if="lesson.id != lessonId">Read</button></router-link>
                     </div>
                 </template>
             </div>
@@ -345,7 +345,7 @@
             <!-- Text -->
             <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}">
                 <template v-for="(word, wordIndex) in words">
-                    <template v-if="word.word.indexOf('NEWLINE') == -1  && _language !== 'japanese'">
+                    <template v-if="word.word.indexOf('NEWLINE') == -1  && language !== 'japanese'">
                         <template v-if="spaceFreeWords.includes(word.word)">
                             <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
                                 @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div>
@@ -356,19 +356,22 @@
                         --></template>
 
                     </template><!--
-                    --><div v-if="word.word.indexOf('NEWLINE') == -1 && _language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
+                    --><div v-if="word.word.indexOf('NEWLINE') == -1 && language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
                         @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                         
                     --><br v-if="word.word == 'NEWLINE'"><!--
                 --></template>
                 <br><br><br><br><br><br>
+                <div class="text-box red" v-if="finishError">
+                    Something went wrong. Please try again.
+                </div>
                 <button id="finish-reading-button" class="btn btn-green" @click="finish()"><i class="fa fa-check"></i>&nbsp;&nbsp;Finish reading</button>
                 <br><br><br><br>
             </div>
             
             <!-- Finish -->
             <div v-if="finished" id="finished-box">
-                <div id="lesson-finished-text">Congratulations! You have finished {{ _lessonName }}!</div>
+                <div id="lesson-finished-text">Congratulations! You have finished {{ lessonName }}!</div>
 
                 <table id="finished-stats" class="table-sm table-bordered">
                     <thead>
@@ -380,7 +383,7 @@
                     <tbody>
                         <tr>
                             <td>Read words:</td>
-                            <td> {{ _wordCount }} </td>
+                            <td> {{ wordCount }} </td>
                         </tr>
                         <tr>
                             <td>Newly saved words:</td>
@@ -396,8 +399,8 @@
                         </tr>
                     </tbody>
                 </table>
-                <a :href="'/lessons/' + _courseId + ''"><button id="go-to-lessons-button" class="btn btn-primary">Go to lessons</button></a>
-                <a :href="'/lesson/' + nextLesson + ''"><button id="go-to-lessons-button" class="btn btn-primary" v-if="nextLesson !== -1">Go to next lesson</button></a>
+                <router-link class="sidebar-button" :to="'/chapters/' + courseId"> <button id="go-to-lessons-button" class="btn btn-primary">Go to lessons</button></router-link>
+                <router-link class="sidebar-button" :to="'/chapters/read/' + nextLesson"> <button id="go-to-lessons-button" class="btn btn-primary" v-if="nextLesson !== -1">Go to next lesson</button></router-link>
             </div>
         </div>
     </div>
@@ -422,13 +425,14 @@
                 toolbar: 'text',
                 spaceFreeWords: ['.', ',', ':', '?', '!', '-', '*', ' ', '\r\n', '\r\n '],
                 finished: false,
+                finishError: false,
                 newlySavedWords: 0,
                 learnedWords: 0,
                 progressedWords: 0,
                 glossary: [],
-                words: JSON.parse(this._text),
-                uniqueWords: JSON.parse(this._uniqueWords),
-                phrases: JSON.parse(this._phrases),
+                words: [],
+                uniqueWords: [],
+                phrases: [],
                 deletedPhrases: [],
                 selection: [],
                 selectedPhrase: -1,
@@ -454,82 +458,109 @@
                 phraseTranslation: '',
                 phraseReading: '',
                 nextLesson: -1,
+
+
+                // to load:
+                words: [],
+                uniqueWords: [],
+                phrases: [],
+                courseName: null,
+                lessonId: null,
+                wordCount: 0,
+                lessonName: null,
+                courseId: null,
+                language: null,
+                lessons: [],
             }
         },
         props: {
-            _courseName: String,
-            _lessonId: String,
-            _wordCount: Number,
-            _lessonName: String,
-            _text: String,
-            _uniqueWords: String,
-            _courseId: String,
-            _language: String,
-            _lessons: Array,
-            _phrases: String,
         },
         mounted() {
-            for (let i = 0; i < this.$props._lessons.length; i++) {
-                if (this.$props._lessons[i].id == this.$props._lessonId && i < this.$props._lessons.length - 1 && this.$props._lessons[i + 1].read_count) {
-                    this.nextLesson = this.$props._lessons[i + 1].id;
-                    break;
-                }
-            }
+            axios.post('/chapter/get/reader', {
+                'chapterId': this.$route.params.chapterId,
+            }).then(function (response) {
+                var data = response.data;
+                this.words = data.words;
+                this.uniqueWords = data.uniqueWords;
+                this.phrases = data.phrases;
+                this.courseName = data.courseName;
+                this.lessonId = data.lessonId;
+                this.wordCount = data.wordCount;
+                this.lessonName = data.lessonName;
+                this.courseId = data.courseId;
+                this.language = data.language;
+                this.lessons = data.lessons;
 
-            this.settings.highlightWords = this.$cookie.get('highlight-words') == 'true';
-            this.settings.plainTextMode = this.$cookie.get('plain-text-mode') == 'true';
-            this.settings.japaneseText = this.$cookie.get('japanese-text') == 'true';
-            this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
-            this.settings.maximumTextWidth =  this.$cookie.get('maximum-text-width');
-            this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') == 'true';
-            this.settings.displayPhraseReading = this.$cookie.get('display-phrase-reading') == 'true';
-            this.settings.displayGlossaryReadings = this.$cookie.get('display-glossary-readings') == 'true';
-            this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') == 'true';
-
-            if (this.settings.highlightWords === null) {
-                this.settings.highlightWords =  true;
-            }
-
-            if (this.settings.plainTextMode === null) {
-                this.settings.plainTextMode =  true;
-            }
-
-            if (this.settings.japaneseText === null) {
-                this.settings.japaneseText =  true;
-            }
-
-            if (this.$cookie.get('font-size') === null) {
-                this.settings.fontSize =  20;
-            }
-
-            if (this.settings.maximumTextWidth === null) {
-                this.settings.maximumTextWidth =  '800px';
-            }
-
-            if (this.settings.displaySuggestedTranslations === null) {
-                this.settings.displaySuggestedTranslations =  false;
-            }
-
-            if (this.settings.displayPhraseReading === null) {
-                this.settings.displayPhraseReading =  false;
-            }
-
-            if (this.settings.displayGlossaryReadings === null) {
-                this.settings.displayGlossaryReadings =  false;
-            }
-
-            if (this.settings.autoMoveWordsToKnown === null) {
-                this.settings.autoMoveWordsToKnown =  false;
-            }
-
-            this.saveSettings();
-            document.getElementById('app').addEventListener('mouseup', this.finishSelection);
-            document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
-            this.$forceUpdate();
-            this.updatePhraseBorders();
-            this.updateGlossary();
+                this.afterMounted();
+                console.log(this.words);
+            }.bind(this)).catch(function (error) {
+            }).then(function () {
+            });
         },
+        // this runs after the initial data
+        // was downloaded with axios
         methods: {
+            afterMounted: function() {
+                document.getElementById('app').addEventListener('mouseup', this.finishSelection);
+                document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
+                for (let i = 0; i < this.lessons.length; i++) {
+                    if (this.lessons[i].id == this.lessonId && i < this.lessons.length - 1 && this.lessons[i + 1].read_count) {
+                        this.nextLesson = this.lessons[i + 1].id;
+                        break;
+                    }
+                }
+
+                this.settings.highlightWords = this.$cookie.get('highlight-words') == 'true';
+                this.settings.plainTextMode = this.$cookie.get('plain-text-mode') == 'true';
+                this.settings.japaneseText = this.$cookie.get('japanese-text') == 'true';
+                this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
+                this.settings.maximumTextWidth =  this.$cookie.get('maximum-text-width');
+                this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') == 'true';
+                this.settings.displayPhraseReading = this.$cookie.get('display-phrase-reading') == 'true';
+                this.settings.displayGlossaryReadings = this.$cookie.get('display-glossary-readings') == 'true';
+                this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') == 'true';
+
+                if (this.settings.highlightWords === null) {
+                    this.settings.highlightWords =  true;
+                }
+
+                if (this.settings.plainTextMode === null) {
+                    this.settings.plainTextMode =  true;
+                }
+
+                if (this.settings.japaneseText === null) {
+                    this.settings.japaneseText =  true;
+                }
+
+                if (this.$cookie.get('font-size') === null) {
+                    this.settings.fontSize =  20;
+                }
+
+                if (this.settings.maximumTextWidth === null) {
+                    this.settings.maximumTextWidth =  '800px';
+                }
+
+                if (this.settings.displaySuggestedTranslations === null) {
+                    this.settings.displaySuggestedTranslations =  false;
+                }
+
+                if (this.settings.displayPhraseReading === null) {
+                    this.settings.displayPhraseReading =  false;
+                }
+
+                if (this.settings.displayGlossaryReadings === null) {
+                    this.settings.displayGlossaryReadings =  false;
+                }
+
+                if (this.settings.autoMoveWordsToKnown === null) {
+                    this.settings.autoMoveWordsToKnown =  false;
+                }
+
+                this.saveSettings();
+                this.$forceUpdate();
+                this.updatePhraseBorders();
+                this.updateGlossary();
+            },
             fullscreen: function() {
                 if (document.fullscreenEnabled) {
                     document.getElementById('fullscreen-box').requestFullscreen();
@@ -827,8 +858,6 @@
                 if (this.settings.fullscreen) {
                     this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
                 } else {
-                    console.log(document.getElementById('fullscreen-box').getBoundingClientRect().top);
-                    console.log(document.getElementById('app').scrollTop);
                     this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
                 }
                 
@@ -868,7 +897,6 @@
                 });
             },
             processSearchRequest: function(data) {
-                console.log(data);
                 this.searchResults = [];
                 for (var i = 0; i < data.length; i++) {
                     this.searchResults.push({
@@ -1154,28 +1182,32 @@
                 return phraseIndex;
             },
             finish: function() {
-                axios.post('/finish-lesson', {
+                axios.post('/chapter/finish', {
                     uniqueWords: JSON.stringify(this.uniqueWords),
                     phrases: JSON.stringify(this.phrases),
                     deletedPhrases: JSON.stringify(this.deletedPhrases),
                     sentences: JSON.stringify(this.sentences),
-                    language: this.$props._language,
-                    lessonId: this.$props._lessonId,
+                    language: this.language,
+                    lessonId: this.lessonId,
                     autoMoveWordsToKnown: this.settings.autoMoveWordsToKnown
                 })
                 .then(function (response) {
-                    // count progressed and learned words
-                    for (var i  = 0; i < this.uniqueWords.length; i++) {
-                        if (!this.uniqueWords[i].checked && this.uniqueWords[i].stage < -1) {
-                            this.progressedWords ++;
+                    if (response.data == 'success') {
+                        // count progressed and learned words
+                        for (var i  = 0; i < this.uniqueWords.length; i++) {
+                            if (!this.uniqueWords[i].checked && this.uniqueWords[i].stage < -1) {
+                                this.progressedWords ++;
+                            }
+
+                            if (!this.uniqueWords[i].checked && this.uniqueWords[i].stage == -1) {
+                                this.learnedWords ++;
+                            }
                         }
 
-                        if (!this.uniqueWords[i].checked && this.uniqueWords[i].stage == -1) {
-                            this.learnedWords ++;
-                        }
+                        this.finished = true;
+                    } else {
+                        this.finishError = true;
                     }
-
-                    this.finished = true;
                 }.bind(this))
                 .catch(function (error) {
                     console.log(error);

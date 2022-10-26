@@ -191,6 +191,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+        return view('home');
+    }
+
+    public function statistics()
+    {
         // language statistics
         $today = date('Y-m-d');
         $selectedLanguage = Auth::user()->selected_language;
@@ -204,7 +209,7 @@ class HomeController extends Controller
         $languageStatistics->words_to_review = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->where('last_level_up', '!=', $today)->inRandomOrder()->limit(50)->count('id');
         $languageStatistics->words_to_review_total = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->inRandomOrder()->limit(50)->count('id');
 
-        if ($selectedLanguage) {
+        if ($selectedLanguage == 'japanese') {
             // get unique kanji
             $uniqueKanji = [];
             $words = EncounteredWord::where('stage', '<>', '2')->where('stage', '<>', '1')->where('language', 'Japanese')->where('user_id', Auth::user()->id)->get();
@@ -219,9 +224,7 @@ class HomeController extends Controller
             $languageStatistics->kanjiCount = count($uniqueKanji);
         }
         
-        return view('home', [
-            'languageStatistics' => $languageStatistics
-        ]);
+        return json_encode($languageStatistics);
     }
 
     public function changeLanguage($language) {
@@ -230,13 +233,5 @@ class HomeController extends Controller
         $user->save();
 
         return redirect('/');
-    }
-
-    public function jishoRequest($keyword) {
-        $handle = curl_init();
-        curl_setopt($handle, CURLOPT_URL, "https://jisho.org/api/v1/search/words?keyword=" . urlencode($keyword));
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true); 
-        $data = curl_exec($handle);
-        return $data;
     }
 }

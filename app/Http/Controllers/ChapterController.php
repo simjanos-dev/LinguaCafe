@@ -13,64 +13,34 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-class LessonController extends Controller
+class ChapterController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    public function courses() {
-        $selectedLanguage = Auth::user()->selected_language;
-        $courses = Course::where('language', $selectedLanguage)->where('user_id', Auth::user()->id)->orderBy('updated_at', 'DESC')->get();
+    public function getChapters(Request $request) {
+        $bookId = intval($request->bookId);
+        $book = Course::where('id', $bookId)->where('user_id', Auth::user()->id)->first();
+        $chapters = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('course_id', $bookId)->where('user_id', Auth::user()->id)->get();
         $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
+        $book->wordCount = $book->getWordCounts($words);
 
-        return view('courses', [
-            'courses' => $courses,
-            'language' => $selectedLanguage,
-            'words' => $words
-        ]);
-    }
-
-    public function getCreateCourse() {
-        return view('create_course');
-    }
-
-    public function postCreateCourse(Request $request) {
-        $course = new Course();
-        $course->user_id = Auth::user()->id;
-        $course->name = $request->name;
-        $course->cover_image = '';
-        $course->language = Auth::user()->selected_language;
-        $course->save();
-
-        if (!is_null($request->cover_image)) {
-            // save image on server
-            $fileName = $course->id . '.' . ($request->file('cover_image')->getClientOriginalExtension());
-            $path = $request->file('cover_image')->storeAs('/images/course_images/', $fileName);
-
-            // save image in database
-            $course->cover_image = $fileName;
-            $course->save();
+        for ($i = 0; $i < count($chapters); $i++) {
+            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
         }
+        
+        $data = new \StdClass();
+        $data->book = $book;
+        $data->chapters = $chapters;
 
-        return redirect('/courses');
+        return json_encode($data);
     }
 
-    public function lessons($courseId) {
-        $course = Course::where('id', $courseId)->where('user_id', Auth::user()->id)->first();
-        $lessons = Lesson::where('course_id', $courseId)->where('user_id', Auth::user()->id)->get();        
-        $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
-
-        return view('lessons', [
-            'course' => $course,
-            'lessons' => $lessons,
-            'words' => $words
-        ]);
-    }
-
-    public function lesson($lessonId) 
+    public function getChapterForReader(Request $request) 
     {        
+        $lessonId = $request->chapterId;
         $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
             '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
             '«', '»', "'", '’', '–', 'NEWLINE'];
@@ -87,7 +57,7 @@ class LessonController extends Controller
         // get lesson word counts
         $uniqueWordsForWordCounts = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
         for ($i = 0; $i < count($lessons); $i++) {
-            $lessons[$i]->wordCounts = $lessons[$i]->getWordCounts($uniqueWordsForWordCounts);
+            $lessons[$i]->wordCount = $lessons[$i]->getWordCounts($uniqueWordsForWordCounts);
         }
 
         // get unique phrase ids
@@ -139,16 +109,22 @@ class LessonController extends Controller
             $phrases[$i]->checked = false;
         }
 
-        return view('lesson', [
-            'lesson' => $lesson,
-            'course' => $course,
-            'uniqueWords' => $encounteredWords,
-            'lessons' => $lessons,
-            'phrases' => $phrases,
-        ]);
+        $data = new \StdClass();
+        $data->words = $words;
+        $data->uniqueWords = $encounteredWords;
+        $data->phrases = $phrases;
+        $data->courseName = $course->name;
+        $data->lessonId = $lesson->id;
+        $data->lessonName = $lesson->name;
+        $data->courseId = $course->id;
+        $data->language = $lesson->language;
+        $data->lessons = $lessons;
+        $data->wordCount = $lesson->word_count;
+        
+        return json_encode($data);
     }
 
-    public function finishLesson(Request $request) {
+    public function finishChapter(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
         $uniqueWords = json_decode($request->uniqueWords);
         $phrases = json_decode($request->phrases);
@@ -259,27 +235,17 @@ class LessonController extends Controller
 
         $dailyAchivement->read_words += $lesson->word_count;
         $dailyAchivement->save();
+
+        return 'success';
     }
 
-    public function createLesson($courseId) {
-        $course = Course::where('id', $courseId)->where('user_id', Auth::user()->id)->first();
-
-        return view('edit_lesson', [
-            'course' => $course
-        ]);
+    public function getChapterForEdit(Request $request) {
+        $chapter = Lesson::select(['name', 'raw_text'])->where('id', $request->chapterId)->where('user_id', Auth::user()->id)->first();
+        $chapter->raw_text = str_replace(" NEWLINE \r\n", "\r\n", $chapter->raw_text);
+        return $chapter;
     }
 
-    function editLesson($lessonId) {
-        $lesson = Lesson::where('user_id', Auth::user()->id)->where('id', $lessonId)->first();
-        $course = Course::where('user_id', Auth::user()->id)->where('id', $lesson->course_id)->first();
-
-        return view('edit_lesson', [
-            'course' => $course,
-            'lesson' => $lesson
-        ]);
-    }
-
-    public function saveLesson(Request $request) {
+    public function saveChapter(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
         $kanjipattern = "/[a-zA-Z0-9０-９あ-んア-ンー。、:？！＜＞： 「」（）｛｝≪≫〈〉《》【】
             『』〔〕［］・\n\r\t\s\(\)　]/u";
@@ -296,17 +262,15 @@ class LessonController extends Controller
         $lesson->word_count = 0;
         $lesson->course_id = $request->course;
         $lesson->language = $selectedLanguage;
-        $lesson->raw_text = str_replace("\r\n", " NEWLINE \r\n", $request->raw_text);
+        $lesson->raw_text = $request->raw_text;
         $lesson->processed_text = '';
         $lesson->unique_words = '';
         
-        $requesttext = $lesson->raw_text;
         $response = Http::post('127.0.0.1:8678/tokenizer/', [
-            'raw_text' => $requesttext,
+            'raw_text' => str_replace(["\r\n", "\r", "\n"], " NEWLINE \r\n", $request->raw_text),
         ]);
 
-        $lesson->processed_text = $response;
-
+        $lesson->processed_text = json_decode($response);
         $words = json_decode($response);
 
         $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
@@ -420,18 +384,6 @@ class LessonController extends Controller
         $courseWordCount = intval(Lesson::where('user_id', Auth::user()->id)->where('course_id', $lesson->course_id)->sum('word_count'));
         Course::where('user_id', Auth::user()->id)->where('id', $lesson->course_id)->update(['word_count' => $courseWordCount]);
 
-        if (isset($request->lesson_id)) {
-            return redirect('/lessons/' . $request->course);
-        } else {
-            return redirect('/lesson/' . $lesson->id);
-        }
-    }
-
-    function deleteLesson($lessonId) {
-        $lesson = Lesson::Where('id', $lessonId)->where('user_id', Auth::user()->id)->first();
-        $courseId = $lesson->course_id;
-        $lesson->delete();
-
-        return redirect('/lessons/' . $courseId);
+        return 'success';
     }
 }
