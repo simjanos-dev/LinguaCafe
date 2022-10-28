@@ -53,6 +53,7 @@ const router = new VueRouter({
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollectionComponent },
         { path: '/review/:bookId?/:chapterId?', component: ReviewComponent },
         { path: '/vocabulary/search', component: VocabularyComponent },
+        { path: '/vocabulary/search/:text/:stage/:book/:chapter/:translation/:phrases/:orderBy/:page', component: VocabularyComponent },
     ]
 })
 

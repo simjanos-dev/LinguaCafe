@@ -1,9 +1,9 @@
 <template>
-    <div id="vocabulary" @click="visiblePopup = ''">
+    <div id="vocabulary">
         <!-- search filter -->
         <div id="vocabulary-search-field">
-            <button class="btn btn-secondary "><i class="fa fa-search"></i> Search</button>
-            <input class="" type="text" placeholder="Search term">
+            <button class="btn btn-secondary" @click="applyFilter('text')"><i class="fa fa-search"></i> Search</button>
+            <input class="" type="text" placeholder="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')">
         </div>
 
         <!-- filters -->
@@ -17,17 +17,17 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'stage'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'stage'}">
-                        <div class="popup-button" @click="applyFilter('stage', 'any')">Any</div>
-                        <div class="popup-button" @click="applyFilter('stage', 2)">New</div>
-                        <div class="popup-button" @click="applyFilter('stage', 1)">Ignored</div>
-                        <div class="popup-button" @click="applyFilter('stage', 0)">Learned</div>
-                        <div class="popup-button" @click="applyFilter('stage', -1)">1</div>
-                        <div class="popup-button" @click="applyFilter('stage', -2)">2</div>
-                        <div class="popup-button" @click="applyFilter('stage', -3)">3</div>
-                        <div class="popup-button" @click="applyFilter('stage', -4)">4</div>
-                        <div class="popup-button" @click="applyFilter('stage', -5)">5</div>
-                        <div class="popup-button" @click="applyFilter('stage', -6)">6</div>
-                        <div class="popup-button" @click="applyFilter('stage', -7)">7</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == 'any'}" @click="applyFilter('stage', 'any')">Any</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == 2}" @click="applyFilter('stage', 2)">New</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == 1}" @click="applyFilter('stage', 1)">Ignored</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == 0}" @click="applyFilter('stage', 0)">Learned</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -1}" @click="applyFilter('stage', -1)">1</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -2}" @click="applyFilter('stage', -2)">2</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -3}" @click="applyFilter('stage', -3)">3</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -4}" @click="applyFilter('stage', -4)">4</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -5}" @click="applyFilter('stage', -5)">5</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -6}" @click="applyFilter('stage', -6)">6</div>
+                        <div :class="{'popup-button': true, 'selected': filters.stage == -7}" @click="applyFilter('stage', -7)">7</div>
                         
                     </div>
                 </div>
@@ -42,14 +42,14 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'book'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'book'}">
-                        <div class="popup-button" @click="applyFilter('book', 'any', -1)">Any</div>
-                        <div class="popup-button" v-for="(book, index) in books" :key="index" @click="applyFilter('book', book.id, index)">{{ book.name }}</div>
+                        <div :class="{'popup-button': true, 'selected': filters.book == 'any'}" @click="applyFilter('book', 'any', -1)">Any</div>
+                        <div :class="{'popup-button': true, 'selected': filters.book == book.id}" v-for="(book, index) in books" :key="index" @click="applyFilter('book', book.id, index)">{{ book.name }}</div>
                     </div>
                 </div>
             </div>
 
             <!-- chapter filter -->
-            <div class="vocabulary-filter chapter" v-if="filters.book !== 'any'">
+            <div class="vocabulary-filter chapter" v-if="filters.bookIndex !== -1">
                 <div class="vocabulary-filter-box">
                     <span @click.stop="toggleFilter('chapter')">
                         Chapter 
@@ -57,8 +57,8 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'chapter'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'chapter'}">
-                        <div class="popup-button" @click="applyFilter('chapter', 'any')">Any</div>
-                        <div class="popup-button" v-for="(chapter, index) in books[filters.bookIndex].chapters" :key="index" @click="applyFilter('chapter', chapter.id)">{{ chapter.name }}</div>
+                        <div :class="{'popup-button': true, 'selected': filters.chapter == 'any'}" @click="applyFilter('chapter', 'any')">Any</div>
+                        <div :class="{'popup-button': true, 'selected': filters.chapter == chapter.id}" v-for="(chapter, index) in books[filters.bookIndex].chapters" :key="index" @click="applyFilter('chapter', chapter.id)">{{ chapter.name }}</div>
                     </div>
                 </div>
             </div>
@@ -72,8 +72,8 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'translation'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'translation'}">
-                        <div class="popup-button" @click="applyFilter('translation', 'any')">Any</div>
-                        <div class="popup-button" @click="applyFilter('translation', 'not empty')">Not empty</div>
+                        <div :class="{'popup-button': true, 'selected': filters.translation == 'any'}" @click="applyFilter('translation', 'any')">Any</div>
+                        <div :class="{'popup-button': true, 'selected': filters.translation == 'not empty'}" @click="applyFilter('translation', 'not empty')">Not empty</div>
                     </div>
                 </div>
             </div>
@@ -87,9 +87,9 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'phrases'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'phrases'}">
-                        <div class="popup-button" @click="applyFilter('phrases', 'both')">Both</div>
-                        <div class="popup-button" @click="applyFilter('phrases', 'only words')">Only words</div>
-                        <div class="popup-button" @click="applyFilter('phrases', 'only phrases')">Only phrases</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.phrases == 'both'}" @click="applyFilter('phrases', 'both')">Both</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.phrases == 'only words'}" @click="applyFilter('phrases', 'only words')">Only words</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.phrases == 'only phrases'}" @click="applyFilter('phrases', 'only phrases')">Only phrases</div>
                     </div>
                 </div>
             </div>
@@ -103,26 +103,10 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'order-by'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'order-by'}">
-                        <div class="popup-button" @click="applyFilter('orderBy', 'words')"><i class="fa fa-sort-alpha-down"></i> Word</div>
-                        <div class="popup-button" @click="applyFilter('orderBy', 'words-desc')"><i class="fa fa-sort-alpha-down-alt"></i> Word</div>
-                        <div class="popup-button" @click="applyFilter('orderBy', 'stage')"><i class="fa fa-sort-numeric-down"></i> Stage</div>
-                        <div class="popup-button" @click="applyFilter('orderBy', 'stage-desc')"><i class="fa fa-sort-numeric-down-alt"></i> Stage</div>
-                        
-                    </div>
-                </div>
-            </div>
-
-            <!-- import -->
-            <div class="vocabulary-filter import">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('import')">
-                        <i class="fa fa-file-import"></i> Import
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'import'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'import'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'import'}">
-                        <div class="popup-button">Excel</div>
-                        <div class="popup-button">Csv</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'words'}" @click="applyFilter('orderBy', 'words')"><i class="fa fa-sort-alpha-down"></i> Word</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'words desc'}" @click="applyFilter('orderBy', 'words desc')"><i class="fa fa-sort-alpha-down-alt"></i> Word</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'stage'}" @click="applyFilter('orderBy', 'stage')"><i class="fa fa-sort-numeric-down"></i> Stage</div>
+                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'stage desc'}" @click="applyFilter('orderBy', 'stage desc')"><i class="fa fa-sort-numeric-down-alt"></i> Stage</div>
                     </div>
                 </div>
             </div>
@@ -136,15 +120,15 @@
                         <i class="fa fa-angle-up" v-if="visiblePopup == 'export'"></i>
                     </span>
                     <div :class="{'filter-popup': true, 'visible': visiblePopup == 'export'}">
-                        <div class="popup-button">Excel</div>
-                        <div class="popup-button">Csv</div>
+                        <div :class="{'popup-button': true}">Excel</div>
+                        <div :class="{'popup-button': true}">Csv</div>
                     </div>
                 </div>
             </div>
 
             <!-- search result info -->
             <div class="vocabulary-filter search-result-info">
-                {{ words.length }} words found
+                {{ wordCount }} words found
             </div>
 
             <!-- show / hide filters -->
@@ -176,12 +160,17 @@
                 <div class="word">{{ word.word }}</div>
                 <div class="reading">{{ word.reading }}</div>
                 <div class="word-with-reading"><ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby></div>
-                <div class="stage" :stage="word.stage"><span>{{ word.stage < 0 ? word.stage * -1 : word.stage }}</span></div>
+                
+                <div class="stage" :stage="word.stage" v-if="word.stage < 0"><span>{{ word.stage * -1 }}</span></div>
+                <div class="stage" :stage="word.stage" v-if="word.stage == 0"><span>0</span></div>
+                <div class="stage" :stage="word.stage" v-if="word.stage == 1"><span>X</span></div>
+                <div class="stage" :stage="word.stage" v-if="word.stage == 2"><span>New</span></div>
+
                 <div class="translations">{{ word.translation }}</div>
                 <div class="actions">
                     <i class="fa fa-ellipsis-h" @click.stop="toggleFilter('word' + index)"></i>
                         <div :class="{'vocabulary-popup': true, 'visible': visiblePopup == ('word' + index)}">
-                            <div class="popup-button"><i class="fa fa-pen"></i> Edit</div>
+                            <div :class="{'popup-button': true}"><i class="fa fa-pen"></i> Edit</div>
                         </div>
                 </div>
             </div>
@@ -189,25 +178,25 @@
 
         <!-- search result info -->
         <div id="small-screen-search-result-info">
-            {{ words.length }} words found
+            {{ wordCount }} words found
         </div>
 
         <div id="vocabulary-pagination">
             <!-- normal pagination -->
-            <div class="pagination-button" v-if="currentPage > 4">1</div>
+            <div class="pagination-button" v-if="currentPage > 4" @click="moveToPage(1)">1</div>
             <div class="pagination-button dots" v-if="currentPage > 5">...</div>
             <template v-for="(page, index) in pageCount">
-                <div :class="{'pagination-button': true, 'selected': page == currentPage}" :key="index" v-if="page >= currentPage - paginationLimitBefore && page <= currentPage + paginationLimitAfter">{{ page }}</div>
+                <div :class="{'pagination-button': true, 'selected': page == currentPage}" :key="index" v-if="page >= currentPage - paginationLimitBefore && page <= currentPage + paginationLimitAfter" @click="moveToPage(page)">{{ page }}</div>
             </template>
             <div class="pagination-button dots" v-if="currentPage < pageCount - 4">...</div>
-            <div class="pagination-button" v-if="currentPage < pageCount - 3">{{ pageCount }}</div>
+            <div class="pagination-button" v-if="currentPage < pageCount - 3" @click="moveToPage(pageCount)">{{ pageCount }}</div>
 
             <!-- pagination below 500px width -->
-            <div class="pagination-button basic first">First</div>
-            <div class="pagination-button basic" v-if="currentPage > 0">{{ currentPage - 1 }}</div>
-            <div class="pagination-button basic selected">{{ currentPage }}</div>
-            <div class="pagination-button basic" v-if="currentPage < pageCount - 1">{{ currentPage + 1 }}</div>
-            <div class="pagination-button basic last">Last</div>
+            <div class="pagination-button basic first" @click="moveToPage(1)">First</div>
+            <div class="pagination-button basic" v-if="currentPage > 0" @click="moveToPage(currentPage - 1)">{{ currentPage - 1 }}</div>
+            <div class="pagination-button basic selected" @click="moveToPage(currentPage)">{{ currentPage }}</div>
+            <div class="pagination-button basic" v-if="currentPage < pageCount - 1" @click="moveToPage(currentPage + 1)">{{ currentPage + 1 }}</div>
+            <div class="pagination-button basic last" @click="moveToPage(pageCount)">Last</div>
         </div>
     </div>
 </template>
@@ -222,6 +211,7 @@
                 paginationLimitBefore: 3,
                 paginationLimitAfter: 3,
                 words: [],
+                wordCount: 0,
                 books: [],
                 chapters: [],
                 pageCount: 1,
@@ -234,31 +224,59 @@
                     chapter: 'any',
                     translation: 'any',
                     phrases: 'both',
-                    orderBy: 'word'
+                    orderBy: 'words',
+                    text: 'anytext',
                 }
             }
         },
         props: {
         },
         mounted() {
-            document.getElementById('app').addEventListener('scroll', () => { this.visiblePopup = '' });
+            document.getElementById('app').addEventListener('scroll', () => { this.visiblePopup = ''; });
+            document.getElementById('app').addEventListener('click', () => { this.visiblePopup = ''; });
+            
+            if (this.$route.params.text !== undefined) {
+                this.filters.text = this.$route.params.text;
+                this.filters.stage = this.$route.params.stage;
+                this.filters.book = this.$route.params.book;
+                this.filters.chapter = this.$route.params.chapter;
+                this.filters.translation = this.$route.params.translation;
+                this.filters.phrases = this.$route.params.phrases;
+                this.filters.orderBy = this.$route.params.orderBy;
+                this.currentPage = this.$route.params.page;
+            }
 
             axios.post('/vocabulary/search', {
-                
+                text: this.filters.text,
+                book: this.filters.book,
+                chapter: this.filters.chapter,
+                stage: this.filters.stage,
+                translation: this.filters.translation,
+                phrases: this.filters.phrases,
+                orderBy: this.filters.orderBy,
+                page: this.currentPage,
             }).then(function (response) {
                 var data = response.data;
+                this.filters.bookIndex = data.bookIndex;
                 this.words = data.words;
                 this.books = data.books;
                 this.pageCount = data.pageCount;
-                this.currentPage = data.currentPage;
+                this.currentPage = parseInt(data.currentPage);
+                this.wordCount = data.wordCount;
 
                 if (this.pageCount - this.currentPage < 3) {
                     this.paginationLimitBefore += 3 - (this.pageCount - this.currentPage);
+                    console.log(this.pageCount, this.currentPage);
                 }
 
                 if (this.currentPage < 4) {
                     this.paginationLimitAfter += 4 - this.currentPage;
                 }
+
+                if (this.filters.text == 'anytext') {
+                    this.filters.text = '';
+                }
+
             }.bind(this)).catch(function (error) {}).then(function () {});
         },
         methods: {
@@ -269,12 +287,60 @@
                     this.visiblePopup = newItem;
                 }
             },
-            applyFilter: function(filter, newValue, newBookIndex = -1) {
-                this.filters[filter] = newValue;
+            applyFilter: function(filter, newValue = -1, newBookIndex = -1) {
+                // text is a v-model, while other
+                // filters are buttons, so they need
+                // need params to transfer value
+                if (filter !== 'text') {
+                    this.filters[filter] = newValue;
+                }
 
                 if (filter == 'book') {
                     this.filters.chapter = 'any';
                     this.filters.bookIndex = newBookIndex;
+                }
+                
+                var text = 'anytext';
+                if (this.filters.text !== '') {
+                    text = encodeURI(this.filters.text);
+                }
+                
+                var url = '/vocabulary/search' 
+                    + '/' + text
+                    + '/' + this.filters.stage
+                    + '/' + this.filters.book
+                    + '/' + this.filters.chapter
+                    + '/' + encodeURI(this.filters.translation)
+                    + '/' + encodeURI(this.filters.phrases)
+                    + '/' + encodeURI(this.filters.orderBy) 
+                    + '/1';
+
+                if(this.$router.currentRoute.path !== url) {
+                    this.$router.push(url);
+                }
+            },
+            moveToPage(page) {
+                // text is a v-model, while other
+                // filters are buttons, so they need
+                // need params to transfer value
+
+                var text = 'anytext';
+                if (this.filters.text !== '') {
+                    text = encodeURI(this.filters.text);
+                }
+                
+                var url = '/vocabulary/search' 
+                    + '/' + text
+                    + '/' + this.filters.stage
+                    + '/' + this.filters.book
+                    + '/' + this.filters.chapter
+                    + '/' + encodeURI(this.filters.translation)
+                    + '/' + encodeURI(this.filters.phrases)
+                    + '/' + encodeURI(this.filters.orderBy)
+                    + '/' + page;
+
+                if(this.$router.currentRoute.path !== url) {
+                    this.$router.push(url);
                 }
             }
         }

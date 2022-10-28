@@ -67,7 +67,7 @@
                 padding-right: 0px;
             }
 
-            &.import, &.export, &.search-result-info {
+            &.export, &.search-result-info {
                 float: right;
                 padding-right: 0px;
                 padding-left: 20px;
@@ -77,10 +77,12 @@
                 color: lighten($font-color, 30%);
             }
 
-            &.stage .vocabulary-filter-box .filter-popup,
-            &.import .vocabulary-filter-box .filter-popup,
-            &.export .vocabulary-filter-box .filter-popup {
+            &.stage .vocabulary-filter-box .filter-popup {
                 width: 100px;
+            }
+
+            &.export .vocabulary-filter-box .filter-popup {
+                width: 90px;
             }
 
             &.book .vocabulary-filter-box .filter-popup,
@@ -131,13 +133,22 @@
                     .popup-button {
                         display: block;
                         width: 100%;
-                        min-height: 36px;
-                        line-height: 36px;
+                        min-height: 32px;
+                        line-height: 32px;
                         user-select: none;
                         cursor: pointer;
 
                         &:hover {
                             background-color: $light-gray;
+                        }
+
+                        &.selected {
+                            background-color: $theme-color;
+                            color: white;
+
+                            &:hover {
+                                background-color: darken($theme-color, 5%);
+                            }
                         }
                     }
                 }
@@ -153,7 +164,6 @@
                 }
             }
 
-            &.import .vocabulary-filter-box .filter-popup,
             &.export .vocabulary-filter-box .filter-popup {
                 left: unset;
                 right: -2px;
@@ -329,7 +339,7 @@
             height: auto;
             min-height: 40px;            
 
-            &.import, &.export, &.search-result-info {
+            &.export, &.search-result-info {
                 display: inline-block;
                 float: right;
                 width: auto;
@@ -366,7 +376,7 @@
         .vocabulary-filter {
             display: none;
             
-            &.import, &.export, &.search-result-info {
+            &.export, &.search-result-info {
                 display: inline-block;
             }
 

@@ -202,8 +202,7 @@ nav .nav-item.dropdown {
 }
 
 ::selection {
-    color: white;
-    background: $theme-color;
+    background: darken($tint, 10%);
 }
 
 .btn {

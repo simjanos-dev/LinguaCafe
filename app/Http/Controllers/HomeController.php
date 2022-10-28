@@ -58,17 +58,14 @@ class HomeController extends Controller
             $lesson->processed_text = '';
             $lesson->unique_words = '';
 
-            $requesttext = $devLesson->raw_text;
             $response = Http::post('127.0.0.1:8678/tokenizer/', [
-                'raw_text' => $requesttext,
+                'raw_text' => str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $devLesson->raw_text)
             ]);
 
             $lesson->processed_text = $response;
 
             $words = json_decode($response);
-            $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
-                            '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
-                            '«', '»', "'", '’', '–', 'NEWLINE'];
+            $wordsToSkip = config('langapp.wordsToSkip');
             $wordCount = 0;
             $uniqueWords = [];
             $uniqueWordIds = [];

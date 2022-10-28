@@ -41,9 +41,7 @@ class ChapterController extends Controller
     public function getChapterForReader(Request $request) 
     {        
         $lessonId = $request->chapterId;
-        $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
-            '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
-            '«', '»', "'", '’', '–', 'NEWLINE'];
+        $wordsToSkip = config('langapp.wordsToSkip');
         $selectedLanguage = Auth::user()->selected_language;
         
 
@@ -185,6 +183,7 @@ class ChapterController extends Controller
             }
 
             $phrase->words = json_encode($currentPhrase->words);
+            $phrase->words_searchable = implode('', $currentPhrase->words);
             $phrase->stage = intval($currentPhrase->stage);
             $phrase->reading = $currentPhrase->reading;
             $phrase->translation = $currentPhrase->translation;
@@ -267,15 +266,13 @@ class ChapterController extends Controller
         $lesson->unique_words = '';
         
         $response = Http::post('127.0.0.1:8678/tokenizer/', [
-            'raw_text' => str_replace(["\r\n", "\r", "\n"], " NEWLINE \r\n", $request->raw_text),
+            'raw_text' => str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $request->raw_text),
         ]);
 
         $lesson->processed_text = json_decode($response);
         $words = json_decode($response);
 
-        $wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
-                        '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
-                        '«', '»', "'", '’', '–', 'NEWLINE'];
+        $wordsToSkip = config('langapp.wordsToSkip');
         $wordCount = 0;
         $uniqueWords = [];
         $uniqueWordIds = [];

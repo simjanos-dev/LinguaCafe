@@ -345,7 +345,7 @@
             <!-- Text -->
             <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}">
                 <template v-for="(word, wordIndex) in words">
-                    <template v-if="word.word.indexOf('NEWLINE') == -1  && language !== 'japanese'">
+                    <template v-if="word.word.indexOf('NEWLINE') == -1 && word.word !== '\r\n' && language !== 'japanese'">
                         <template v-if="spaceFreeWords.includes(word.word)">
                             <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
                                 @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div>

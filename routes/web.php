@@ -28,7 +28,8 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/flashcards', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/flashcards/edit/{flashcardCollectionId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/review/{bookId?}/{chapterId?}', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/vocabulary/{search?}/{chapterId?}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/vocabulary/search', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/vocabulary/search/{text}/{stage}/{book}/{chapter}/{translation}/{phrases}/{orderBy}/{page}', [App\Http\Controllers\HomeController::class, 'index']);
 
     
     // home
