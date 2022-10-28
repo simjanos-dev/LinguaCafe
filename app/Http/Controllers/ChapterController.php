@@ -266,7 +266,7 @@ class ChapterController extends Controller
         $lesson->unique_words = '';
         
         $response = Http::post('127.0.0.1:8678/tokenizer/', [
-            'raw_text' => str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $request->raw_text),
+            'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $request->raw_text)),
         ]);
 
         $lesson->processed_text = json_decode($response);

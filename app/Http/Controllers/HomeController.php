@@ -54,12 +54,12 @@ class HomeController extends Controller
             $lesson->word_count = 0;
             $lesson->book_id = $devLesson->book_id;
             $lesson->language = $selectedLanguage;
-            $lesson->raw_text = $devLesson->raw_text;
+            $lesson->raw_text = str_replace(" NEWLINE \r\n", "\r\n", $devLesson->raw_text);
             $lesson->processed_text = '';
             $lesson->unique_words = '';
 
             $response = Http::post('127.0.0.1:8678/tokenizer/', [
-                'raw_text' => str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $devLesson->raw_text)
+                'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", str_replace(" NEWLINE \r\n", "\r\n", $devLesson->raw_text))),
             ]);
 
             $lesson->processed_text = $response;
