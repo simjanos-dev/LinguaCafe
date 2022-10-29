@@ -54,12 +54,11 @@ class HomeController extends Controller
             $lesson->word_count = 0;
             $lesson->book_id = $devLesson->book_id;
             $lesson->language = $selectedLanguage;
-            $lesson->raw_text = str_replace(" NEWLINE \r\n", "\r\n", $devLesson->raw_text);
             $lesson->processed_text = '';
             $lesson->unique_words = '';
 
             $response = Http::post('127.0.0.1:8678/tokenizer/', [
-                'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", str_replace(" NEWLINE \r\n", "\r\n", $devLesson->raw_text))),
+                'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $devLesson->raw_text)),
             ]);
 
             $lesson->processed_text = $response;
@@ -80,12 +79,13 @@ class HomeController extends Controller
                 $word->lemmaReading = $words[$i]->lr;
                 $word->sentenceIndex = $words[$i]->si;
 
-                // if ($i < count($words) - 1 && $words[$i]->pos == 'VERB' && $words[$i + 1]->pos == 'VERB') {
-                //     $i ++;
-                //     $word->word .= $words[$i]->w;
-                //     $word->reading .= $words[$i]->r;
-                //     $word->lemma = $words[$i - 1]->w . $words[$i]->l;
-                // }
+                if ($i < count($words) - 1 && $words[$i]->pos == 'VERB' && $words[$i + 1]->pos == 'VERB'  && !in_array($words[$i]->w, $wordsToSkip, true)) {
+                    $i ++;
+                    $word->word .= $words[$i]->w;
+                    $word->reading .= $words[$i]->r;
+                    $word->lemmaReading = $words[$i - 1]->r . $words[$i]->lr;
+                    $word->lemma = $words[$i - 1]->w . $words[$i]->l;
+                }
                 
                 if ($words[$i]->pos == 'VERB' && $words[$i]->w !== $words[$i]->l && $i < count($words) - 1 && $words[$i + 1]->pos == 'AUX') {
                     do {

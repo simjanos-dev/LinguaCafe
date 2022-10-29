@@ -288,12 +288,13 @@ class ChapterController extends Controller
             $word->sentenceIndex = $words[$i]->si;
 
 
-            // if ($i < count($words) - 1 && $words[$i]->pos == 'VERB' && $words[$i + 1]->pos == 'VERB') {
-            //     $i ++;
-            //     $word->word .= $words[$i]->w;
-            //     $word->reading .= $words[$i]->r;
-            //     $word->lemma = $words[$i - 1]->w . $words[$i]->l;
-            // }
+            if ($i < count($words) - 1 && $words[$i]->pos == 'VERB' && $words[$i + 1]->pos == 'VERB') {
+                $i ++;
+                $word->word .= $words[$i]->w;
+                $word->reading .= $words[$i]->r;
+                $word->lemmaReading = $words[$i - 1]->r . $words[$i]->lr;
+                $word->lemma = $words[$i - 1]->w . $words[$i]->l;
+            }
             
             if ($words[$i]->pos == 'VERB' && $words[$i]->w !== $words[$i]->l && $i < count($words) - 1 && $words[$i + 1]->pos == 'AUX') {
                 do {
