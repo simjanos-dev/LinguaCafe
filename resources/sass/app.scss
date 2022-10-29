@@ -28,18 +28,25 @@ html, body, div#app, #page, #content {
     margin: 0px;
     padding: 0px;
     overflow-x: hidden;
+    overflow-y: visible;
     background-color: $background;
     font-family: sans-serif;
+}
+
+#content {
+    overflow-y: auto;
 }
 
 ::-webkit-scrollbar {
     width: 8px;
     background-color: rgba(235, 235, 235, 0);
+    z-index: 100;
 }
 
 ::-webkit-scrollbar-thumb {
     background: rgb(180, 180, 180);
     border-radius: 2px;
+    z-index: 100;
 }
 
 .text-box {
@@ -65,9 +72,41 @@ div#app {
     width: calc(100% - 200px);
     margin-left: 200px;
     height: 100%;
+}
 
-    nav {
-        margin-bottom: 20px;
+#topbar {
+    box-sizing: border-box;
+    display: none;
+    position: fixed;
+    background-color: $light-gray;
+    left: 0px;
+    top: 0px;
+    height: 40px;
+    line-height: 40px;
+    width: 100%;
+    padding: 0px 8px;
+    user-select: none;
+    z-index: 2;
+
+    .topbar-button.dropdown, 
+    .topbar-popup {
+        display: none;
+    }
+
+    .topbar-button {
+        display: inline-block;
+        float: left;
+        padding: 0px 6px;
+
+        &.right {
+            float: right;
+        }
+
+        &:hover {
+            text-decoration: none;
+            color: darken($sidebar-button-color, 30%);
+            background-color: darken($light-gray, 5%);
+        }
     }
 }
 
@@ -137,47 +176,6 @@ div#app {
             }
         }
     }
-}
-
-nav.navbar.navbar-light {
-    display: none;
-    box-shadow: none;
-    border: none;
-
-    .nav-item, .nav-item.dropdown {
-        margin: 0px 10px;
-        a {
-            color: $font-color;
-
-            &:hover {
-                color: black;
-            }
-        }
-    }
-}
-
-nav .nav-item.ebook-mode-button {
-    user-select: none;
-    cursor: pointer;
-    
-    a>i {
-        color: $green;
-        font-size: 18px;
-    }
-}
-
-nav .nav-item.dropdown {
-    color: $black;
-    
-}
-
-.navbar-brand {
-    font-size: 40px;
-    height: 40px;
-    line-height: 42px;
-    padding-top: 0px;
-    overflow: hidden;
-    color: $theme-color !important;
 }
 
 #vocabulary-select-dropdown, #language-select-dropdown {
@@ -467,7 +465,7 @@ label.switch {
 }
 
 @media (max-width: 1200px) {
-    nav.navbar.navbar-light {
+    #topbar {
         display: block;
     }
 
@@ -478,6 +476,11 @@ label.switch {
     div#app {
         width: 100%;
         margin-left: 0px;
+
+        #page {
+            height: 100%;
+            padding-top: 40px;
+        }
     }
 }
 
@@ -495,11 +498,51 @@ label.switch {
 }
 
 @media (max-width: 500px) {
+    #topbar {
+        .topbar-button {
+            font-size: 12.5px;
+            padding: 0px 3px;
+        }
+    }
+
     .pagination-button {
         display:none;
 
         &.basic {
             display: inline-block;
+        }
+    }
+}
+
+@media (max-width: 420px) {
+    #topbar {
+        .topbar-button {
+            display: none;
+        
+            &.right, &.dropdown {
+                display: block;
+            }
+        }
+        
+        .topbar-popup.visible {
+            display: block;
+            position: absolute;
+            top: 40px;
+            left: 10px;
+            width: 200px;
+            height: 200px;
+            padding: 8px;
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid $border;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, .2);
+
+            .topbar-button.popup {
+                display: block;
+                width: 100%;
+                height: 36px;
+                line-height: 36px;
+            }
         }
     }
 }

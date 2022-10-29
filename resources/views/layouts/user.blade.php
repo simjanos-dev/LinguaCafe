@@ -20,8 +20,8 @@
         <link href="{{ asset('css/ebook_reader_mode.css') }}" rel="stylesheet">
     @endif
 </head>
-<body>
-<div id="app">
-    @yield('content')
-</div>
-</body></html>
+<body><!--
+--><div id="app"><!--
+    --><layout-component></layout-component><!--
+--></div><!--
+--></body></html>
