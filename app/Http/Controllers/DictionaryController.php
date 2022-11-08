@@ -109,6 +109,10 @@ class DictionaryController extends Controller
 
         $search = VocabularyJmdict::select('conjugations')->whereIn('id', $ids)->first();
         
-        return json_encode($search->conjugations);
+        if ($search) {
+            return json_encode($search->conjugations);   
+        } else {
+            return json_encode([]);
+        }
     }
 }
