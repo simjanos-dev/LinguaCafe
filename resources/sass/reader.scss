@@ -725,6 +725,13 @@
 
 @media (max-width: 650px) {
     #reader-box {
+        #vocab-box #close-vocab-box-button {
+            height: 28px;
+            bottom: -14px;
+            width: 90px;
+            right: calc(50% - 45px);
+        }
+
         #settings {
             .setting {
                 height: auto;

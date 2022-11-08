@@ -429,16 +429,16 @@
                     <template v-if="word.word.indexOf('NEWLINE') == -1 && word.word !== '\r\n' && language !== 'japanese'">
                         <template v-if="spaceFreeWords.includes(word.word)">
                             <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                                @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div>
+                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @touchend.stop="finishSelection" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div>
                         </template><!--
                         --><template v-if="!spaceFreeWords.includes(word.word)"><!--
                             --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                                @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
+                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @touchend.stop="finishSelection" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                         --></template>
 
                     </template><!--
                     --><div v-if="word.word.indexOf('NEWLINE') == -1 && language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                        @mousedown.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @mousemove="updateSelection($event, wordIndex);" @mouseenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
+                        @mousedown.stop="startSelection($event, wordIndex)" @touchstart.stop="startSelection($event, wordIndex)" @mouseup.stop="finishSelection" @touchend.stop="finishSelection" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
                         
                     --><br v-if="word.word == 'NEWLINE'"><!--
                 --></template>
@@ -562,6 +562,13 @@
         props: {
         },
         mounted() {
+            window.oncontextmenu = function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            };
+
+
             axios.post('/chapter/get/reader', {
                 'chapterId': this.$route.params.chapterId,
             }).then(function (response) {
@@ -745,6 +752,7 @@
                 }
             },
             startSelection: function(event, wordIndex) {
+                event.preventDefault();
                 if (event == undefined) {
                     return;
                 }
@@ -782,10 +790,24 @@
                 this.ongoingSelectionStartingWord.wordIndex = wordIndex;
                 this.updateSelectedWordLookupCount(selectedWord.word, selectedWord.uniqueWordIndex);
             },
-            updateSelection: function(event, wordIndex) {
+            updateSelectionMouse: function(event, wordIndex) {
                 if (!this.ongoingSelection.length || event == undefined || event.buttons !== 1) {
                     return;
                 }
+
+                this.updateSelection(wordIndex);
+            },
+            updateSelectionTouch: function(event, wordIndex) {
+                event.preventDefault();
+                var touch = event.changedTouches[0];
+                var wordIndex = document.elementFromPoint( touch.clientX, touch.clientY ).getAttribute('wordindex'); 
+                if (wordIndex !== null && this.ongoingSelection.length) {
+                    
+                    this.updateSelection(wordIndex);
+                }
+            },
+            updateSelection: function(wordIndex) {
+                
 
                 if (wordIndex > this.ongoingSelection[0].wordIndex && 
                     wordIndex < this.ongoingSelection[this.ongoingSelection.length - 1].wordIndex) {
@@ -1124,13 +1146,11 @@
                 this.updateSelectedWordStage();
             },
             stageChanged: function() {
-                console.log('before', this.vocabBoxSelectedStage);
                 if (this.selectedPhrase == -1) {
                     this.vocabBoxSelectedStage = this.uniqueWords[this.selection[0].uniqueWordIndex].stage;
                 } else {
                     this.vocabBoxSelectedStage = this.phrases[this.selectedPhrase].stage;
                 }
-                console.log('after', this.vocabBoxSelectedStage);
             },
             deletePhrase: function() {
                 if (this.selectedPhrase == -1) {
