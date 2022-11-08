@@ -2,36 +2,53 @@
     <div v-if="currentReviewIndex !== -1" id="review-box">
         <div id="review" v-if="!finished">
             <div id="review-progress-line">
-                <div id="progress-bar-correct-counter">{{ correctReviews }}</div>
+                <div id="progress-bar-correct-counter" :style="{'background-color': $vuetify.theme.currentTheme.green}">{{ correctReviews }}</div>
                 <div id="review-progress-bar">
                         <div id="review-progress-bar-correct" :style="{'width': (correctReviews / totalReviews * 100) + '%'}"></div>
-                        <div id="review-progress-bar-seen" :style="{'width': (seen / totalReviews * 100) + '%'}"></div>
                         <div id="review-progress-bar-text">{{ correctReviews }} / {{ totalReviews }}</div>
                 </div>
                 <div id="progress-bar-remaining-counter">{{ reviews.length + finishedReviews.length - correctReviews }}</div>
             </div>
 
             <div id="toolbar">
-                <button class="toolbar-button" @click="finished = true"><i class="fa fa-check"></i></button>
-                <button class="toolbar-button" @click="fullscreen" v-if="!settings.fullscreen"><i class="fa fa-expand"></i></button>
-                <button class="toolbar-button" @click="exitFullscreen" v-if="settings.fullscreen"><i class="fa fa-compress"></i></button>
-                <button class="toolbar-button" @click="settings.sentenceMode = true; saveSettings();" v-if="!settings.sentenceMode"><i class="fa fa-align-center"></i></button>
-                <button class="toolbar-button" @click="settings.sentenceMode = false; saveSettings();" v-if="settings.sentenceMode"><i class="fa fa-underline"></i></button>
-                <button class="toolbar-button" @click="settings.fontSize ++; saveSettings();"><i class="fa fa-search-plus"></i></button>
-                <button class="toolbar-button" @click="settings.fontSize --; saveSettings();"><i class="fa fa-search-minus"></i></button>
+                <v-btn icon class="toolbar-button pa-0" @click="finished = true"><v-icon>mdi-check-all</v-icon></v-btn>
+                <v-btn-toggle class="ma-0" color="primary" group v-model="settings.fullscreen">
+                    <v-btn icon class="toolbar-button pa-0" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" :value="true" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                </v-btn-toggle>
+                <v-btn-toggle class="ma-0" color="primary" group v-model="settings.sentenceMode">
+                    <v-btn icon class="pa-0 ma-0 toolbar-button" :value="true" @click.stop="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon>mdi-card-text</v-icon></v-btn>
+                </v-btn-toggle>
+                <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-format-font-size-increase</v-icon></v-btn>
+                <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize --; saveSettings();"><v-icon>mdi-format-font-size-decrease</v-icon></v-btn>
             </div>
 
-            <div id="review-card" :class="{'revealed': revealed, 'back-to-deck-animation': backToDeckAnimation, 'into-the-correct-deck-animation': intoTheCorrectDeckAnimation, 'draw-new-card-animation': newCardAnimation}">
+            <div id="review-card" 
+                :class="{
+                    'revealed': revealed, 
+                    'back-to-deck-animation': backToDeckAnimation, 
+                    'into-the-correct-deck-animation': intoTheCorrectDeckAnimation, 
+                    'draw-new-card-animation': newCardAnimation
+                }">
                 <div id="review-card-content">
                     <!-- Review card front -->
                     <div id="review-card-front">
-                        
                         <!-- Word review -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Example sentence mode -->
                             <div class="phrase" v-if="settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <template v-for="(word, index) in JSON.parse(reviews[currentReviewIndex].example_sentence)">
-                                    <div :class="{'phrase-word': true, 'highlighted': word.toLowerCase() == reviews[currentReviewIndex].word}" v-if="word !== 'NEWLINE'" :key="index">
+                                    <div 
+                                        :class="{
+                                            'phrase-word': true, 
+                                            'highlighted': word.toLowerCase() == reviews[currentReviewIndex].word
+                                        }"
+                                        :style="{
+                                            'background-color':  word.toLowerCase() == reviews[currentReviewIndex].word ? $vuetify.theme.currentTheme.highlightedWord : ''
+                                        }"
+                                        v-if="word !== 'NEWLINE'" 
+                                        :key="index"
+                                    >
                                         {{ word }}
                                     </div>
                                 </template>
@@ -39,7 +56,7 @@
                             
                             <!-- Single word  mode -->
                             <div class="word" v-if="!settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <i class="fas fa-long-arrow-alt-right"></i> </template>
+                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}
                             </div>
                         </template>
@@ -53,12 +70,12 @@
                     </div>
 
                     <!-- Review card back -->
-                    <div id="review-card-back">
+                    <div id="review-card-back" :style="{'background-color': backgroundColor}">
                         <!-- Word review -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Single word  mode -->
                             <div class="word" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <i class="fas fa-long-arrow-alt-right"></i> </template>
+                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}
                             </div>
                         </template>
@@ -73,7 +90,7 @@
                         <!-- Reading -->
                         <div class="reading" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
                             <hr>
-                            <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <i class="fas fa-long-arrow-alt-right"></i> </template>
+                            <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                             {{ reviews[currentReviewIndex].reading }}
                         </div>
                         <hr>
@@ -85,9 +102,9 @@
                 </div>
             </div>
 
-            <button id="review-reveal-button" class="btn btn-green" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><i class="fa fa-sync"></i> Reveal</button>
-            <button id="review-wrong-button" class="btn btn-orange" @click="missed" v-if="revealed"><i class="fa fa-times"></i> Again</button>
-            <button id="review-correct-button" class="btn btn-green" @click="correct" v-if="revealed"><i class="fa fa-check"></i> I was correct</button>
+            <v-btn dark id="review-reveal-button" color="green" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+            <v-btn dark id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+            <v-btn dark id="review-correct-button" color="green" @click="correct" v-if="revealed">I was correct</v-btn>
         </div>
         <div id="finished-box" v-if="finished">
             <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ readSentences }} sentences!</div>
@@ -109,7 +126,7 @@
                     </tr>
                 </tbody>
             </table>
-            <button id="close-button" class="btn btn-primary" @click="finish()">Close</button>
+            <v-btn color="primary" @click="finish()">Close</v-btn>
         </div>
     </div>
 </template>
@@ -124,6 +141,7 @@
                 revealed: false,
                 backToDeckAnimation: false,
                 intoTheCorrectDeckAnimation: false,
+                backgroundColor: 'white',
                 newCardAnimation: false,
                 settings: {
                     fontSize: 20,
@@ -134,7 +152,6 @@
                 currentReviewIndex: -1,
                 reviews: [],
                 totalReviews: [],
-                seen: 0,
                 finishedReviews: [],
                 correctReviews: 0,
                 language: this.$props._language,
@@ -148,6 +165,7 @@
             
         },
         mounted() {
+            console.log(this.$vuetify.theme.currentTheme);
             var data = {};
             if (this.$route.params.bookId !== undefined) {
                 data.bookId = this.$route.params.bookId;
@@ -271,6 +289,7 @@
                 this.intoTheCorrectDeckAnimation = true;
                 this.backToDeckAnimation = false;
                 this.newCardAnimation = false;
+                this.backgroundColor = this.$vuetify.theme.currentTheme.green;
 
                 if (!this.reviews[this.currentReviewIndex].levelLocked 
                     && this.reviews[this.currentReviewIndex].stage < 0
@@ -278,10 +297,6 @@
                     
                     this.reviews[this.currentReviewIndex].last_level_up = this.today;
                     this.reviews[this.currentReviewIndex].stage ++;
-                }
-
-                if (this.reviews[this.currentReviewIndex].levelLocked) {
-                    this.seen --;
                 }
 
                 this.reviews[this.currentReviewIndex].levelLocked = true;
@@ -300,14 +315,12 @@
                 this.backToDeckAnimation = true;
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = false;
+                this.backgroundColor = this.$vuetify.theme.currentTheme.red;
 
                 this.revealed = false;
                 if (!this.reviews[this.currentReviewIndex].levelLocked) {
                     this.reviews[this.currentReviewIndex].levelLocked = true;
-                    this.seen ++;
                 }
-
-                
 
                 this.countReadWords();
                 setTimeout(this.next, this.settings.transitionDuration);
@@ -316,6 +329,7 @@
                 this.backToDeckAnimation = false;
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = true;
+                this.backgroundColor = 'white';
 
                 setTimeout(() => {
                     this.newCardAnimation = false;

@@ -1,7 +1,7 @@
 #edit-chapter-form {
     display: block;
-    margin: auto;
-    width: 600px;
+    width: 800px;
+    max-width: 1000px;
 
     .form-line {
         display: block;
@@ -10,5 +10,18 @@
         input, select, textarea {
             width: 100%;
         }
+    }
+}
+
+@media (max-width: 850px) {
+    #edit-chapter-form {
+        width: 94%;
+    }
+}
+
+@media (max-width: 600px) {
+    #edit-chapter-form {
+        max-width: 400px;
+        width: calc(100% - 32x);
     }
 }

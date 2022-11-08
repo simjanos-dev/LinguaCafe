@@ -1,34 +1,64 @@
 <template>
-    <form method="post" id="edit-chapter-form" enctype="multipart/form-data" v-if="book !== -1">
-        <div class="form-line">
-            Name
-            <input type="text" v-model="name" required>
-        </div>
+    <v-form ref="form" id="edit-chapter-form" class="mx-auto mt-6" v-if="book !== -1">
+        <v-text-field 
+            filled
+            dense
+            label="Name"
+            v-model="name"
+            :rules="[rules.required]"
+        ></v-text-field>
         
-        <div class="form-line">
-            Text
-            <textarea name="raw_text" rows="12" v-model="text"></textarea>
-        </div>
+        <v-textarea
+            filled
+            dense
+            no-resize
+            label="Text"
+            v-model="text"
+        ></v-textarea>
 
-        <button class="btn btn-primary" @click.prevent="saveChapter">Save</button>
-        <router-link class="sidebar-button" :to="'/chapters/' + book">
-            <button class="btn btn-primary" type="button">Cancel</button>
-        </router-link>
-        <div class="text-box red" v-if="error">
+        <v-btn 
+            class="mx-0"
+            depressed 
+            :disabled="saving"
+            :loading="saving"
+            :dark="!saving"
+            :color="saving ? '' : 'primary'"
+            @click="saveChapter"
+        >Save</v-btn>
+        
+        <v-btn 
+            class="mx-0"
+            depressed
+            color="primary"
+            :to="'/chapters/' + book"
+        >Cancel</v-btn>
+        
+        <v-alert
+            class="my-3" 
+            border="left"
+            type="error"
+            v-if="error"
+            >
             Something went wrong. Please try again.
-        </div>
-    </form>
+        </v-alert>
+    </v-form>
 </template>
 
 <script>
     export default {
         data: function() {
             return {
+                rules: {
+                    required: (value) => {
+                        return !!value || 'Required.';
+                    },
+                },
+                error: false,
+                saving: false,
                 name: '',
                 text: '',
                 book: -1,
                 chapter: -1,
-                error: false
             }
         },
         props: {
@@ -54,6 +84,11 @@
         },
         methods: {
             saveChapter: function() {
+                if (!this.$refs.form.validate()) {
+                    return;
+                }
+
+                this.saving = true;
                 var data = {
                     'name': this.name,
                     'raw_text': this.text,
@@ -70,10 +105,11 @@
                     } else {
                         this.error = true;
                     }
-                }.bind(this)).catch(function (error) {
-                    
-                }).then(function () {
-
+                }.bind(this)).catch((error) => {
+                    this.saving = false;
+                    this.error = true;
+                }).then(() =>{
+                    this.saving = false;
                 });
             }
         }

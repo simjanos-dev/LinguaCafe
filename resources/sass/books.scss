@@ -1,121 +1,85 @@
-button#books-back-button {
-    margin: 0px 25px;
-}
-
-button#create-book-button {
-    margin-right: 25px;
-}
-
-button#sentences-button {
-    margin: 0px 25px;
-}
-
 #books {
-    display: block;
-    box-sizing: border-box;
-    width: 90%;
-    max-width: 1000px;
-    margin: auto;
-    padding-bottom: 25px;
+    width: 100%;
+    overflow-y: visible;
     
     .book {
-        position: relative;
-        display: block;
-        box-sizing: border-box;
-        width: 100%;
-        height: 250px;
-        border: 1px solid $border;
-        font-size: 18px;       
-        margin: 24px 0px;
-        margin-top: 0px;
-        padding: 0px;
-        overflow: hidden;
+        width: 800px;
+        max-width: 1000px;
 
-        .image-box {
-            display: inline-block;
-            float: left;
-            width: 250px;
-            height: 250px;
+        &.button-box {
+            background-color: rgb(0, 0, 0, 0);
+            border: none;
+        }
+        
+        div.v-image.cover-image {
+            width: 266px;
+            height: 266px;
+        }
+    }
+
+    .book .action-button i.v-icon {
+        font-size: 20px;
+    }
+
+    .book-info-table {
+        width: 90%;
+
+        .info-table-value {
+            height: 24px;
+            line-height: 24px;
+            width: 60px;
+
+            &.highlighted {
+                border-radius: 4px;
+            }
         }
 
-        .image-box img {
-            width: 100%;
-            height: 100%;
+        tbody tr,
+        tbody tr td {
+            height: 26px !important;
+            line-height: 26px !important;
+            border: none !important;
         }
 
-        .information-box {
-            position: relative;
-            display: inline-block;
-            float: left;
-            width: calc(100% - 250px);
-            height: 250px;
-
-            .name {
-                display: block;
-                width: 100%;
-                height: 40px;
-                font-size: 22px;
-                padding-left: 20px;
-                padding-top: 8px;
-                margin-bottom: 8px;
-            }
-
-            .information {
-                height: calc(100% - 40px);
-                width: 300px;
-                font-size: 14px;
-                padding-left: 20px;
-                height: 22px;
-                margin: 1px 0px;
-
-                span {
-                    position: relative;
-                    width: 60px;
-                    text-align: center;
-                    float: right;
-                    border-radius: 4px;
-
-                    &.highlighted {
-                        background-color: $green;
-                        text-align: left;
-                        padding-left: 25px;
-                    }
-
-                    &.new {
-                        background-color: $new-word;
-                        text-align: left;
-                        padding-left: 25px;
-                    }
-
-                    i {
-                        font-size: 12px;
-                        position: absolute;
-                        left: 5px;
-                        top: 5px; 
-                    }
-                }
-            }
-
-            .buttons {
-                position: absolute;
-                width: 100%;
-                bottom: 10px;
-                padding-right: 10px;
-                
-                button {
-                    width: 115px;
-                }
-                
-                a {
-                    float: right;
-                    margin: 0px;
-                    margin-left: 10px;
-                }
-
-                i {
-                    margin-right: 4px;
-                }
-            }
+        tbody tr td:nth-child(1) {
+            width: 325px;
         }
     }
 }
+
+
+@media (max-width: 850px) {
+    #books .book {
+        overflow: hidden;
+        width: 94%;
+
+        .book-title {
+            font-size: 18px;
+        }
+
+        .book-info-table td {
+            font-size: 13px;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    #books .book {
+        max-width: 400px;
+        width: calc(100% - 32px);
+        height: auto;
+
+        div.v-image.cover-image {
+            width: 100%;
+        }
+
+        .book-title {
+            font-size: 18px;
+        }
+
+        .book-info-table td {
+            font-size: 13px;
+        }
+    }
+}
+

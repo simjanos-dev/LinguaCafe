@@ -1,98 +1,82 @@
-#save-flashcard-collection-button {
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-#edit-flashcard-collection-form {
-    display: block;
-    margin: auto;
-    width: 90%;
-    max-width: 1400px;
-}
-
-#import-file {
-    display: inline-block;
-    float: right;
-    width: 300px;
-    height: 43px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-.flashcard-button {
-    display: inline-block;
-    float: left;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    padding: 0px;
-    margin: 3px;
-}
-
-#edit-flashcards-table {
-
-    textarea {
-        resize: none;
-        height: 100%;
-    }
-
-    td:nth-of-type(6), th:nth-of-type(6) {
-        width: 74px;
-        padding: 0px !important;
-    }
-
-    td:nth-of-type(1), th:nth-of-type(1) {
-        width: 56px;
-        text-align: center;
-    }
-
-    td:nth-of-type(2), th:nth-of-type(2) {
-        width: 50px;
-        text-align: center;
-    }
-
-    td:nth-of-type(3), th:nth-of-type(3), 
-    td:nth-of-type(5), th:nth-of-type(5) {
-        width: 32%;
-        padding-left: 5px;
-    }
-
-    td:nth-of-type(4), th:nth-of-type(4) {
-        padding-left: 5px;
-    }
-
-    th {
-        text-align: center;
-        background-color: $green;
-        color: white;
-    }
-
-    tr, td, th {
-        height: 36px;
-        line-height: 36px;
-        font-size: 16px;
-        padding: 0px;
-
-        div {
-            box-sizing: border-box;
-            display: block;
-            width: 100%;
-            height: 36px;
-            line-height: 36px;
-            margin: 0px;
+#edit-flashcards #flashcards{
+    thead tr ,
+    tbody tr {
+        td.index,
+        th.index {
+            text-align: center;
             padding: 0px;
-            overflow: hidden;
+            width: 40px;
+        }
+
+        td.level,
+        th.level {
+            text-align: center;
+            padding: 0px;
+            width: 40px;
+        }
+
+        td.target-language,
+        th.target-language {
+            text-align: center;
+        }
+
+        td.reading,
+        th.reading {
+            text-align: center;
+            width: 200px;
+        }
+
+        td.translation,
+        th.translation {
+            text-align: center;
+            width: 200px;
+        }
+
+        td.options,
+        th.options {
+            text-align: center;
+            width: 78px;
+
+            button.v-btn {
+                width: 36px !important;
+                min-width: 36px !important;
+            }
         }
     }
+}
 
-    tr.edit, tr.edit td, tr.edit th {
-        height: 160px;
+@media (max-width: 1100px) {
+    #edit-flashcards #flashcards{
+        thead tr ,
+        tbody tr {
+            td.reading,
+            th.reading {
+                display: none;
+            }
+        }
     }
+}
 
-    tr.edit button {
-        display: block;
-        float: none;
-        margin: 65px auto;
+@media (max-width: 650px) {
+    #edit-flashcards #flashcards{
+        thead tr ,
+        tbody tr {
+            td.translation,
+            th.translation {
+                display: none;
+            }
+        }
+    }
+}
+
+@media (max-width: 400px) {
+    #edit-flashcards #flashcards{
+        thead tr ,
+        tbody tr {
+            td.level,
+            th.level {
+                display: none;
+            }
+        }
     }
 }

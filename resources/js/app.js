@@ -7,6 +7,7 @@ import axios from 'axios'
 import Vue from 'vue';
 import VueSlider from 'vue-slider-component';
 import VueRouter from 'vue-router';
+import vuetify from './vuetify';
 
 require('./bootstrap');
 window.Vue = require('vue').default;
@@ -66,6 +67,7 @@ const router = new VueRouter({
 const app = new Vue({
     router,
     el: '#app',
+    vuetify
 });
 
 

@@ -1,61 +1,72 @@
 <template>
-    <div id="edit-flashcard-collection-form">
-        <button id="save-flashcard-collection-button" class="btn btn-primary" @click="save">Save flash card collection</button>
-        <button class="btn btn-primary" @click="cancel()">Cancel</button>
-        <input id="import-file" class="form-control" type="file" ref="importFileInput" @change="importFlashcards()">
-        <div class="text-box red" v-if="errors.save">
+    <div id="edit-flashcards">
+        <v-btn color="primary" @click="save">Save</v-btn>
+        <v-btn color="primary" @click="cancel">Cancel</v-btn>
+        
+        <v-alert
+            class="my-3" 
+            border="left"
+            type="error"
+            v-if="error"
+            >
             Something went wrong. Please try again.
-        </div>
-        <div class="form-group">
-            <label class="form-check-label" for="name">Name</label>
-            <input class="form-control" type="text" name="name" v-model="name" required>
-        </div>
-        <div class="text-box red" v-if="errors.emptyName">
-            You must type in a name.
-        </div>
-        <div class="form-group">
-            <label class="form-check-label" for="type">Type</label>
-            <select class="form-control" name="type" v-model="type">
-                <option value="normal">Normal</option>
-                <option value="typing">Typing</option>
-            </select>
-        </div><br>
-        <table id="edit-flashcards-table" class="table table-sm table-bordered">
+        </v-alert>
+
+        <v-text-field 
+            class="mt-6"
+            filled
+            dense
+            label="Name"
+            v-model="name"
+            :rules="[rules.required]"
+        ></v-text-field>
+
+        <v-select
+            dense
+            filled
+            v-model="type"
+            :items="types"
+            item-text="text"
+            item-value="value"
+            label="Select"
+        ></v-select>
+        
+        <v-simple-table id="flashcards" class="py-0 no-hover border" dense>
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Level</th>
-                    <th>{{ language.charAt(0).toUpperCase() + language.slice(1) }}</th>
-                    <th>Reading</th>
-                    <th>Translation</th>
-                    <th></th>
+                    <th class="index">#</th>
+                    <th class="level">Level</th>
+                    <th class="target-language">{{ language.charAt(0).toUpperCase() + language.slice(1) }}</th>
+                    <th class="reading">Reading</th>
+                    <th class="translation">Translation</th>
+                    <th class="actions px-2">Options</th>
                 </tr>
             </thead>
             <tbody>
                 <template v-for="(flashCard, index) in flashCards">
                     <tr v-if="!flashCard.deleted && selectedFlashcard !== index" :key="index">
-                        <td>{{ (index + 1) }}</td>
-                        <td><div :title="flashCard.level">{{ flashCard.level }}</div></td>
-                        <td><div :title="flashCard.sentence">{{ flashCard.sentence }}</div></td>
-                        <td><div :title="flashCard.reading">{{ flashCard.reading }}</div></td>
-                        <td><div :title="flashCard.translation">{{ flashCard.translation }}</div></td>
-                        <td>
-                            <button class="btn btn-primary flashcard-button" @click="editFlashcard(index)"><i class="fa fa-edit"></i></button>
-                            <button class="btn btn-primary flashcard-button" @click="deleteFlashcard(index)"><i class="fa fa-trash"></i></button>
+                        <td class="index">{{ (index + 1) }}</td>
+                        <td class="level"><div :title="flashCard.level">{{ flashCard.level }}</div></td>
+                        <td class="target-language"><div :title="flashCard.sentence">{{ flashCard.sentence }}</div></td>
+                        <td class="reading"><div :title="flashCard.reading">{{ flashCard.reading }}</div></td>
+                        <td class="translation"><div :title="flashCard.translation">{{ flashCard.translation }}</div></td>
+                        <td class="actions px-2">
+                            <v-btn icon><v-icon>mdi-dots-horizontal</v-icon></v-btn>
                         </td>
                     </tr>
                     <tr class="edit" v-if="!flashCard.deleted && selectedFlashcard == index" :key="index">
-                        <td>{{ '#' + (index + 1) }}</td>
-                        <td>{{ flashCard.level }}</td>
-                        <td><textarea class="form-control" v-model="flashCard.sentence"></textarea></td>
-                        <td><textarea class="form-control" v-model="flashCard.reading"></textarea></td>
-                        <td><textarea class="form-control" v-model="flashCard.translation"></textarea></td>
-                        <td><button class="btn btn-primary flashcard-button" @click="selectedFlashcard = -1"><i class="fa fa-check"></i></button></td>
+                        <td class="index">{{ '#' + (index + 1) }}</td>
+                        <td class="level">{{ flashCard.level }}</td>
+                        <td class="target-language"><textarea class="form-control" v-model="flashCard.sentence"></textarea></td>
+                        <td class="reading"><textarea class="form-control" v-model="flashCard.reading"></textarea></td>
+                        <td class="translation"><textarea class="form-control" v-model="flashCard.translation"></textarea></td>
+                        <td class="actions px-2"><v-btn color="primary" @click="selectedFlashcard = -1"><v-icon>mdi-check</v-icon></v-btn></td>
                     </tr>
                 </template>
             </tbody>
-        </table>
-        <button class="btn btn-primary" @click="addFlashcard()">Add flash card</button>
+        </v-simple-table>
+
+        <v-btn color="primary" @click="addFlashcard()">Add flashcard</v-btn>
     </div>
 </template>
 
@@ -63,10 +74,22 @@
     export default {
         data: function() {
             return {
-                errors: {
-                    save: false,
-                    emptyName: false,
+                rules: {
+                    required: (value) => {
+                        return !!value || 'Required.';
+                    },
                 },
+                error: false,
+                types: [
+                    {
+                        text: 'Normal',
+                        value: 'normal'
+                    },
+                    {
+                        text: 'Typing',
+                        value: 'typing'
+                    }
+                ],
                 language: '',
                 id: -1,
                 name: '',

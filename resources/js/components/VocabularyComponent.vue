@@ -1,188 +1,238 @@
 <template>
-    <div id="vocabulary">
+    <div id="vocabulary" class="pa-6">
         <!-- search filter -->
         <div id="vocabulary-search-field">
-            <button class="btn btn-secondary" @click="applyFilter('text')"><i class="fa fa-search"></i> Search</button>
-            <input class="" type="text" placeholder="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')">
+            <v-btn rounded depressed color="primary" @click="applyFilter('text')"><v-icon>mdi-magnify</v-icon> Search</v-btn>
+            <v-text-field rounded outlined dense label="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')"></v-text-field>
         </div>
 
         <!-- filters -->
-        <div id="vocabulary-filters" :class="{'filters-hidden': filtersHidden}">
-            <!-- stage filter -->
-            <div class="vocabulary-filter stage">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('stage')">
-                        Stage 
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'stage'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'stage'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'stage'}">
-                        <div :class="{'popup-button': true, 'selected': filters.stage == 'any'}" @click="applyFilter('stage', 'any')">Any</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == 2}" @click="applyFilter('stage', 2)">New</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == 1}" @click="applyFilter('stage', 1)">Ignored</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == 0}" @click="applyFilter('stage', 0)">Learned</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -1}" @click="applyFilter('stage', -1)">1</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -2}" @click="applyFilter('stage', -2)">2</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -3}" @click="applyFilter('stage', -3)">3</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -4}" @click="applyFilter('stage', -4)">4</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -5}" @click="applyFilter('stage', -5)">5</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -6}" @click="applyFilter('stage', -6)">6</div>
-                        <div :class="{'popup-button': true, 'selected': filters.stage == -7}" @click="applyFilter('stage', -7)">7</div>
-                        
-                    </div>
+        <v-container fluid>
+            <v-row id="filters" :class="{'hidden': filtersHidden}">
+                <!-- Stage filter -->
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
+                            Stage
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item :class="{'v-list-item--active': filters.stage == 'any'}" @click="applyFilter('stage', 'any')">Any</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == 2}" @click="applyFilter('stage', 2)">New</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == 1}" @click="applyFilter('stage', 1)">Ignored</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == 0}" @click="applyFilter('stage', 0)">Learned</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -1}" @click="applyFilter('stage', -1)">1</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -2}" @click="applyFilter('stage', -2)">2</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -3}" @click="applyFilter('stage', -3)">3</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -4}" @click="applyFilter('stage', -4)">4</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -5}" @click="applyFilter('stage', -5)">5</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -6}" @click="applyFilter('stage', -6)">6</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.stage == -7}" @click="applyFilter('stage', -7)">7</v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+
+                <!-- Book filter -->
+                <v-menu offset-y v-if="books.length">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
+                            Book
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item :class="{'v-list-item--active': filters.book == 'any'}" @click="applyFilter('book', 'any', -1)">Any</v-list-item>
+                            <v-list-item 
+                                v-for="(book, index) in books" :key="index"
+                                :class="{'v-list-item--active': filters.book == book.id}"
+                                @click="applyFilter('book', book.id, index)">{{ book.name }}</v-list-item>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+
+                <!-- Chapter filter -->
+                <v-menu offset-y v-if="filters.bookIndex !== -1 && books.length">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
+                            Chapter
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item :class="{'v-list-item--active': filters.chapter == 'any'}" @click="applyFilter('chapter', 'any')">Any</v-list-item>
+                            <v-list-item 
+                                v-for="(chapter, index) in books[filters.bookIndex].chapters" :key="index"
+                                :class="{'v-list-item--active': filters.chapter == chapter.id}"
+                                @click="applyFilter('chapter', chapter.id, index)">{{ chapter.name }}</v-list-item>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+
+                <!-- Translation filter -->
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
+                            Translation
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item 
+                                :class="{'v-list-item--active': filters.translation == 'any'}"
+                                @click="applyFilter('translation', 'any')">Any
+                            </v-list-item>
+                            <v-list-item 
+                                :class="{'v-list-item--active': filters.translation == 'not empty'}" 
+                                @click="applyFilter('translation', 'not empty')">Not empty
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+
+                <!-- Phrases filter -->
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
+                            Phrases
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item 
+                                :class="{'v-list-item--active': filters.phrases == 'both'}"
+                                @click="applyFilter('phrases', 'both')">Both
+                            </v-list-item>
+                            <v-list-item 
+                                :class="{'v-list-item--active': filters.phrases == 'only words'}" 
+                                @click="applyFilter('phrases', 'only words')">Only words
+                            </v-list-item>
+                            <v-list-item 
+                                :class="{'v-list-item--active': filters.phrases == 'only phrases'}" 
+                                @click="applyFilter('phrases', 'only phrases')">Only phrases
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+
+                <!-- Search result order -->
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
+                            Order by
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item :class="{'v-list-item--active': filters.orderBy == 'words'}" @click="applyFilter('orderBy', 'words')"><v-icon class="mr-1">mdi-sort-alphabetical-ascending</v-icon>Word</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.orderBy == 'words desc'}" @click="applyFilter('orderBy', 'words desc')"><v-icon class="mr-1">mdi-sort-alphabetical-descending</v-icon>Word</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.orderBy == 'stage'}" @click="applyFilter('orderBy', 'stage')"><v-icon class="mr-1">mdi-sort-numeric-ascending</v-icon>Stage</v-list-item>
+                            <v-list-item :class="{'v-list-item--active': filters.orderBy == 'stage desc'}" @click="applyFilter('orderBy', 'stage desc')"><v-icon class="mr-1">mdi-sort-numeric-descending</v-icon>Stage</v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+
+                <!-- Show filters -->
+                <v-btn class="filter-menu show-filters px-1" plain @click="filtersHidden = !filtersHidden">
+                    <v-icon small class="mr-1" v-if="filtersHidden">mdi-eye</v-icon>
+                    <v-icon small class="mr-1" v-if="!filtersHidden">mdi-eye-off</v-icon>Show filters
+                </v-btn>
+                
+                <!-- search result info -->
+                <v-spacer></v-spacer>
+                <div id="search-result-info" class="filter-menu">
+                    {{ wordCount }} words
                 </div>
-            </div>
 
-            <!-- book filter -->
-            <div class="vocabulary-filter book" v-if="books.length">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('book')">
-                        Book 
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'book'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'book'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'book'}">
-                        <div :class="{'popup-button': true, 'selected': filters.book == 'any'}" @click="applyFilter('book', 'any', -1)">Any</div>
-                        <div :class="{'popup-button': true, 'selected': filters.book == book.id}" v-for="(book, index) in books" :key="index" @click="applyFilter('book', book.id, index)">{{ book.name }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- chapter filter -->
-            <div class="vocabulary-filter chapter" v-if="filters.bookIndex !== -1">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('chapter')">
-                        Chapter 
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'chapter'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'chapter'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'chapter'}">
-                        <div :class="{'popup-button': true, 'selected': filters.chapter == 'any'}" @click="applyFilter('chapter', 'any')">Any</div>
-                        <div :class="{'popup-button': true, 'selected': filters.chapter == chapter.id}" v-for="(chapter, index) in books[filters.bookIndex].chapters" :key="index" @click="applyFilter('chapter', chapter.id)">{{ chapter.name }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- translation filter -->
-            <div class="vocabulary-filter translation">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('translation')">
-                        Translation 
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'translation'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'translation'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'translation'}">
-                        <div :class="{'popup-button': true, 'selected': filters.translation == 'any'}" @click="applyFilter('translation', 'any')">Any</div>
-                        <div :class="{'popup-button': true, 'selected': filters.translation == 'not empty'}" @click="applyFilter('translation', 'not empty')">Not empty</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- phrases filter -->
-            <div class="vocabulary-filter phrases">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('phrases')">
-                        Phrases 
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'phrases'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'phrases'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'phrases'}">
-                        <div :class="{'popup-button': true, 'selected' : filters.phrases == 'both'}" @click="applyFilter('phrases', 'both')">Both</div>
-                        <div :class="{'popup-button': true, 'selected' : filters.phrases == 'only words'}" @click="applyFilter('phrases', 'only words')">Only words</div>
-                        <div :class="{'popup-button': true, 'selected' : filters.phrases == 'only phrases'}" @click="applyFilter('phrases', 'only phrases')">Only phrases</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- order by filter -->
-            <div class="vocabulary-filter order-by">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('order-by')">
-                        Order by 
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'order-by'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'order-by'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'order-by'}">
-                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'words'}" @click="applyFilter('orderBy', 'words')"><i class="fa fa-sort-alpha-down"></i> Word</div>
-                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'words desc'}" @click="applyFilter('orderBy', 'words desc')"><i class="fa fa-sort-alpha-down-alt"></i> Word</div>
-                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'stage'}" @click="applyFilter('orderBy', 'stage')"><i class="fa fa-sort-numeric-down"></i> Stage</div>
-                        <div :class="{'popup-button': true, 'selected' : filters.orderBy == 'stage desc'}" @click="applyFilter('orderBy', 'stage desc')"><i class="fa fa-sort-numeric-down-alt"></i> Stage</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- export -->
-            <div class="vocabulary-filter export">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="toggleFilter('export')">
-                        <i class="fa fa-file-download"></i> Export
-                        <i class="fa fa-angle-down" v-if="visiblePopup !== 'export'"></i>
-                        <i class="fa fa-angle-up" v-if="visiblePopup == 'export'"></i>
-                    </span>
-                    <div :class="{'filter-popup': true, 'visible': visiblePopup == 'export'}">
-                        <div :class="{'popup-button': true}">Excel</div>
-                        <div :class="{'popup-button': true}">Csv</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- search result info -->
-            <div class="vocabulary-filter search-result-info">
-                {{ wordCount }} words found
-            </div>
-
-            <!-- show / hide filters -->
-            <div class="vocabulary-filter show-filters">
-                <div class="vocabulary-filter-box">
-                    <span @click.stop="filtersHidden = !filtersHidden" v-if="filtersHidden">
-                        <i class="fa fa-filter"></i> Show filters
-                    </span>
-
-                    <span @click.stop="filtersHidden = !filtersHidden" v-if="!filtersHidden">
-                        <i class="fa fa-filter"></i> Hide filters
-                    </span>
-                </div>
-            </div>
-        </div>
+                <!-- Export -->
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="filter-menu export px-1" plain v-bind="attrs" v-on="on">
+                            <v-icon small class="mr-1">mdi-file-download</v-icon>Export
+                            <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list class="filter-popup pa-0" dense>
+                        <v-list-item-group color="primary">
+                            <v-list-item><v-icon class="mr-1">mdi-file-excel</v-icon> Excel</v-list-item>
+                            <v-list-item><v-icon class="mr-1">mdi-file-delimited</v-icon>Csv</v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-menu>
+            </v-row>
+        </v-container>
 
         <!-- vocabulary list -->
-        <div id="vocabulary-list">
-            <div class="vocabulary-line header">
-                <div class="word">Word</div>
-                <div class="reading">Reading</div>
-                <div class="word-with-reading">Word</div>
-                <div class="stage">Stage</div>
-                <div class="translations">Definitions</div>
-                <div class="actions">Options</div>
-            </div>    
+        <v-simple-table id="vocabulary-list" class="py-0 no-hover border" dense>
+            <thead>
+                <tr>
+                    <th class="word">Word</th>
+                    <th class="reading">Reading</th>
+                    <th class="word-with-reading">Word</th>
+                    <th class="stage px-1">Stage</th>
+                    <th class="translation">Definitions</th>
+                    <th class="actions">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(word, index) in words" :key="index">
+                    <td class="word">{{ word.word }}</td>
+                    <td class="reading">{{ word.reading }}</td>                    
+                    <td class="word-with-reading"><ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby></td>
+                    
+                    <td class="stage px-1" :stage="word.stage" v-if="word.stage < 0">
+                        <div :style="{'background-color': $vuetify.theme.currentTheme.highlightedWord}">{{ word.stage * -1 }}</div>
+                    </td>
+                    <td class="stage px-1" :stage="word.stage" v-if="word.stage == 0">
+                        <div :style="{'background-color': $vuetify.theme.currentTheme.background}">0</div>
+                    </td>
+                    <td class="stage px-1" :stage="word.stage" v-if="word.stage == 1">
+                        <div :style="{'background-color': $vuetify.theme.currentTheme.background}">X</div>
+                    </td>
+                    <td class="stage px-1" :stage="word.stage" v-if="word.stage == 2">
+                        <div :style="{'background-color': $vuetify.theme.currentTheme.newWord}">New</div>
+                    </td>
+                    
+                    <td class="translation">{{ word.translation }}</td>
+                    <td class="actions"><v-btn icon><v-icon>mdi-dots-horizontal</v-icon></v-btn></td>
+                </tr>
+            </tbody>
+        </v-simple-table>
 
-            <div class="vocabulary-line" v-for="(word, index) in words" :key="index">
-                <div class="word">{{ word.word }}</div>
-                <div class="reading">{{ word.reading }}</div>
-                <div class="word-with-reading"><ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby></div>
-                
-                <div class="stage" :stage="word.stage" v-if="word.stage < 0"><span>{{ word.stage * -1 }}</span></div>
-                <div class="stage" :stage="word.stage" v-if="word.stage == 0"><span>0</span></div>
-                <div class="stage" :stage="word.stage" v-if="word.stage == 1"><span>X</span></div>
-                <div class="stage" :stage="word.stage" v-if="word.stage == 2"><span>New</span></div>
-
-                <div class="translations">{{ word.translation }}</div>
-                <div class="actions">
-                    <i class="fa fa-ellipsis-h" @click.stop="toggleFilter('word' + index)"></i>
-                        <div :class="{'vocabulary-popup': true, 'visible': visiblePopup == ('word' + index)}">
-                            <div :class="{'popup-button': true}"><i class="fa fa-pen"></i> Edit</div>
-                        </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- search result info -->
         <div id="small-screen-search-result-info">
-            {{ wordCount }} words found
+            {{ wordCount }} words
         </div>
 
+        <div class="px-2">
+            <v-pagination
+                v-model="currentPage"
+                :length="pageCount"
+                :total-visible="10"
+                prev-icon="mdi-menu-left"
+                next-icon="mdi-menu-right"
+                @input="moveToPage(currentPage)"
+            ></v-pagination>
+        </div>
+
+
+        <!--
         <div id="vocabulary-pagination">
-            <!-- normal pagination -->
+
             <div class="pagination-button" v-if="currentPage > 4" @click="moveToPage(1)">1</div>
             <div class="pagination-button dots" v-if="currentPage > 5">...</div>
             <template v-for="(page, index) in pageCount">
@@ -191,13 +241,13 @@
             <div class="pagination-button dots" v-if="currentPage < pageCount - 4">...</div>
             <div class="pagination-button" v-if="currentPage < pageCount - 3" @click="moveToPage(pageCount)">{{ pageCount }}</div>
 
-            <!-- pagination below 500px width -->
             <div class="pagination-button basic first" @click="moveToPage(1)">First</div>
             <div class="pagination-button basic" v-if="currentPage > 0" @click="moveToPage(currentPage - 1)">{{ currentPage - 1 }}</div>
             <div class="pagination-button basic selected" @click="moveToPage(currentPage)">{{ currentPage }}</div>
             <div class="pagination-button basic" v-if="currentPage < pageCount - 1" @click="moveToPage(currentPage + 1)">{{ currentPage + 1 }}</div>
             <div class="pagination-button basic last" @click="moveToPage(pageCount)">Last</div>
         </div>
+        -->
     </div>
 </template>
 
@@ -213,7 +263,6 @@
                 words: [],
                 wordCount: 0,
                 books: [],
-                chapters: [],
                 pageCount: 1,
                 currentPage: 1,
 
@@ -225,7 +274,7 @@
                     translation: 'any',
                     phrases: 'both',
                     orderBy: 'words',
-                    text: 'anytext',
+                    text: '',
                 }
             }
         },
@@ -236,18 +285,18 @@
             document.getElementById('app').addEventListener('click', () => { this.visiblePopup = ''; });
             
             if (this.$route.params.text !== undefined) {
-                this.filters.text = this.$route.params.text;
+                this.filters.text = (this.$route.params.text == 'anytext') ? '' : this.$route.params.text;
                 this.filters.stage = this.$route.params.stage;
                 this.filters.book = this.$route.params.book;
                 this.filters.chapter = this.$route.params.chapter;
                 this.filters.translation = this.$route.params.translation;
                 this.filters.phrases = this.$route.params.phrases;
                 this.filters.orderBy = this.$route.params.orderBy;
-                this.currentPage = this.$route.params.page;
+                this.currentPage = parseInt(this.$route.params.page);
             }
 
             axios.post('/vocabulary/search', {
-                text: this.filters.text,
+                text: (this.filters.text == '') ? 'anytext' : this.filters.text,
                 book: this.filters.book,
                 chapter: this.filters.chapter,
                 stage: this.filters.stage,

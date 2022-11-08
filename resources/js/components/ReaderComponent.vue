@@ -1,62 +1,48 @@
 <template>
-    <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}">
+    <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}" :style="{'background-color': $vuetify.theme.currentTheme.background}">
         <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}" v-if="lessonId !== null">
-            <div v-if="!finished" id="toolbar">
-                <div class="toolbar-button-group menus">
-                    <button :class="{'toolbar-button': true, 'selected': toolbar == 'text'}" @click="setToolbar('text')" title="Text">
-                        <i class="fas fa-align-justify"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true, 'selected': toolbar == 'chapters'}" @click="setToolbar('chapters')" title="Chapters">
-                        <i class="fas fa-book"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true, 'selected': toolbar == 'glossary'}" @click="setToolbar('glossary')" title="Glossary">
-                        <i class="fas fa-list"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true, 'selected': toolbar == 'settings'}"  @click="setToolbar('settings')" title="Settings">
-                        <i class="fa fa-cog"></i>
-                    </button>
+            <div v-if="!finished" id="toolbar" class="d-flex " :style="{'width': settings.maximumTextWidth}">
+                <v-btn-toggle group class="toolbar-button-group menus ma-0 mb-16" v-model="toolbarMenu">
+                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('text')" value="text" title="Text"><v-icon>mdi-text-box-outline</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('chapters')" value="chapters" title="Chapters"><v-icon>mdi-bookmark</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('glossary')" value="glossary" title="Glossary"><v-icon>mdi-format-list-bulleted</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('settings')" value="settings" title="Settings"><v-icon>mdi-tune</v-icon></v-btn>
+                </v-btn-toggle>
+
+                
+                <v-btn-toggle class="toolbar-button-group ma-0 d-none d-sm-flex" group multiple v-model="toolbarOptions">
+                    <v-btn icon class="toolbar-button pa-0" @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon>mdi-marker</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="settings.japaneseText = !settings.japaneseText; saveSettings();"><v-icon>mdi-syllabary-hiragana</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="settings.highlightWords = !settings.highlightWords; saveSettings();"><v-icon>mdi-format-letter-matches</v-icon></v-btn>
+                </v-btn-toggle>
+                
+                <v-spacer></v-spacer>
+                <div class="toolbar-button-group zoom ma-0">
+                    <v-btn icon class="toolbar-button pa-0 ma-1" @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0 ma-1" @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                 </div>
 
-                <div class="toolbar-button-group">
-                    <button class="toolbar-button" @click="fullscreen" title="Fullscreen" v-if="!settings.fullscreen">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                    <button class="toolbar-button" @click="exitFullscreen" title="Exit fullscreen" v-if="settings.fullscreen">
-                        <i class="fas fa-compress"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true}" @click="settings.fontSize ++; unselectWord(); saveSettings();" title="Increase font size">
-                        <i class="fa fa-search-plus"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true}" @click="settings.fontSize --; unselectWord(); saveSettings();" title="Decrease font size">
-                        <i class="fa fa-search-minus"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true, 'selected': settings.plainTextMode}" @click="settings.plainTextMode = !settings.plainTextMode; unselectWord(); saveSettings();" title="Plain text mode">
-                        <i class="fa fa-highlighter"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true, 'selected': settings.japaneseText}" @click="settings.japaneseText = !settings.japaneseText; unselectWord(); saveSettings();" title="Japanese text direction">
-                        <i class="fa fa-language"></i>
-                    </button>
-                    <button :class="{'toolbar-button': true, 'selected': settings.highlightWords}"  @click="settings.highlightWords = !settings.highlightWords; saveSettings();" title="Highlight words">
-                        <i class="fa fa-underline"></i>
-                    </button>
-                </div>
+                <v-btn-toggle class="toolbar-button-group ma-0" group multiple v-model="toolbarFullscreen">
+                    <v-btn icon class="toolbar-button pa-0" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                </v-btn-toggle>
             </div>
 
             <!-- Settings -->
-            <div id="toolbar-header" v-if="toolbar !== 'text'" :style="{'width': settings.maximumTextWidth}">
-                <template v-if="toolbar == 'chapters'">Chapters<span>{{ bookName }}</span></template>
+            <div id="toolbar-header" v-if="toolbar !== 'text'" :style="{'background-color': $vuetify.theme.currentTheme.background}">
+                <template v-if="toolbar == 'chapters'">Chapters</template>
                 <template v-if="toolbar == 'glossary'">Glossary</template>
                 <template v-if="toolbar == 'settings'">Settings</template>
             </div>
             <div id="settings" :class="{'visible': toolbar == 'settings'}">
                 <!-- Highlight words -->
-                <div class="setting">
+                <div class="setting switch">
                     <div class="setting-label">Highlight words:</div>
                     <div class="setting-input switch">
-                        <label class="switch">
-                            <input type="checkbox" v-model="settings.highlightWords" @change="saveSettings">
-                            <span class="slider"></span>
-                        </label>
+                        <v-switch
+                            v-model="settings.highlightWords" 
+                            @change="saveSettings(); updateToolbarButtonGroup()"
+                        ></v-switch>
                     </div>
                 </div>
 
@@ -102,46 +88,24 @@
                 </div>
 
                 <!-- Japanese vertical text -->
-                <div class="setting">
+                <div class="setting switch">
                     <div class="setting-label">Japanese vertical text:</div>
                     <div class="setting-input switch">
-                        <label class="switch">
-                            <input type="checkbox" v-model="settings.japaneseText" @change="saveSettings">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Display phrase reading -->
-                <div class="setting">
-                    <div class="setting-label">Display phrase reading:</div>
-                    <div class="setting-input switch">
-                        <label class="switch">
-                            <input type="checkbox" v-model="settings.displayPhraseReading" @change="saveSettings">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Display glossary reading -->
-                <div class="setting">
-                    <div class="setting-label">Display glossary reading:</div>
-                    <div class="setting-input switch">
-                        <label class="switch">
-                            <input type="checkbox" v-model="settings.displayGlossaryReadings" @change="saveSettings">
-                            <span class="slider"></span>
-                        </label>
+                        <v-switch
+                            v-model="settings.japaneseText" 
+                            @change="saveSettings(); updateToolbarButtonGroup()"
+                        ></v-switch>
                     </div>
                 </div>
 
                 <!-- Auto move words to known -->
-                <div class="setting">
+                <div class="setting switch">
                     <div class="setting-label">Auto move words to known:</div>
                     <div class="setting-input switch">
-                        <label class="switch">
-                            <input type="checkbox" v-model="settings.autoMoveWordsToKnown" @change="saveSettings">
-                            <span class="slider"></span>
-                        </label>
+                        <v-switch
+                            v-model="settings.autoMoveWordsToKnown" 
+                            @change="saveSettings(); updateToolbarButtonGroup()"
+                        ></v-switch>
                     </div>
                 </div>
             </div>
@@ -149,50 +113,45 @@
             <!-- Chapters -->
             <div v-if="!finished" id="chapters" :class="{'visible': toolbar == 'chapters'}">
                 <template v-for="(lesson, index) in lessons">
-                    <div class="chapter-connect-line" v-if="index" v-for="i in 4"></div>
-                    <div :id="lesson.id == lessonId ? 'selected-chapter' : ''" class="chapter" :key="index">
+                    <div class="chapter-connect-line" v-if="index" v-for="i in 3"></div>
+                    <v-card :id="lesson.id == lessonId ? 'selected-chapter' : ''" class="chapter rounded-lg pa-3 mx-auto" :key="index">
                         <div class="chapter-title">
                             {{ lesson.name }}
                             <div v-if="lesson.id == lessonId"> Current chapter</div>
                         </div>
                         <div class="chapter-read">Read count: <span>{{ lesson.read_count}}</span></div>
-                        <div class="chapter-words">Word count: <span>{{ lesson.wordCount.total }}</span></div>
-                        <div class="chapter-unique-words">Unique word count: <span>{{ lesson.wordCount.unique }}</span></div>
-                        <div class="chapter-known-words">Known word count: <span>{{ lesson.wordCount.known }}</span></div>
-                        <div class="chapter-highlighted-words">Highlighted word count: <span class="highlighted"><i class="fa fa-book-open"></i> {{ lesson.wordCount.highlighted }}</span></div>
-                        <div class="chapter-new-words">New word count: <span class="new"><i class="fa fa-eye-slash"></i> {{ lesson.wordCount.new }}</span></div>
-                        <router-link class="sidebar-button" :to="'/chapters/read/' + lesson.id"><button class="btn btn-secondary small" v-if="lesson.id != lessonId">Read</button></router-link>
-                    </div>
+                        <div class="chapter-words">Words: <span>{{ lesson.wordCount.total }}</span></div>
+                        <div class="chapter-unique-words">Unique words: <span>{{ lesson.wordCount.unique }}</span></div>
+                        <div class="chapter-known-words">Known words: <span>{{ lesson.wordCount.known }}</span></div>
+                        <div class="chapter-highlighted-words">Highlighted words: <span class="highlighted">{{ lesson.wordCount.highlighted }}</span></div>
+                        <div class="chapter-new-words">New words: <span class="new">{{ lesson.wordCount.new }}</span></div>
+                        <v-card-actions class="pa-0 mt-3">
+                            <v-spacer></v-spacer>
+                            <v-btn rounded width="80px" color="primary" :small="$vuetify.breakpoint.xsOnly" :to="'/chapters/read/' + lesson.id" v-if="lesson.id != lessonId">Read</v-btn>
+                        </v-card-actions>
+                    </v-card>
                 </template>
             </div>
 
             <!-- Glossary -->
             <div v-if="!finished" id="glossary" :class="{'visible': toolbar == 'glossary'}">
                 <template v-for="(word, index) in glossary">
-                    <div class="glossary-entry" :key="index">
+                    <div class="glossary-entry " :key="index">
                         <div class="glossary-title">
                             <!-- Glossary entry stage -->
-                                <div class="stage" :stage="word.stage">
-                                    {{ Math.abs(word.stage) }}
-                                </div>
-                            <template>
-                                <div class="word" v-if="word.base_word == ''">
-                                    <div>{{ word.word }}</div>
-                                </div>
-                                <div class="word" v-if="word.base_word !== ''">
-                                    <div>{{ word.base_word }}</div> 
-                                    <i class="fas fa-long-arrow-alt-right"></i> 
-                                    <div>{{ word.word }}</div> 
-                                </div>
-                                <div class="reading" v-if="word.base_word == '' && settings.displayGlossaryReadings">
-                                    <div>{{ word.reading }}</div>
-                                </div>
-                                <div class="reading" v-if="word.base_word !== '' && settings.displayGlossaryReadings">
-                                    <div>{{ word.base_word_reading }}</div> 
-                                    <i class="fas fa-long-arrow-alt-right"></i> 
-                                    <div>{{ word.reading }}</div> 
-                                </div>
-                            </template>
+                            <div class="stage" :stage="word.stage">
+                                {{ Math.abs(word.stage) }}
+                            </div>
+                            
+                            <!-- Glossary entry word-->
+                            <div class="word" v-if="word.base_word == ''">
+                                <ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby>
+                            </div>
+                            <div class="word" v-if="word.base_word !== ''">
+                                <ruby>{{ word.base_word }}<rt>{{ word.base_word_reading }}</rt></ruby>
+                                <i class="fas fa-long-arrow-alt-right"></i> 
+                                <ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby> 
+                            </div>
                         </div>
 
                         <!-- Glossary entry translation-->
@@ -206,141 +165,246 @@
             </div>
 
             <!-- Vocab box -->
-            <div id="vocab-box" :class="{'editing': vocabEditMode == 'word' || vocabEditMode == 'phrase', 'new-phrase': selection.length > 1 && selectedPhrase == -1, 'translation-edit': vocabEditMode == 'translation'}" :style="{'top': vocabBoxPosition.top + 'px', 'left': vocabBoxPosition.left + 'px'}" v-if="selection.length && !finished && !selectionOngoing " @mouseup.stop=";">
-                <!-- Word -->
-                <div class="vocab-word-box" v-if="selection.length == 1 && (vocabEditMode == '' || vocabEditMode == 'word')">
-                    <span class="title" v-if="vocabEditMode == ''">Word</span>
-                    <span class="title" v-if="vocabEditMode == 'word'">Word editing</span>
-                    <template v-if="vocabEditMode == ''">
-                        <span class="vocab-edit" @click="vocabEditMode = 'word'; updateVocabBoxPosition();"><i class="fa fa-pen"></i> Edit</span>
-                    </template>
-                    
-                    <!-- With base word-->
-                    <div class="vocab-word"  v-if="uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
-                        <ruby>{{uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
-                        <i class="fas fa-long-arrow-alt-right"></i>
-                        <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
-                    </div>
-                    
-                    <!-- No base word-->
-                    <div class="vocab-word" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
-                        <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
-                    </div>
+            <v-card 
+                id="vocab-box" 
+                :class="{
+                    'editing': vocabEditMode == 'word' || vocabEditMode == 'phrase', 
+                    'new-phrase': selection.length > 1 && selectedPhrase == -1, 
+                    'translation-edit': vocabEditMode == 'translation',
+                    'rounded-lg': true,
+                    'closed': vocabBoxClosed
+                }" 
+                :style="{
+                    'top': vocabBoxPosition.top + 'px', 
+                    'left': vocabBoxPosition.left + 'px',
+                    'width': vocabBoxSize.width + 'px'
+                }" 
+                v-if="selection.length && !finished && !selectionOngoing " 
+                @mouseup.stop=";"
+            >
+                <v-tabs id="vocab-box-tabs" fixed-tabs background-color="primary" height="36" v-model="vocabBoxTab" @change="scrollToVocabBox">
+                    <v-tab class="px-2" v-if="selection.length == 1">Word</v-tab>
+                    <v-tab class="px-2" v-if="selection.length > 1">Phrase</v-tab>
+                    <v-tab class="px-2">Edit</v-tab>
+                    <v-tab class="px-2">Inflections</v-tab>
+                </v-tabs>
+                
+                <v-card-text class="pa-2">
+                    <v-tabs-items v-model="vocabBoxTab">
+                        <!-- Word/phrase tab -->
+                        <v-tab-item :value="0">
+                            <!-- Single word -->
+                            <template v-if="selection.length == 1">
+                                <div class="subheader">Word</div>
+                                <!-- With base word -->
+                                <div id="word" class="pl-2" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
+                                    <ruby>{{uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
+                                    <v-icon>mdi-arrow-right-thick</v-icon>
+                                    <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
+                                </div>
+                                
+                                <!-- No base word -->
+                                <div id="word" class="pl-2" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
+                                    <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
+                                </div>
+                            </template>
+                            
+                            <!-- Phrase -->
+                            <template v-if="selection.length > 1">
+                                <div class="subheader">Phrase</div>
+                                <!-- Phrase text -->
+                                <div id="phrase" class="pl-2">
+                                    <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
+                                </div>
 
-                    <!-- Vocab edit fields-->
-                    <div id="vocab-word-edit" v-if="vocabEditMode == 'word'">
-                        <div class="vocab-word-edit-line">
-                            <div class="vocab-word-edit-cell">Form</div>
-                            <div class="vocab-word-edit-cell">Word</div>
-                            <div class="vocab-word-edit-cell">Reading</div>
-                        </div>
-                        <div class="vocab-word-edit-line">
-                            <div class="vocab-word-edit-cell">Selected</div>
-                            <div class="vocab-word-edit-cell">
-                                {{uniqueWords[selection[0].uniqueWordIndex].word}}
-                            </div>
-                            <div class="vocab-word-edit-cell"><input type="text" v-model="uniqueWords[selection[0].uniqueWordIndex].reading" @change="updateNewWord"></div>
-                        </div>
-                        <div class="vocab-word-edit-line">
-                            <div class="vocab-word-edit-cell">Base</div>
-                            <div class="vocab-word-edit-cell"><input type="text" v-model="uniqueWords[selection[0].uniqueWordIndex].base_word" @change="updateNewWord"></div>
-                            <div class="vocab-word-edit-cell"><input type="text" v-model="uniqueWords[selection[0].uniqueWordIndex].base_word_reading" @change="updateNewWord"></div>
-                        </div>
-                        <div class="vocab-word-edit-line button">
-                            <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''">Close</button>
-                        </div>
-                    </div>
-                </div>
+                                <!-- Phrase reading -->
+                                <template>
+                                    <div class="subheader mt-2">Reading</div>
+                                    <div id="reading" class="pl-2">{{ phraseReading }}</div>
+                                </template>
+                            </template>
 
-                <!-- Phrase -->
-                <div class="vocab-phrase-box" v-if="selection.length > 1 && vocabEditMode !== 'translation'">
-                    <!-- Phrase text -->
-                    <span class="title">Phrase</span>
-                    <span class="vocab-edit" @click="vocabEditMode = 'phrase'; updateVocabBoxPosition();" v-if="vocabEditMode == '' && selectedPhrase !== -1"><i class="fa fa-pen"></i> Edit</span>
-                    <span class="show-phrase-reading" @click="settings.displayPhraseReading = !settings.displayPhraseReading; updateVocabBoxPosition();" v-if="selection.length > 1 && vocabEditMode == ''">
-                        <template v-if="!settings.displayPhraseReading"><i class="fa fa-eye"></i> Show reading</template>
-                        <template v-if="settings.displayPhraseReading"><i class="fa fa-eye-slash"></i> Hide reading</template>
-                    </span>
-                    <div class="vocab-phrase">
-                        <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
-                    </div>
+                            <!-- Translation -->
+                            <template v-if="selectedTranslation !== '' && (selectedTranslation.length > 1 || selectedTranslation[0] !== '')">
+                                <div class="subheader mt-2">Definitions</div>
+                                <ul id="definitions" class="ma-0">
+                                    <template>
+                                        <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
+                                    </template>
+                                </ul>
+                            </template>
 
-                    <!-- Phrase reading -->
-                    <template v-if="vocabEditMode == '' && settings.displayPhraseReading">
-                        <span class="title">Reading</span>
-                        <div class="vocab-phrase-reading">
-                            {{ phraseReading }}
-                        </div>
-                    </template>
-
-                    <!-- Phrase reading editing-->
-                    <span class="title" v-if="vocabEditMode == 'phrase'">Phrase reading</span>
-                    <textarea type="text" class="phrase-reading" v-model="phraseReading" @change="updatePhrase" v-if="vocabEditMode == 'phrase'"></textarea>
-
-                    
-                    <button class="btn btn-green small vocab-box-button" @click="saveNewPhrase" v-if="selectedPhrase == -1">Save new phrase</button>
-                    <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''" v-if="vocabEditMode == 'phrase'">Close</button>
-                    <button id="delete-phrase-button" class="btn btn-red small vocab-box-button" @click="deletePhrase" v-if="vocabEditMode == 'phrase'">Delete phrase</button>
-                </div>
-
-                <!-- Translations -->
-                <div :class="{'vocab-translation': true}" v-if="(selection.length == 1 || selectedPhrase !== -1) && vocabEditMode == ''">
-                    <span class="title">Translation</span>
-                    <span class="vocab-edit" @click="vocabEditMode = 'translation'; updateVocabBoxPosition();" v-if="vocabEditMode == ''"><i class="fa fa-pen"></i> Edit</span>
-                    <ul v-if="(selectedTranslation.length > 1 || searchResults.length || selectedTranslation[0] !== '') && vocabEditMode == ''">
-                        <template v-if="selectedTranslation.length > 1 || selectedTranslation[0] !== ''">
-                            <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
-                        </template>
-                        <template v-for="(searchResult, searchResultIndex) in searchResults" v-if="settings.displaySuggestedTranslations">
-                        </template>
-                    </ul>
-                </div>
-
-                <!-- Translation editing -->
-                <div :class="{'vocab-translation': true }" v-if="vocabEditMode == 'translation'">
-                    <span class="title">Search term</span>
-                    <input id="search-box" type="text" v-model="vocabSearch" @change="makeSearchRequest">
-                    <span class="title">Translation</span>
-                    
-                    <textarea v-model="uniqueWords[selection[0].uniqueWordIndex].translation" @change="updateNewWord" v-if="selection.length == 1"></textarea>
-                    <textarea v-model="phraseTranslation" @change="updatePhrase" v-if="selectedPhrase !== -1"></textarea>
-
-                    <span class="title">Search results</span>
-                    <div id="search-results">
-                        <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in searchResults" :key="searchresultIndex">
-                            <div class="search-result-title">{{ searchResult.word }} <div class="dictionary">jmdict</div></div>
-                            <div class="search-result-definition" v-for="(definition, definitionIndex) in searchResult.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
-                                {{ definition }} <i class="fa fa-plus"></i>
-                            </div>
-                            <template v-if="searchResult.otherForms.length">
-                                <div class="search-result-other-forms-title">Other forms:</div>
-                                <div class="search-result-other-forms">
-                                    <div class="search-result-other-form" v-for="(form, formIndex) in searchResult.otherForms" :key="formIndex">
-                                        {{ form }}
+                            <!-- Stage buttons-->
+                            <template v-if="selection.length == 1 || selectedPhrase !== -1">
+                                <div class="subheader mt-2">Stage</div>
+                                <div :class="{'d-block': true, 'text-center': true, 'mt-1': false, 'mb-6': selection.length == 1}">
+                                    <div id="stage-buttons" class="v-item-group theme--light v-btn-toggle v-btn-toggle--rounded primary--text">
+                                        <v-btn :value="-7" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -7}" @click="setStage(-7)">7</v-btn>
+                                        <v-btn :value="-6" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -6}" @click="setStage(-6)">6</v-btn>
+                                        <v-btn :value="-5" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -5}" @click="setStage(-5)">5</v-btn>
+                                        <v-btn :value="-4" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -4}" @click="setStage(-4)">4</v-btn>
+                                        <v-btn :value="-3" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -3}" @click="setStage(-3)">3</v-btn>
+                                        <v-btn :value="-2" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -2}" @click="setStage(-2)">2</v-btn>
+                                        <v-btn :value="-1" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -1}" @click="setStage(-1)">1</v-btn>
+                                        <v-btn :value="0" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == 0}" @click="setStage(0)"><v-icon>mdi-check</v-icon></v-btn>
+                                        <v-btn :value="1" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == 1}" @click="setStage(1)" v-if="selection.length == 1"><v-icon>mdi-close</v-icon></v-btn>
                                     </div>
                                 </div>
                             </template>
-                        </div>
-                    </div>
-                    <button class="btn btn-black small vocab-box-button" @click="vocabEditMode = ''">Close</button>
-                </div>
 
-                <!-- Stage buttons -->
-                <div class="stage-buttons-box" v-if="(selection.length == 1 || selectedPhrase !== -1) && vocabEditMode == ''">
-                    <span class="title">Stage</span>
-                    <div :class="{'stage-buttons': true, 'hidden-ignore-button': selection.length > 1}"><!--
-                        --><div @click="setStage(-7)" :class="{'stage-button': true, 'selected': selectionStage == -7}">7</div><!--
-                        --><div @click="setStage(-6)" :class="{'stage-button': true, 'selected': selectionStage == -6}">6</div><!--
-                        --><div @click="setStage(-5)" :class="{'stage-button': true, 'selected': selectionStage == -5}">5</div><!--
-                        --><div @click="setStage(-4)" :class="{'stage-button': true, 'selected': selectionStage == -4}">4</div><!--
-                        --><div @click="setStage(-3)" :class="{'stage-button': true, 'selected': selectionStage == -3}">3</div><!--
-                        --><div @click="setStage(-2)" :class="{'stage-button': true, 'selected': selectionStage == -2}">2</div><!--
-                        --><div @click="setStage(-1)" :class="{'stage-button': true, 'selected': selectionStage == -1}">1</div><!--
-                        --><div @click="setStage(0)" :class="{'stage-button': true, 'selected': selectionStage == 0}"><i class="fa fa-book"></i></div><!--
-                        --><div @click="setStage(1)" :class="{'stage-button': true, 'selected': selectionStage == 1}" v-if="selection.length == 1"><b>X</b></div>
-                    </div>
-                </div>
-            </div>
+                            <!-- Save and delete phrase buttons -->
+                            <v-card-actions class="pa-0">
+                                <v-spacer></v-spacer>
+                                <v-btn 
+                                    class="mt-2"
+                                    small
+                                    rounded
+                                    color="green"
+                                    @click="saveNewPhrase"
+                                    v-if="selection.length > 1 && selectedPhrase == -1"
+                                >Save new phrase</v-btn>
+                                <v-btn 
+                                    class="mt-2"
+                                    small
+                                    rounded
+                                    color="red"
+                                    @click="deletePhrase"
+                                    v-if="selectedPhrase != -1"
+                                >Delete phrase</v-btn>
+                            </v-card-actions>
+                        </v-tab-item>
+
+                        <!-- Edit tab -->
+                        <v-tab-item :value="1" v-if="selection.length == 1 || selectedPhrase !== -1">
+                            <!-- Word editing -->
+                            <v-simple-table dense id="word-edit-table" class="no-hover mx-auto" v-if="selection.length == 1">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Base</th>
+                                        <th></th>
+                                        <th>Selected</th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th>Word</th>
+                                        <td>
+                                            <v-text-field 
+                                                class="word-input"
+                                                filled
+                                                dense
+                                                hide-details
+                                                v-model="uniqueWords[selection[0].uniqueWordIndex].base_word"
+                                            ></v-text-field>
+                                        </td>
+                                        <td><v-icon>mdi-arrow-right-thick</v-icon></td>
+                                        <td id="selected-word-field" class="text-left pl-4">{{ uniqueWords[selection[0].uniqueWordIndex].word }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Reading</th>
+                                        <td>
+                                            <v-text-field 
+                                                class="word-input my-1"
+                                                filled
+                                                dense
+                                                hide-details
+                                                v-model="uniqueWords[selection[0].uniqueWordIndex].base_word_reading"
+                                            ></v-text-field>
+                                        </td>
+                                        <td><v-icon>mdi-arrow-right-thick</v-icon></td>
+                                        <td>
+                                            <v-text-field 
+                                                class="word-input my-1"
+                                                filled
+                                                dense
+                                                hide-details
+                                                v-model="uniqueWords[selection[0].uniqueWordIndex].reading"
+                                            ></v-text-field>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </v-simple-table>
+                            
+                            <!-- Phrase editing -->
+                            <template v-if="selectedPhrase !== -1">
+                                <div class="subheader">Phrase reading</div>
+                                <v-textarea
+                                    filled
+                                    dense
+                                    no-resize
+                                    hide-details
+                                    height="80px"
+                                    v-model="phraseReading"
+                                    @change="updatePhrase"
+                                ></v-textarea>
+                            </template>
+
+                            <!-- Translation editing -->
+
+                            <!-- Word translation -->
+                            <div class="subheader mt-2">Translation</div>
+                            <v-textarea
+                                filled
+                                dense
+                                no-resize
+                                hide-details
+                                height="80px"
+                                v-model="uniqueWords[selection[0].uniqueWordIndex].translation"
+                                @change="updateNewWord"
+                                v-if="selection.length == 1"
+                            ></v-textarea>
+                            
+                            <!-- Phrase translation -->
+                            <v-textarea
+                                filled
+                                dense
+                                no-resize
+                                hide-details
+                                height="80px"
+                                v-model="phraseTranslation"
+                                @change="updatePhrase"
+                                v-if="selectedPhrase !== -1"
+                            ></v-textarea>
+
+                            <!-- Search term -->
+                            <div class="subheader mt-2">Dictionary search</div>
+                            <v-text-field 
+                                class="mb-3"
+                                filled
+                                dense
+                                hide-details
+                                width="100%"
+                                v-model="vocabSearch"
+                                @change="makeSearchRequest"
+                            ></v-text-field>
+
+                            <!-- Search results -->
+                            <div id="search-results" class="mb-4 pa-2">
+                                <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in searchResults" :key="searchresultIndex">
+                                    <div class="search-result-title rounded px-2">{{ searchResult.word }} <div class="dictionary">jmdict</div></div>
+                                    <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in searchResult.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
+                                        {{ definition }} <v-icon>mdi-plus</v-icon>
+                                    </div>
+                                    <template v-if="searchResult.otherForms.length">
+                                        <div class="subheader">Other forms:</div>
+                                        <div class="d-flex flex-wrap">
+                                            <div v-for="(form, formIndex) in searchResult.otherForms" :key="formIndex">
+                                                {{ form }}<span class="mr-2" v-if="formIndex < searchResult.otherForms.length - 1">, </span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                        </v-tab-item>
+
+                        <!-- Inflections tab -->
+                        <v-tab-item :value="2">inflections</v-tab-item>
+                    </v-tabs-items>
+                </v-card-text>
+                <v-btn id="close-vocab-box-button" rounded elevation="2" color="red" @click="unselectWord()"><v-icon>mdi-close</v-icon> Close</v-btn>
+            </v-card>
 
             <!-- Text -->
             <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}">
@@ -365,7 +429,7 @@
                 <div class="text-box red" v-if="finishError">
                     Something went wrong. Please try again.
                 </div>
-                <button id="finish-reading-button" class="btn btn-green" @click="finish()"><i class="fa fa-check"></i>&nbsp;&nbsp;Finish reading</button>
+                <v-btn rounded class="mt-8 mb-16" color="green" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
                 <br><br><br><br>
             </div>
             
@@ -399,8 +463,10 @@
                         </tr>
                     </tbody>
                 </table>
-                <router-link class="sidebar-button" :to="'/chapters/' + bookId"> <button id="go-to-lessons-button" class="btn btn-primary">Go to lessons</button></router-link>
-                <router-link class="sidebar-button" :to="'/chapters/read/' + nextLesson"> <button id="go-to-lessons-button" class="btn btn-primary" v-if="nextLesson !== -1">Go to next lesson</button></router-link>
+                <div class="text-center">
+                    <v-btn rounded :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/' + bookId">Go to lessons</v-btn>
+                    <v-btn rounded :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/read/' + nextLesson" v-if="nextLesson !== -1">Go to next lesson</v-btn>
+                </div>
             </div>
         </div>
     </div>
@@ -417,11 +483,12 @@
                     fontSize: 20,
                     maximumTextWidth: '800px',
                     displaySuggestedTranslations: false,
-                    displayPhraseReading: false,
-                    displayGlossaryReadings: false,
                     autoMoveWordsToKnown: false,
                     fullscreen: false,
                 },
+                toolbarMenu: 'text',
+                toolbarOptions: [],
+                toolbarFullscreen: [],
                 toolbar: 'text',
                 spaceFreeWords: ['.', ',', ':', '?', '!', '-', '*', ' ', '\r\n', '\r\n '],
                 finished: false,
@@ -436,19 +503,21 @@
                 deletedPhrases: [],
                 selection: [],
                 selectedPhrase: -1,
-                selectionStage: null,
                 selectedTranslation: [],
                 ongoingSelection: [],
                 ongoingSelectionStartingWord: {
                     wordIndex: -1,
                 },
+                vocabBoxTab: 0,
                 vocabBoxPosition: {
                     left: 0,
                     top: 0
                 },
                 vocabBoxSize: {
-                    width: screen.width > 440 ? 400 : 380,
+                    width: window.innerWidth > 440 ? 400 : window.innerWidth - 20,
                 },
+                vocabBoxClosed: true,
+                vocabBoxSelectedStage: 0,
                 selectionOngoing: false,
                 searchResults: [],
                 vocabEditMode: '',
@@ -492,7 +561,6 @@
                 this.lessons = data.lessons;
 
                 this.afterMounted();
-                console.log(this.words);
             }.bind(this)).catch(function (error) {
             }).then(function () {
             });
@@ -502,6 +570,7 @@
         methods: {
             afterMounted: function() {
                 document.getElementById('app').addEventListener('mouseup', this.finishSelection);
+                window.addEventListener('resize', this.updateVocabBoxPosition);
                 document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
                 for (let i = 0; i < this.lessons.length; i++) {
                     if (this.lessons[i].id == this.lessonId && i < this.lessons.length - 1 && this.lessons[i + 1].read_count) {
@@ -516,8 +585,6 @@
                 this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
                 this.settings.maximumTextWidth =  this.$cookie.get('maximum-text-width');
                 this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') == 'true';
-                this.settings.displayPhraseReading = this.$cookie.get('display-phrase-reading') == 'true';
-                this.settings.displayGlossaryReadings = this.$cookie.get('display-glossary-readings') == 'true';
                 this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') == 'true';
 
                 if (this.settings.highlightWords === null) {
@@ -544,14 +611,6 @@
                     this.settings.displaySuggestedTranslations =  false;
                 }
 
-                if (this.settings.displayPhraseReading === null) {
-                    this.settings.displayPhraseReading =  false;
-                }
-
-                if (this.settings.displayGlossaryReadings === null) {
-                    this.settings.displayGlossaryReadings =  false;
-                }
-
                 if (this.settings.autoMoveWordsToKnown === null) {
                     this.settings.autoMoveWordsToKnown =  false;
                 }
@@ -560,6 +619,7 @@
                 this.$forceUpdate();
                 this.updatePhraseBorders();
                 this.updateGlossary();
+                this.updateToolbarButtonGroup();
             },
             fullscreen: function() {
                 if (document.fullscreenEnabled) {
@@ -573,6 +633,8 @@
             },
             updateFullscreen: function() {
                 this.settings.fullscreen = document.fullscreenElement !== null;
+
+                this.toolbarFullscreen = this.settings.fullscreen ? [0] : [];
             },
             saveSettings: function() {
                 if (this.settings.fontSize < 15) {
@@ -589,8 +651,6 @@
                 this.$cookie.set('font-size', this.settings.fontSize, 3650);
                 this.$cookie.set('maximum-text-width', this.settings.maximumTextWidth, 3650);
                 this.$cookie.set('display-suggested-translations', this.settings.displaySuggestedTranslations, 3650);
-                this.$cookie.set('display-phrase-reading', this.settings.displayPhraseReading, 3650);
-                this.$cookie.set('display-glossary-readings', this.settings.displayGlossaryReadings, 3650);
                 this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
             },
             setToolbar: function(newToolbar) {
@@ -606,6 +666,20 @@
                     document.getElementById('fullscreen-box').scrollTo(0, 0);
                 }
             },
+            updateToolbarButtonGroup: function() {
+                this.toolbarOptions = [];
+                if (this.settings.plainTextMode) {
+                    this.toolbarOptions.push(0);
+                }
+
+                if (this.settings.japaneseText) {
+                    this.toolbarOptions.push(1);
+                }
+
+                if (this.settings.highlightWords) {
+                    this.toolbarOptions.push(2);
+                }
+            },  
             getUniqueWordIndex: function(word) {
                 for (var i = 0; i < this.uniqueWords.length; i++) {
                     if (this.uniqueWords[i].word == word) {
@@ -806,6 +880,8 @@
                 this.updateVocabBoxPosition();
                 this.makeSearchRequest();
                 this.updatePhraseBorders();
+                this.vocabBoxTab = 0;
+                this.vocabBoxClosed = false;
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
@@ -814,9 +890,13 @@
             },
             updateSelectedWordStage: function() {
                 if (this.selectedPhrase == -1 && this.selection.length) {
-                    this.selectionStage = this.uniqueWords[this.selection[0].uniqueWordIndex].stage;
+                    this.vocabBoxSelectedStage = parseInt(this.uniqueWords[this.selection[0].uniqueWordIndex].stage);
                 } else if (this.selectedPhrase !== -1){
-                    this.selectionStage = this.phrases[this.selectedPhrase].stage;
+                    this.vocabBoxSelectedStage = parseInt(this.phrases[this.selectedPhrase].stage);
+                }
+
+                if (this.vocabBoxSelectedStage == 2) {
+                    this.vocabBoxSelectedStage = undefined;
                 }
             },
             updateExampleSentence: function() {
@@ -836,6 +916,8 @@
 
             },
             updateVocabBoxPosition: function() {
+                this.vocabBoxSize.width = window.innerWidth > 440 ? 400 : window.innerWidth - 20;
+
                 if (!this.selection.length) {
                     return;
                 }
@@ -849,7 +931,10 @@
 
                 this.vocabBoxPosition.left = positions.right - reader.left - this.vocabBoxSize.width / 2 - (positions.right - positions.left) / 2;
 
-                if (this.vocabBoxPosition.left < 5) {
+
+                if (window.innerWidth  < 440) {
+                    this.vocabBoxPosition.left = 10;
+                } else if (this.vocabBoxPosition.left < 5) {
                     this.vocabBoxPosition.left = 5;
                 } else if (this.vocabBoxPosition.left > reader.right - reader.left - this.vocabBoxSize.width) {
                     this.vocabBoxPosition.left = reader.right - reader.left - this.vocabBoxSize.width;
@@ -860,13 +945,16 @@
                 } else {
                     this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
                 }
-                
-                this.$nextTick(() => {
+
+                this.scrollToVocabBox();
+            },
+            scrollToVocabBox: function() {
+                setTimeout(() => {
                     var vocabBox = document.getElementById('vocab-box');
                     if (vocabBox) {
                         vocabBox.scrollIntoViewIfNeeded(false);
                     }
-                });
+                }, 450);
             },
             updateSelectedWordLookupCount: function(word, uniqueWordIndex) {
                 this.uniqueWords[uniqueWordIndex].lookup_count ++;
@@ -918,14 +1006,17 @@
                 });
             },
             unselectWord() {
-                this.vocabEditMode = '';
-                this.selectedPhrase = -1;
-                this.selection = [];
-                
-                for (let i  = 0; i < this.words.length; i++) {
-                    this.words[i].selected = false;
-                    this.words[i].hover = false;
-                }
+                this.vocabBoxClosed = true;
+                setTimeout(() => {
+                    this.vocabEditMode = '';
+                    this.selectedPhrase = -1;
+                    this.selection = [];
+                    
+                    for (let i  = 0; i < this.words.length; i++) {
+                        this.words[i].selected = false;
+                        this.words[i].hover = false;
+                    }
+                }, 120);
             },
             addDefinitionToInput: function(definition) {
                 if (this.selection.length == 1) {
@@ -964,6 +1055,15 @@
                 }
 
                 this.updateSelectedWordStage();
+            },
+            stageChanged: function() {
+                console.log('before', this.vocabBoxSelectedStage);
+                if (this.selectedPhrase == -1) {
+                    this.vocabBoxSelectedStage = this.uniqueWords[this.selection[0].uniqueWordIndex].stage;
+                } else {
+                    this.vocabBoxSelectedStage = this.phrases[this.selectedPhrase].stage;
+                }
+                console.log('after', this.vocabBoxSelectedStage);
             },
             deletePhrase: function() {
                 if (this.selectedPhrase == -1) {

@@ -4,7 +4,7 @@ $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
 // Colors
-$theme-color: #EA526F;
+$theme-color: #a1887f;
 $background: rgb(246, 246, 246);
 $light-gray: rgb(240, 241, 243);
 $green: #2cd87f;
@@ -13,10 +13,9 @@ $orange: #ff8146;
 $dark-gray: rgb(85, 85, 85);
 $tint: rgb(235, 235, 235);
 $border: rgb(225, 225, 225);
-$new-word: #FDD692;
-$selected-word: rgb(220, 220, 220);
+$selected-word: rgba(141, 110, 97, .35);
 
-$font-color: rgb(50, 50, 50);
+$font-color: rgba(0, 0, 0, .87);
 $font-color-light: rgb(130, 130, 130);
 $sidebar-button-color: rgb(160, 170, 180);
 $border-dark: rgb(180, 180, 180);
@@ -58,7 +57,8 @@ $black-button-border-color: darken($dark-gray, 5%);
 $black-button-hover-background: darken($dark-gray, 12%);
 $black-button-hover-border-color: darken($dark-gray, 10%);
 
-$highlighted-word: #34e87f;
+$new-word: #f5dd63;
+$highlighted-word: #63ee6d;
 $stage7: rgba($highlighted-word, 1);
 $stage6: rgba($highlighted-word, 1);
 $stage5: rgba($highlighted-word, 1);

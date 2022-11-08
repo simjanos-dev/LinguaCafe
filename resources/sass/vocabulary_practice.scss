@@ -14,15 +14,7 @@
     #review-correct-button,
     #review-wrong-button {
         width: 150px;
-        height: 40px;
-        line-height: 38px;
-        padding: 0px;
         box-sizing: border-box;
-
-        i {
-            font-size: 14px;
-            margin-right: 4px;
-        }
     }
 
     #toolbar {
@@ -31,40 +23,23 @@
         height: 280px;
         width: 40px;
         left: calc(50% - 280px);
-        top: 70px;
+        top: 90px;
 
         .toolbar-button {
-            display: block;
-            border: none;
-            background-color: transparent;
-            width: 40px;
-            height: 40px;
+            box-sizing: border-box !important;
+            width: 48px !important;
+            height: 48px !important;
             margin: 0px auto;
-            padding-top: 5px;
-            outline: none;
-            color: $sidebar-button-color;
-            border-radius: 4px;
             transition: .2s;
             border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, 0);
-    
+            
             i {
-                margin: 0px;
-                font-size: 18px;
+                font-size: 22px;
             }
     
             &:active, &:focus {
                 outline: none;
-            }
-    
-            &:hover {
-                background-color: $tint;
-            }
-    
-            &.selected {
-                background-color: $tint;
-                color: $theme-color;
-            }
+            }    
         }
     }
     
@@ -92,9 +67,8 @@
             line-height: 28px;
             text-align: center;
             font-size: 15px;
-            background-color: $highlighted-word;
             border: 1px solid $border;
-            color: $font-color;
+            color: white;
             margin-right: 20px;
             border-radius: 6px;   
         }
@@ -185,7 +159,6 @@
 
             #review-card-front,
             #review-card-back {
-                background-color: $orange;
                 color: white;
             }
         }
@@ -195,7 +168,6 @@
             
             #review-card-front,
             #review-card-back {
-                background-color: $highlighted-word;
                 color: white;
             }
 
@@ -233,7 +205,6 @@
                     float: left;
                     
                     &.highlighted {
-                        background-color: $highlighted-word;
                         border-radius: 5px;
                         padding: 0px 4px;
                         margin: 0px 5px;
@@ -417,6 +388,7 @@
             max-width: 440px;
             margin: 0px auto;
             margin-bottom: 10px;
+            margin-top: 10px;
         }
 
         #review-progress-line {

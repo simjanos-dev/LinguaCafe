@@ -11,7 +11,6 @@
     box-sizing: border-box;
     min-height: 100%;
     width: 100%;
-    background-color: white;
     overflow-y: visible;
     scroll-behavior: smooth;
     
@@ -19,6 +18,10 @@
         min-height: unset;
         height: 100%;
         overflow-y: auto;
+
+        #reader-box #toolbar {
+            max-width: calc(100% - 8px) !important;
+        }
     }
 }
 
@@ -29,19 +32,9 @@
     min-height: 100%;
     margin: 0px auto;
     padding: 0px;
-    padding-left: 60px;
+    padding-top: 60px;
     overflow-y: visible;
     transition: .2s;
-
-    textarea, select, input[type="text"] {
-        border: 1px solid $border;
-        background: $light-gray;
-
-        &:focus, &:active {
-            border: 1px solid $border;
-            background: rgb(238, 238, 238);
-        }
-    }
 
     #finish-reading-button {
         margin-top: 10px;
@@ -51,59 +44,22 @@
     #toolbar {
         position: fixed;
         box-sizing: border-box;
-        display: inline-block;
-        width: 60px;
-        margin-bottom: 10px;
-        margin-left: -60px;
-        height: 100%;
-        padding: 0px;
-        border-radius: 8px;
+        display: flex;
+        margin-top: -60px;
+        height: 60px;
+        background-color: $background;
+        max-width: calc(100% - 256px);
+        z-index: 10;
 
         .toolbar-button-group {
-            display: block;
-            width: 100%;
-            border-radius: 14px;
-            padding: 10px 10px;
-            margin: 10px 0px;
-
-            &.menus {
-                margin-top: 0px;
-                padding-top: 3px;
-            }
+            display: flex;
         }
 
         .toolbar-button {
-            display: block;
             border: none;
-            background-color: transparent;
-            width: 40px;
-            height: 40px;
-            margin: 8px auto;
-            padding-top: 5px;
-            outline: none;
-            color: $sidebar-button-color;
-            border-radius: 4px;
-            transition: .2s;
+            width: 48px;
+            height: 48px;
             border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, 0);
-
-            i {
-                margin: 0px;
-                font-size: 18px;
-            }
-
-            &:active, &:focus {
-                outline: none;
-            }
-
-            &:hover {
-                background-color: $tint;
-            }
-
-            &.selected {
-                background-color: $tint;
-                color: $theme-color;
-            }
         }
     }
 
@@ -112,12 +68,11 @@
         position: fixed;
         height: 50px;
         line-height: 50px;
-        padding-top: 5px;
-        max-width: calc(100% - 268px);
-        background-color: white;
+        width: 100%;
         color: $font-color;
         font-size: 22px;
         z-index: 10;
+        overflow: hidden;
 
         span {
             float: right;
@@ -129,7 +84,7 @@
         position: relative;
         box-sizing: border-box;
         display: none;
-        width: calc(100% - 60px);
+        width: calc(100%);
         margin: 0px;
         height: 100%;
         padding: 12px 0px;
@@ -143,9 +98,10 @@
     #settings {
         .setting {
             display: block;
+            width: 100%;
             height: 50px;
             padding-left: 10px;
-
+            
             .setting-label {
                 display: inline-block;
                 float: left;
@@ -158,16 +114,16 @@
             .setting-input {
                 display: inline-block;
                 float: left;
-                width: 300px;
+                width: calc(100% - 210px);
+                max-width: 300px;
                 height: 50px;
                 
-                &.switch {
-                    padding-top: 17px;
+                &.switch .v-input{
+                    margin-top: 10px;
                 }
 
                 &.slider {
                     padding-top: 10px;
-
                 }
             }
         }
@@ -182,11 +138,12 @@
         padding: 10px;
 
         &:nth-child(even) {
-            background-color: $light-gray;
+            background-color: rgb(232, 232, 232);
         }
 
         rt {
-            font-size: 13.5px;
+            font-size: 13px;
+            color: lighten($font-color, 20%);
         }
 
         .glossary-title {
@@ -273,7 +230,6 @@
             
             ul {
                 padding-left: 70px;
-                margin-top: 10px;
             }
         }
     }
@@ -284,7 +240,7 @@
             display: block;
             width: 10px;
             height: 10px;
-            margin: 20px calc(50% - 5px);
+            margin: 15px calc(50% - 5px);
             border-radius: 10px;
             background-color: $theme-color;
         }
@@ -292,13 +248,9 @@
         .chapter {
             position: relative;
             display: block;
-            width: 100%;
+            width: calc(100% - 32px);
             line-height: 30px;
-            padding: 10px;
-            font-size: 17px;
             scroll-margin: 50px;
-            background-color: $light-gray;
-            border-radius: 4px;;
 
             .chapter-title {
                 font-weight: bold;
@@ -311,7 +263,6 @@
                     float: right;
                     padding: 1px 5px;
                     background-color: $green;
-                    color: white;
                     font-weight: normal;
                     border-radius: 4px;
                     font-size: 15px;
@@ -366,353 +317,88 @@
 
     #vocab-box {
         position: absolute;
-        box-sizing: border-box;
-        display: block;
-        width: 400px;
         background-color: white;
-        border: 1px solid $border;
-        border-radius: 6px;
-        z-index: 10;
-        box-shadow: 0 10px 15px rgba(0, 0, 0, .2);
+        z-index: 9;
+        transition: transform .12s linear !important;
+        transform-origin: top;
 
-        .vocab-box-button {
-            float: right;
-            margin-right: 0px;
-            margin-top: 5px;
+        .v-tab {
+            color: rgba(255, 255, 255, .5);
+
+            &.v-tab--active {
+                background-color: rgba(255, 255, 255, .14);
+                color: white;
+            }
         }
 
-        #delete-phrase-button {
-            margin-right: 5px;
+        .v-input__slot {
+            min-height: 30px !important
         }
 
-        .title {
-            display: block;
-            font-family: "Nunito", sans-serif;
-            font-size: 13.5px;
-            color: $font-color-light;
-            float: left;
+        .v-window.v-item-group {
+            transition: .12s;
+
+            .v-window__container {
+                transition: .12s;
+            }
         }
 
-        .vocab-edit, .show-phrase-reading {
-            font-family: "Nunito", sans-serif;
+        &.closed {
+            padding: 0px !important;
+            transform: scale(1, 0);
+        }
+
+        #close-vocab-box-button {
             position: absolute;
-            right: 8px;
-            top: 8px;
-            font-size: 13.5px;
-            color: $font-color-light;
-            float: right;
-            user-select: none;
-            cursor: pointer;
-
-            &:hover {
-                color: $font-color;
-            }
-
-            &.show-phrase-reading {
-                right: 60px;
-            }
-        }
-
-        .vocab-phrase-box {
-            display: block;
-            position: relative;
-            font-family: notosans;
-            width: 100%;
-            padding: 8px 10px;
-            border-bottom: 1px solid rgb(200, 200, 200);
-            overflow: hidden;
-            
-            button {
-                margin-right: 0px;
-            }
-
-            .phrase-reading {
-                display: block;
-                width: 100%;
-                height: 80px;
-                margin: auto;
-                margin-top: 10px;
-                margin-bottom: 10px;
-            }
-
-            .vocab-phrase {
-                display: block;
-                width: 100%;
-                margin-top: 22px;
-                margin-bottom: 5px;
-                padding: 0px 6px;
-                font-size: 18px;
-            }
-
-            .vocab-phrase-reading {
-                margin-top: 30px;
-                display: block;
-                width: 100%;
-                padding: 0px 6px;
-                font-size: 18px;
-            }
-        }
-
-        .vocab-word-box {
-            position: relative;
-            font-family: notosans;
-            width: 100%;
-            border-bottom: 1px solid rgb(200, 200, 200);
-            font-size: 20px;
-            padding: 8px;
-            overflow: hidden;
-
-            .vocab-word {
-                display: block;
-                width: 100%;
-                text-align: left;
-                padding-left: 10px;
-                margin-top: 25px;
-            }
-
-            ruby {
-                rt {
-                    font-size: 14px;
-                    color: rgb(80, 80, 80);
-                }
-            }
-
-            #vocab-word-edit {
-                display: block;
-                width: calc(100%);
-                margin: auto;
-                margin-top: 20px;
-                font-size: 13px;
-                box-sizing: border-box;
-
-                .vocab-word-edit-line {
-                    display: block;
-                    width: 100%;
-                    overflow: hidden;
-
-                    &:last-child {
-                        height: 35px;
-                    }
-
-                    button {
-                        margin-right: 0px;
-                    }
-                }
-
-                .vocab-word-edit-cell {
-                    display: inline-block;
-                    float: left;
-
-                    &:nth-child(3) {
-                        text-align: right;
-                    }
-                }
-                
-                .vocab-word-edit-line, .vocab-word-edit-cell {
-                    box-sizing: border-box;
-                    text-align: center;
-                    height: 40px;
-                    line-height: 40px;
-                    margin: 0px;
-                    padding: 0px;
-                }
-
-                .vocab-word-edit-line:nth-child(1) .vocab-word-edit-cell, 
-                .vocab-word-edit-line:nth-child(1) {
-                    height: 30px;
-                    line-height: 30px;
-                    font-weight: bold;
-                    text-align: center;
-                }
-
-                .vocab-word-edit-cell:nth-child(1){
-                    width: 70px;
-                    text-align: right !important;
-                    padding-right: 20px;
-                    
-                }
-
-                .vocab-word-edit-cell:nth-child(2){
-                    width: 150px;
-                }
-
-                .vocab-word-edit-cell:nth-child(3){
-                    width: 150px;
-                    float: right;
-                }
-
-                input {
-                    box-sizing: border-box;
-                    width: calc(100% - 8px);
-                    height: 30px;
-                }
-            }
-        }
-
-        .vocab-translation {
-            position: relative;
-            width: 100%;
-            min-height: 50px;
-            border-bottom: 1px solid rgb(200, 200, 200);
-            font-size: 16px;
-            padding: 8px;
-
-            ul {
-                display: block;
-                width: 100%;
-                overflow-y: auto;
-                padding: 5px 0px;
-                padding-left: 30px;
-                margin-top: 30px;
-                margin-bottom: 0px;
-            }
-
-            #search-box {
-                display: block;
-                width: 100%;
-                margin: auto;
-                margin-bottom: 5px;
-            }
-
-            textarea {
-                display: block;
-                width: 100%;
-                height: 80px;
-                margin: auto;
-                margin-top: 10px;
-                margin-bottom: 10px;
-            }
-
-            #search-results {
-                display: block;
-                overflow-y: scroll;
-                height: 190px;
-                margin-bottom: 3px;
-                width: 100%;
-                border-radius: 8px;
-                
-                .search-result {
-                    position: relative;
-                    display: block;
-                    width: calc(100% - 5px);
-                    margin: 0px 0px;
-                    padding-left: 8px;
-                    //height: 36px;
-                    line-height: 36px;
-                    overflow: hidden;
-
-                    .search-result-title {
-                        display: block;
-                        text-align: right;
-                        background-color: rgb(116, 227, 154);
-                        height: 30px;
-                        line-height: 30px;
-                        padding: 0px 6px;
-                        border-radius: 6px;
-                        margin-bottom: 4px;
-
-                        &:nth-of-type(1) {
-                            margin-top: 10px;
-                        }
-
-                        .dictionary {
-                            float: left;
-                        }
-                    }
-
-                    .search-result-definition {
-                        display: block;
-                        position: relative;
-                        text-align: right;
-                        font-size: 15px;
-                        min-height: 30px;
-                        padding-right: 24px;
-                        border-radius: 6px;
-                        cursor: pointer;
-
-                        i {
-                            display: block;
-                            position: absolute;
-                            right: 5px;
-                            top: 11px;
-                        }
-
-                        &:hover {
-                            background-color: $tint;
-                        }
-                    }
-
-                    .search-result-other-forms-title {
-                        display: block;
-                        width: 100%;
-                        height: 18px;
-                        line-height: 18px;
-                        color: $font-color;
-                        font-size: 13px;
-                    }
-
-                    .search-result-other-forms {
-                        display: block;
-                        width: 100%;
-                        color: $font-color;
-                        font-size: 13px;
-                        line-height: 24px;
-                        .search-result-other-form {
-                            display: inline-block;
-                            float: left;
-                            margin-right: 10px;
-                        }
-                    }
-                }
-            }
-        }
-
-        .stage-buttons-box {
-            box-sizing: border-box;
-            padding: 8px;
-            overflow: hidden;
-        }
-
-        .stage-buttons {
-            width: 351px; 
+            bottom: -18px;
+            width: 100px;
             height: 36px;
-            margin: 10px auto;
-            margin-top: 25px;
-            background-color: $light-gray;
-            border: 0px solid $border;
-            border-radius: 6px;
-            text-align: center;
-            overflow: hidden;
+            right: calc(50% - 50px);
+            z-index: 2;
+        }
 
-            &.hidden-ignore-button {
-                width: 342px; 
+        #word-edit-table table {
+
+            thead tr,
+            thead tr th,
+            thead tr td {
+                height: 26px;
+                min-height: 26px;
             }
 
-            .stage-button {
-                box-sizing: border-box;
-                display: inline-block;
-                width: 39px;
-                height: 36px;
-                line-height: 36px;
-                user-select: none;
-                cursor: pointer;
+            thead tr th, tbody tr th, tbody tr td {
+                border: none !important;
                 text-align: center;
-                font-size: 16px;
-                font-weight: bold;
-                margin: 0px;
-                border-top: 1px solid $border;
-                border-bottom: 1px solid $border;
-
-                &:hover {
-                    background-color: $tint;
-                }
-
-                &.selected {
-                    background-color: $theme-color;
-                    border-color: $theme-color;
-                    color: white;
-                }
+                padding: 0px 4px;
             }
+
+            #selected-word-field {
+                font-size: 16px;
+            }
+        }
+
+        .subheader {
+            color: rgba(0, 0, 0, .5);
+        }
+
+        #word, #phrase, #reading {
+            color: $font-color;
+            font-size: 19px;
+            
+            rt {
+                font-size: 11.5px;
+            }
+        }
+
+        #definitions {
+            color: $font-color;
+            font-size: 16px;
+        }
+
+        #vocab-box-bottom-space {
+            display: block;
+            width: 100%;
+            height: 32px;
         }
 
         &:after, &:before {
@@ -728,7 +414,7 @@
         
         &:after {
             border-color: rgba(0, 0, 0, 0);
-            border-bottom-color: white;
+            border-bottom-color: $theme-color;
             border-width: 14px;
             margin-left: -14px;
         }
@@ -739,61 +425,73 @@
             border-width: 15px;
             margin-left: -15px;
         }
-    }
 
-    #vocab-box.new-phrase {
-        .vocab-phrase-box {
-            border-bottom: 0px;
+        #stage-buttons {
+            overflow: hidden;
+
+            button.v-btn {
+                min-width: 40px;
+                min-height: 40px;
+                width: 40px;
+                height: 40px;
+            }
         }
 
-        .show-phrase-reading {
-            right: 8px;
-        }
-    }
-
-    #vocab-box.editing {
-        .stage-buttons-box {
+        #search-results {
             display: block;
-        }
+            width: 100%;
+            height: 200px;
+            overflow-y: scroll;
 
-        .vocab-word-box, .vocab-phrase-box {
-            border-bottom: 0px;
-        }
+            .search-result {
+                display: block;
+                margin-bottom: 16px;
 
-        .show-phrase-reading {
-            right: 8px;
-        }
-    }
 
-    #vocab-box.translation-edit {
-        .vocab-word-box, .stage-buttons-box {
-            display: none;
-        }
+                .search-result-title {
+                    display: block;
+                    width: 100%;
+                    height: 32 px;
+                    line-height: 32px;
 
-        .vocab-translation {
-            border-bottom: 0px;
-            padding: 8px;
-            padding-bottom: 43px;
-        }
-    }
+                    .dictionary {
+                        display: inline-block;
+                        float: right;
+                    }
+                }
+                
 
-    button.btn.btn-primary.edit-stage-button {
-        width: 35px;
-        height: 35px;
-        line-height: 35px;
-        padding: 0px;
-        text-align: center;
-        font-size: 17px;
-        margin: 0px 1.5px;
-        font-weight: bold;
+                .search-result-definition {
+                    position: relative;
+                    display: block;
+                    width: 100%;
+                    min-height: 36px;
+                    line-height: 36px;
+                    user-select: none;
+                    cursor: pointer;
+                    text-align: right;
+                    overflow: hidden;
+                    padding-right: 32px;
 
-        &.selected, &.selected:focus, &.selected:active {
-            background-color: darken($green, 10%);
-            color: white;
-        }
+                    &:hover {
+                        background-color: #e0e0e0;
+                    }
 
-        &:active, &:focus {
-            box-shadow: none;
+                    i.v-icon {
+                        position: absolute;
+                        right: 4px;
+                        top: calc(50% - 12px);
+                    }
+                }
+
+                .search-result-other-forms {
+                    width: 100%;
+                }
+
+                &.jmdict .search-result-title {
+                    background-color: #74e39a;
+                }
+            }
         }
     }
 
@@ -816,8 +514,7 @@
         line-height: 1.3;
         margin: 0px auto;
         user-select: none;
-        padding: 10px;
-        padding-left: 0px;
+        padding: 8px;
         transition: .2s;
         overflow-x: auto;
 
@@ -1017,83 +714,156 @@
             text-align: center;
         }
     }
+}
 
-    #go-to-lessons-button.btn {
-        display: block;
-        margin: auto;
-        width: 160px;
-    }
 
-    a {
-        display: block;
-        margin: 5px auto;
+@media (max-width: 1263px) { 
+    #reader-box #toolbar {
+        max-width: calc(100% - 8px);
     }
 }
 
-@media (min-width: 1201px) {
-    #toolbar #back-to-book-button {
+@media (max-width: 650px) {
+    #reader-box {
+        #settings {
+            .setting {
+                height: auto;
+
+                .setting-label {
+                    display: block;
+                    float: unset;
+                    width: 100%;
+                    height: 30px;
+                    line-height: 30px;
+                }
+    
+                .setting-input {
+                    display: block;
+                    float: unset;
+                    width: calc(100% - 16px);
+                    max-width: 300px;
+                    margin-bottom: 20px;
+                    
+                    &.switch, &.slider {
+                        padding-top: 0px;
+                    }
+                }
+
+                &.switch {
+                    height: 50px;
+                    margin-bottom: 20px;
+
+                    .setting-label {
+                        display: inline-block;
+                        float: left;
+                        width: 210px;
+                        margin-bottom: 0px;
+                    }
+        
+                    .setting-input.switch {
+                        display: block;
+                        float: unset;
+                        width: calc(100% - 210px);
+                        margin-bottom: 0px;
+                        padding-top: 0px !important;
+                    }
+                }
+            }
+        }
+
+        #glossary .glossary-entry{
+            .word {
+                font-size: 17px;
+            }
+
+            .translation {
+                font-size: 15px;
+            }
+        }
+
+        #chapters .chapter {
+            .chapter-read, 
+            .chapter-words,
+            .chapter-unique-words,
+            .chapter-known-words,
+            .chapter-highlighted-words,
+            .chapter-new-words {
+                width: calc(100% - 0px);
+                margin: 1px auto;
+                font-size: 13px;
+            }
+
+            .chapter-highlighted-words span{
+                width: 50px;
+            }
+
+            .chapter-new-words {
+                span {
+                    width: 50px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 500px) {
+    #reader-box {
+        padding-top: 50px;
+
+        #toolbar {
+            height: 50px;
+            margin-top: -50px;
+        
+            .toolbar-button-group .toolbar-button{
+                min-width: 42px !important;
+                width: 42px !important;
+                height: 42px !important;
+            }
+        }
+    }
+}
+
+@media (max-width: 400px) {
+    #reader-box #vocab-box #stage-buttons {
+        overflow: hidden;
+
+        button.v-btn {
+            min-width: 38px;
+            min-height: 38px;
+            width: 38px;
+            height: 38px;
+        }
+    }
+}
+
+@media (max-width: 380px) {
+    #reader-box #vocab-box #stage-buttons {
+        overflow: hidden;
+
+        button.v-btn {
+            min-width: 35px;
+            min-height: 35px;
+            width: 35px;
+            height: 35px;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    #reader-box #toolbar .toolbar-button-group.zoom {
         display: none;
     }
 }
 
+@media (max-width: 350px) {
+    #reader-box #vocab-box #stage-buttons {
+        overflow: hidden;
 
-@media (max-width: 650px) {
-    #glossary .glossary-entry{
-        rt {
-            font-size: 14px;
-        }
-
-        .word {
-            font-size: 17px;
-        }
-
-        .translation {
-            font-size: 15px;
-        }
-    }
-    #reader-box {
-        padding-left: 60px;
-    }
-
-    #toolbar {
-        width: 60px;
-        margin-left: -60px;
-    
-        .toolbar-button-group {
-            padding: 5px 10px;
-        }
-    }
-}
-@media (max-width: 440px) {
-    #vocab-box {
-        width: 380px;
-
-        .vocab-word-box {    
-            #vocab-word-edit {
-                display: block;
-                width: calc(100% - 10px);
-                margin-top: 10px;
-    
-                .vocab-word-edit-cell:nth-child(1){
-                    width: 70px;
-                    text-align: right !important;
-                    padding-right: 20px;
-                    
-                }
-    
-                .vocab-word-edit-cell:nth-child(2){
-                    width: 135px;
-                }
-    
-                .vocab-word-edit-cell:nth-child(3){
-                    width: 135px;
-                    float: right;
-                }
-    
-                input {
-                    width: calc(100%);
-                }
-            }
+        button.v-btn {
+            min-width: 33px;
+            min-height: 33px;
+            width: 33px;
+            height: 33px;
         }
     }
 }

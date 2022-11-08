@@ -1,20 +1,40 @@
 <template>
-    <div id="flashcard-collections" v-if="flashcardCollections.length">
-        <router-link class="sidebar-button" to="/flashcards/edit/">
-            <button id="create-flashcard-collection-button" class="btn btn-primary">Create new collection</button>
-        </router-link>
-        <div class="flashcard-collection" v-for="(collection, index) in flashcardCollections" :key="index">
-            <div class="flashcard-collection-name">{{ collection.name }}</div>
-            <div class="flashcard-collection-buttons">
-                <button class="btn btn-primary" @click="deleteFlashcardCollection(collection.id)">Delete</button>
-                <router-link class="sidebar-button" :to="'/flashcards/edit/' + collection.id">
-                    <button class="btn btn-primary">Edit</button>
-                </router-link>
-                <router-link class="sidebar-button" :to="'#' + collection.id">
-                    <button class="btn btn-primary">Practice</button>
-                </router-link>
-            </div>
-        </div>
+    <div id="flashcard-collections" class="d-flex justify-center flex-column flex-nowrap flex-sm-row flex-sm-wrap" v-if="flashcardCollections.length">
+            <!--
+                <v-btn color="primary" to="/flashcards/edit/">Create new collection</v-btn>
+            -->
+            <v-card class="flashcard-collection d-flex flex-column ma-6 mx-auto mx-sm-6" v-for="(collection, index) in flashcardCollections" :key="index">
+                <v-card-title class="pa-3 text-center">
+                    {{ collection.name }}
+                    <v-spacer></v-spacer>
+                    <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>
+                </v-card-title>
+                <v-card-text class="pa-0">
+                    <v-simple-table dense class="flashcard-collection-info-table no-hover pb-4  mx-auto">
+                        <tbody>
+                            <tr>
+                                <td width="200px">Cards</td>
+                                <td class="text-center"><div class="info-table-value">347</div></td>
+                            </tr>
+                            <tr>
+                                <td width="200px">Due today</td>
+                                <td class="text-center"><div class="info-table-value">18</div></td>
+                            </tr>
+                            <tr>
+                                <td width="200px">Unseen</td>
+                                <td class="text-center"><div class="info-table-value">116</div></td>
+                            </tr>
+                        </tbody>
+                    </v-simple-table>
+                </v-card-text>
+                <v-spacer></v-spacer>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    
+                    <v-btn color="primary" :to="'/flashcards/edit/' + collection.id">Edit</v-btn>
+                    <v-btn color="primary">Review</v-btn>
+                </v-card-actions>
+            </v-card>
     </div>
 </template>
 

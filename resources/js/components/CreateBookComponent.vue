@@ -1,35 +1,62 @@
 <template>
-    <form method="post" id="create-book-form">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input class="form-control" type="text" v-model="name" required>
-        </div>
+    <v-form ref="form" id="create-book-form" class="mx-auto mt-6">
+        <v-text-field 
+            filled
+            dense
+            label="Name"
+            v-model="name"
+            :rules="[rules.required]"
+        ></v-text-field>
         
-        <div class="text-box red" v-if="nameError">
-            You must type in a name.
-        </div>
+         <v-file-input
+            ref="image"
+            :rules="[rules.required]"
+            accept="image/*"
+            placeholder="Cover image"
+            prepend-icon="mdi-image"
+            v-model="image"
+        ></v-file-input>
 
-        <div class="form-group">
-            <label for="image">Cover image</label>
-            <input type="file" class="form-control-file" accept="image/*" ref="image">
-        </div>
-
-        <button type="submit" class="btn btn-primary" @click.prevent="createBook">Create Book</button>
-        <router-link class="sidebar-button" to="/books/search"><button id="create-book-button" class="btn btn-primary">Cancel</button></router-link>
+        <v-btn 
+            class="mx-0"
+            depressed 
+            :disabled="saving"
+            :loading="saving"
+            :color="saving ? '' : 'primary'"
+            @click="createBook"
+        >Save</v-btn>
         
-        <div class="text-box red" v-if="error !== ''">
-            {{ error }}
-        </div>
-    </form>
+        <v-btn 
+            class="mx-0"
+            depressed
+            color="primary"
+            @click="$router.push('/books')"
+        >Cancel</v-btn>
+        
+        <v-alert
+            class="my-3" 
+            border="left"
+            type="error"
+            v-if="error"
+            >
+            Something went wrong. Please try again.
+        </v-alert>
+    </v-form>
 </template>
 
 <script>
     export default {
         data: function() {
             return {
+                rules: {
+                    required: (value) => {
+                        return !!value || 'Required.';
+                    },
+                },
+                saving: false,
+                error: false,
                 name: '',
-                nameError: false,
-                error: ''
+                image: null,
             }
         },
         props: {
@@ -39,31 +66,31 @@
         },
         methods: {
             createBook: function() {
-                this.resetErrors();
-                if (this.name == '') {
-                    this.nameError = true;
+                if (!this.$refs.form.validate()) {
                     return;
                 }
 
+                this.saving = true;
+                
                 var form = new FormData();
                 form.set('name',this.name);
-                if (this.$refs.image.files.length) {
-                    form.set('image',this.$refs.image.files[0])
+                if (!!this.image) {
+                    form.set('image',this.image)
                 }
 
-                axios.post('/books/create', form).then(function (response) {
+                axios.post('/books/create', form).then((response) => {
+                    this.saving = false;
                     if (response.data == 'success') {
                         this.$router.push('/books');
                     } else {
-                        this.error = 'Something went wrong. Please try again.';
+                        this.error = true;
                     }
-                }.bind(this)).catch(function (error) {
-                    this.error = 'Something went wrong. Please try again.';
-                }).then(function () {});
-            },
-            resetErrors: function() {
-                this.error = '';
-                this.nameError = false;
+                }).catch((error) => {
+                    this.saving = false;
+                    this.error = true;
+                }).then( () => {
+                    this.saving = false;
+                });
             }
         }
     }
