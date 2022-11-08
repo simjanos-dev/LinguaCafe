@@ -8,8 +8,6 @@ use App\Models\VocabularyJmdict;
 class DictionaryController extends Controller
 {
     public function search(Request $request) {
-        $start = microtime(true);
-        
         $dictionary = $request->dictionary;
         $term = $request->term;
 
@@ -77,5 +75,40 @@ class DictionaryController extends Controller
         }
 
         return json_encode($translations);
+    }
+
+    public function searchInflections(Request $request) {
+        
+        $dictionary = $request->dictionary;
+        $term = $request->term;
+
+        $ids = [];
+        // exact word matches
+        $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', 'like', $term)->get()->toArray();
+        foreach ($search as $result) {
+            if (count($ids)) {
+                break;
+            }
+
+            if (!in_array($result, $ids, true)) {
+                array_push($ids, $result);
+            }
+        }
+
+        // exact reading matches
+        $search = VocabularyJmdict::select('id')->whereRelation('readings', 'reading', 'like', $term)->get()->toArray();
+        foreach ($search as $result) {
+            if (count($ids)) {
+                break;
+            }
+
+            if (!in_array($result, $ids, true)) {
+                array_push($ids, $result);
+            }
+        }
+
+        $search = VocabularyJmdict::select('conjugations')->whereIn('id', $ids)->first();
+        
+        return json_encode($search->conjugations);
     }
 }

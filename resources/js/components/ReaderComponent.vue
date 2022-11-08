@@ -400,7 +400,24 @@
                         </v-tab-item>
 
                         <!-- Inflections tab -->
-                        <v-tab-item :value="2">inflections</v-tab-item>
+                        <v-tab-item :value="2" class="pb-4">
+                            <v-simple-table dense id="inflections-table" class="no-hover mx-auto" v-if="inflections.length">
+                                <thead>
+                                    <tr>
+                                        <th>Form</th>
+                                        <th>Affirmative</th>
+                                        <th>Negative</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(inflection, index) in inflections" :key="index">
+                                        <td class="px-2">{{ inflection.name }}</td>
+                                        <td class="px-1">{{ inflection.affPlain }}</td>
+                                        <td class="px-1">{{ inflection.negPlain }}</td>
+                                    </tr>
+                                </tbody>
+                            </v-simple-table>
+                        </v-tab-item>
                     </v-tabs-items>
                 </v-card-text>
                 <v-btn id="close-vocab-box-button" rounded elevation="2" color="red" @click="unselectWord()"><v-icon>mdi-close</v-icon> Close</v-btn>
@@ -967,10 +984,61 @@
             },
             makeSearchRequest: function() {
                 this.searchResults = [];
+                this.inflections = [];
                 if (!this.selection.length) {
                     return;
                 }
 
+                // search inflections
+                axios.post('/dictionary/search/inflections', {
+                    dictionary: 'jmdict',
+                    term: this.vocabSearch
+                })
+                .then(function (response) {
+                    var data = JSON.parse(response.data);
+                    var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
+                    
+                    for (var i = 0; i < data.length; i++) {
+                        if (!displayedInflections.includes(data[i].name)) {
+                            continue;
+                        }
+
+                        var index = this.inflections.findIndex(item => item.name === data[i].name);
+                        if (index == -1) {
+                            this.inflections.push({
+                                name: data[i].name,
+                            });
+
+                            index = this.inflections.length - 1;
+                        }
+
+                        // add different forms to the item
+                        if (data[i].form == 'aff-plain:') {
+                            this.inflections[index].affPlain = data[i].value;
+                        }
+
+                        if (data[i].form == 'aff-formal:') {
+                            this.inflections[index].affFormal = data[i].value;
+                        }
+
+                        if (data[i].form == 'neg-plain:') {
+                            this.inflections[index].negPlain = data[i].value;
+                        }
+
+                        if (data[i].form == 'neg-formal:') {
+                            this.inflections[index].negFormal = data[i].value;
+                        }
+                    }
+                    
+                    console.log(data);
+                }.bind(this))
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                });
+
+                // search word
                 axios.post('/dictionary/search', {
                     dictionary: 'jmdict',
                     term: this.vocabSearch
@@ -990,8 +1058,7 @@
                     this.searchResults.push({
                         word: data[i].words.shift(),
                         otherForms: data[i].words,
-                        definitions: data[i].definitions,
-                        conjugations: data[i].conjugations
+                        definitions: data[i].definitions
                     });
                 }
 

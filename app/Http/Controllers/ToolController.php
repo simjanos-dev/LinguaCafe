@@ -119,7 +119,7 @@ class ToolController extends Controller
         $index = 0;
         DB::beginTransaction();
         while (($line = fgets($file)) !== false) {
-            $data = explode('|', $line);
+            $data = explode('|', str_replace(["\r\n", "\r", "\n"], '', $line));
             
             // save main vocab model
             $vocabulary = new VocabularyJmdict();

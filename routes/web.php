@@ -47,6 +47,7 @@ Route::group(['middleware' => 'web'], function () {
 
     // dictionary
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'search']);
+    Route::post('/dictionary/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
 
     // vocabulary
     Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);    
