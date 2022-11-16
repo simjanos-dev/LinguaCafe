@@ -1,0 +1,83 @@
+#kanji-details {
+    #kanji-details-column {
+        display: inline-block;
+        float: left;
+        width: 400px;
+    }
+
+    #kanji-words-column {
+        display: inline-block;
+        float: left;
+        width: calc(100% - 400px);
+        padding-left: 12px;
+    }
+
+    #kanji-words-table {
+        max-width: 600px;
+    }
+
+    #characters-row {
+        display: block;
+        margin: auto;
+        width: 100%;
+        height: 150px;
+    }
+
+    #character {
+        display: inline-block;
+        float: left;
+        width: 150px;
+        height: 150px;
+        line-height: 150px;
+        font-size: 120px;
+        text-align: center;
+        user-select: none;
+    }
+
+    #character-dmak-box {
+        display: inline-block;
+        float: left;
+        width: 150px;
+        height: 150px;
+    }
+
+    #kanji-details-table {
+        display: block;
+        margin: auto;
+        max-width: 400px;
+
+        td {
+            font-size: 16px;
+        }
+
+        td:nth-child(1) {
+            width: 120px;
+            font-weight: bold;
+        }
+    }
+    
+    #character-dmak {
+        display: block;
+        width: 112px;
+        height: 112px;
+        transform: scale(1.36, 1.36);
+        transform-origin: top left;
+    }
+}
+
+
+@media (max-width: 800px) { 
+    #kanji-details {
+        #characters-row {
+            width: 300px;
+        }
+
+        #kanji-details-column,
+        #kanji-words-column {
+            display: block;
+            float: none;
+            width: 100%;
+            padding-left: 0px;
+        }
+    }
+}

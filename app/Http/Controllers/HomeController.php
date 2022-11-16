@@ -209,7 +209,7 @@ class HomeController extends Controller
         if ($selectedLanguage == 'japanese') {
             // get unique kanji
             $uniqueKanji = [];
-            $words = EncounteredWord::where('stage', '<>', '2')->where('stage', '<>', '1')->where('language', 'Japanese')->where('user_id', Auth::user()->id)->get();
+            $words = EncounteredWord::where('stage', 0)->where('language', 'Japanese')->where('user_id', Auth::user()->id)->get();
             foreach ($words as $word) {
                 $kanji = preg_split("//u", $word->kanji, -1, PREG_SPLIT_NO_EMPTY);
                 foreach($kanji as $currentKanji) {

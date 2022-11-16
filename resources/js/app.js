@@ -39,6 +39,8 @@ const FlashcardCollectionListComponent = require('./components/FlashcardCollecti
 const FlashcardCollectionComponent = require('./components/FlashcardCollectionComponent.vue').default;
 const ReviewComponent = require('./components/ReviewComponent.vue').default;
 const VocabularyComponent = require('./components/VocabularyComponent.vue').default;
+const KanjiListComponent = require('./components/KanjiListComponent.vue').default;
+const KanjiDetailsComponent = require('./components/KanjiDetailsComponent.vue').default;
 
 const router = new VueRouter({
     mode: 'history',
@@ -55,6 +57,8 @@ const router = new VueRouter({
         { path: '/review/:bookId?/:chapterId?', component: ReviewComponent },
         { path: '/vocabulary/search', component: VocabularyComponent },
         { path: '/vocabulary/search/:text/:stage/:book/:chapter/:translation/:phrases/:orderBy/:page', component: VocabularyComponent },
+        { path: '/kanji/search', component: KanjiListComponent },
+        { path: '/kanji/:character', component: KanjiDetailsComponent },
     ]
 })
 

@@ -10,7 +10,7 @@ export default new Vuetify({
             light: {
                 background: '#f6f6f6',
                 navigation: '#f6f6f6',
-                primary: '#a1887f',
+                primary: '#7b4cfd',
                 secondary: '#78655f',
 
                 green: '#00c853',

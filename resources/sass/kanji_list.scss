@@ -1,0 +1,45 @@
+#kanji-list {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 100%;
+    padding-bottom: 50px;
+
+    .subheader {
+        width: 100%;
+        color: rgba(0, 0, 0, .8)
+    }
+
+    .skeleton-title {
+        width: 200px;
+        height: 24px;
+        border-radius: 12px;
+    }
+
+    .skeleton-button {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        margin: 4px;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .kanji {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        line-height: 40px;
+        margin: 4px;
+        font-size: 20px;
+        user-select: none;
+        border-radius: 6px;
+        text-align: center;
+        cursor: pointer; 
+        color: rgba(0, 0, 0, .8);
+
+        &:not(.learned) {
+            color: rgba(0, 0, 0, .15);
+        }
+    }
+}

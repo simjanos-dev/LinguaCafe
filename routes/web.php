@@ -30,6 +30,8 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/review/{bookId?}/{chapterId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/vocabulary/search', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/vocabulary/search/{text}/{stage}/{book}/{chapter}/{translation}/{phrases}/{orderBy}/{page}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/kanji/search', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/kanji/{character}', [App\Http\Controllers\HomeController::class, 'index']);
 
     
     // home
@@ -40,7 +42,8 @@ Route::group(['middleware' => 'web'], function () {
     // tools
     Route::get('/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
     Route::get('/jmdict/import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
-
+    Route::get('/kanji/import', [App\Http\Controllers\ToolController::class, 'kanjiImport']);
+    
     // images 
     Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
     Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
@@ -50,7 +53,9 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/dictionary/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
 
     // vocabulary
-    Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);    
+    Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);
+    Route::post('/kanji/search', [App\Http\Controllers\VocabularyController::class, 'searchKanji']);
+    Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);
 
     
     // review

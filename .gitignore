@@ -16,3 +16,4 @@ yarn-error.log
 /public/css/*.css
 /public/js/*.js
 !/public/css/awesomefont.css
+/public/js/dmak/kanji/*.svg

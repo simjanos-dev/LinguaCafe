@@ -2,7 +2,7 @@
     <div id="books" class="d-flex flex-column justify-center flex-nowrap">
         <v-card outlined class="book button-box mx-auto mt-6 mb-2">
             <v-card-actions class="px-0">
-                <v-btn class="mx-0 black--text" :small="$vuetify.breakpoint.xsOnly" rounded color="green" :to="'/books/create'"><v-icon>mdi-plus</v-icon> Create</v-btn>
+                <v-btn class="mx-0 black--text" :small="$vuetify.breakpoint.xsOnly" color="green" :to="'/books/create'"><v-icon>mdi-plus</v-icon> Create</v-btn>
             </v-card-actions>
         </v-card>
         <v-card :class="{'book': true, 'rounded-lg': true, 'mx-auto': true, 'my-6': index}" v-for="(book, index) in books" :key="index">
@@ -40,8 +40,8 @@
                     </v-simple-table>
                     <v-card-actions class="pa-3">
                         <v-spacer></v-spacer>
-                        <v-btn :small="$vuetify.breakpoint.xsOnly" rounded color="primary" :to="'/review/' + book.id"><v-icon class="mr-1">mdi-spellcheck</v-icon> Review</v-btn>
-                        <v-btn :small="$vuetify.breakpoint.xsOnly" rounded color="primary" :to="'/chapters/' + book.id"><v-icon class="mr-1">mdi-view-list</v-icon> Chapters</v-btn>
+                        <v-btn :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/review/' + book.id"><v-icon class="mr-1">mdi-spellcheck</v-icon> Review</v-btn>
+                        <v-btn :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/' + book.id"><v-icon class="mr-1">mdi-view-list</v-icon> Chapters</v-btn>
                     </v-card-actions>
                 </v-card-text>
             </div>

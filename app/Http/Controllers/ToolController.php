@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Kanji;
 use App\Models\Lesson;
 use App\Models\VocabularyJmdict;
 use App\Models\VocabularyJmdictWord;
@@ -13,10 +14,10 @@ class ToolController extends Controller
 {
     public function jmdictTextGenerator() {
         ob_implicit_flush(true);
-        $file = fopen(base_path() . '/tools/jmdict_text_generator/jmdict.txt', 'w');
+        $file = fopen(base_path() . '/storage/app/dictionaries/jmdict.txt', 'w');
         $doc = new \DOMDocument();
         $reader = new \XMLReader();
-        $reader->open(base_path() . '/tools/jmdict_text_generator/JMdict_e.xml');
+        $reader->open(base_path() . '/storage/app/dictionaries/JMdict_e.xml');
         $index = 0;
         
 
@@ -104,6 +105,113 @@ class ToolController extends Controller
         }
 
         fclose($file);
+        echo('finished');
+        ob_implicit_flush(false);
+    }
+
+    public function kanjiImport() {
+        $jlpt = [
+            '1' => 1,
+            '2' => 2,
+            '3' => 4,
+            '4' => 5,
+        ];
+
+        DB::statement('DELETE FROM dictionary_ja_kanji');
+
+        ob_implicit_flush(true);
+        $doc = new \DOMDocument();
+        $reader = new \XMLReader();
+        $reader->open(base_path() . '/storage/app/dictionaries/kanjidic2.xml');
+        $index = 0;        
+
+        DB::beginTransaction();
+        while ($reader->read() && $reader->name !== 'character');
+        while ($reader->name === 'character') {
+            if ($index % 100 == 0) {
+                echo($index . " ");
+                echo str_pad('',4096);
+            }
+
+            $node = simplexml_import_dom($doc->importNode($reader->expand(), true));
+            
+            $kanji = new Kanji();
+            $kanji->kanji = $node->literal->__toString();
+            $meanings = [];
+            $readings_on = [];
+            $readings_kun = [];
+            $kanji->grade = 0;
+            $kanji->strokes = 0;
+            $kanji->frequency = 0;
+            $kanji->jlpt = 0;
+
+            // grade
+            // 1-6 school
+            // 8 Jouyou kanji
+            // 9-10 Jinmeiyou kanji, used for names
+            if (isset($node->misc->grade)) {
+                $kanji->grade = intval($node->misc->grade->__toString());
+                if ($kanji->grade == 9) {
+                    $kanji->grade = 10;
+                }
+            }
+            
+            // stoke count
+            if (isset($node->misc->stroke_count)) {
+                $kanji->strokes = intval($node->misc->stroke_count->__toString());
+            }
+
+            // frequency (based on modern newspapers 1-2501)
+            if (isset($node->misc->freq)) {
+                $kanji->frequency = intval($node->misc->freq->__toString());
+            }
+            
+            // jlpt level (2 is 2/3 in the new system)
+            if (isset($node->misc->jlpt)) {
+                $kanji->jlpt = $jlpt[$node->misc->jlpt->__toString()];
+            }
+            
+            // readings
+            if (isset($node->reading_meaning) && isset($node->reading_meaning->rmgroup) && count($node->reading_meaning->rmgroup->reading)) {
+                for ($i = 0; $i < count($node->reading_meaning->rmgroup->reading); $i++) {
+                    $element = $node->reading_meaning->rmgroup->reading[$i];
+                    if (isset($element->attributes()->r_type)) {
+                        
+                        // on reading
+                        if ($element->attributes()->r_type == 'ja_on') {
+                            array_push($readings_on, $element->__toString());
+                        }
+
+                        // kun reading
+                        if ($element->attributes()->r_type == 'ja_kun') {
+                            array_push($readings_kun, $element->__toString());
+                        }
+                    }
+                }
+            }
+
+            // meanings
+            if (isset($node->reading_meaning) && isset($node->reading_meaning->rmgroup) && count($node->reading_meaning->rmgroup->meaning)) {
+                for ($i = 0; $i < count($node->reading_meaning->rmgroup->meaning); $i++) {
+                    $element = $node->reading_meaning->rmgroup->meaning[$i];
+                    
+                    // english meanings
+                    if (!isset($element->attributes()->m_lang)) {
+                        array_push($meanings, $element->__toString());
+                    }   
+                }
+            }
+
+            // save kanji in database
+            $kanji->meanings = json_encode($meanings);
+            $kanji->readings_on = json_encode($readings_on);
+            $kanji->readings_kun = json_encode($readings_kun);
+            $kanji->save();
+            $index ++;
+            $reader->next('character');
+        }
+
+        DB::commit();
         echo('finished');
         ob_implicit_flush(false);
     }

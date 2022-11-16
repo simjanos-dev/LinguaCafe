@@ -10,6 +10,8 @@
 @import 'edit_flash_card_collection';
 @import 'reader';
 @import 'vocabulary';
+@import 'kanji_list';
+@import 'kanji_details';
 @import 'books';
 @import 'create_book';
 @import 'edit_chapter';
@@ -31,6 +33,7 @@ html, body, div#app {
 }
 
 main {
+    display: block;
     overflow-x: hidden;
     width: 100%;
 }
@@ -72,15 +75,30 @@ div.v-btn.primary, div.v-btn.green, div.v-btn.red,
 button.v-btn.primary, button.v-btn.green, button.v-btn.red,
 a.v-btn.primary, a.v-btn.green, a.v-btn.red {
     &:not(.toolbar-button):not(.stage-button) {
-        color: rgba(255,255,255, .85);
+        color: rgba(255,255,255, .94);
         
         span {
-            color: rgba(255,255,255, .85);
+            color: rgba(255,255,255, .94);
         }
     }
 }
 
 div.v-data-table {
+    th {
+        color: rgb(0, 0, 0, .8) !important;
+    }
+
+    &.no-background {
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    &.no-row-border {
+        td, th, tr {
+            border-top: 0px !important;
+            border-bottom: 0px !important;
+        }
+    }
+
     &.border .v-data-table__wrapper table {
         border: 1px solid rgba(0, 0, 0, 0.12);
     }
@@ -104,9 +122,21 @@ div.v-data-table {
     }
 }
 
+@media (min-width: 1264px) {
+    .container {
+        max-width: 1185px !important;
+    }
+}
+
 @media (max-width: 850px) {
     div.v-bottom-navigation a {
         max-width: 110px !important;
+    }
+}
+
+@media (min-width: 576px) {
+    .container-sm, .container {
+        max-width: 720px;
     }
 }
 

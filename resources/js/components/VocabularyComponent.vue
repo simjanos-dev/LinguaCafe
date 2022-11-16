@@ -1,5 +1,5 @@
 <template>
-    <div id="vocabulary" class="pa-6">
+    <div id="vocabulary">
         <!-- search filter -->
         <div id="vocabulary-search-field">
             <v-btn rounded depressed color="primary" @click="applyFilter('text')"><v-icon>mdi-magnify</v-icon> Search</v-btn>

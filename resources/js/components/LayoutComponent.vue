@@ -16,7 +16,7 @@
         </v-navigation-drawer>
 
         <v-main :style="{background: $vuetify.theme.currentTheme.background}">
-            <v-container id="content" class="pa-0" fluid>
+            <v-container id="content" >
                 <router-view :key="$route.fullPath"></router-view>
             </v-container>
         </v-main>
@@ -53,6 +53,12 @@
                         url: '/vocabulary/search',
                         icon: 'mdi-translate',
                         topbar: true,
+                    },
+                    {
+                        name: 'Kanji',
+                        url: '/kanji/search',
+                        icon: 'mdi-ideogram-cjk',
+                        topbar: false,
                     },
                     {
                         name: 'Review',

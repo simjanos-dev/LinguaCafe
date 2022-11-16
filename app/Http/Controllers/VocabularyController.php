@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\EncounteredWord;
+use App\Models\Phrase;
+use App\Models\Kanji;
 use App\Models\Book;
 use App\Models\Lesson;
-use App\Models\Phrase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -153,6 +154,80 @@ class VocabularyController extends Controller
         $data->bookIndex = $bookIndex;
         $data->pageCount = ceil($data->wordCount / $limit);
         $data->currentPage = $page;
+
+        return json_encode($data);
+    }
+
+    public function searchKanji(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
+        $words = EncounteredWord::where('user_id', Auth::user()->id)->where('stage', 0)->where('language', $selectedLanguage)->where('kanji', '<>', '')->get();
+        
+        // get knwon kanji
+        $knownKanji = [];
+        foreach ($words as $word) {
+            $wordKanji = preg_split("//u", $word->kanji, -1, PREG_SPLIT_NO_EMPTY);
+            foreach($wordKanji as $currentKanji) {
+                if(!in_array($currentKanji, $knownKanji, true)) {
+                    array_push($knownKanji, $currentKanji);
+                }
+            }
+        }
+
+        // get kanji list
+        if ($request->groupBy == 'grade') {
+            $kanji = Kanji::where(function($query) use($knownKanji) {
+                $query->where('grade', '>', 0)->orWhereIn('kanji', $knownKanji);
+            });
+        } else {
+            $kanji = Kanji::where(function($query) use($knownKanji) {
+                $query->where('jlpt', '>', 0)->orWhereIn('kanji', $knownKanji);
+            });
+        }
+
+        if (!$request->showUnknown) {
+            $kanji = $kanji->whereIn('kanji', $knownKanji);
+        }
+        
+        $kanji = $kanji->get();
+
+        // label kanji list
+        foreach ($kanji as $currentKanji) {
+            $currentKanji->known = in_array($currentKanji->kanji, $knownKanji);
+        }
+
+        // group kanji list
+        if ($request->groupBy == 'grade') {
+            $kanji = $kanji->groupBy('grade');
+        } else {
+            $kanji = $kanji->groupBy('jlpt');
+        }
+        
+
+        // get count for statistics
+        if ($request->groupBy == 'grade') {
+            $totalCount = Kanji::select('grade', DB::raw('count(id) as total'))->groupBy('grade')->get()->keyBy('grade');
+            $knownCount = Kanji::select('grade', DB::raw('count(id) as total'))->whereIn('kanji', $knownKanji)->groupBy('grade')->get()->keyBy('grade');
+        } else {
+            $totalCount = Kanji::select('jlpt', DB::raw('count(id) as total'))->groupBy('jlpt')->get()->keyBy('jlpt');
+            $knownCount = Kanji::select('jlpt', DB::raw('count(id) as total'))->whereIn('kanji', $knownKanji)->groupBy('jlpt')->get()->keyBy('jlpt');
+        }
+        
+        $data = new \StdClass();
+        $data->kanji = $kanji;
+        $data->total = $totalCount;
+        $data->known = $knownCount;
+
+        return json_encode($data);
+    }
+
+    public function getKanjiDetails(Request $request) {
+        $kanji = Kanji::where('kanji', $request->kanji)->first();
+        $words = EncounteredWord::where('word', 'like', '%' . $request->kanji . '%')->where('translation', '<>', '')->limit(12)->get();
+
+        $data = new \StdClass();
+        $data->kanji = $kanji;
+        $data->words = $words;
+
         return json_encode($data);
     }
 }
