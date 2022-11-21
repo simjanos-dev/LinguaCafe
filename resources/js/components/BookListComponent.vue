@@ -1,14 +1,15 @@
 <template>
-    <div id="books" class="d-flex flex-column justify-center flex-nowrap">
-        <v-card outlined class="book button-box mx-auto mt-6 mb-2">
+    <v-container id="books" class="d-flex flex-column justify-center flex-nowrap">
+        <v-card elevation="0" class="book button-box mx-auto mt-6 mb-2">
             <v-card-actions class="px-0">
-                <v-btn class="mx-0 black--text" :small="$vuetify.breakpoint.xsOnly" color="green" :to="'/books/create'"><v-icon>mdi-plus</v-icon> Create</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn class="mx-0" depressed color="secondary" :to="'/books/create'">Create book</v-btn>
             </v-card-actions>
         </v-card>
-        <v-card :class="{'book': true, 'rounded-lg': true, 'mx-auto': true, 'my-6': index}" v-for="(book, index) in books" :key="index">
-            <div class="d-flex flex-wrap flex-sm-nowrap justify-space-between">
+        <v-card outlined :class="{'book': true, 'mx-auto': true, 'my-6': index}" v-for="(book, index) in books" :key="index">
+            <div class="book-box">
                 <v-img class="cover-image" :src="'/images/book_images/' + book.cover_image"></v-img>
-                <v-card-text class="pa-0">
+                <v-card-text class="pa-0 pl-3">
                     <v-card-title class="book-title pa-3">
                         {{ book.name }}
                         <v-spacer></v-spacer>
@@ -40,13 +41,13 @@
                     </v-simple-table>
                     <v-card-actions class="pa-3">
                         <v-spacer></v-spacer>
-                        <v-btn :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/review/' + book.id"><v-icon class="mr-1">mdi-spellcheck</v-icon> Review</v-btn>
-                        <v-btn :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/' + book.id"><v-icon class="mr-1">mdi-view-list</v-icon> Chapters</v-btn>
+                        <v-btn depressed color="secondary" :to="'/review/' + book.id">Review</v-btn>
+                        <v-btn class="ml-3" depressed color="secondary" :to="'/chapters/' + book.id">Chapters</v-btn>
                     </v-card-actions>
                 </v-card-text>
             </div>
         </v-card>
-    </div>
+    </v-container>
 </template>
 
 <script>

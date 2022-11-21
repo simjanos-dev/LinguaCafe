@@ -1,10 +1,9 @@
 <template>
-    <div id="chapters" class="d-flex flex-column justify-center flex-nowrap" v-if="book !== null">
+    <v-container id="chapters" class="d-flex flex-column justify-center flex-nowrap" v-if="book !== null">
         <v-card outlined class="chapter button-box mx-auto mt-6 mb-2">
             <v-card-actions class="px-0">
-                <v-btn :small="$vuetify.breakpoint.xsOnly" class="mx-0" rounded color="green" :to="'/chapters/create/' + book.id"><v-icon>mdi-plus</v-icon> Create</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn :small="$vuetify.breakpoint.xsOnly" class="mx-0" rounded color="primary" :to="'/chapters/read/' + randomChapter"  v-if="chapters.length"><v-icon>mdi-shuffle-variant</v-icon> Read random chapter</v-btn>
+                <v-btn class="mx-0 ml-2" depressed color="secondary" :to="'/chapters/create/' + book.id">Create chapter</v-btn>
             </v-card-actions>
         </v-card>
 
@@ -19,37 +18,37 @@
                     <v-simple-table dense class="chapter-info-table pb-4  mx-auto">
                         <tbody>
                             <tr>
-                                <td width="200px">Words</td>
-                                <td class="text-center"><div class="info-table-value">{{ chapter.wordCount.total }}</div></td>
+                                <td>Words</td>
+                                <td><div class="info-table-value">{{ chapter.wordCount.total }}</div></td>
                             </tr>
                             <tr>
-                                <td width="200px">Unique words</td>
-                                <td class="text-center"><div class="info-table-value">{{ chapter.wordCount.unique }}</div></td>
+                                <td>Unique words</td>
+                                <td><div class="info-table-value">{{ chapter.wordCount.unique }}</div></td>
                             </tr>
                             <tr>
-                                <td width="200px">Known words</td>
-                                <td class="text-center"><div class="info-table-value">{{ chapter.wordCount.known }}</div></td>
+                                <td>Known words</td>
+                                <td><div class="info-table-value">{{ chapter.wordCount.known }}</div></td>
                             </tr>
                             <tr>
-                                <td width="200px">Highlighted words</td>
-                                <td class="text-center"><div class="info-table-value highlighted px-2" :style="{'background-color': $vuetify.theme.currentTheme.highlightedWord }">{{ chapter.wordCount.highlighted }}</div></td>
+                                <td>Highlighted words</td>
+                                <td><div class="info-table-value highlighted px-2" :style="{'background-color': $vuetify.theme.currentTheme.highlightedWord }">{{ chapter.wordCount.highlighted }}</div></td>
                             </tr>
                             <tr>
-                                <td width="200px">New words</td>
-                                <td class="text-center"><div class="info-table-value highlighted px-2" :style="{'background-color': $vuetify.theme.currentTheme.newWord }">{{ chapter.wordCount.new }}</div></td>
+                                <td>New words</td>
+                                <td><div class="info-table-value highlighted px-2" :style="{'background-color': $vuetify.theme.currentTheme.newWord }">{{ chapter.wordCount.new }}</div></td>
                             </tr>
                         </tbody>
                     </v-simple-table>
                     <v-card-actions class="pa-3">
                         <v-spacer></v-spacer>
-                        <!--<v-btn class="action-button" rounded color="primary" :to="'/chapters/edit/' + book.id + '/' + chapter.id">Edit</v-btn>-->
-                        <v-btn :small="$vuetify.breakpoint.xsOnly" class="action-button" rounded color="primary" :to="'/review/' + book.id + '/' + chapter.id"><v-icon>mdi-spellcheck</v-icon> Review</v-btn>
-                        <v-btn :small="$vuetify.breakpoint.xsOnly" class="action-button" rounded color="primary" :to="'/chapters/read/' + chapter.id"><v-icon>mdi-book-open-variant</v-icon> Read</v-btn>
+                        <!--<v-btn depressed color="secondary" :to="'/chapters/edit/' + book.id + '/' + chapter.id">Edit</v-btn>-->
+                        <v-btn depressed color="secondary" :to="'/review/' + book.id + '/' + chapter.id">Review</v-btn>
+                        <v-btn depressed color="secondary" :to="'/chapters/read/' + chapter.id">Read</v-btn>
                     </v-card-actions>
                 </v-card-text>
             </div>
         </v-card>
-    </div>
+    </v-container>
 </template>
 
 <script>

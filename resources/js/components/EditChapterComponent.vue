@@ -1,47 +1,49 @@
 <template>
-    <v-form ref="form" id="edit-chapter-form" class="mx-auto mt-6" v-if="book !== -1">
-        <v-text-field 
-            filled
-            dense
-            label="Name"
-            v-model="name"
-            :rules="[rules.required]"
-        ></v-text-field>
-        
-        <v-textarea
-            filled
-            dense
-            no-resize
-            label="Text"
-            v-model="text"
-        ></v-textarea>
+    <v-container>
+        <v-form ref="form" id="edit-chapter-form" class="mx-auto mt-6" v-if="book !== -1">
+            <v-text-field 
+                filled
+                dense
+                label="Name"
+                v-model="name"
+                :rules="[rules.required]"
+            ></v-text-field>
+            
+            <v-textarea
+                filled
+                dense
+                no-resize
+                label="Text"
+                v-model="text"
+            ></v-textarea>
 
-        <v-btn 
-            class="mx-0"
-            depressed 
-            :disabled="saving"
-            :loading="saving"
-            :dark="!saving"
-            :color="saving ? '' : 'primary'"
-            @click="saveChapter"
-        >Save</v-btn>
-        
-        <v-btn 
-            class="mx-0"
-            depressed
-            color="primary"
-            :to="'/chapters/' + book"
-        >Cancel</v-btn>
-        
-        <v-alert
-            class="my-3" 
-            border="left"
-            type="error"
-            v-if="error"
-            >
-            Something went wrong. Please try again.
-        </v-alert>
-    </v-form>
+            <v-btn 
+                class="mx-0"
+                depressed 
+                :disabled="saving"
+                :loading="saving"
+                :dark="!saving"
+                :color="saving ? '' : 'secondary'"
+                @click="saveChapter"
+            >Save</v-btn>
+            
+            <v-btn 
+                class="mx-0"
+                depressed
+                color="secondary"
+                :to="'/chapters/' + book"
+            >Cancel</v-btn>
+            
+            <v-alert
+                class="my-3" 
+                border="left"
+                type="error"
+                v-if="error"
+                >
+                Something went wrong. Please try again.
+            </v-alert>
+        </v-form>
+    </v-container>
 </template>
 
 <script>

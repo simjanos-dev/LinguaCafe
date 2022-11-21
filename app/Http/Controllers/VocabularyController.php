@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
 use App\Models\Kanji;
+use App\Models\Radical;
 use App\Models\Book;
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Auth;
@@ -222,10 +223,12 @@ class VocabularyController extends Controller
 
     public function getKanjiDetails(Request $request) {
         $kanji = Kanji::where('kanji', $request->kanji)->first();
-        $words = EncounteredWord::where('word', 'like', '%' . $request->kanji . '%')->where('translation', '<>', '')->limit(12)->get();
-
+        $words = EncounteredWord::where('word', 'like', '%' . $request->kanji . '%')->limit(12)->get();
+        $radicals = Radical::select('radicals')->where('kanji', $request->kanji)->first();
+        
         $data = new \StdClass();
         $data->kanji = $kanji;
+        $data->radicals = $radicals->radicals;
         $data->words = $words;
 
         return json_encode($data);

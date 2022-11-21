@@ -1,48 +1,52 @@
 <template>
-    <div id="kanji-list">
-        <v-container>
-            <v-tabs class="mb-10" background-color="background" v-model="groupBy" @change="updateKanjiList">
-                <v-tab>Grade</v-tab>
-                <v-tab>JLPT</v-tab>
-                <v-spacer></v-spacer>
-                <v-btn class="px-2" plain @click="showUnknown = !showUnknown; updateKanjiList();" v-if="showUnknown">Hide unknown <v-icon class="ml-1">mdi-eye-off</v-icon></v-btn>
-                <v-btn class="px-2" plain @click="showUnknown = !showUnknown; updateKanjiList();" v-if="!showUnknown">Show unknown <v-icon class="ml-1">mdi-eye</v-icon></v-btn>
-            </v-tabs>
-            <v-row>
-                <!-- Skeleton loader -->
-                <template v-for="groupIndex in 3" v-if="loading">
+    <v-container id="kanji-list">
+        <v-tabs v-model="groupBy" @change="updateKanjiList" background-color="background">
+            <v-tab>Grade</v-tab>
+            <v-tab>JLPT</v-tab>
+            <v-spacer></v-spacer>
+            <v-btn class="px-2 mr-2 mt-2" text @click="showUnknown = !showUnknown; updateKanjiList();" v-if="showUnknown">Hide unknown <v-icon class="ml-1">mdi-eye-off</v-icon></v-btn>
+            <v-btn class="px-2 mr-2 mt-2" text @click="showUnknown = !showUnknown; updateKanjiList();" v-if="!showUnknown">Show unknown <v-icon class="ml-1">mdi-eye</v-icon></v-btn>
+        </v-tabs>
+        <div>
+            <!-- Skeleton loader -->
+            <template v-for="groupIndex in 3" v-if="loading">
+                <div class="subheader">
                     <v-skeleton-loader
-                        class="skeleton-title ml-1 my-5 mb-2"
+                        class="skeleton-title ml-1 my-2 mb-0"
                         type="image"
                     ></v-skeleton-loader>
+                </div>
 
-                    <div class="d-flex flex-wrap">
+                <v-card outlined>
+                    <v-card-text class="d-flex flex-wrap mt-0">
                         <template v-for="kanjiIndex in 24 + ((groupIndex + 1) * 20)">
                             <v-skeleton-loader
                                 class="skeleton-button"
                                 type="image"
                             ></v-skeleton-loader>
                         </template>
-                    </div>
-                </template>
+                    </v-card-text>
+                </v-card>
+            </template>
 
-                <!-- JLPT info -->
-                <v-alert width="100%" class="my-5" dark type="info" border="left" v-if="groupBy == 1 && !loading">
-                    The JLPT data is from the previous 4 level system, which was changed in 2010. There is no official kanji list for the current JLPT.
-                    The old levels are similar to the current ones, except that the old N2 is now divided between N2 and N3.
-                </v-alert>
-                
-                <!-- Kanji List -->
-                <template v-for="(group, groupIndex) in kanji" v-if="!loading">
-                    <div class="subheader mt-10 pl-1 h5" v-if="group.length">
-                        <template v-if="groupIndex == 0">
-                            {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }})
-                        </template>
-                        <template v-else>
-                            {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }}/{{ totalKanjiCounts[groupIndex].total }})
-                        </template>
-                    </div>
-                    <div class="d-flex flex-wrap" v-if="group.length">
+            <!-- JLPT info -->
+            <v-alert width="100%" class="my-5" type="info" border="left" v-if="groupBy == 1 && !loading">
+                The JLPT data is from the previous 4 level system, which was changed in 2010. There is no official kanji list for the current JLPT.
+                The old levels are similar to the current ones, except that the old N2 is now divided between N2 and N3.
+            </v-alert>
+            
+            <!-- Kanji List -->
+            <template v-for="(group, groupIndex) in kanji" v-if="!loading">
+                <div class="subheader" v-if="group.length">
+                    <template v-if="groupIndex == 0">
+                        {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }})
+                    </template>
+                    <template v-else>
+                        {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }}/{{ totalKanjiCounts[groupIndex].total }})
+                    </template>
+                </div>
+                <v-card outlined class="d-flex flex-wrap" v-if="group.length">
+                    <v-card-text>
                         <template v-for="(kanji, kanjiIndex) in group">
                             <v-btn
                                 icon
@@ -54,11 +58,11 @@
                                 {{ kanji.kanji }}
                             </v-btn>
                         </template>
-                    </div>
-                </template>
-            </v-row>
-        </v-container>
-    </div>
+                    </v-card-text>
+                </v-card>
+            </template>
+        </div>
+    </v-container>
 </template>
 
 <script>
@@ -107,7 +111,6 @@
                     groupBy: this.groupBy == 0 ? 'grade' : 'jlpt',
                     showUnknown: this.showUnknown,
                 }).then(function (response) {
-                    console.log(response.data);
                     this.kanji = response.data.kanji;
                     this.knownKanjiCounts = response.data.known;
                     this.totalKanjiCounts = response.data.total;

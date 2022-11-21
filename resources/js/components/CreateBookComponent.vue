@@ -1,47 +1,49 @@
 <template>
-    <v-form ref="form" id="create-book-form" class="mx-auto mt-6">
-        <v-text-field 
-            filled
-            dense
-            label="Name"
-            v-model="name"
-            :rules="[rules.required]"
-        ></v-text-field>
-        
-         <v-file-input
-            ref="image"
-            :rules="[rules.required]"
-            accept="image/*"
-            placeholder="Cover image"
-            prepend-icon="mdi-image"
-            v-model="image"
-        ></v-file-input>
+    <v-container>
+        <v-form ref="form" id="create-book-form" class="mx-auto mt-6">
+            <v-text-field 
+                filled
+                dense
+                label="Name"
+                v-model="name"
+                :rules="[rules.required]"
+            ></v-text-field>
+            
+            <v-file-input
+                ref="image"
+                :rules="[rules.required]"
+                accept="image/*"
+                placeholder="Cover image"
+                prepend-icon="mdi-image"
+                v-model="image"
+            ></v-file-input>
 
-        <v-btn 
-            class="mx-0"
-            depressed 
-            :disabled="saving"
-            :loading="saving"
-            :color="saving ? '' : 'primary'"
-            @click="createBook"
-        >Save</v-btn>
-        
-        <v-btn 
-            class="mx-0"
-            depressed
-            color="primary"
-            @click="$router.push('/books')"
-        >Cancel</v-btn>
-        
-        <v-alert
-            class="my-3" 
-            border="left"
-            type="error"
-            v-if="error"
-            >
-            Something went wrong. Please try again.
-        </v-alert>
-    </v-form>
+            <v-btn 
+                class="mx-0"
+                depressed 
+                :disabled="saving"
+                :loading="saving"
+                :color="saving ? '' : 'secondary'"
+                @click="createBook"
+            >Save</v-btn>
+            
+            <v-btn 
+                class="mx-0"
+                depressed
+                color="secondary"
+                @click="$router.push('/books')"
+            >Cancel</v-btn>
+            
+            <v-alert
+                class="my-3" 
+                border="left"
+                type="error"
+                v-if="error"
+                >
+                Something went wrong. Please try again.
+            </v-alert>
+        </v-form>
+    </v-container>
 </template>
 
 <script>

@@ -2,12 +2,18 @@
     width: 100%;
     overflow-y: visible;
     
+    .book-box {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+    }
+
     .book {
+        background-color: white;
         width: 800px;
-        max-width: 1000px;
 
         &.button-box {
-            background-color: rgb(0, 0, 0, 0);
+            background-color: transparent;
             border: none;
         }
         
@@ -22,7 +28,8 @@
     }
 
     .book-info-table {
-        width: 90%;
+        width: calc(100% - 24px);
+        background-color: transparent;
 
         .info-table-value {
             height: 24px;
@@ -41,17 +48,20 @@
             border: none !important;
         }
 
-        tbody tr td:nth-child(1) {
-            width: 325px;
+        tbody tr td:nth-child(2) {
+            padding-right: 0px;
+            
+            div {
+                float: right;
+            }
         }
     }
 }
 
 
-@media (max-width: 850px) {
+@media (max-width: 959px) {
     #books .book {
         overflow: hidden;
-        width: 94%;
 
         .book-title {
             font-size: 18px;
@@ -63,11 +73,15 @@
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     #books .book {
-        max-width: 400px;
         width: calc(100% - 32px);
+        max-width: 400px;
         height: auto;
+
+        .book-box {
+            flex-wrap: wrap;
+        }
 
         div.v-image.cover-image {
             width: 100%;

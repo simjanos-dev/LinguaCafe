@@ -40,6 +40,7 @@
                     <div class="setting-label">Highlight words:</div>
                     <div class="setting-input switch">
                         <v-switch
+                            color="success"
                             v-model="settings.highlightWords" 
                             @change="saveSettings(); updateToolbarButtonGroup()"
                         ></v-switch>
@@ -92,6 +93,7 @@
                     <div class="setting-label">Japanese vertical text:</div>
                     <div class="setting-input switch">
                         <v-switch
+                            color="success"
                             v-model="settings.japaneseText" 
                             @change="saveSettings(); updateToolbarButtonGroup()"
                         ></v-switch>
@@ -103,6 +105,7 @@
                     <div class="setting-label">Auto move words to known:</div>
                     <div class="setting-input switch">
                         <v-switch
+                            color="success"
                             v-model="settings.autoMoveWordsToKnown" 
                             @change="saveSettings(); updateToolbarButtonGroup()"
                         ></v-switch>
@@ -182,7 +185,7 @@
                 v-if="selection.length && !finished && !selectionOngoing " 
                 @mouseup.stop=";"
             >
-                <v-tabs id="vocab-box-tabs" fixed-tabs background-color="primary" height="36" v-model="vocabBoxTab" @change="scrollToVocabBox">
+                <v-tabs id="vocab-box-tabs" grow background-color="primary" height="36" v-model="vocabBoxTab" @change="scrollToVocabBox">
                     <v-tab class="px-2" v-if="selection.length == 1">Word</v-tab>
                     <v-tab class="px-2" v-if="selection.length > 1">Phrase</v-tab>
                     <v-tab class="px-2">Edit</v-tab>
@@ -195,7 +198,7 @@
                         <v-tab-item :value="0">
                             <!-- Single word -->
                             <template v-if="selection.length == 1">
-                                <div class="subheader">Word</div>
+                                <div class="vocab-box-subheader">Word</div>
                                 <!-- With base word -->
                                 <div id="word" class="pl-2" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
                                     <ruby>{{uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
@@ -211,7 +214,7 @@
                             
                             <!-- Phrase -->
                             <template v-if="selection.length > 1">
-                                <div class="subheader">Phrase</div>
+                                <div class="vocab-box-subheader">Phrase</div>
                                 <!-- Phrase text -->
                                 <div id="phrase" class="pl-2">
                                     <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
@@ -219,14 +222,14 @@
 
                                 <!-- Phrase reading -->
                                 <template>
-                                    <div class="subheader mt-2">Reading</div>
+                                    <div class="vocab-box-subheader mt-2">Reading</div>
                                     <div id="reading" class="pl-2">{{ phraseReading }}</div>
                                 </template>
                             </template>
 
                             <!-- Translation -->
                             <template v-if="selectedTranslation !== '' && (selectedTranslation.length > 1 || selectedTranslation[0] !== '')">
-                                <div class="subheader mt-2">Definitions</div>
+                                <div class="vocab-box-subheader mt-2">Definitions</div>
                                 <ul id="definitions" class="ma-0">
                                     <template>
                                         <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
@@ -236,7 +239,7 @@
 
                             <!-- Stage buttons-->
                             <template v-if="selection.length == 1 || selectedPhrase !== -1">
-                                <div class="subheader mt-2">Stage</div>
+                                <div class="vocab-box-subheader mt-2">Stage</div>
                                 <div :class="{'d-block': true, 'text-center': true, 'mt-1': false, 'mb-6': selection.length == 1}">
                                     <div id="stage-buttons" class="v-item-group theme--light v-btn-toggle v-btn-toggle--rounded primary--text">
                                         <v-btn :value="-7" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -7}" @click="setStage(-7)">7</v-btn>
@@ -259,15 +262,15 @@
                                     class="mt-2"
                                     small
                                     rounded
-                                    color="green"
+                                    color="success"
                                     @click="saveNewPhrase"
                                     v-if="selection.length > 1 && selectedPhrase == -1"
-                                >Save new phrase</v-btn>
+                                >Save phrase</v-btn>
                                 <v-btn 
                                     class="mt-2"
                                     small
                                     rounded
-                                    color="red"
+                                    color="error"
                                     @click="deletePhrase"
                                     v-if="selectedPhrase != -1"
                                 >Delete phrase</v-btn>
@@ -328,7 +331,7 @@
                             
                             <!-- Phrase editing -->
                             <template v-if="selectedPhrase !== -1">
-                                <div class="subheader">Phrase reading</div>
+                                <div class="vocab-box-subheader">Phrase reading</div>
                                 <v-textarea
                                     filled
                                     dense
@@ -343,7 +346,7 @@
                             <!-- Translation editing -->
 
                             <!-- Word translation -->
-                            <div class="subheader mt-2">Translation</div>
+                            <div class="vocab-box-subheader mt-2">Translation</div>
                             <v-textarea
                                 filled
                                 dense
@@ -368,7 +371,7 @@
                             ></v-textarea>
 
                             <!-- Search term -->
-                            <div class="subheader mt-2">Dictionary search</div>
+                            <div class="vocab-box-subheader mt-2">Dictionary search</div>
                             <v-text-field 
                                 class="mb-3"
                                 filled
@@ -387,7 +390,7 @@
                                         {{ definition }} <v-icon>mdi-plus</v-icon>
                                     </div>
                                     <template v-if="searchResult.otherForms.length">
-                                        <div class="subheader">Other forms:</div>
+                                        <div class="vocab-box-subheader">Other forms:</div>
                                         <div class="d-flex flex-wrap">
                                             <div v-for="(form, formIndex) in searchResult.otherForms" :key="formIndex">
                                                 {{ form }}<span class="mr-2" v-if="formIndex < searchResult.otherForms.length - 1">, </span>
@@ -420,7 +423,7 @@
                         </v-tab-item>
                     </v-tabs-items>
                 </v-card-text>
-                <v-btn id="close-vocab-box-button" rounded elevation="2" color="red" @click="unselectWord()"><v-icon>mdi-close</v-icon> Close</v-btn>
+                <v-btn id="close-vocab-box-button" rounded elevation="2" color="error" @click="unselectWord()"><v-icon>mdi-close</v-icon> Close</v-btn>
             </v-card>
 
             <!-- Text -->
@@ -443,10 +446,15 @@
                     --><br v-if="word.word == 'NEWLINE'"><!--
                 --></template>
                 <br><br><br><br><br><br>
-                <div class="text-box red" v-if="finishError">
+                <v-alert
+                    class="my-3" 
+                    border="left"
+                    type="error"
+                    v-if="finishError"
+                    >
                     Something went wrong. Please try again.
-                </div>
-                <v-btn rounded class="mt-8 mb-16" color="green" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
+                </v-alert>
+                <v-btn rounded class="mt-8 mb-16" color="success" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
                 <br><br><br><br>
             </div>
             
@@ -604,40 +612,41 @@
                     }
                 }
 
-                this.settings.highlightWords = this.$cookie.get('highlight-words') == 'true';
-                this.settings.plainTextMode = this.$cookie.get('plain-text-mode') == 'true';
-                this.settings.japaneseText = this.$cookie.get('japanese-text') == 'true';
+                this.settings.highlightWords = this.$cookie.get('highlight-words') === 'true';
+                this.settings.plainTextMode = this.$cookie.get('plain-text-mode') === 'true';
+                this.settings.japaneseText = this.$cookie.get('japanese-text') === 'true';
                 this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
                 this.settings.maximumTextWidth =  this.$cookie.get('maximum-text-width');
-                this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') == 'true';
-                this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') == 'true';
+                this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
+                this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
 
-                if (this.settings.highlightWords === null) {
-                    this.settings.highlightWords =  true;
+                if (this.$cookie.get('highlight-words') === null) {
+                    this.settings.highlightWords = true;
                 }
 
-                if (this.settings.plainTextMode === null) {
-                    this.settings.plainTextMode =  true;
+                if (this.$cookie.get('plain-text-mode') === null) {
+                    this.settings.plainTextMode = false;
                 }
 
-                if (this.settings.japaneseText === null) {
-                    this.settings.japaneseText =  true;
+                if (this.$cookie.get('japanese-text') === null) {
+                    console.log('oh');
+                    this.settings.japaneseText =  false;
                 }
 
                 if (this.$cookie.get('font-size') === null) {
                     this.settings.fontSize =  20;
                 }
 
-                if (this.settings.maximumTextWidth === null) {
+                if (this.$cookie.get('maximum-text-width') === null) {
                     this.settings.maximumTextWidth =  '800px';
                 }
 
-                if (this.settings.displaySuggestedTranslations === null) {
+                if (this.$cookie.get('display-suggested-translations') === null) {
                     this.settings.displaySuggestedTranslations =  false;
                 }
 
-                if (this.settings.autoMoveWordsToKnown === null) {
-                    this.settings.autoMoveWordsToKnown =  false;
+                if (this.$cookie.get('auto-move-words-to-known') === null) {
+                    this.settings.autoMoveWordsToKnown =  true;
                 }
 
                 this.saveSettings();
@@ -998,7 +1007,7 @@
 
             },
             updateVocabBoxPosition: function() {
-                this.vocabBoxSize.width = window.innerWidth > 440 ? 400 : window.innerWidth - 20;
+                this.vocabBoxSize.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
 
                 if (!this.selection.length) {
                     return;
@@ -1015,7 +1024,7 @@
 
 
                 if (window.innerWidth  < 440) {
-                    this.vocabBoxPosition.left = 10;
+                    this.vocabBoxPosition.left = 8;
                 } else if (this.vocabBoxPosition.left < 5) {
                     this.vocabBoxPosition.left = 5;
                 } else if (this.vocabBoxPosition.left > reader.right - reader.left - this.vocabBoxSize.width) {

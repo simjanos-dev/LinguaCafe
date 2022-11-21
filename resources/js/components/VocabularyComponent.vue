@@ -1,9 +1,9 @@
 <template>
-    <div id="vocabulary">
+    <v-container id="vocabulary">
         <!-- search filter -->
         <div id="vocabulary-search-field">
             <v-btn rounded depressed color="primary" @click="applyFilter('text')"><v-icon>mdi-magnify</v-icon> Search</v-btn>
-            <v-text-field rounded outlined dense label="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')"></v-text-field>
+            <v-text-field rounded outlined dense color="primary" label="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')"></v-text-field>
         </div>
 
         <!-- filters -->
@@ -228,27 +228,7 @@
                 @input="moveToPage(currentPage)"
             ></v-pagination>
         </div>
-
-
-        <!--
-        <div id="vocabulary-pagination">
-
-            <div class="pagination-button" v-if="currentPage > 4" @click="moveToPage(1)">1</div>
-            <div class="pagination-button dots" v-if="currentPage > 5">...</div>
-            <template v-for="(page, index) in pageCount">
-                <div :class="{'pagination-button': true, 'selected': page == currentPage}" :key="index" v-if="page >= currentPage - paginationLimitBefore && page <= currentPage + paginationLimitAfter" @click="moveToPage(page)">{{ page }}</div>
-            </template>
-            <div class="pagination-button dots" v-if="currentPage < pageCount - 4">...</div>
-            <div class="pagination-button" v-if="currentPage < pageCount - 3" @click="moveToPage(pageCount)">{{ pageCount }}</div>
-
-            <div class="pagination-button basic first" @click="moveToPage(1)">First</div>
-            <div class="pagination-button basic" v-if="currentPage > 0" @click="moveToPage(currentPage - 1)">{{ currentPage - 1 }}</div>
-            <div class="pagination-button basic selected" @click="moveToPage(currentPage)">{{ currentPage }}</div>
-            <div class="pagination-button basic" v-if="currentPage < pageCount - 1" @click="moveToPage(currentPage + 1)">{{ currentPage + 1 }}</div>
-            <div class="pagination-button basic last" @click="moveToPage(pageCount)">Last</div>
-        </div>
-        -->
-    </div>
+    </v-container>
 </template>
 
 <script>

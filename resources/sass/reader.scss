@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: notosans;
-    src: url('/noto-sans/NotoSansJP-Regular.otf');
+    src: url('/fonts/noto-sans/NotoSansJP-Regular.otf');
 }
 
 #fullscreen-box {
@@ -377,8 +377,8 @@
             }
         }
 
-        .subheader {
-            color: rgba(0, 0, 0, .5);
+        .vocab-box-subheader {
+            color: rgba(0, 0, 0, .45);
         }
 
         #word, #phrase, #reading {

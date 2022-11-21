@@ -1,7 +1,10 @@
 #chapters {
+    width: 100%;
+    
     .chapter {
         width: 800px;
         max-width: 1000px;
+        background-color: white;
         
         &.button-box {
             background-color: rgb(0, 0, 0, 0);
@@ -9,7 +12,8 @@
         }
 
         .chapter-info-table {
-            width: 90%;
+            width: 100%;
+            background-color: transparent;
             
             .info-table-value {
                 height: 24px;
@@ -32,14 +36,15 @@
                 }
             }
     
-            tbody tr td:nth-child(1) {
-                width: 325px;
+            tbody tr td:nth-child(2) {
+                width: 100px;
+                text-align: center;
             }
         }
     }
 }
 
-@media (max-width: 850px) {
+@media (max-width: 959px) {
     #chapters .chapter{
         width: 94%;
 

@@ -1,77 +1,83 @@
 <template>
-    <div id="kanji-details" >
-        <div class="d-flex h3 my-4 mb-8">
-            {{ kanji }} kanji details
-            <v-spacer></v-spacer>
-            <v-btn icon><v-icon>mdi-dots-horizontal</v-icon></v-btn>
-        </div>
-        <div>
-            <div id="kanji-details-column">
-                <div id="characters-row">
+    <v-container id="kanji">
+        <div class="subheader small-margin">Kanji info</div>
+        <v-card outlined id="kanji-info-box">
+            <v-card-text class="d-flex flex-wrap justify-center">
+                <div id="characters">
                     <!-- Kanji -->
-                    <div id="character">{{ kanji }}</div>
+                    <div class="character">{{ kanji }}</div>
                     
                     <!-- Kanji drawing -->
-                    <div id="character-dmak-box">
-                        <div id="character-dmak"></div>
-                    </div>
+                    <div class="character"><div id="character-dmak"></div></div>
                 </div>
 
                 <!-- Kanji info -->
-                <v-simple-table id ="kanji-details-table" dense class="no-hover no-row-border no-background max-auto mt-3">
-                    <tbody>
-                        <tr>
-                            <td>Meanings:</td>
-                            <td>{{ meanings }}</td>
-                        </tr>
-                        <tr>
-                            <td>Onyomi:</td>
-                            <td>{{ readingsOn }}</td>
-                        </tr>
-                        <tr>
-                            <td>Kunyomi:</td>
-                            <td>{{ readingsKun }}</td>
-                        </tr>
-                        <tr>
-                            <td>Strokes:</td>
-                            <td>{{ strokes }}</td>
-                        </tr>
-                        <tr>
-                            <td>Grade:</td>
-                            <td>{{ gradeNames[grade] }}</td>
-                        </tr>
-                        <tr>
-                            <td>JLPT:</td>
-                            <td>{{ jlptNames[jlpt] }}</td>
-                        </tr>
-                        <tr>
-                            <td>Frequency:</td>
-                            <td>{{ frequency }}</td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </div>
-            <div id="kanji-words-column" class="h5">
-                Words you know which contain {{ kanji }}
-                <v-simple-table id="kanji-words-table" dense class="no-background mt-3">
-                    <thead>
-                        <tr>
-                            <th class="pl-0">Word</th>
-                            <th>Reading</th>
-                            <th>Translation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(word, index) in words" :key="index">
-                            <td class="pl-0">{{ word.word }}</td>
-                            <td>{{ word.reading }}</td>
-                            <td>{{ word.translation }}</td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </div>
+                <div id ="kanji-info">
+                    <div id="chip-info" class="mb-2">
+                        <v-chip small class="mb-1" label dark color="pink" v-if="strokes">
+                            {{ strokes }} strokes
+                        </v-chip>
+                        <v-chip small class="mb-1" label dark color="indigo" v-if="grade">
+                            {{ grade }}. grade
+                        </v-chip>
+                        <v-chip small class="mb-1" label dark color="teal" v-if="jlpt">
+                            JLPT {{ jlptNames[jlpt] }}
+                        </v-chip>
+                        <v-chip small class="mb-1" label dark color="red" v-if="frequency">
+                            {{ frequency }}. most common
+                        </v-chip>
+                    </div>
+                    <div class="kanji-info-group mt-3">
+                        <div class="kanji-info-title">Meanings</div>
+                        <div class="kanji-info my-2 pl-4">
+                            <span class="mr-6" v-for="(meaning, index) in meanings">{{ meaning }}</span>
+                        </div>
+                    </div>
+                    <div class="kanji-info-group my-4" v-if="readingsKun.length">
+                        <div class="kanji-info-title">Kun'yomi</div>
+                        <div class="kanji-info my-2 pl-4">
+                            <span class="mr-6" v-for="(reading, index) in readingsKun">{{ reading }}</span>
+                        </div>
+                    </div>
+                    <div class="kanji-info-group"  v-if="readingsOn.length">
+                        <div class="kanji-info-title">On'yomi</div>
+                        <div class="kanji-info my-2 pl-4">
+                            <span class="mr-6" v-for="(reading, index) in readingsOn">{{ reading }}</span>
+                        </div>
+                    </div>
+                </div>
+            </v-card-text>
+        </v-card>
+        
+        <!-- Kanji radicals -->
+        <div class="subheader">Radicals</div>
+        <v-card id="kanji-radicals" outlined>
+            <v-card-text  class="d-flex flex-wrap">
+                <div class="kanji-radical ma-2" v-for="(radical, index) in radicals">{{ radical.radical }} <span>{{ radical.strokes }} strokes</span></div>
+            </v-card-text>
+        </v-card>
+        
+        <!-- Kanji words -->
+        <div class="subheader">Known words with {{ kanji }}</div>
+        <div id="kanji-words" class="h5">
+            <v-simple-table id="kanji-words-table" dense class="mt-3 mb-4 border">
+                <thead>
+                    <tr>
+                        <th>Word</th>
+                        <th class="reading">Reading</th>
+                        <th>Translation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(word, index) in words" :key="index">
+                        <td>{{ word.word }}</td>
+                        <td class="reading">{{ word.reading }}</td>
+                        <td>{{ word.translation }}</td>
+                    </tr>
+                </tbody>
+            </v-simple-table>
         </div>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -97,8 +103,9 @@
                     8: 'Junior highschool',
                     10: 'Jinmeiyou kanji'
                 },
-                words: [],
                 kanji: this.$route.params.character,
+                radicals: [],
+                words: [],
                 meanings: '',
                 readingsOn: [],
                 readingsKun: [],
@@ -115,13 +122,13 @@
             this.dmak = new Dmak(this.kanji, {
                 element : 'character-dmak',
                 uri: '/js/dmak/kanji/',
-                step: 0.015,
+                step: 0.01,
                 grid: {
                     show: false
                 },
                 stroke: {
                     attr: {
-                        active: '#7b4cfd',
+                        active: this.$vuetify.theme.currentTheme.secondary,
                         'stroke-width': 5,
                         'font-size': 1
                     },
@@ -137,9 +144,10 @@
             }).then(function (response) {
                 console.log(response.data);
                 this.words = response.data.words;
-                this.meanings = JSON.parse(response.data.kanji.meanings).join(', ');
-                this.readingsOn = JSON.parse(response.data.kanji.readings_on).join(', ');
-                this.readingsKun = JSON.parse(response.data.kanji.readings_kun).join(', ');
+                this.radicals = JSON.parse(response.data.radicals);
+                this.meanings = JSON.parse(response.data.kanji.meanings);
+                this.readingsOn = JSON.parse(response.data.kanji.readings_on);
+                this.readingsKun = JSON.parse(response.data.kanji.readings_kun);
                 this.strokes = response.data.kanji.strokes;
                 this.grade = response.data.kanji.grade;
                 this.jlpt = response.data.kanji.jlpt;

@@ -1,5 +1,5 @@
 <template>
-    <div id="edit-flashcards">
+    <v-container id="edit-flashcards">
         <v-btn color="primary" @click="save">Save</v-btn>
         <v-btn color="primary" @click="cancel">Cancel</v-btn>
         
@@ -67,7 +67,7 @@
         </v-simple-table>
 
         <v-btn color="primary" @click="addFlashcard()">Add flashcard</v-btn>
-    </div>
+    </v-container>
 </template>
 
 <script>

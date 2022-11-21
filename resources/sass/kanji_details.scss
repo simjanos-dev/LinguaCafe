@@ -1,83 +1,143 @@
-#kanji-details {
-    #kanji-details-column {
-        display: inline-block;
-        float: left;
-        width: 400px;
-    }
+@import 'variables';
 
-    #kanji-words-column {
-        display: inline-block;
-        float: left;
-        width: calc(100% - 400px);
-        padding-left: 12px;
-    }
-
-    #kanji-words-table {
-        max-width: 600px;
-    }
-
-    #characters-row {
+#kanji {
+    #kanji-info-box {
         display: block;
-        margin: auto;
         width: 100%;
-        height: 150px;
-    }
 
-    #character {
-        display: inline-block;
-        float: left;
-        width: 150px;
-        height: 150px;
-        line-height: 150px;
-        font-size: 120px;
-        text-align: center;
-        user-select: none;
-    }
-
-    #character-dmak-box {
-        display: inline-block;
-        float: left;
-        width: 150px;
-        height: 150px;
-    }
-
-    #kanji-details-table {
-        display: block;
-        margin: auto;
-        max-width: 400px;
-
-        td {
-            font-size: 16px;
+        #characters {
+            width: 150px;
+            height: 300px;
         }
 
-        td:nth-child(1) {
-            width: 120px;
-            font-weight: bold;
+        .character {
+            position: relative;
+            display: inline-block;
+            float: left;
+            width: 150px;
+            height: 150px;
+            line-height: 150px;
+            font-size: 120px;
+            text-align: center;
+            user-select: none;
+            overflow: hidden;
+            
+            #character-dmak {
+                display: block;
+                float: unset;
+                margin: 0px;
+                width: 112px;
+                height: 112px;
+                transform: scale(1.339, 1.339);
+                transform-origin: top left;
+                
+                svg {
+                    position: absolute !important;
+                    left: 0px;
+                    top: 0px;
+                }
+            }
+        }
+
+        #kanji-info {
+            width: calc(100% - 150px);
+            
+            #kanji-chip-info {
+                display: block;
+                width: 100%;
+                height: 40px;
+                padding-left: 0px;
+            }
+
+            #meanings {
+                display: block;
+                width: 100%;
+                min-height: 36px;
+                line-height: 36px;
+                font-size: 22px;
+            }
+
+            .kanji-info-group {
+                display: block;
+                width: 100%;
+                min-height: 30px;
+                font-size: 16px;
+                
+                .kanji-info-title {
+                    font-weight: bold;
+                }
+            }
         }
     }
-    
-    #character-dmak {
+
+    #kanji-radicals {
+        width: 100%;
+
+        .kanji-radical {
+            width: 100px;
+            height: 100px;
+            line-height: 76px;
+            font-size: 60px;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            user-select: none;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: .1s;
+            
+            span {
+                display: block;
+                font-size: 12px;
+                line-height: 24px;
+            }
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        &::after {
+            content: "";
+            flex: auto;
+        }
+    }
+
+    #kanji-words {
         display: block;
-        width: 112px;
-        height: 112px;
-        transform: scale(1.36, 1.36);
-        transform-origin: top left;
+        width: 100%;
+
     }
 }
 
 
-@media (max-width: 800px) { 
-    #kanji-details {
-        #characters-row {
-            width: 300px;
-        }
+@media (max-width: 767px) {
+    #kanji {
+        #kanji-info-box {
+            #characters {
+                width: 246px;
+                height: 123px;
+                margin-bottom: 16px;
 
-        #kanji-details-column,
-        #kanji-words-column {
-            display: block;
-            float: none;
-            width: 100%;
-            padding-left: 0px;
+                .character {
+                    width: 123px;
+                    height: 123px;
+                    font-size: 110px;
+
+                    #character-dmak {
+                        transform: scale(1.128, 1.128);
+                    }
+                }
+            }
+
+            #kanji-info {
+                width: 100%;
+            }
         }
+    }    
+}
+
+@media (max-width: 400px) {
+    #kanji-words-table .reading {
+        display: none;
     }
 }

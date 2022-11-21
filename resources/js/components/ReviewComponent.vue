@@ -1,8 +1,8 @@
 <template>
-    <div v-if="currentReviewIndex !== -1" id="review-box">
+    <v-container v-if="currentReviewIndex !== -1" id="review-box">
         <div id="review" v-if="!finished">
             <div id="review-progress-line">
-                <div id="progress-bar-correct-counter" :style="{'background-color': $vuetify.theme.currentTheme.green}">{{ correctReviews }}</div>
+                <div id="progress-bar-correct-counter" :style="{'background-color': $vuetify.theme.currentTheme.success}">{{ correctReviews }}</div>
                 <div id="review-progress-bar">
                         <div id="review-progress-bar-correct" :style="{'width': (correctReviews / totalReviews * 100) + '%'}"></div>
                         <div id="review-progress-bar-text">{{ correctReviews }} / {{ totalReviews }}</div>
@@ -102,9 +102,9 @@
                 </div>
             </div>
 
-            <v-btn dark id="review-reveal-button" color="green" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+            <v-btn dark id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
             <v-btn dark id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
-            <v-btn dark id="review-correct-button" color="green" @click="correct" v-if="revealed">I was correct</v-btn>
+            <v-btn dark id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
         </div>
         <div id="finished-box" v-if="finished">
             <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ readSentences }} sentences!</div>
@@ -128,7 +128,7 @@
             </table>
             <v-btn color="primary" @click="finish()">Close</v-btn>
         </div>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -289,7 +289,7 @@
                 this.intoTheCorrectDeckAnimation = true;
                 this.backToDeckAnimation = false;
                 this.newCardAnimation = false;
-                this.backgroundColor = this.$vuetify.theme.currentTheme.green;
+                this.backgroundColor = this.$vuetify.theme.currentTheme.success;
 
                 if (!this.reviews[this.currentReviewIndex].levelLocked 
                     && this.reviews[this.currentReviewIndex].stage < 0
@@ -315,7 +315,7 @@
                 this.backToDeckAnimation = true;
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = false;
-                this.backgroundColor = this.$vuetify.theme.currentTheme.red;
+                this.backgroundColor = this.$vuetify.theme.currentTheme.error;
 
                 this.revealed = false;
                 if (!this.reviews[this.currentReviewIndex].levelLocked) {

@@ -1,5 +1,5 @@
 <template>
-    <div id="flashcard-collections" class="d-flex justify-center flex-column flex-nowrap flex-sm-row flex-sm-wrap" v-if="flashcardCollections.length">
+    <v-container id="flashcard-collections" class="d-flex flex-column flex-nowrap flex-sm-row flex-sm-wrap" v-if="flashcardCollections.length">
             <!--
                 <v-btn color="primary" to="/flashcards/edit/">Create new collection</v-btn>
             -->
@@ -35,7 +35,7 @@
                     <v-btn color="primary">Review</v-btn>
                 </v-card-actions>
             </v-card>
-    </div>
+    </v-container>
 </template>
 
 <script>

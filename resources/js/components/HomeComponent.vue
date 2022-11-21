@@ -1,5 +1,5 @@
 <template>
-    <div id="home">
+    <v-container id="home">
         <table class="table table-bordered table-sm col-md-6 offset-md-3" v-if="this.statistics !== null">
             <thead></thead>
             <tbody>
@@ -25,7 +25,7 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </v-container>
 </template>
 
 <script>

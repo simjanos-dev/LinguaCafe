@@ -67,7 +67,6 @@
             line-height: 28px;
             text-align: center;
             font-size: 15px;
-            border: 1px solid $border;
             color: white;
             margin-right: 20px;
             border-radius: 6px;   
@@ -82,7 +81,6 @@
             text-align: center;
             font-size: 15px;
             background-color: $white;
-            border: 1px solid $border;
             color: $font-color;
             margin-left: 20px;
             border-radius: 6px;
@@ -190,7 +188,6 @@
             width: 100%;
             background: white;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            border: 1px solid $border;
             color: $font-color;
             border-radius: 5px;
             backface-visibility: hidden;

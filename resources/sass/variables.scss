@@ -1,0 +1,34 @@
+
+// Colors
+$theme-color: #aa8476;
+$background: #F2F5F6;
+$light-gray: rgb(240, 241, 243);
+$green: #3dcf59;
+$red: #ef6268;
+$tint: rgb(235, 235, 235);
+$selected-word: rgba(141, 110, 97, .35);
+
+$font-color: rgba(0, 0, 0, 1);
+$font-color-light: rgb(130, 130, 130);
+$sidebar-button-color: rgb(160, 170, 180);
+$border-dark: rgb(180, 180, 180);
+
+$new-word: #ffdd4b;
+$highlighted-word: #61df6b;
+$stage7: rgba($highlighted-word, 1);
+$stage6: rgba($highlighted-word, 1);
+$stage5: rgba($highlighted-word, 1);
+$stage4: rgba($highlighted-word, 1);
+$stage3: rgba($highlighted-word, 1);
+$stage2: rgba($highlighted-word, 1);
+$stage1: rgba($highlighted-word, 1);
+
+
+
+//
+$sliderThemeColor: $highlighted-word;
+
+@font-face {
+    font-family: notosans;
+    src: url('/fonts/noto-sans/NotoSansJP-Regular.otf');
+}

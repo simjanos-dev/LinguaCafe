@@ -40,9 +40,10 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
 
     // tools
-    Route::get('/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
-    Route::get('/jmdict/import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
-    Route::get('/kanji/import', [App\Http\Controllers\ToolController::class, 'kanjiImport']);
+    Route::get('/tools/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
+    Route::get('/tools/jmdict/import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
+    Route::get('/tools/kanji/import', [App\Http\Controllers\ToolController::class, 'kanjiImport']);
+    Route::get('/tools/radicals/import', [App\Http\Controllers\ToolController::class, 'kanjiRadicalImport']);
     
     // images 
     Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
