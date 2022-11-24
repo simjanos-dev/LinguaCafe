@@ -225,12 +225,14 @@ class HomeController extends Controller
                         }
 
                         
-                        echo('<br><br><br>Word: ' . $word->word);
-                        echo('<br>Sentence:' . $sentenceStart . ' - ' . $j . '');
-                        echo('<br>New example:<br>');
-                        var_dump(implode('', $exampleSentence));
-                        echo('<br><br>Old example:');
-                        var_dump(implode('', json_decode($word->example_sentence)));
+                        if ($exampleSentence !== json_decode($word->example_sentence)) {
+                            echo('<br><br><br>Word: ' . $word->word);
+                            echo('<br>Sentence:' . $sentenceStart . ' - ' . $j . '');
+                            echo('<br>New example:<br>');
+                            var_dump(implode('', $exampleSentence));
+                            echo('<br><br>Old example:');
+                            var_dump(implode('', json_decode($word->example_sentence)));
+                        }
                         
 
                         $word->example_sentence = json_encode($exampleSentence);
