@@ -964,6 +964,7 @@
                     this.phrases[this.getSelectedPhraseIndex()].checked = true;
                     this.selectedTranslation = this.phrases[this.getSelectedPhraseIndex()].translation.split(';')
                 } else if (this.selection.length == 1) {
+                    console.log('sentence index:', this.selection[0].sentenceIndex);
                     this.uniqueWords[this.selection[0].uniqueWordIndex].checked = true;
                     this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');
                 }
@@ -1003,6 +1004,7 @@
                     }
 
                     this.uniqueWords[this.selection[0].uniqueWordIndex].example_sentence = JSON.stringify(exampleSentence);
+                    console.log('new example sentence:', exampleSentence);
                 }
 
             },

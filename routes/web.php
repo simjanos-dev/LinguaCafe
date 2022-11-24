@@ -38,6 +38,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/statistics', [App\Http\Controllers\HomeController::class, 'statistics']);
     Route::get('/language/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
+    Route::get('/dev2', [App\Http\Controllers\HomeController::class, 'dev2']);
 
     // tools
     Route::get('/tools/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);

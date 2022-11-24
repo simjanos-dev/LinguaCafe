@@ -1,13 +1,21 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from spacy.language import Language
 import json
 import pykakasi
 import spacy
 import time
 
+@Language.component("custom_sentence_splitter")
+def custom_sentence_splitter(doc):
+    for token in doc[:-1]:
+        if token.text == "NEWLINE":
+            doc[token.i+1].is_sent_start = True
+    return doc
 
 
 nlp = spacy.load("ja_core_news_sm")
+nlp.add_pipe("custom_sentence_splitter", first=True)
 nlp.max_length = 1500000
 hiraganaConverter = pykakasi.kakasi()
 

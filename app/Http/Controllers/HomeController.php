@@ -181,6 +181,73 @@ class HomeController extends Controller
         ob_implicit_flush(false);
     }
 
+    public function dev2() {
+        ob_implicit_flush(true);
+        $fstart = microtime(true);
+        $twords = 0;
+        
+        $affected = EncounteredWord::where('language', 'japanese')->where('example_sentence', '<>', '')->where('translation', '')->update(['example_sentence' => '']);
+        echo('Deleted examples where there is no translation: ' . $affected . '<br>');
+        $affected = EncounteredWord::where('language', 'japanese')->where('example_sentence', '<>', '')->where('stage', '>', -1)->update(['example_sentence' => '']);
+        echo('Deleted examples where stage > -1: ' . $affected . '<br>');
+        $words = EncounteredWord::where('language', 'japanese')->where('example_sentence', '<>', '')->orderBy('id', 'desc')->get();
+        echo('Words to modify: ' . count($words) . '<br><br>');
+        $uniqueWords = [];
+        
+        foreach ($words as $word) {
+            $lessons = Lesson::where('language', 'japanese')->orderBy('id', 'desc')->get();
+            foreach($lessons as $lesson) {
+                $uniqueWords = json_decode($lesson->unique_words);
+                if (!in_array($word->word, $uniqueWords, true)) {
+                    continue;
+                }
+
+                $lessonWords = json_decode(gzuncompress($lesson->processed_text));
+                $sentenceStart = 0;
+                $sentenceStartIndex = 0;
+                for ($i = 0; $i < count($lessonWords); $i++) {
+                    // sentence start
+                    if ($i && $lessonWords[$i]->sentenceIndex !== $sentenceStartIndex) {
+                        $sentenceStart = $i;
+                        $sentenceStartIndex = $lessonWords[$i]->sentenceIndex;
+                    }
+
+                    // if word is found, save new example sentence
+                    if ($lessonWords[$i]->word == mb_strtolower($word->word)) {                        
+                        $exampleSentence = [];
+                        $j = $sentenceStart;
+                        while($j < count($lessonWords) - 1 && $lessonWords[$j]->sentenceIndex == $sentenceStartIndex) {
+                            if ($lessonWords[$j]->word !== 'NEWLINE') {
+                                array_push($exampleSentence, $lessonWords[$j]->word);
+                            }
+
+                            $j ++;
+                        }
+
+                        
+                        echo('<br><br><br>Word: ' . $word->word);
+                        echo('<br>Sentence:' . $sentenceStart . ' - ' . $j . '');
+                        echo('<br>New example:<br>');
+                        var_dump(implode('', $exampleSentence));
+                        echo('<br><br>Old example:');
+                        var_dump(implode('', json_decode($word->example_sentence)));
+                        
+
+                        $word->example_sentence = json_encode($exampleSentence);
+                        $word->save();
+                        break;
+                    }
+                }
+
+
+                // stops at the first example sentence
+                break;
+            }
+        }
+
+        ob_implicit_flush(false);
+    }
+
     /**
      * Show the application dashboard.
      *
