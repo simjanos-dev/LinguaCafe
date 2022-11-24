@@ -8,9 +8,12 @@ import time
 
 @Language.component("custom_sentence_splitter")
 def custom_sentence_splitter(doc):
+    punctuations = ['NEWLINE', '？', '！', '。']
     for token in doc[:-1]:
-        if token.text == "NEWLINE":
+        if token.text in punctuations:
             doc[token.i+1].is_sent_start = True
+        else:
+            doc[token.i+1].is_sent_start = False
     return doc
 
 
