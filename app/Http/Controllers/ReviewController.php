@@ -64,7 +64,7 @@ class ReviewController extends Controller
         } else if ($bookId !== -1) {
             $uniqueWords = [];
             $uniquePhraseIds = [];
-            $lessons = Lesson::where('book_id', $bookId)->where('read_count', '>', 0)->where('user_id', Auth::user()->id)->get();
+            $lessons = Lesson::where('book_id', $bookId)->where('user_id', Auth::user()->id)->get();
             foreach ($lessons as $lesson) {
                 $words = json_decode(gzuncompress($lesson->processed_text));
                 foreach ($words as $word) {
