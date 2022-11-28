@@ -55,14 +55,16 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/dictionary/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
 
     // vocabulary
+    Route::post('/vocabulary/update', [App\Http\Controllers\VocabularyController::class, 'saveWord']);
+    Route::post('/vocabulary/phrase/update', [App\Http\Controllers\VocabularyController::class, 'savePhrase']);
+    Route::post('/vocabulary/phrase/delete', [App\Http\Controllers\VocabularyController::class, 'deletePhrase']);
     Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);
     Route::post('/kanji/search', [App\Http\Controllers\VocabularyController::class, 'searchKanji']);
     Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);
-
     
     // review
     Route::post('/review', [App\Http\Controllers\ReviewController::class, 'review']);
-    Route::post('/review/finish', [App\Http\Controllers\ReviewController::class, 'finishReview']);
+    Route::post('/review/update', [App\Http\Controllers\ReviewController::class, 'updateReviewCounts']);
 
     // flash cards
     Route::post('/flashcards', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollections']);

@@ -7,7 +7,7 @@
                         <div id="review-progress-bar-correct" :style="{'width': (correctReviews / totalReviews * 100) + '%'}"></div>
                         <div id="review-progress-bar-text">{{ correctReviews }} / {{ totalReviews }}</div>
                 </div>
-                <div id="progress-bar-remaining-counter">{{ reviews.length + finishedReviews.length - correctReviews }}</div>
+                <div id="progress-bar-remaining-counter">{{ totalReviews - correctReviews }}</div>
             </div>
 
             <div id="toolbar">
@@ -107,7 +107,7 @@
             <v-btn dark id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
         </div>
         <div id="finished-box" v-if="finished">
-            <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ readSentences }} sentences!</div>
+            <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ finishedReviews }} sentences!</div>
             <table id="finished-stats" class="table-sm table-bordered">
                 <thead>
                     <tr>
@@ -122,7 +122,7 @@
                     </tr>
                     <tr>
                         <td>Reviewed sentences:</td>
-                        <td> {{ readSentences }} </td>
+                        <td> {{ finishedReviews }} </td>
                     </tr>
                 </tbody>
             </table>
@@ -152,11 +152,10 @@
                 currentReviewIndex: -1,
                 reviews: [],
                 totalReviews: [],
-                finishedReviews: [],
                 correctReviews: 0,
                 language: this.$props._language,
                 readWords: 0,
-                readSentences: 0,
+                finishedReviews: -1,
                 finished: false,
                 today: new moment().format('YYYY-MM-DD'), // CHANGE TO SERVER SIDE
             }
@@ -165,7 +164,6 @@
             
         },
         mounted() {
-            console.log(this.$vuetify.theme.currentTheme);
             var data = {};
             if (this.$route.params.bookId !== undefined) {
                 data.bookId = this.$route.params.bookId;
@@ -191,7 +189,7 @@
         methods: {
             afterMounted: function() {
                 if (this.reviews.length) {
-                    this.currentReviewIndex = 0;
+                    this.next();
                 } else {
                     window.location.href = '/';
                 }
@@ -291,39 +289,68 @@
                 this.newCardAnimation = false;
                 this.backgroundColor = this.$vuetify.theme.currentTheme.success;
 
-                if (!this.reviews[this.currentReviewIndex].levelLocked 
-                    && this.reviews[this.currentReviewIndex].stage < 0
-                    && this.reviews[this.currentReviewIndex].last_level_up !== this.today) {
-                    
-                    this.reviews[this.currentReviewIndex].last_level_up = this.today;
-                    this.reviews[this.currentReviewIndex].stage ++;
-                }
-
-                this.reviews[this.currentReviewIndex].levelLocked = true;
                 this.correctReviews ++;
                 this.countReadWords();
 
-                if (this.reviews.length == 1) {
-                    this.finish();
-                    return;
+                // update word or phrase in database
+                var url = '/vocabulary/update';
+                if (this.reviews[this.currentReviewIndex].type == 'phrase') {
+                    url = '/vocabulary/phrase/update';
                 }
-                
-                this.finishedReviews.push(this.reviews.splice(this.currentReviewIndex, 1)[0]);
-                setTimeout(this.next, this.settings.transitionDuration);
+
+                var saveData = {
+                    id: this.reviews[this.currentReviewIndex].id
+                };
+
+                if (this.reviews[this.currentReviewIndex].relearning) {
+                    saveData.relearning = false;
+                    this.reviews[this.currentReviewIndex].relearning = false;
+                } else {
+                    saveData.stage = this.reviews[this.currentReviewIndex].stage + 1;
+                }
+
+                axios.post(url, saveData).then(() => {
+                    if (this.reviews.length == 1) {
+                        this.finish();
+                    } else {
+                        this.reviews.splice(this.currentReviewIndex, 1)[0];
+                        setTimeout(this.next, this.settings.transitionDuration);
+                    }
+                });
             },
             missed() {
                 this.backToDeckAnimation = true;
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = false;
                 this.backgroundColor = this.$vuetify.theme.currentTheme.error;
-
                 this.revealed = false;
-                if (!this.reviews[this.currentReviewIndex].levelLocked) {
-                    this.reviews[this.currentReviewIndex].levelLocked = true;
+                this.countReadWords();
+
+                // update word or phrase in database
+                var url = '/vocabulary/update';
+                if (this.reviews[this.currentReviewIndex].type == 'phrase') {
+                    url = '/vocabulary/phrase/update';
                 }
 
-                this.countReadWords();
-                setTimeout(this.next, this.settings.transitionDuration);
+                var saveData = {
+                    id: this.reviews[this.currentReviewIndex].id
+                };
+                
+                if (!this.reviews[this.currentReviewIndex].relearning) {
+                    saveData.relearning = true;
+
+                    if (this.reviews[this.currentReviewIndex].stage > -7) {
+                        saveData.stage = this.reviews[this.currentReviewIndex].stage - 1;
+                    } else {
+                        saveData.stage = -7;
+                    }
+                
+                    axios.post(url, saveData).then(() => {
+                        setTimeout(this.next, this.settings.transitionDuration);
+                    });
+                } else {
+                    setTimeout(this.next, this.settings.transitionDuration);
+                }
             },
             next() {
                 this.backToDeckAnimation = false;
@@ -335,8 +362,18 @@
                     this.newCardAnimation = false;
                 }, this.settings.transitionDuration);
 
-                this.readSentences ++;
+                this.finishedReviews ++;
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
+                
+                // update reviewed and read words data
+                console.log(this.readWords, this.finishedReviews);
+                axios.post('/review/update', {
+                    readWords: this.readWords,
+                    reviewCount: this.finishedReviews,
+                }).then(() => {
+                    this.readWords = 0;
+                    this.finishedReviews = 0;
+                });
             },
             saveSettings() {
                 if (this.settings.fontSize < 12) {
@@ -351,40 +388,7 @@
                 this.$cookie.set('sentence-mode', this.settings.sentenceMode, 3650);
             },
             finish() {
-                var changedReviews = [];
-                for (var i = 0; i < this.finishedReviews.length; i++) {
-                    if (this.finishedReviews[i].levelLocked) {
-                        changedReviews.push({
-                            id: this.finishedReviews[i].id, 
-                            type: this.finishedReviews[i].type,
-                            stage: this.finishedReviews[i].stage,
-                            last_level_up: this.finishedReviews[i].last_level_up
-                        });
-                    }
-                }
-
-                for (var i = 0; i < this.reviews.length; i++) {
-                    if (this.reviews[i].levelLocked) {
-                        changedReviews.push({
-                            id: this.reviews[i].id, 
-                            type: this.reviews[i].type,
-                            stage: this.reviews[i].stage,
-                            last_level_up: this.reviews[i].last_level_up
-                        });
-                    }
-                }
-
-                axios.post('/review/finish', {
-                    readWords: this.readWords,
-                    reviewCount: this.readSentences,
-                    changedReviews: JSON.stringify(changedReviews)
-                }).then(function (response) {
-                    this.$router.push('/');
-                }.bind(this)).catch(function (error) {
-                    console.log(error);
-                }).then(function () {
-                    // always
-                });
+                this.$router.push('/');
             }
         },
     }

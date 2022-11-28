@@ -49,7 +49,7 @@ class ChapterController extends Controller
         $uniqueWords = json_decode($lesson->unique_words);
         $book = Book::where('id', $lesson->book_id)->where('user_id', Auth::user()->id)->first();
         $lessons = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('book_id', $book->id)->where('user_id', Auth::user()->id)->get();
-        $encounteredWords = DB::table('encountered_words')->select(DB::raw('*, false as checked, 0 as appearance_in_text'))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereIn('word', $uniqueWords)->get();
+        $encounteredWords = DB::table('encountered_words')->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereIn('word', $uniqueWords)->get();
         $words = json_decode(gzuncompress($lesson->processed_text));
 
         // get lesson word counts
@@ -69,6 +69,7 @@ class ChapterController extends Controller
         }
 
         sort($phraseIds);
+        
         // get unique words from lesson
         for ($wordCounter = 0; $wordCounter < count($words); $wordCounter ++) {
             // make the word into an object
@@ -93,7 +94,6 @@ class ChapterController extends Controller
             if ($wordId !== false) {
                 $word->stage = $encounteredWords[$wordId]->stage;
                 $word->lookup_count = $encounteredWords[$wordId]->lookup_count;
-                $word->last_level_up = $encounteredWords[$wordId]->last_level_up;
                 $encounteredWords[$wordId]->read_count ++;
             }
 
@@ -104,7 +104,6 @@ class ChapterController extends Controller
         $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereIn('id', $phraseIds)->orderBy('id')->get();
         for ($i = 0; $i < count($phrases); $i++) {
             $phrases[$i]->words = json_decode($phrases[$i]->words);
-            $phrases[$i]->checked = false;
         }
 
         $data = new \StdClass();
@@ -130,37 +129,23 @@ class ChapterController extends Controller
         $autoMoveWordsToKnown = boolval($request->autoMoveWordsToKnown);
         $today = date('Y-m-d');
         
-        // update words
+        // automove words that the user sees the first time in the software,
+        // but they already know it to learned stage.
         DB::beginTransaction();
-        foreach ($uniqueWords as $uniqueWordData) {
-            $stage = $uniqueWordData->stage;
-            $last_level_up = $uniqueWordData->stage;
+        if ($autoMoveWordsToKnown) {
+            foreach ($uniqueWords as $uniqueWordData) {
+                $saveData = [];
+                $saveData['read_count'] = $uniqueWordData->read_count;
+                
+                if ($uniqueWordData->stage == 2) {
+                    $saveData['stage'] = 0;
+                    $saveData['added_to_srs'] = null;
+                    $saveData['next_review'] = null;
+                    $saveData['relearning'] = false;
+                }
 
-            // increase word stage strength if it wasn't checked
-            if ($uniqueWordData->stage < 0 && !$uniqueWordData->checked && 
-                $uniqueWordData->last_level_up !== $today) {
-                $stage++;
-                $last_level_up = $today;
+                EncounteredWord::where('id', $uniqueWordData->id)->update($saveData);
             }
-
-            // these are words that the user sees the first time in the software,
-            // but they already know it
-            if ($autoMoveWordsToKnown && $uniqueWordData->stage == 2) {
-                $stage = 0;
-                $last_level_up = $today;
-            }
-
-            EncounteredWord::where('id', $uniqueWordData->id)->update([
-                'translation' => $uniqueWordData->translation,
-                'reading' => $uniqueWordData->reading,
-                'base_word' => $uniqueWordData->base_word,
-                'base_word_reading' => $uniqueWordData->base_word_reading,
-                'example_sentence' => $uniqueWordData->example_sentence,
-                'lookup_count' => $uniqueWordData->lookup_count,
-                'read_count' => $uniqueWordData->read_count,
-                'last_level_up' => $last_level_up,
-                'stage' => $stage
-            ]);
         }
 
         DB::commit();
@@ -169,57 +154,6 @@ class ChapterController extends Controller
         $lesson = Lesson::where('id', $request->lessonId)->where('user_id', Auth::user()->id)->first();
         $lesson->read_count ++;
         $lesson->save();
-
-        // save phrases
-        foreach ($phrases as $currentPhrase) {
-            $newPhrase = false;
-            if ($currentPhrase->id == -1) {
-                $newPhrase = true;
-                $phrase = new Phrase();
-                $phrase->user_id = Auth::user()->id;
-                $phrase->language = $selectedLanguage;
-            } else {
-                $phrase = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('id', $currentPhrase->id)->first();
-            }
-
-            $phrase->words = json_encode($currentPhrase->words);
-            $phrase->words_searchable = implode('', $currentPhrase->words);
-            $phrase->stage = intval($currentPhrase->stage);
-            $phrase->reading = $currentPhrase->reading;
-            $phrase->translation = $currentPhrase->translation;
-            if ($phrase->stage < 0 && !$currentPhrase->checked && 
-                $phrase->last_level_up !== $today) {
-                $phrase->stage++;
-                $phrase->last_level_up = $today;
-            }
-
-            $phrase->save();
-
-            // if this phrase was not in the database before, 
-            // mark the phrase in all text
-            if ($newPhrase) {
-                $lessons = Lesson::all();
-                foreach ($lessons as $currentLesson) {
-                    $phraseWords = array_unique($currentPhrase->words);
-                    $uniqueWords = json_decode($currentLesson->unique_words);
-                    if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
-                        continue;
-                    }
-
-                    $currentLesson->updatePhraseIds($phrase->id);
-                }
-            }
-        }
-
-        // delete phrases
-        foreach ($deletedPhrases as $currentPhrase) {
-            $lessons = Lesson::all();
-            foreach ($lessons as $currentLesson) {
-                $currentLesson->deletePhraseIds($currentPhrase->id);
-            }
-            
-            Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('id', $currentPhrase->id)->delete();
-        }
 
         // increase read word count
         $dailyAchivement = DailyAchivement::where('user_id', Auth::user()->id)->where('day', \date('Y-m-d'))->where('language', $selectedLanguage)->first();

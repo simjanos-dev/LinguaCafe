@@ -15,6 +15,118 @@ use Illuminate\Support\Facades\DB;
 
 class VocabularyController extends Controller
 {
+    public function saveWord(Request $request) {
+        $word = EncounteredWord::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
+
+        if (isset($request->translation)) {
+            $word->translation = $request->translation;
+        }
+
+        if (isset($request->reading)) {
+            $word->reading = $request->reading;
+        }
+
+        if (isset($request->base_word)) {
+            $word->base_word = $request->base_word;
+        }
+
+        if (isset($request->base_word_reading)) {
+            $word->base_word_reading = $request->base_word_reading;
+        }
+
+        if (isset($request->example_sentence)) {
+            $word->example_sentence = $request->example_sentence;
+        }
+
+        if (isset($request->lookup_count)) {
+            $word->lookup_count = $request->lookup_count;
+        }
+
+        if (isset($request->read_count)) {
+            $word->read_count = $request->read_count;
+        }
+
+        if (isset($request->stage)) {
+            $word->setStage($request->stage);
+        }
+
+        if (isset($request->relearning)) {
+            $word->relearning = $request->relearning;
+        }
+        
+        $word->save();
+
+        return $request->id . ' vocabulary updated<br>';
+    }
+
+    public function savePhrase(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
+        $isNewPhrase = false;
+
+        if (is_null($request->id)) {
+            $phrase = new Phrase();
+            $isNewPhrase = true;
+
+            // it's required here because empty 
+            // post parameter string passes as null
+            $phrase->translation = '';
+        } else {
+            $phrase = Phrase::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
+        }
+
+
+        $phrase->user_id = Auth::user()->id;
+        $phrase->language = $selectedLanguage;
+        if (isset($request->words)) {
+            $phrase->words = json_encode($request->words);
+            $phrase->words_searchable = implode('', $request->words);
+        }
+
+        if (isset($request->reading)) {
+            $phrase->reading = $request->reading;
+        }
+
+        if (isset($request->translation)) {
+            $phrase->translation = $request->translation;
+        }
+
+        if (isset($request->stage)) {
+            $phrase->setStage($request->stage);
+        }
+
+        if (isset($request->relearning)) {
+            $phrase->relearning = $request->relearning;
+        }
+        
+        $phrase->save();
+
+        // mark the phrase in every text
+        if ($isNewPhrase) {
+            $lessons = Lesson::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
+            foreach ($lessons as $currentLesson) {
+                $phraseWords = array_unique($request->words);
+                $uniqueWords = json_decode($currentLesson->unique_words);
+                if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
+                    continue;
+                }
+
+                $currentLesson->updatePhraseIds($phrase->id);
+            }
+        }
+
+        return $phrase->id;
+    }
+
+    public function deletePhrase(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
+        $lessons = Lesson::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
+        foreach ($lessons as $currentLesson) {
+            $currentLesson->deletePhraseIds($request->id);
+        }
+        
+        Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('id', $request->id)->delete();
+    }
+
     public function search(Request $request) {
         $wordsToSkip = config('langapp.wordsToSkip');
         $selectedLanguage = Auth::user()->selected_language;

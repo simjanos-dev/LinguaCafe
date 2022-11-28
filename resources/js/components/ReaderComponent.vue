@@ -171,29 +171,30 @@
             <v-card 
                 id="vocab-box" 
                 :class="{
-                    'editing': vocabEditMode == 'word' || vocabEditMode == 'phrase', 
                     'new-phrase': selection.length > 1 && selectedPhrase == -1, 
-                    'translation-edit': vocabEditMode == 'translation',
                     'rounded-lg': true,
-                    'closed': vocabBoxClosed
+                    'closed': vocabBox.closed
                 }" 
                 :style="{
-                    'top': vocabBoxPosition.top + 'px', 
-                    'left': vocabBoxPosition.left + 'px',
-                    'width': vocabBoxSize.width + 'px'
+                    'top': vocabBox.position.top + 'px', 
+                    'left': vocabBox.position.left + 'px',
+                    'width': vocabBox.width + 'px'
                 }" 
                 v-if="selection.length && !finished && !selectionOngoing " 
                 @mouseup.stop=";"
             >
-                <v-tabs id="vocab-box-tabs" grow background-color="primary" height="36" v-model="vocabBoxTab" @change="scrollToVocabBox">
+                <v-tabs id="vocab-box-tabs" grow background-color="primary" height="36" v-model="vocabBox.tab" @change="scrollToVocabBox">
                     <v-tab class="px-2" v-if="selection.length == 1">Word</v-tab>
                     <v-tab class="px-2" v-if="selection.length > 1">Phrase</v-tab>
                     <v-tab class="px-2">Edit</v-tab>
                     <v-tab class="px-2">Inflections</v-tab>
                 </v-tabs>
-                
+                <v-overlay class="text-center rounded-lg" absolute :value="phraseCurrentlySaving" opacity="0.6" v-if="selection.length > 1 && phraseCurrentlySaving">
+                    <span class="h5">Saving phrase, please wait a second.</span><br><br>
+                    <v-progress-circular indeterminate size="64" color="white"></v-progress-circular>
+                </v-overlay>
                 <v-card-text class="pa-2">
-                    <v-tabs-items v-model="vocabBoxTab">
+                    <v-tabs-items v-model="vocabBox.tab">
                         <!-- Word/phrase tab -->
                         <v-tab-item :value="0">
                             <!-- Single word -->
@@ -223,16 +224,16 @@
                                 <!-- Phrase reading -->
                                 <template>
                                     <div class="vocab-box-subheader mt-2">Reading</div>
-                                    <div id="reading" class="pl-2">{{ phraseReading }}</div>
+                                    <div id="reading" class="pl-2">{{ vocabBox.reading }}</div>
                                 </template>
                             </template>
 
                             <!-- Translation -->
-                            <template v-if="selectedTranslation !== '' && (selectedTranslation.length > 1 || selectedTranslation[0] !== '')">
+                            <template v-if="vocabBox.translationText.length">
                                 <div class="vocab-box-subheader mt-2">Definitions</div>
                                 <ul id="definitions" class="ma-0">
                                     <template>
-                                        <li v-for="translation, index in selectedTranslation" :key="index">{{ translation }}</li>
+                                        <li v-for="translation, index in vocabBox.translationList" :key="index">{{ translation }}</li>
                                     </template>
                                 </ul>
                             </template>
@@ -242,15 +243,15 @@
                                 <div class="vocab-box-subheader mt-2">Stage</div>
                                 <div :class="{'d-block': true, 'text-center': true, 'mt-1': false, 'mb-6': selection.length == 1}">
                                     <div id="stage-buttons" class="v-item-group theme--light v-btn-toggle v-btn-toggle--rounded primary--text">
-                                        <v-btn :value="-7" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -7}" @click="setStage(-7)">7</v-btn>
-                                        <v-btn :value="-6" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -6}" @click="setStage(-6)">6</v-btn>
-                                        <v-btn :value="-5" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -5}" @click="setStage(-5)">5</v-btn>
-                                        <v-btn :value="-4" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -4}" @click="setStage(-4)">4</v-btn>
-                                        <v-btn :value="-3" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -3}" @click="setStage(-3)">3</v-btn>
-                                        <v-btn :value="-2" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -2}" @click="setStage(-2)">2</v-btn>
-                                        <v-btn :value="-1" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == -1}" @click="setStage(-1)">1</v-btn>
-                                        <v-btn :value="0" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == 0}" @click="setStage(0)"><v-icon>mdi-check</v-icon></v-btn>
-                                        <v-btn :value="1" :class="{'stage-button': true, 'v-btn--active': vocabBoxSelectedStage == 1}" @click="setStage(1)" v-if="selection.length == 1"><v-icon>mdi-close</v-icon></v-btn>
+                                        <v-btn :value="-7" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
+                                        <v-btn :value="-6" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
+                                        <v-btn :value="-5" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
+                                        <v-btn :value="-4" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
+                                        <v-btn :value="-3" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
+                                        <v-btn :value="-2" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
+                                        <v-btn :value="-1" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
+                                        <v-btn :value="0" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == 0}" @click="setStage(0)"><v-icon>mdi-check</v-icon></v-btn>
+                                        <v-btn :value="1" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == 1}" @click="setStage(1)" v-if="selection.length == 1"><v-icon>mdi-close</v-icon></v-btn>
                                     </div>
                                 </div>
                             </template>
@@ -263,7 +264,7 @@
                                     small
                                     rounded
                                     color="success"
-                                    @click="saveNewPhrase"
+                                    @click="addNewPhrase"
                                     v-if="selection.length > 1 && selectedPhrase == -1"
                                 >Save phrase</v-btn>
                                 <v-btn 
@@ -278,7 +279,7 @@
                         </v-tab-item>
 
                         <!-- Edit tab -->
-                        <v-tab-item :value="1" v-if="selection.length == 1 || selectedPhrase !== -1">
+                        <v-tab-item :value="1">
                             <!-- Word editing -->
                             <v-simple-table dense id="word-edit-table" class="no-hover mx-auto" v-if="selection.length == 1">
                                 <thead>
@@ -298,7 +299,7 @@
                                                 filled
                                                 dense
                                                 hide-details
-                                                v-model="uniqueWords[selection[0].uniqueWordIndex].base_word"
+                                                v-model="vocabBox.base_word"
                                             ></v-text-field>
                                         </td>
                                         <td><v-icon>mdi-arrow-right-thick</v-icon></td>
@@ -312,7 +313,7 @@
                                                 filled
                                                 dense
                                                 hide-details
-                                                v-model="uniqueWords[selection[0].uniqueWordIndex].base_word_reading"
+                                                v-model="vocabBox.base_word_reading"
                                             ></v-text-field>
                                         </td>
                                         <td><v-icon>mdi-arrow-right-thick</v-icon></td>
@@ -322,7 +323,7 @@
                                                 filled
                                                 dense
                                                 hide-details
-                                                v-model="uniqueWords[selection[0].uniqueWordIndex].reading"
+                                                v-model="vocabBox.reading"
                                             ></v-text-field>
                                         </td>
                                     </tr>
@@ -330,7 +331,7 @@
                             </v-simple-table>
                             
                             <!-- Phrase editing -->
-                            <template v-if="selectedPhrase !== -1">
+                            <template v-if="selection.length > 1">
                                 <div class="vocab-box-subheader">Phrase reading</div>
                                 <v-textarea
                                     filled
@@ -338,14 +339,11 @@
                                     no-resize
                                     hide-details
                                     height="80px"
-                                    v-model="phraseReading"
-                                    @change="updatePhrase"
+                                    v-model="vocabBox.reading"
                                 ></v-textarea>
                             </template>
 
                             <!-- Translation editing -->
-
-                            <!-- Word translation -->
                             <div class="vocab-box-subheader mt-2">Translation</div>
                             <v-textarea
                                 filled
@@ -353,21 +351,8 @@
                                 no-resize
                                 hide-details
                                 height="80px"
-                                v-model="uniqueWords[selection[0].uniqueWordIndex].translation"
-                                @change="updateNewWord"
-                                v-if="selection.length == 1"
-                            ></v-textarea>
-                            
-                            <!-- Phrase translation -->
-                            <v-textarea
-                                filled
-                                dense
-                                no-resize
-                                hide-details
-                                height="80px"
-                                v-model="phraseTranslation"
-                                @change="updatePhrase"
-                                v-if="selectedPhrase !== -1"
+                                v-model="vocabBox.translationText"
+                                @change="updateVocabBoxTranslationList"
                             ></v-textarea>
 
                             <!-- Search term -->
@@ -378,13 +363,13 @@
                                 dense
                                 hide-details
                                 width="100%"
-                                v-model="vocabSearch"
+                                v-model="vocabBox.searchField"
                                 @change="makeSearchRequest"
                             ></v-text-field>
 
                             <!-- Search results -->
                             <div id="search-results" class="mb-4 pa-2">
-                                <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in searchResults" :key="searchresultIndex">
+                                <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in vocabBox.searchResults" :key="searchresultIndex">
                                     <div class="search-result-title rounded px-2">{{ searchResult.word }} <div class="dictionary">jmdict</div></div>
                                     <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in searchResult.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
                                         {{ definition }} <v-icon>mdi-plus</v-icon>
@@ -454,7 +439,7 @@
                     >
                     Something went wrong. Please try again.
                 </v-alert>
-                <v-btn rounded class="mt-8 mb-16" color="success" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
+                <v-btn depressed class="mt-8 mb-16" color="success" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
                 <br><br><br><br>
             </div>
             
@@ -489,8 +474,8 @@
                     </tbody>
                 </table>
                 <div class="text-center">
-                    <v-btn rounded :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/' + bookId">Go to lessons</v-btn>
-                    <v-btn rounded :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/read/' + nextLesson" v-if="nextLesson !== -1">Go to next lesson</v-btn>
+                    <v-btn depressed :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/' + bookId">Go to lessons</v-btn>
+                    <v-btn depressed :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/read/' + nextLesson" v-if="nextLesson !== -1">Go to next lesson</v-btn>
                 </div>
             </div>
         </div>
@@ -501,6 +486,7 @@
     export default {
         data: function() {
             return {
+                phraseCurrentlySaving: false,
                 settings: {
                     highlightWords: true,
                     plainTextMode: false,
@@ -525,33 +511,33 @@
                 words: [],
                 uniqueWords: [],
                 phrases: [],
-                deletedPhrases: [],
                 selection: [],
                 selectedPhrase: -1,
-                selectedTranslation: [],
                 ongoingSelection: [],
                 ongoingSelectionStartingWord: {
                     wordIndex: -1,
                 },
                 touchTimer: null,
-                vocabBoxTab: 0,
-                vocabBoxPosition: {
-                    left: 0,
-                    top: 0
-                },
-                vocabBoxSize: {
+                vocabBox: {
+                    tab: 0,
+                    closed: true,
+                    selectedStageButton: 0,
                     width: window.innerWidth > 440 ? 400 : window.innerWidth - 20,
+                    position: {
+                        left: 0,
+                        top: 0
+                    },
+                    searchField: '',
+                    searchResults: [],
+                    translationText: '',
+                    translationList: [],
+                    reading: '',
+                    base_word: '',
+                    base_word_reading: '',
                 },
-                vocabBoxClosed: true,
-                vocabBoxSelectedStage: 0,
                 selectionOngoing: false,
-                searchResults: [],
-                vocabEditMode: '',
                 allSearchResultsVisible: false,
                 showAllSearchResults: false,
-                vocabSearch: '',
-                phraseTranslation: '',
-                phraseReading: '',
                 nextLesson: -1,
 
 
@@ -629,7 +615,6 @@
                 }
 
                 if (this.$cookie.get('japanese-text') === null) {
-                    console.log('oh');
                     this.settings.japaneseText =  false;
                 }
 
@@ -755,11 +740,8 @@
                     return a.stage - b.stage;
                 });
             },
-            updateNewWord: function() {
-                this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');
-                if (this.selection.length == 1 && this.uniqueWords[this.selection[0].uniqueWordIndex].stage == 2) {
-                    this.setStage(-5);
-                }
+            updateVocabBoxTranslationList: function() {
+                this.vocabBox.translationList = this.vocabBox.translationText.split(';');
             },
             startSelectionTouch: function(event, wordIndex) {
                 this.touchTimer = setTimeout(() => {
@@ -778,8 +760,6 @@
                 }
 
                 this.selectionOngoing = true;
-                this.selectedTranslation = '';
-                this.vocabEditMode = '';
                 
                 if (this.ongoingSelection.length == 1 && this.ongoingSelection[0].wordIndex == wordIndex) {
                     this.unselectWord();
@@ -832,7 +812,6 @@
                 var element = document.elementFromPoint( touch.clientX, touch.clientY );
 
                 var wordIndex = null;
-                console.log(element);
                 if (element !== null && element.classList.contains('word')) {
                     wordIndex = element.getAttribute('wordindex');
                 }
@@ -899,6 +878,12 @@
                     return;
                 }
 
+                if (this.selection.length == 1) {
+                    this.saveWord();
+                } else if (this.selectedPhrase !== -1) {
+                    this.savePhrase();
+                }
+
                 this.selectionOngoing = false;
                 if (this.ongoingSelection.length == 1) {
                     // if the selected word is in an expression, select the expression instead
@@ -920,24 +905,24 @@
 
                     if (this.ongoingSelection.length == 1) {
                         if (this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word !== '') {
-                            this.vocabSearch = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word;
+                            this.vocabBox.searchField = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word;
                         } else {
-                            this.vocabSearch = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].word;
+                            this.vocabBox.searchField = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].word;
                         }
                         
                     }
                 }
 
                 if (this.ongoingSelection.length > 1) {
-                    this.phraseReading = '';
-                    this.vocabSearch = '';
+                    this.vocabBox.reading = '';
+                    this.vocabBox.searchField = '';
                     for (let i = 0; i < this.ongoingSelection.length; i++) {
                         if (this.ongoingSelection.[i].word.toLowerCase() == 'newline') {
                             continue;
                         }
 
-                        this.vocabSearch += this.ongoingSelection.[i].word;
-                        this.phraseReading += this.ongoingSelection.[i].reading;
+                        this.vocabBox.searchField += this.ongoingSelection.[i].word;
+                        this.vocabBox.reading += this.ongoingSelection.[i].reading;
                     }
                 }
 
@@ -953,27 +938,27 @@
                 this.selection = this.ongoingSelection;
                 this.selectedPhrase = this.getSelectedPhraseIndex();
 
-                this.phraseTranslation = this.selectedPhrase !== -1 ? this.phrases[this.selectedPhrase].translation : '';
-                this.phraseReading = this.selectedPhrase !== -1 ? this.phrases[this.selectedPhrase].reading : this.phraseReading;
+                this.vocabBox.translationText = this.selectedPhrase !== -1 ? this.phrases[this.selectedPhrase].translation : '';
                 this.ongoingSelection = [];
                 this.updateSelectedWordStage();
                 this.updateExampleSentence();
                 
-                // if the user checks the meaning of a word or phrase, it must not level up
-                if (this.getSelectedPhraseIndex() !== -1) {
-                    this.phrases[this.getSelectedPhraseIndex()].checked = true;
-                    this.selectedTranslation = this.phrases[this.getSelectedPhraseIndex()].translation.split(';')
-                } else if (this.selection.length == 1) {
-                    console.log('sentence index:', this.selection[0].sentenceIndex);
-                    this.uniqueWords[this.selection[0].uniqueWordIndex].checked = true;
-                    this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');
+                // reading
+                if (this.selection.length == 1) {
+                    this.vocabBox.translationText = this.uniqueWords[this.selection[0].uniqueWordIndex].translation;
+                    this.vocabBox.reading = this.uniqueWords[this.selection[0].uniqueWordIndex].reading;
+                    this.vocabBox.base_word = this.uniqueWords[this.selection[0].uniqueWordIndex].base_word;
+                    this.vocabBox.base_word_reading = this.uniqueWords[this.selection[0].uniqueWordIndex].base_word_reading;
+                } else {
+                    this.vocabBox.reading = this.selectedPhrase !== -1 ? this.phrases[this.selectedPhrase].reading : this.vocabBox.reading;
                 }
 
                 this.updateVocabBoxPosition();
                 this.makeSearchRequest();
                 this.updatePhraseBorders();
-                this.vocabBoxTab = 0;
-                this.vocabBoxClosed = false;
+                this.updateVocabBoxTranslationList();
+                this.vocabBox.tab = 0;
+                this.vocabBox.closed = false;
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
@@ -982,13 +967,13 @@
             },
             updateSelectedWordStage: function() {
                 if (this.selectedPhrase == -1 && this.selection.length) {
-                    this.vocabBoxSelectedStage = parseInt(this.uniqueWords[this.selection[0].uniqueWordIndex].stage);
+                    this.vocabBox.selectedStageButton = parseInt(this.uniqueWords[this.selection[0].uniqueWordIndex].stage);
                 } else if (this.selectedPhrase !== -1){
-                    this.vocabBoxSelectedStage = parseInt(this.phrases[this.selectedPhrase].stage);
+                    this.vocabBox.selectedStageButton = parseInt(this.phrases[this.selectedPhrase].stage);
                 }
 
-                if (this.vocabBoxSelectedStage == 2) {
-                    this.vocabBoxSelectedStage = undefined;
+                if (this.vocabBox.selectedStageButton == 2) {
+                    this.vocabBox.selectedStageButton = undefined;
                 }
             },
             updateExampleSentence: function() {
@@ -1004,12 +989,10 @@
                     }
 
                     this.uniqueWords[this.selection[0].uniqueWordIndex].example_sentence = JSON.stringify(exampleSentence);
-                    console.log('new example sentence:', exampleSentence);
                 }
-
             },
             updateVocabBoxPosition: function() {
-                this.vocabBoxSize.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
+                this.vocabBox.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
 
                 if (!this.selection.length) {
                     return;
@@ -1022,21 +1005,21 @@
                     var positions = document.querySelector('[wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                this.vocabBoxPosition.left = positions.right - reader.left - this.vocabBoxSize.width / 2 - (positions.right - positions.left) / 2;
+                this.vocabBox.position.left = positions.right - reader.left - this.vocabBox.width / 2 - (positions.right - positions.left) / 2;
 
 
                 if (window.innerWidth  < 440) {
-                    this.vocabBoxPosition.left = 8;
-                } else if (this.vocabBoxPosition.left < 5) {
-                    this.vocabBoxPosition.left = 5;
-                } else if (this.vocabBoxPosition.left > reader.right - reader.left - this.vocabBoxSize.width) {
-                    this.vocabBoxPosition.left = reader.right - reader.left - this.vocabBoxSize.width;
+                    this.vocabBox.position.left = 8;
+                } else if (this.vocabBox.position.left < 5) {
+                    this.vocabBox.position.left = 5;
+                } else if (this.vocabBox.position.left > reader.right - reader.left - this.vocabBox.width) {
+                    this.vocabBox.position.left = reader.right - reader.left - this.vocabBox.width;
                 }
 
                 if (this.settings.fullscreen) {
-                    this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
+                    this.vocabBox.position.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
                 } else {
-                    this.vocabBoxPosition.top = positions.bottom + 12 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
+                    this.vocabBox.position.top = positions.bottom + 12 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
                 }
 
                 this.scrollToVocabBox();
@@ -1051,6 +1034,10 @@
             },
             updateSelectedWordLookupCount: function(word, uniqueWordIndex) {
                 this.uniqueWords[uniqueWordIndex].lookup_count ++;
+                axios.post('/vocabulary/update', {
+                    id: this.uniqueWords[uniqueWordIndex].id,
+                    lookup_count: this.uniqueWords[uniqueWordIndex].lookup_count
+                });
 
                 for (var i  = 0; i < this.words.length; i++) {
                     if (this.words[i].word.toLowerCase() == word) {
@@ -1059,7 +1046,7 @@
                 }
             },
             makeSearchRequest: function() {
-                this.searchResults = [];
+                this.vocabBox.searchResults = [];
                 this.inflections = [];
                 if (!this.selection.length) {
                     return;
@@ -1068,10 +1055,10 @@
                 // search inflections
                 axios.post('/dictionary/search/inflections', {
                     dictionary: 'jmdict',
-                    term: this.vocabSearch
+                    term: this.vocabBox.searchField
                 })
                 .then(function (response) {
-                    var data = JSON.parse(response.data);
+                    var data = response.data;
                     var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
                     
                     for (var i = 0; i < data.length; i++) {
@@ -1115,7 +1102,7 @@
                 // search word
                 axios.post('/dictionary/search', {
                     dictionary: 'jmdict',
-                    term: this.vocabSearch
+                    term: this.vocabBox.searchField
                 })
                 .then(function (response) {
                     this.processSearchRequest(response.data);
@@ -1127,9 +1114,9 @@
                 });
             },
             processSearchRequest: function(data) {
-                this.searchResults = [];
+                this.vocabBox.searchResults = [];
                 for (var i = 0; i < data.length; i++) {
-                    this.searchResults.push({
+                    this.vocabBox.searchResults.push({
                         word: data[i].words.shift(),
                         otherForms: data[i].words,
                         definitions: data[i].definitions
@@ -1147,9 +1134,14 @@
                 });
             },
             unselectWord() {
-                this.vocabBoxClosed = true;
+                if (this.selection.length == 1) {
+                    this.saveWord();
+                } else if (this.selectedPhrase !== -1) {
+                    this.savePhrase();
+                }
+
+                this.vocabBox.closed = true;
                 setTimeout(() => {
-                    this.vocabEditMode = '';
                     this.selectedPhrase = -1;
                     this.selection = [];
                     
@@ -1160,24 +1152,23 @@
                 }, 120);
             },
             addDefinitionToInput: function(definition) {
-                if (this.selection.length == 1) {
-                    if (this.uniqueWords[this.selection[0].uniqueWordIndex].translation.length) {
-                        this.uniqueWords[this.selection[0].uniqueWordIndex].translation += ';';
-                    }
-
-                    this.uniqueWords[this.selection[0].uniqueWordIndex].translation += definition;
-                    this.selectedTranslation = this.uniqueWords[this.selection[0].uniqueWordIndex].translation.split(';');
-                } else {
-                    if (this.phraseTranslation.length) {
-                        this.phraseTranslation += ';';
-                    }
-
-                    this.phraseTranslation += definition;
-                    this.updatePhrase();
-                    this.selectedTranslation = this.phraseTranslation.split(';');
+                if (this.vocabBox.translationText.length) {
+                    this.vocabBox.translationText += ';';
                 }
+
+                this.vocabBox.translationText += definition;
+                this.updateVocabBoxTranslationList();
             },
             setStage: function(stage) {
+                // determine if saving is needed
+                var save = 'none';
+                if (this.selection.length == 1 && this.uniqueWords[this.selection[0].uniqueWordIndex].stage !== stage) {
+                    save = 'word';
+                } else if (this.selection.length > 1 && this.phrases[this.selectedPhrase].stage !== stage) {
+                    save = 'phrase';
+                }
+                
+
                 if (this.selectedPhrase == -1 && this.selection.length == 1) {
                     this.uniqueWords[this.selection[0].uniqueWordIndex].stage = stage;
                     if (stage == 0) {
@@ -1196,13 +1187,50 @@
                 }
 
                 this.updateSelectedWordStage();
+                
+                if (save == 'word') {
+                    this.saveWord(true);
+                } else if (save == 'phrase') {
+                    this.savePhrase(true);
+                }
+                
             },
             stageChanged: function() {
                 if (this.selectedPhrase == -1) {
-                    this.vocabBoxSelectedStage = this.uniqueWords[this.selection[0].uniqueWordIndex].stage;
+                    this.vocabBox.selectedStageButton = this.uniqueWords[this.selection[0].uniqueWordIndex].stage;
                 } else {
-                    this.vocabBoxSelectedStage = this.phrases[this.selectedPhrase].stage;
+                    this.vocabBox.selectedStageButton = this.phrases[this.selectedPhrase].stage;
                 }
+            },
+            saveWord: function(withStage = false) {
+                // save vocab box data to word
+                this.uniqueWords[this.selection[0].uniqueWordIndex].translation = this.vocabBox.translationText;
+                this.uniqueWords[this.selection[0].uniqueWordIndex].reading = this.vocabBox.reading;
+                this.uniqueWords[this.selection[0].uniqueWordIndex].base_word = this.vocabBox.base_word;
+                this.uniqueWords[this.selection[0].uniqueWordIndex].base_word_reading = this.vocabBox.base_word_reading;
+
+                var selectedWord = this.uniqueWords[this.selection[0].uniqueWordIndex];
+                var saveData = {
+                    id: selectedWord.id,
+                    translation: selectedWord.translation,
+                    reading: selectedWord.reading,
+                    base_word: selectedWord.base_word,
+                    base_word_reading: selectedWord.base_word_reading,
+                    example_sentence: selectedWord.example_sentence,
+                    lookup_count: selectedWord.lookup_count,
+                };
+
+                if (withStage) {
+                    saveData.stage = selectedWord.stage;
+                }
+
+                axios.post('/vocabulary/update', saveData).then(function (response) {
+                }.bind(this))
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                });
             },
             deletePhrase: function() {
                 if (this.selectedPhrase == -1) {
@@ -1227,34 +1255,28 @@
                 }
 
                 var deletedPhrase = this.phrases.splice(this.selectedPhrase, 1)[0];
-                if (deletedPhrase.id !== -1) {
-                    this.deletedPhrases.push(deletedPhrase);
-                }
+                axios.post('/vocabulary/phrase/delete', {
+                    id: deletedPhrase.id,
+                }).then(function (response) {
+
+                }.bind(this)).catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                });
 
                 this.selectedPhrase = -1;
                 this.selection = [];
                 this.updatePhraseBorders();
             },
-            updatePhrase: function() {
-                // save phrase if already exists
-                var selectedPhrase = this.getSelectedPhraseIndex();
-                if (selectedPhrase !== -1) {
-                    this.phrases[selectedPhrase].reading = this.phraseReading;
-                    this.phrases[selectedPhrase].translation = this.phraseTranslation;
-                }
-
-                this.selectedTranslation = this.phraseTranslation.split(';');
-            },
-            saveNewPhrase: function() {
+            addNewPhrase: function() {
                 // create phrase object
                 var phrase = {
                     id: -1,
-                    stage: -5,
+                    stage: 0,
                     words: [],
-                    checked: true,
-                    last_level_up: '',
-                    reading: this.phraseReading,
-                    translation: this.phraseTranslation,
+                    reading: this.vocabBox.reading,
+                    translation: '',
                 };
 
                 for (var i = 0; i < this.selection.length; i++) {
@@ -1313,22 +1335,53 @@
                     }
                 }
 
-                // remove the new phrase from the deleted phrases
-                for (let i = 0; i < this.deletedPhrases.length; i++) {
-                    var currentPhrase = this.deletedPhrases[i].words.join();
-                    if (this.deletedPhrases[i].words.join() == phrase.words.join()) {
-                        phrase.id = this.deletedPhrases[i].id;
-                        this.deletedPhrases.splice(i, 1);
-                        break;
-                    }
-                }
-
                 this.phrases.push(phrase);
                 this.updatePhraseBorders();
                 this.selectedPhrase = this.getSelectedPhraseIndex();
 
                 this.updateSelectedWordStage();
                 this.updateVocabBoxPosition();
+                this.savePhrase();
+            },
+            savePhrase: function(withStage = false) {
+                var selectedPhraseIndex = this.selectedPhrase;
+                if (this.phraseCurrentlySaving) {
+                    return;
+                }
+
+                this.phraseCurrentlySaving = true;
+                this.phrases[selectedPhraseIndex].translation = this.vocabBox.translationText;
+                this.phrases[selectedPhraseIndex].reading = this.vocabBox.reading;
+
+                var saveData = {
+                    words: this.phrases[selectedPhraseIndex].words,
+                    reading: this.phrases[selectedPhraseIndex].reading,
+                    translation: this.phrases[selectedPhraseIndex].translation,
+                };
+
+                if (this.phrases[selectedPhraseIndex].id == -1) {
+                    saveData.stage = this.phrases[selectedPhraseIndex].stage;
+                } else {
+                    saveData.id = this.phrases[selectedPhraseIndex].id;
+                }
+
+                if (withStage) {
+                    saveData.stage = this.phrases[selectedPhraseIndex].stage;
+                }
+
+                axios.post('/vocabulary/phrase/update', saveData).then(function (response) {
+                    if (this.phrases[selectedPhraseIndex].id == -1) {
+                        this.phrases[selectedPhraseIndex].id = parseInt(response.data);
+                    }
+
+
+                    this.phraseCurrentlySaving = false;
+                }.bind(this))
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                });
             },
             updatePhraseBorders: function() {
                 for (var i = 0; i < this.words.length; i++) {
@@ -1423,8 +1476,6 @@
             finish: function() {
                 axios.post('/chapter/finish', {
                     uniqueWords: JSON.stringify(this.uniqueWords),
-                    phrases: JSON.stringify(this.phrases),
-                    deletedPhrases: JSON.stringify(this.deletedPhrases),
                     sentences: JSON.stringify(this.sentences),
                     language: this.language,
                     lessonId: this.lessonId,
@@ -1432,16 +1483,6 @@
                 })
                 .then(function (response) {
                     if (response.data == 'success') {
-                        // count progressed and learned words
-                        for (var i  = 0; i < this.uniqueWords.length; i++) {
-                            if (!this.uniqueWords[i].checked && this.uniqueWords[i].stage < -1) {
-                                this.progressedWords ++;
-                            }
-
-                            if (!this.uniqueWords[i].checked && this.uniqueWords[i].stage == -1) {
-                                this.learnedWords ++;
-                            }
-                        }
 
                         this.finished = true;
                     } else {
