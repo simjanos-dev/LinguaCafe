@@ -17,7 +17,7 @@
                     ></v-skeleton-loader>
                 </div>
 
-                <v-card outlined>
+                <v-card outlined class="rounded-lg">
                     <v-card-text class="d-flex flex-wrap mt-0">
                         <template v-for="kanjiIndex in 24 + ((groupIndex + 1) * 20)">
                             <v-skeleton-loader
@@ -45,7 +45,7 @@
                         {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }}/{{ totalKanjiCounts[groupIndex].total }})
                     </template>
                 </div>
-                <v-card outlined class="d-flex flex-wrap" v-if="group.length">
+                <v-card outlined class="d-flex flex-wrap rounded-lg" v-if="group.length">
                     <v-card-text>
                         <template v-for="(kanji, kanjiIndex) in group">
                             <v-btn

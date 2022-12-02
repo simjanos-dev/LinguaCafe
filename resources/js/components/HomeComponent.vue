@@ -25,6 +25,7 @@
                 </tr>
             </tbody>
         </table>
+        <v-btn rounded color="primary" to="/review/false/-1/-1">Review all</v-btn>
     </v-container>
 </template>
 

@@ -19,7 +19,7 @@
 
             <v-btn 
                 class="mx-0"
-                depressed 
+                rounded 
                 :disabled="saving"
                 :loading="saving"
                 :dark="!saving"
@@ -29,7 +29,7 @@
             
             <v-btn 
                 class="mx-0"
-                depressed
+                rounded
                 color="secondary"
                 :to="'/chapters/' + book"
             >Cancel</v-btn>

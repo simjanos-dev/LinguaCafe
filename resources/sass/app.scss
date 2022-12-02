@@ -31,6 +31,12 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, .2), 0 1px 2px rgba(0, 0, 0, .35);
 }
 
+.v-input--selection-controls .v-input__slot>.v-label {
+    height: 28px;
+    line-height: 28px;
+    margin-bottom: 0px;
+}
+
 .v-ripple__container {
     display:none !important;
 }
@@ -44,27 +50,86 @@
     color: #2d2d2d;
 }
 
-#navigation-drawer {
-    z-index: 2001;
-    height: 280px !important;
+.v-pagination li button {
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, .12);
+    border-radius: 6px;
+
+    &:not(.v-pagination__item--active):hover {
+        background-color: rgba(0, 0, 0, .04) !important;
+    }
+
+    &:not(.v-pagination__item--active):active {
+        background-color: rgba(0, 0, 0, .12) !important;
+    }
 }
 
-#app-bar {
-    z-index: 2000;
+.v-btn.menu-button,
+a.v-btn.menu-button {
+    width: 100%;
+    line-height: 36px !important;
+    display: flex;
+    border-radius: 0px;
+    margin: 0px;
+    border: 0px;
+    box-shadow: none;
+}
 
-    #app-bar-links {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
+#navigation-drawer {
+    #logo {
+        color: $text-light;
+        font-size: 24px;
+        text-align: center;
+        
+        .v-icon {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 8px;
+            color: $text-light;
+        }
+    }
 
-        li {
-            display: inline-block;
-            float: lefŧ;
-            user-select: none;
-            cursor: pointer;
-            transition: .1s;
-            
-            
+    #language {
+        width: calc(100% - 16px);
+        display: flex;
+        height: 40px;
+        line-height: 40px;
+        text-align: left;
+        
+        .v-image__image {
+            border: 1px solid rgba(53, 42, 42, 0.2);
+        }
+
+        span {
+            width: calc(100% - 43px);
+            height: 30px;
+            line-height: 30px;
+        }
+    }
+
+    a.navigation-button {
+        text-decoration: none !important; 
+        padding-left: 16px;
+    }
+
+    &.v-navigation-drawer--mini-variant {
+        width: 80px !important;
+
+        a.navigation-button {
+            display:block;
+            width: 64px;
+            height: 64px;
+            font-size: 11px;
+            text-align: center;
+            padding: 0px;
+            padding-top: 12px;
+
+            i, span {
+                display:block;
+                width: 100%;
+                height: auto;
+            }
         }
     }
 }
@@ -113,7 +178,7 @@ main {
 div.v-bottom-navigation{
     position: fixed !important;
     bottom: 0px !important;
-    z-index: 1;
+    z-index: 2000;
 }
 
 div.v-btn,
@@ -122,8 +187,10 @@ a.v-btn {
     &:not(.toolbar-button):not(.stage-button) {
         text-decoration: none !important;
         text-transform: unset !important;
-        font-weight: normal;
     }
+
+    padding-left: 12px !important;
+    padding-right: 12px !important;
 }
 
 .v-bottom-navigation .v-btn,

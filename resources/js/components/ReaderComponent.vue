@@ -40,7 +40,7 @@
                     <div class="setting-label">Highlight words:</div>
                     <div class="setting-input switch">
                         <v-switch
-                            color="success"
+                            color="primary"
                             v-model="settings.highlightWords" 
                             @change="saveSettings(); updateToolbarButtonGroup()"
                         ></v-switch>
@@ -93,7 +93,7 @@
                     <div class="setting-label">Japanese vertical text:</div>
                     <div class="setting-input switch">
                         <v-switch
-                            color="success"
+                            color="primary"
                             v-model="settings.japaneseText" 
                             @change="saveSettings(); updateToolbarButtonGroup()"
                         ></v-switch>
@@ -105,7 +105,7 @@
                     <div class="setting-label">Auto move words to known:</div>
                     <div class="setting-input switch">
                         <v-switch
-                            color="success"
+                            color="primary"
                             v-model="settings.autoMoveWordsToKnown" 
                             @change="saveSettings(); updateToolbarButtonGroup()"
                         ></v-switch>

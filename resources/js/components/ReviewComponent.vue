@@ -2,12 +2,12 @@
     <v-container v-if="currentReviewIndex !== -1" id="review-box">
         <div id="review" v-if="!finished">
             <div id="review-progress-line">
-                <div id="progress-bar-correct-counter" :style="{'background-color': $vuetify.theme.currentTheme.success}">{{ correctReviews }}</div>
+                <div id="progress-bar-correct-counter" class="border" :style="{'background-color': $vuetify.theme.currentTheme.success}">{{ correctReviews }}</div>
                 <div id="review-progress-bar">
                         <div id="review-progress-bar-correct" :style="{'width': (correctReviews / totalReviews * 100) + '%'}"></div>
                         <div id="review-progress-bar-text">{{ correctReviews }} / {{ totalReviews }}</div>
                 </div>
-                <div id="progress-bar-remaining-counter">{{ totalReviews - correctReviews }}</div>
+                <div id="progress-bar-remaining-counter" class="border">{{ totalReviews - correctReviews }}</div>
             </div>
 
             <div id="toolbar">
@@ -32,7 +32,7 @@
                 }">
                 <div id="review-card-content">
                     <!-- Review card front -->
-                    <div id="review-card-front">
+                    <div id="review-card-front" class="rounded-lg border"> 
                         <!-- Word review -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Example sentence mode -->
@@ -70,7 +70,7 @@
                     </div>
 
                     <!-- Review card back -->
-                    <div id="review-card-back" :style="{'background-color': backgroundColor}">
+                    <div id="review-card-back" class="rounded-lg border" :style="{'background-color': backgroundColor}">
                         <!-- Word review -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Single word  mode -->
@@ -102,9 +102,9 @@
                 </div>
             </div>
 
-            <v-btn dark id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
-            <v-btn dark id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
-            <v-btn dark id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+            <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+            <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
         </div>
         <div id="finished-box" v-if="finished">
             <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ finishedReviews }} sentences!</div>
@@ -138,6 +138,7 @@
             return {
                 //card state and animations
                 language: '',
+                practiceMode: false,
                 revealed: false,
                 backToDeckAnimation: false,
                 intoTheCorrectDeckAnimation: false,
@@ -163,16 +164,23 @@
         props: {
             
         },
-        mounted() {
+        mounted: function() {
+            console.log('mounted');
             var data = {};
             if (this.$route.params.bookId !== undefined) {
                 data.bookId = this.$route.params.bookId;
+            }
+
+            if (this.$route.params.practiceMode !== undefined) {
+                data.practiceMode = this.$route.params.practiceMode;
+                this.practiceMode = this.$route.params.practiceMode === 'true';
             }
 
             if (this.$route.params.chapterId !== undefined) {
                 data.lessonId = this.$route.params.chapterId;
             }
 
+            console.log(data);
             axios.post('/review', data).then(function (response) {
                 var data = response.data;
                 this.reviews = data.reviews;
@@ -181,10 +189,12 @@
                 
                 this.afterMounted();
             }.bind(this)).catch(function (error) {
-                
             }).then(function () {
 
             });
+        },
+        beforeDestroy: function () {
+            window.removeEventListener('keyup', this.hotkey);
         },
         methods: {
             afterMounted: function() {
@@ -223,8 +233,6 @@
                 if (!this.finished && this.revealed && event.which == 88) {
                     this.missed();
                 }
-
-                this.$emit('keyup', event);
             },
             fullscreen() {
                 if (document.fullscreenEnabled) {
@@ -309,14 +317,24 @@
                     saveData.stage = this.reviews[this.currentReviewIndex].stage + 1;
                 }
 
-                axios.post(url, saveData).then(() => {
+                if (!this.practiceMode) {
+                    axios.post(url, saveData).then(() => {
+                        if (this.reviews.length == 1) {
+                            this.finish();
+                        } else {
+                            this.reviews.splice(this.currentReviewIndex, 1)[0];
+                            setTimeout(this.next, this.settings.transitionDuration);
+                        }
+                    });
+                } else {
+                    console.log('practicemode, update skipped');
                     if (this.reviews.length == 1) {
                         this.finish();
                     } else {
                         this.reviews.splice(this.currentReviewIndex, 1)[0];
                         setTimeout(this.next, this.settings.transitionDuration);
                     }
-                });
+                }
             },
             missed() {
                 this.backToDeckAnimation = true;
@@ -336,7 +354,7 @@
                     id: this.reviews[this.currentReviewIndex].id
                 };
                 
-                if (!this.reviews[this.currentReviewIndex].relearning) {
+                if (!this.reviews[this.currentReviewIndex].relearning && !this.practiceMode) {
                     saveData.relearning = true;
 
                     if (this.reviews[this.currentReviewIndex].stage > -7) {
@@ -344,11 +362,12 @@
                     } else {
                         saveData.stage = -7;
                     }
-                
+
                     axios.post(url, saveData).then(() => {
                         setTimeout(this.next, this.settings.transitionDuration);
                     });
                 } else {
+                    console.log('practicemode, update skipped');
                     setTimeout(this.next, this.settings.transitionDuration);
                 }
             },

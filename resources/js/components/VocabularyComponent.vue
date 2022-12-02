@@ -36,7 +36,7 @@
                 </v-menu>
 
                 <!-- Book filter -->
-                <v-menu offset-y v-if="books.length">
+                <v-menu right offset-y v-if="books.length">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn class="filter-menu px-1" plain v-bind="attrs" v-on="on">
                             Book
@@ -178,7 +178,7 @@
         </v-container>
 
         <!-- vocabulary list -->
-        <v-simple-table id="vocabulary-list" class="py-0 no-hover border" dense>
+        <v-simple-table id="vocabulary-list" class="py-0 no-hover border rounded-lg" dense>
             <thead>
                 <tr>
                     <th class="word">Word</th>
@@ -220,6 +220,7 @@
 
         <div class="px-2">
             <v-pagination
+                class="my-6"
                 v-model="currentPage"
                 :length="pageCount"
                 :total-visible="10"

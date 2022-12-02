@@ -29,6 +29,12 @@ Vue.component('vue-slider', VueSlider);
 Vue.component('layout-component', require('./components/LayoutComponent.vue').default);
 
 
+
+// dialogs
+import StartReviewDialog from './components/dialogs/StartReviewDialog';
+Vue.component('start-review-dialog', StartReviewDialog);
+
+
 const HomeComponent = require('./components/HomeComponent.vue').default;
 const BookListComponent = require('./components/BookListComponent.vue').default;
 const CreateBookComponent = require('./components/CreateBookComponent.vue').default;
@@ -54,7 +60,7 @@ const router = new VueRouter({
         { path: '/chapters/edit/:bookId/:chapterId', component: EditChapterComponent },
         { path: '/flashcards', component: FlashcardCollectionListComponent },
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollectionComponent },
-        { path: '/review/:bookId?/:chapterId?', component: ReviewComponent },
+        { path: '/review/:practiceMode?/:bookId?/:chapterId?', component: ReviewComponent },
         { path: '/vocabulary/search', component: VocabularyComponent },
         { path: '/vocabulary/search/:text/:stage/:book/:chapter/:translation/:phrases/:orderBy/:page', component: VocabularyComponent },
         { path: '/kanji/search', component: KanjiListComponent },

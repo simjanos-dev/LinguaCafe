@@ -20,7 +20,7 @@
 
             <v-btn 
                 class="mx-0"
-                depressed 
+                rounded 
                 :disabled="saving"
                 :loading="saving"
                 :color="saving ? '' : 'secondary'"
@@ -29,7 +29,7 @@
             
             <v-btn 
                 class="mx-0"
-                depressed
+                rounded
                 color="secondary"
                 @click="$router.push('/books')"
             >Cancel</v-btn>

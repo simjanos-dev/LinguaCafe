@@ -321,6 +321,7 @@
         z-index: 9;
         transition: transform .12s linear !important;
         transform-origin: top;
+        border-top: none;
 
         .v-tab {
             color: rgba(255, 255, 255, .5);

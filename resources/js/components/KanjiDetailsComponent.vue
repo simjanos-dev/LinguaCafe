@@ -1,7 +1,7 @@
 <template>
     <v-container id="kanji">
         <div class="subheader small-margin">Kanji info</div>
-        <v-card outlined id="kanji-info-box">
+        <v-card outlined id="kanji-info-box" class="rounded-lg">
             <v-card-text class="d-flex flex-wrap justify-center">
                 <div id="characters">
                     <!-- Kanji -->
@@ -14,16 +14,16 @@
                 <!-- Kanji info -->
                 <div id ="kanji-info">
                     <div id="chip-info" class="mb-2">
-                        <v-chip small class="mb-1" label dark color="pink" v-if="strokes">
+                        <v-chip small class="mb-1" dark color="pink" v-if="strokes">
                             {{ strokes }} strokes
                         </v-chip>
-                        <v-chip small class="mb-1" label dark color="indigo" v-if="grade">
+                        <v-chip small class="mb-1" dark color="indigo" v-if="grade">
                             {{ grade }}. grade
                         </v-chip>
-                        <v-chip small class="mb-1" label dark color="teal" v-if="jlpt">
+                        <v-chip small class="mb-1" dark color="teal" v-if="jlpt">
                             JLPT {{ jlptNames[jlpt] }}
                         </v-chip>
-                        <v-chip small class="mb-1" label dark color="red" v-if="frequency">
+                        <v-chip small class="mb-1" dark color="red" v-if="frequency">
                             {{ frequency }}. most common
                         </v-chip>
                     </div>
@@ -51,7 +51,7 @@
         
         <!-- Kanji radicals -->
         <div class="subheader">Radicals</div>
-        <v-card id="kanji-radicals" outlined>
+        <v-card outlined id="kanji-radicals" class="rounded-lg">
             <v-card-text  class="d-flex flex-wrap">
                 <div class="kanji-radical ma-2" v-for="(radical, index) in radicals">{{ radical.radical }} <span>{{ radical.strokes }} strokes</span></div>
             </v-card-text>
@@ -60,7 +60,7 @@
         <!-- Kanji words -->
         <div class="subheader">Known words with {{ kanji }}</div>
         <div id="kanji-words" class="h5">
-            <v-simple-table id="kanji-words-table" dense class="mt-3 mb-4 border">
+            <v-simple-table id="kanji-words-table" dense class="mt-3 mb-4 border rounded-lg">
                 <thead>
                     <tr>
                         <th>Word</th>

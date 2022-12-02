@@ -1,32 +1,35 @@
 <template>
    <v-app>
-        <v-app-bar id="app-bar" app dense dark clipped-left color="primary" height="52">
-            <div id="logo" class="mr-10"><v-icon class="mr-1">mdi-coffee</v-icon> Immersion</div>
-            
-            <ul id="app-bar-links" class="d-none d-sm-block">
-                <li v-for="(item, index) in navigation" :key="index">
-                    <v-btn class="px-3" plain :to="item.url">{{ item.name }}</v-btn>
-                </li>
-            </ul>
-        </v-app-bar>
+        <v-navigation-drawer id="navigation-drawer" floating :mini-variant="$vuetify.breakpoint.md" app permanent v-model="drawer" color="navigation" v-if="$vuetify.breakpoint.mdAndUp">
+            <div id="logo" class="my-8"><v-icon>mdi-coffee</v-icon> Lingua Cafe</div>
+            <v-list nav rounded>
+                <v-list-item-group color="primaryDark">
+                    <v-list-item class="navigation-button" v-for="(item, index) in navigation" :key="index"  :to="item.url">
+                        <div v-if="drawerMinimized">
+                            <v-icon> {{ item.icon }} </v-icon>
+                            <span> {{ item.name }} </span>
+                        </div>
 
-        <v-navigation-drawer id="navigation-drawer" class="d-flex justify-column" bottom app clipped temporary v-model="drawer">
-            <v-spacer></v-spacer>
-            <v-list class="mt-0" dense nav>
-                <v-list-item-group>
-                    <v-list-item v-for="(item, index) in navigation" :key="index"  :to="item.url"  class="text-decoration-none">
-                        <v-list-item-icon><v-icon v-text="item.icon"></v-icon></v-list-item-icon>
-                        <v-list-item-content><v-list-item-title v-text="item.name"></v-list-item-title></v-list-item-content>
+                        <template v-else>
+                            <v-list-item-icon><v-icon v-text="item.icon"></v-icon></v-list-item-icon>
+                            <v-list-item-content class="ml-2"><v-list-item-title v-text="item.name"></v-list-item-title></v-list-item-content>
+                        </template>
                     </v-list-item>
                 </v-list-item-group>
             </v-list>
+            <template v-slot:append>
+                <v-btn id="language" rounded text class="ma-2">
+                    <v-img :src="'/images/flags/japanese'" height="30" width="43"></v-img> 
+                    <span class="pl-2">Japanese</span>
+                </v-btn>
+            </template>
         </v-navigation-drawer>
 
         <v-main :style="{background: $vuetify.theme.currentTheme.background}">
             <router-view :key="$route.fullPath"></router-view>
         </v-main>
         
-        <v-bottom-navigation dense grow class="d-flex d-sm-flex d-md-flex d-lg-none d-xl-none" dark background-color="primary">
+        <v-bottom-navigation dense grow shift class="d-flex d-sm-flex d-md-none" dark background-color="primary">
             <v-btn 
                 class="text-decoration-none"
                 grow 
@@ -47,6 +50,7 @@
         data: function() {
             return {
                 drawer: false,
+                drawerMinimized: true,
                 navbarVisible: true,
                 navigation: [
                     {
@@ -75,7 +79,7 @@
                     },
                     {
                         name: 'Review',
-                        url: '/review',
+                        url: '/review/false/-1/-1',
                         icon: 'mdi-playlist-check',
                         bottomNav: false,
                     },

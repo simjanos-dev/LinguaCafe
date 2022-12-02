@@ -19,20 +19,43 @@ class ReviewController extends Controller
     }
     
     public function review(Request $request) {
+        $practiceMode = false;
         $lessonId = -1;
         $bookId = -1;
-
+        
+        if (isset($request->practiceMode)) {
+            $practiceMode = $request->practiceMode === 'true';
+        }
+        
         if (isset($request->lessonId)) {
-            $lessonId = $request->lessonId;
+            $lessonId = intval($request->lessonId);
         }
 
         if (isset($request->bookId)) {
-            $bookId = $request->bookId;
+            $bookId = intval($request->bookId);
         }
 
         $selectedLanguage = Auth::user()->selected_language;
         $today = date('Y-m-d');
 
+        // base query
+        $reviewWords = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0');
+        $reviewPhrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0');
+
+        // practice mode
+        if (!$practiceMode) {
+            $reviewWords = $reviewWords->where(function($query) {
+                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
+                $query->orWhere('relearning', true);
+            });
+
+            $reviewPhrases = $reviewPhrases->where(function($query) {
+                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
+                $query->orWhere('relearning', true);
+            });
+        }
+        
+        // limit query to 1 lesson
         if ($lessonId !== -1) {
             $lesson = Lesson::where('id', $lessonId)->where('user_id', Auth::user()->id)->first();            
             $words = json_decode(gzuncompress($lesson->processed_text));
@@ -51,17 +74,12 @@ class ReviewController extends Controller
                 }
             }
 
-            $words = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            })->whereIn('word', $uniqueWords)->inRandomOrder()->get();
-
-
-            $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            })->whereIn('id', $uniquePhraseIds)->inRandomOrder()->get();
-        } else if ($bookId !== -1) {
+            $reviewWords = $reviewWords->whereIn('word', $uniqueWords);
+            $reviewPhrases = $reviewPhrases->whereIn('id', $uniquePhraseIds);
+        }
+        
+        // limit query to one book
+        if ($bookId !== -1 && $lessonId == -1) {
             $uniqueWords = [];
             $uniquePhraseIds = [];
             $lessons = Lesson::where('book_id', $bookId)->where('user_id', Auth::user()->id)->get();
@@ -79,35 +97,21 @@ class ReviewController extends Controller
                     }
                 }
             }
-            
-            
-            $words = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            })->whereIn('word', $uniqueWords)->inRandomOrder()->get();
 
-            $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            })->whereIn('id', $uniquePhraseIds)->inRandomOrder()->get();
-        } else {
-            $words = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            })->inRandomOrder()->get();
-            $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            })->inRandomOrder()->get();
-        } 
+            $reviewWords = $reviewWords->whereIn('word', $uniqueWords);
+            $reviewPhrases = $reviewPhrases->whereIn('id', $uniquePhraseIds);
+        }
+
+        $reviewWords = $reviewWords->inRandomOrder()->get();
+        $reviewPhrases = $reviewPhrases->inRandomOrder()->get();
 
         $reviews = [];
-        foreach ($words as $word) {
+        foreach ($reviewWords as $word) {
             $word->type = 'word';
             array_push($reviews, $word);
         }
 
-        foreach ($phrases as $phrase) {
+        foreach ($reviewPhrases as $phrase) {
             $phrase->type = 'phrase';
             array_push($reviews, $phrase);
         }

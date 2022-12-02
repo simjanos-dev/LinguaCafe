@@ -1,7 +1,8 @@
 
 // Colors
 $theme-color: #aa8476;
-$background: #F2F5F6;
+$background: #fafafa;
+$text-light: #a4a4a4;
 $light-gray: rgb(240, 241, 243);
 $green: #3dcf59;
 $red: #ef6268;
@@ -26,7 +27,7 @@ $stage1: rgba($highlighted-word, 1);
 
 
 //
-$sliderThemeColor: $highlighted-word;
+$sliderThemeColor: $theme-color;
 
 @font-face {
     font-family: notosans;
