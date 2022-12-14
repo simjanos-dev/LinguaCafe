@@ -47,9 +47,8 @@
         display: flex;
         margin-top: -60px;
         height: 60px;
-        background-color: $background;
         max-width: calc(100% - 256px);
-        z-index: 10;
+        z-index: 3;
 
         .toolbar-button-group {
             display: flex;
@@ -69,9 +68,9 @@
         height: 50px;
         line-height: 50px;
         width: 100%;
-        color: $font-color;
+        color: var(--v-text-base);
         font-size: 22px;
-        z-index: 10;
+        z-index: 3;
         overflow: hidden;
 
         span {
@@ -143,7 +142,7 @@
 
         rt {
             font-size: 13px;
-            color: lighten($font-color, 20%);
+            color: var(--v-text-base);
         }
 
         .glossary-title {
@@ -162,40 +161,18 @@
             font-size: 15px;
             font-weight: bold;
             overflow: hidden;
-            background-color: $green;
             text-align: center;
             user-select: none;
 
-            &[stage="-7"] {
-                background-color: $stage7;
-            }
-
-            &[stage="-6"] {
-                background-color: $stage6;
-            }
-
-            &[stage="-5"] {
-                background-color: $stage5;
-            }
-
-            &[stage="-4"] {
-                background-color: $stage4;
-            }
-
-            &[stage="-3"] {
-                background-color: $stage3;
-            }
-
-            &[stage="-2"] {
-                background-color: $stage2;
-            }
-
-            &[stage="-1"] {
-                background-color: $stage1;
+            &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"],
+            &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+                background-color: var(--v-highlightedWord-base);
+                color: var(--v-highlightedWordText-base);
             }
 
             &[stage="2"] {
-                background-color: $new-word;
+                background-color: var(--v-newWord-base);
+                color: var(--v-highlightedWordText-base);
             }
         }
 
@@ -219,7 +196,7 @@
             }
 
             &.reading {
-                color: lighten($font-color, 40%);
+                color: var(--v-text-base);
             }
         }
 
@@ -242,7 +219,7 @@
             height: 10px;
             margin: 15px calc(50% - 5px);
             border-radius: 10px;
-            background-color: $theme-color;
+            background-color: var(--v-primary-base);
         }
 
         .chapter {
@@ -262,7 +239,8 @@
                     line-height: 26px;
                     float: right;
                     padding: 1px 5px;
-                    background-color: $green;
+                    background-color: var(--v-highlightedWord-base);
+                    color: var(--v-highlightedWordText-base);
                     font-weight: normal;
                     border-radius: 4px;
                     font-size: 15px;
@@ -289,9 +267,10 @@
                 }
             }
 
-            .chapter-highlighted-words span{
+            .chapter-highlighted-words span {
                 width: 60px;
-                background-color: $highlighted-word;
+                background-color: var(--v-highlightedWord-base);
+                color: var(--v-highlightedWordText-base);
                 border-radius: 4px;
                 text-align: center;
             }
@@ -301,7 +280,8 @@
                 
                 span {
                     width: 60px;
-                    background-color: $new-word;
+                    background-color: var(--v-newWord-base);
+                    color: var(--v-highlightedWordText-base);
                     border-radius: 4px;
                     text-align: center;
                 }
@@ -318,13 +298,13 @@
     #vocab-box {
         position: absolute;
         background-color: white;
-        z-index: 9;
+        z-index: 2;
         transition: transform .12s linear !important;
         transform-origin: top;
         border-top: none;
 
         .v-tab {
-            color: rgba(255, 255, 255, .5);
+            color: rgba(255, 255, 255, .8);
 
             &.v-tab--active {
                 background-color: rgba(255, 255, 255, .14);
@@ -355,7 +335,7 @@
             width: 100px;
             height: 36px;
             right: calc(50% - 50px);
-            z-index: 10;
+            z-index: 3;
         }
 
         #word-edit-table table {
@@ -383,7 +363,7 @@
         }
 
         #word, #phrase, #reading {
-            color: $font-color;
+            color: var(--v-text-base);
             font-size: 19px;
             
             rt {
@@ -392,7 +372,7 @@
         }
 
         #definitions {
-            color: $font-color;
+            color: var(--v-text-base);
             font-size: 16px;
         }
 
@@ -415,7 +395,7 @@
         
         &:after {
             border-color: rgba(0, 0, 0, 0);
-            border-bottom-color: $theme-color;
+            border-bottom-color: var(--v-primary-base);
             border-width: 14px;
             margin-left: -14px;
         }
@@ -533,7 +513,7 @@
             cursor: pointer;
             margin: 1px 0px;
             transition: .2s;
-            color: black;
+            color: var(--v-text-base);
             border-radius: 0px;
             border-top: 1px solid rgba(0, 0, 0, 0);
             border-bottom: 1px solid rgba(0, 0, 0, 0);
@@ -547,56 +527,10 @@
                 margin-left: 4px;
             }
 
-            &[stage="-7"] {
-                background-color: $stage7;
-                margin-left: .5px !important;
-                margin-right: .5px !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-            &[stage="-6"] {
-                background-color: $stage6;
-                margin-left: .5px !important;
-                margin-right: .5px !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-            &[stage="-5"] {
-                background-color: $stage5;
-                margin-left: .5px !important;
-                margin-right: .5px !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-            &[stage="-4"] {
-                background-color: $stage4;
-                margin-left: .5px !important;
-                margin-right: .5px !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-            &[stage="-3"] {
-                background-color: $stage3;
-                margin-left: .5px !important;
-                margin-right: .5px !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-            &[stage="-2"] {
-                background-color: $stage2;
-                margin-left: .5px !important;
-                margin-right: .5px !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-            &[stage="-1"] {
-                background-color: $stage1;
+            &[stage="-7"], &[stage="-6"], &[stage="-5"], 
+            &[stage="-4"], &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+                background-color: var(--v-highlightedWord-base);
+                color: var(--v-highlightedWordText-base);
                 margin-left: .5px !important;
                 margin-right: .5px !important;
                 padding-left: 4px !important;
@@ -609,46 +543,49 @@
             }
 
             &.no-highlight, &.plain-text-mode {
-                background-color: rgba(0, 0, 0, 0);
+                background-color: rgba(0, 0, 0, 0) !important;
+                color: var(--v-text-base) !important;
+                border-bottom: none;
             }
 
             &.phrase {
-                background-color: $stage1;
-                border-top: 1px solid darken($stage1, 8%);
-                border-bottom: 1px solid darken($stage1, 8%);
+                background-color: var(--v-highlightedWord-base);
+                color: var(--v-highlightedWordText-base);
+                border-top: 1px solid var(--v-highlightedWord-darken1);
+                border-bottom: 1px solid var(--v-highlightedWord-darken1);
                 margin-left: 0 !important;
                 margin-right: 0 !important;
-                color: $font-color;
 
                 &:hover {
-                    background-color: rgba($stage1, 0.5);
+                    background-color: var(--v-highlightedWord-darken2);
                 }
                 
                 &[phrasestage="0"] {
                     border-color: rgb(90, 90, 90) !important;
-                    color: $font-color;
+                    color: var(--v-text-base);
                 }
 
                 &[phrasestage="0"]:not([stage="2"]) {
                     background-color: rgba(0, 0, 0, 0);
 
                     &.highlighted {
-                        background-color: $selected-word;
+                        background-color: var(--v-readerWordSelection-base);
                     }
                 }
 
                 &.plain-text-mode, &.no-highlight {
                     background-color: rgba(0, 0, 0, 0);
-                    border-color: rgba(0, 0, 0, 0);
+                    border-color: rgba(0, 0, 0, 0) !important;
+                    color: var(--v-text-base);
                 }
 
                 &.highlighted, &:hover, &[phrasestage="0"]:hover {
-                    background-color: $selected-word;
+                    background-color: var(--v-readerWordSelection-base);
                 }
             }
 
             &.phrase-start {
-                border-left: 1px solid darken($stage1, 8%);
+                border-left: 1px solid var(--v-highlightedWord-darken1);
                 border-top-left-radius: 6px !important;
                 border-bottom-left-radius: 6px !important;
                 margin-left: .5px !important;
@@ -656,7 +593,7 @@
             }
 
             &.phrase-end {
-                border-right: 1px solid darken($stage1, 8%);
+                border-right: 1px solid var(--v-highlightedWord-darken1);
                 border-top-right-radius: 6px !important;
                 border-bottom-right-radius: 6px !important;
                 margin-right: .5px !important;
@@ -664,7 +601,8 @@
             }
 
             &[stage="2"] {
-                background-color: $new-word;
+                background-color: var(--v-newWord-base);
+                color: var(--v-highlightedWordText-base);
                 margin-left: .5px !important;
                 margin-right: .5px !important;
 
@@ -674,14 +612,15 @@
             }
             
             &.highlighted, &:hover {
-                background-color: $selected-word;
-                border-color: $selected-word !important;
+                background-color: var(--v-readerWordSelection-base);
+                color: var(--v-highlightedWordText-base);
+                border-color: var(--v-readerWordSelection-base) !important;
             }
 
             &.plain-text-mode {
                 cursor: default !important;
                 &:hover {
-                    color: $font-color !important;
+                    color: var(--v-text-base) !important;
                     user-select: text !important;
                     cursor: text !important;
                     background-color: rgba(0, 0, 0, 0);
@@ -873,5 +812,26 @@
             width: 33px;
             height: 33px;
         }
+    }   
+}
+
+// style for e-ink theme
+#app main.eink #reader-box {
+    #vocab-box {
+        transition: 0s !important;
+
+        #search-results .search-result.jmdict .search-result-title {
+            background-color: #000000;
+            color: white;
+        }
+    }
+
+    #reader .word[stage="2"]:not(.highlighted):not(:hover) {
+        border-bottom: 2px solid var(--v-text-base);
+        background-color: #ffffff;
+        color: var(--v-text-base);
+        
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
     }
 }

@@ -27,6 +27,12 @@
     font-family: sans-serif !important;
 }
 
+.v-overlay {
+}
+
+.v-dialog__content {
+}
+
 .v-sheet.v-app-bar.v-toolbar:not(.v-sheet--outlined) {
     box-shadow: 0 1px 3px rgba(0, 0, 0, .2), 0 1px 2px rgba(0, 0, 0, .35);
 }
@@ -64,6 +70,10 @@
     }
 }
 
+.v-tab {
+    color: rgba(255, 255, 255, 1);
+}
+
 .v-btn.menu-button,
 a.v-btn.menu-button {
     width: 100%;
@@ -76,8 +86,10 @@ a.v-btn.menu-button {
 }
 
 #navigation-drawer {
+    height: 100% !important;
+
     #logo {
-        color: $text-light;
+        color: #a4a4a4;
         font-size: 24px;
         text-align: center;
         
@@ -86,11 +98,11 @@ a.v-btn.menu-button {
             height: 40px;
             line-height: 40px;
             border-radius: 8px;
-            color: $text-light;
+            color: #a4a4a4;
         }
     }
 
-    #language {
+    #language, #theme {
         width: calc(100% - 16px);
         display: flex;
         height: 40px;
@@ -101,6 +113,10 @@ a.v-btn.menu-button {
             border: 1px solid rgba(53, 42, 42, 0.2);
         }
 
+        .v-icon {
+            width: 43px;
+        }
+        
         span {
             width: calc(100% - 43px);
             height: 30px;
@@ -171,14 +187,10 @@ main {
     z-index: 100;
 }
 
-::selection {
-    //background: darken($tint, 10%);
-}
-
 div.v-bottom-navigation{
     position: fixed !important;
     bottom: 0px !important;
-    z-index: 2000;
+    z-index: 4;
 }
 
 div.v-btn,
@@ -198,10 +210,10 @@ div.v-btn.primary, div.v-btn.success, div.v-btn.error, div.v-btn.info, div.v-btn
 button.v-btn.primary, button.v-btn.success, button.v-btn.error, button.v-btn.info, button.v-btn.purple,
 a.v-btn.primary, a.v-btn.success, a.v-btn.error , a.v-btn.info, a.v-btn.purple {
 &:not(.toolbar-button):not(.stage-button):not(.v-btn--router){
-        color: rgba(255, 255, 255, .9);
+        color: #ffffff;
 
         span {
-            color: rgba(255, 255, 255, .9);
+            color: #ffffff;
         }
 
         i {
@@ -259,8 +271,16 @@ div.v-data-table {
 }
 
 @media (max-width: 380px) {
-
     div.v-bottom-navigation a {
         min-width: 0px !important;
     }
+}
+
+// style for e-ink theme
+#app main.eink * {
+    transition: 0s !important;
+}
+
+#navigation-drawer.eink {
+    transition-duration: 0s !important;
 }

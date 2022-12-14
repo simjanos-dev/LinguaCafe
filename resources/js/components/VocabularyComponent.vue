@@ -196,16 +196,16 @@
                     <td class="word-with-reading"><ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby></td>
                     
                     <td class="stage px-1" :stage="word.stage" v-if="word.stage < 0">
-                        <div :style="{'background-color': $vuetify.theme.currentTheme.highlightedWord}">{{ word.stage * -1 }}</div>
+                        <div class="highlighted-word">{{ word.stage * -1 }}</div>
                     </td>
                     <td class="stage px-1" :stage="word.stage" v-if="word.stage == 0">
-                        <div :style="{'background-color': $vuetify.theme.currentTheme.background}">0</div>
+                        <div>0</div>
                     </td>
                     <td class="stage px-1" :stage="word.stage" v-if="word.stage == 1">
-                        <div :style="{'background-color': $vuetify.theme.currentTheme.background}">X</div>
+                        <div>X</div>
                     </td>
                     <td class="stage px-1" :stage="word.stage" v-if="word.stage == 2">
-                        <div :style="{'background-color': $vuetify.theme.currentTheme.newWord}">New</div>
+                        <div class="new-word">New</div>
                     </td>
                     
                     <td class="translation">{{ word.translation }}</td>

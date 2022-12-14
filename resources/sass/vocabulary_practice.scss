@@ -80,8 +80,8 @@
             text-align: center;
             font-size: 15px;
             background-color: $white;
-            color: $font-color;
-            margin-left: 20px;
+            color: var(--v-text-base);
+            margin-left: 20px;  
             border-radius: 6px;
         }
 
@@ -93,7 +93,7 @@
             height: 30px;
             border-radius: 30px;
             overflow-x: hidden;
-            background-color: $tint;
+            background-color: var(--v-backgroundHighlight-base);
             
 
             #review-progress-bar-text {
@@ -108,19 +108,15 @@
                 margin: 0px;
                 padding: 0px;
                 text-align: center;
-                color: $font-color;
+                color: var(--v-text-base);
             }
 
-            #review-progress-bar-correct, #review-progress-bar-seen {
+            #review-progress-bar-correct {
                 display: inline-block;
                 float: left;
                 height: 100%;
-                background-color: $highlighted-word;
+                background-color: var(--v-highlightedWord-base);
                 transition: ease-in .3s;
-            }
-
-            #review-progress-bar-seen {
-                background-color: lighten($highlighted-word, 20%);
             }
         }
     }
@@ -186,7 +182,7 @@
             height: 100%;
             width: 100%;
             background: white;
-            color: $font-color;
+            color: var(--v-text-base);
             backface-visibility: hidden;
             padding: 10px;
             overflow: hidden;
@@ -199,6 +195,8 @@
                     float: left;
                     
                     &.highlighted {
+                        background-color: var(--v-highlightedWord-base);
+                        color: var(--v-highlightedWordText-base);
                         border-radius: 5px;
                         padding: 0px 4px;
                         margin: 0px 5px;
@@ -433,6 +431,22 @@
         
         100% {
             transform: rotateY( -180deg );
+        }
+    }
+}
+
+// style for e-ink theme
+#app main.eink #review-box {
+    #review-progress-line #review-progress-bar #review-progress-bar-correct {
+        transition: 0s;
+    }
+
+    #review-card {
+        &.into-the-correct-deck-animation #review-card-content,
+        &.draw-new-card-animation #review-card-content,
+        &.back-to-deck-animation #review-card-content,
+        &.revealed #review-card-content {        
+            animation-duration: 0s;
         }
     }
 }

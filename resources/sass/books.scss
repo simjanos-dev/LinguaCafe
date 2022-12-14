@@ -36,6 +36,16 @@
             height: 24px;
             line-height: 24px;
             width: 60px;
+
+            &.highlighted-words {
+                background-color: var(--v-highlightedWord-base);
+                color: var(--v-highlightedWordText-base);
+            }
+
+            &.new-words {
+                background-color: var(--v-newWord-base);
+                color: var(--v-highlightedWordText-base);
+            }
         }
 
         tbody tr,

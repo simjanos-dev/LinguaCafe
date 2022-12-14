@@ -32,7 +32,9 @@ Vue.component('layout-component', require('./components/LayoutComponent.vue').de
 
 // dialogs
 import StartReviewDialog from './components/dialogs/StartReviewDialog';
+import ThemeSelectionDialog from './components/dialogs/ThemeSelectionDialog';
 Vue.component('start-review-dialog', StartReviewDialog);
+Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 
 
 const HomeComponent = require('./components/HomeComponent.vue').default;

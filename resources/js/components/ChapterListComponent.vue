@@ -34,31 +34,29 @@
                     <v-simple-table dense class="chapter-info-table pb-4  mx-auto">
                         <tbody>
                             <tr>
-                                <td>Words</td>
-                                <td><div class="info-table-value">{{ chapter.wordCount.total }}</div></td>
+                                <td width="200px">Words</td>
+                                <td class="text-center"><div class="info-table-value">{{ chapter.wordCount.total }}</div></td>
                             </tr>
                             <tr>
-                                <td>Unique words</td>
-                                <td><div class="info-table-value">{{ chapter.wordCount.unique }}</div></td>
+                                <td width="200px">Unique words</td>
+                                <td class="text-center"><div class="info-table-value">{{ chapter.wordCount.unique }}</div></td>
                             </tr>
                             <tr>
-                                <td>Known words</td>
-                                <td><div class="info-table-value">{{ chapter.wordCount.known }}</div></td>
+                                <td width="200px">Known words</td>
+                                <td class="text-center"><div class="info-table-value">{{ chapter.wordCount.known }}</div></td>
                             </tr>
                             <tr>
-                                <td>Highlighted words</td>
-                                <td><div class="info-table-value highlighted px-2 rounded-xl" :style="{'background-color': $vuetify.theme.currentTheme.highlightedWord }">{{ chapter.wordCount.highlighted }}</div></td>
+                                <td width="200px">Highlighted words</td>
+                                <td class="text-center"><div class="info-table-value highlighted-words px-2 rounded-xl">{{ chapter.wordCount.highlighted }}</div></td>
                             </tr>
                             <tr>
-                                <td>New words</td>
-                                <td><div class="info-table-value highlighted px-2 rounded-xl" :style="{'background-color': $vuetify.theme.currentTheme.newWord }">{{ chapter.wordCount.new }}</div></td>
+                                <td width="200px">New words</td>
+                                <td class="text-center"><div class="info-table-value new-words px-2 rounded-xl">{{ chapter.wordCount.new }}</div></td>
                             </tr>
                         </tbody>
                     </v-simple-table>
                     <v-card-actions class="pa-3">
                         <v-spacer></v-spacer>
-                        <!--<v-btn rounded color="secondary" :to="'/chapters/edit/' + book.id + '/' + chapter.id">Edit</v-btn>-->
-                        <v-btn rounded color="secondary" :to="'/review/' + book.id + '/' + chapter.id">Review</v-btn>
                         <v-btn rounded color="secondary" :to="'/chapters/read/' + chapter.id">Read</v-btn>
                     </v-card-actions>
                 </v-card-text>

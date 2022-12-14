@@ -46,11 +46,11 @@
                             </tr>
                             <tr>
                                 <td width="200px">Highlighted words</td>
-                                <td class="text-center"><div class="info-table-value highlighted px-2 rounded-xl" :style="{'background-color': $vuetify.theme.currentTheme.highlightedWord }">{{ book.wordCount.highlighted }}</div></td>
+                                <td class="text-center"><div class="info-table-value highlighted-words px-2 rounded-xl">{{ book.wordCount.highlighted }}</div></td>
                             </tr>
                             <tr>
                                 <td width="200px">New words</td>
-                                <td class="text-center"><div class="info-table-value highlighted px-2 rounded-xl" :style="{'background-color': $vuetify.theme.currentTheme.newWord }">{{ book.wordCount.new }}</div></td>
+                                <td class="text-center"><div class="info-table-value new-words px-2 rounded-xl">{{ book.wordCount.new }}</div></td>
                             </tr>
                         </tbody>
                     </v-simple-table>

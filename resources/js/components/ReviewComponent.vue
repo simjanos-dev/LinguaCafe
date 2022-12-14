@@ -43,9 +43,6 @@
                                             'phrase-word': true, 
                                             'highlighted': word.toLowerCase() == reviews[currentReviewIndex].word
                                         }"
-                                        :style="{
-                                            'background-color':  word.toLowerCase() == reviews[currentReviewIndex].word ? $vuetify.theme.currentTheme.highlightedWord : ''
-                                        }"
                                         v-if="word !== 'NEWLINE'" 
                                         :key="index"
                                     >
@@ -147,7 +144,7 @@
                 settings: {
                     fontSize: 20,
                     sentenceMode: false,
-                    transitionDuration: this.$cookie.get('ebook-reader-mode') === null ? 400 : 0,
+                    transitionDuration: this.$cookie.get('theme') === 'eink' ? 0 : 400,
                     fullscreen: false,
                 },
                 currentReviewIndex: -1,
@@ -165,7 +162,6 @@
             
         },
         mounted: function() {
-            console.log('mounted');
             var data = {};
             if (this.$route.params.bookId !== undefined) {
                 data.bookId = this.$route.params.bookId;

@@ -1,7 +1,7 @@
 <template>
     <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}" :style="{'background-color': $vuetify.theme.currentTheme.background}">
         <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}" v-if="lessonId !== null">
-            <div v-if="!finished" id="toolbar" class="d-flex " :style="{'width': settings.maximumTextWidth}">
+            <div v-if="!finished" id="toolbar" class="d-flex " :style="{'width': settings.maximumTextWidth, 'background-color': $vuetify.theme.currentTheme.background}">
                 <v-btn-toggle group class="toolbar-button-group menus ma-0 mb-16" v-model="toolbarMenu">
                     <v-btn icon class="toolbar-button pa-0" @click="setToolbar('text')" value="text" title="Text"><v-icon>mdi-text-box-outline</v-icon></v-btn>
                     <v-btn icon class="toolbar-button pa-0" @click="setToolbar('chapters')" value="chapters" title="Chapters"><v-icon>mdi-bookmark</v-icon></v-btn>
@@ -117,7 +117,7 @@
             <div v-if="!finished" id="chapters" :class="{'visible': toolbar == 'chapters'}">
                 <template v-for="(lesson, index) in lessons">
                     <div class="chapter-connect-line" v-if="index" v-for="i in 3"></div>
-                    <v-card :id="lesson.id == lessonId ? 'selected-chapter' : ''" class="chapter rounded-lg pa-3 mx-auto" :key="index">
+                    <v-card outlined :id="lesson.id == lessonId ? 'selected-chapter' : ''" class="chapter rounded-lg pa-3 mx-auto" :key="index">
                         <div class="chapter-title">
                             {{ lesson.name }}
                             <div v-if="lesson.id == lessonId"> Current chapter</div>
@@ -196,7 +196,7 @@
                 <v-card-text class="pa-2">
                     <v-tabs-items v-model="vocabBox.tab">
                         <!-- Word/phrase tab -->
-                        <v-tab-item :value="0">
+                        <v-tab-item :transition="theme !== 'eink'" :value="0">
                             <!-- Single word -->
                             <template v-if="selection.length == 1">
                                 <div class="vocab-box-subheader">Word</div>
@@ -279,7 +279,7 @@
                         </v-tab-item>
 
                         <!-- Edit tab -->
-                        <v-tab-item :value="1">
+                        <v-tab-item :transition="theme !== 'eink'" :value="1">
                             <!-- Word editing -->
                             <v-simple-table dense id="word-edit-table" class="no-hover mx-auto" v-if="selection.length == 1">
                                 <thead>
@@ -388,7 +388,7 @@
                         </v-tab-item>
 
                         <!-- Inflections tab -->
-                        <v-tab-item :value="2" class="pb-4">
+                        <v-tab-item :transition="theme !== 'eink'" :value="2" class="pb-4">
                             <v-simple-table dense id="inflections-table" class="no-hover mx-auto" v-if="inflections.length">
                                 <thead>
                                     <tr>
@@ -412,21 +412,21 @@
             </v-card>
 
             <!-- Text -->
-            <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}">
+            <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}" @mousemove="removePhraseHover">
                 <template v-for="(word, wordIndex) in words">
                     <template v-if="word.word.indexOf('NEWLINE') == -1 && word.word !== '\r\n' && language !== 'japanese'">
                         <template v-if="spaceFreeWords.includes(word.word)">
                             <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div>
+                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div>
                         </template><!--
                         --><template v-if="!spaceFreeWords.includes(word.word)"><!--
                             --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
+                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
                         --></template>
 
                     </template><!--
                     --><div v-if="word.word.indexOf('NEWLINE') == -1 && language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                        @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave="removePhraseHover()">{{ word.word }}</div><!--
+                        @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
                         
                     --><br v-if="word.word == 'NEWLINE'"><!--
                 --></template>
@@ -439,7 +439,7 @@
                     >
                     Something went wrong. Please try again.
                 </v-alert>
-                <v-btn depressed class="mt-8 mb-16" color="success" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
+                <v-btn rounded class="mt-8 mb-16" color="success" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
                 <br><br><br><br>
             </div>
             
@@ -486,6 +486,7 @@
     export default {
         data: function() {
             return {
+                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 phraseCurrentlySaving: false,
                 settings: {
                     highlightWords: true,
