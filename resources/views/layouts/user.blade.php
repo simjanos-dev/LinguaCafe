@@ -23,9 +23,6 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     @yield('header')
     <link href="{{ asset('css/awesomefont.css') }}" rel="stylesheet">
-    @if (isset($_COOKIE["ebook-reader-mode"]))
-        <link href="{{ asset('css/ebook_reader_mode.css') }}" rel="stylesheet">
-    @endif
 </head>
 <body><!--
 --><div id="app"><!--
