@@ -254,7 +254,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        return view('home', [
+            'language' => Auth::user()->selected_language,
+        ]);
     }
 
     public function statistics()
@@ -290,11 +292,13 @@ class HomeController extends Controller
         return json_encode($languageStatistics);
     }
 
+    public function getLanguage() {
+        return Auth::user()->selected_language;
+    }
+
     public function changeLanguage($language) {
         $user = Auth::user();
         $user->selected_language = $language;
         $user->save();
-
-        return redirect('/');
     }
 }

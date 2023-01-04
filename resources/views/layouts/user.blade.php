@@ -26,6 +26,6 @@
 </head>
 <body><!--
 --><div id="app"><!--
-    --><layout-component></layout-component><!--
+    --><layout-component _selected-language="{{ $language }}"></layout-component><!--
 --></div><!--
 --></body></html>

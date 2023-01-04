@@ -7,7 +7,7 @@
             <v-card-text>
                 <v-list nav rounded>
                     <v-list-item-group color="primaryDark" v-model="selectedTheme">
-                        <v-list-item class="my-1" v-for="(theme, index) in displayNames" :key="index" @click="selectTheme(index)" :value="index">
+                        <v-list-item class="my-1" v-for="(theme, index) in displayNames" :key="index" :value="index" @click="selectTheme(index)">
                             <v-list-item-content>
                                 <v-list-item-title class="text-center">{{ theme }}</v-list-item-title>
                             </v-list-item-content>

@@ -1,6 +1,7 @@
 <template>
    <v-app>
-        <theme-selection-dialog v-model="themeSelectionDialog" @change="updateTheme"></theme-selection-dialog>
+        <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
+        <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
         <v-navigation-drawer id="navigation-drawer" :class="{'eink': theme == 'eink'}" floating :mini-variant="$vuetify.breakpoint.md" app :permanent="$vuetify.breakpoint.mdAndUp" v-model="drawer" color="navigation">
             <div id="logo" class="my-8"><v-icon>mdi-coffee</v-icon> Lingua Cafe</div>
             <v-list nav rounded>
@@ -16,9 +17,9 @@
                     <v-icon>mdi-palette</v-icon>
                     <span class="pl-6">Theme</span>
                 </v-btn>
-                <v-btn id="language" rounded text class="ma-2">
-                    <v-img :src="'/images/flags/japanese'" width="20"></v-img> 
-                    <span class="pl-6">Japanese</span>
+                <v-btn id="language" rounded text class="ma-2" @click="languageSelectionDialog = true">
+                    <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase()" max-width="43" height="28"></v-img> 
+                    <span class="pl-6">{{ selectedLanguage }}</span>
                 </v-btn>
             </template>
         </v-navigation-drawer>
@@ -52,8 +53,10 @@
     export default {
         data: function() {
             return {
+                selectedLanguage: this.$props._selectedLanguage,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 themeSelectionDialog: false,
+                languageSelectionDialog: false,
                 drawer: false,
                 navbarVisible: true,
                 navigation: [
@@ -97,7 +100,7 @@
             }
         },
         props: {
-            
+            _selectedLanguage: String,
         },
         mounted() {
             // load theme
@@ -108,8 +111,9 @@
         },
         methods: {
             updateTheme: function() {
+                console.log('updateeeee');
                 this.theme = (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme');
-            }
+            },
         }
     }
 </script>

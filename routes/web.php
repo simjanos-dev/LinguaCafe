@@ -36,7 +36,8 @@ Route::group(['middleware' => 'web'], function () {
     
     // home
     Route::post('/statistics', [App\Http\Controllers\HomeController::class, 'statistics']);
-    Route::get('/language/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
+    Route::get('/language/change/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
+    Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
     Route::get('/dev2', [App\Http\Controllers\HomeController::class, 'dev2']);
 
