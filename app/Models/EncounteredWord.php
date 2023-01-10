@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\Goal;
+use App\Models\GoalAchievement;
 
 class EncounteredWord extends Model
 {
@@ -23,7 +25,37 @@ class EncounteredWord extends Model
     ];
 
     public function setStage($stage) {
+        $selectedLanguage = Auth::user()->selected_language;
+        
+        // if it's a newly saved word, update today's achievement
         if ($this->stage >= 0 && $stage < 0) {
+            $goal = Goal::where('user_id', Auth::user()->id)
+                ->where('language', $selectedLanguage)
+                ->where('type', 'learn_words')
+                ->first();
+            
+            $achievement = GoalAchievement::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->where('goal_id', $goal->id)
+            ->where('day', Carbon::now()->toDateString())
+            ->first();
+
+            if (!$achievement) {
+                $achievement = new GoalAchievement();
+                $achievement->language = $selectedLanguage;
+                $achievement->user_id = Auth::user()->id;
+                $achievement->goal_id = $goal->id;
+                $achievement->achieved_quantity = 0;
+                $achievement->goal_quantity = $goal->quantity;
+                $achievement->day = Carbon::now()->toDateString();
+            }
+            
+
+            $achievement->achieved_quantity++;
+            $achievement->save();
+        }
+        
+        if ($this->stage >= 0 && $stage < 0 && $stage !== -7) {
             $this->relearning = true;
         }
 

@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Lesson;
 use App\Models\Phrase;
 use App\Models\EncounteredWord;
-use App\Models\DailyAchivement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Goal;
+use App\Models\GoalAchievement;
 
 class ReviewController extends Controller
 {
@@ -125,20 +126,34 @@ class ReviewController extends Controller
 
     public function updateReviewCounts(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
-        $dailyAchivement = DailyAchivement::where('user_id', Auth::user()->id)->where('day', \date('Y-m-d'))->where('language', $selectedLanguage)->first();
+        
+        // updage today's reading achievement
+        $goal = Goal::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->where('type', 'read_words')
+            ->first();
+        
+        $achievement = GoalAchievement::where('user_id', Auth::user()->id)
+        ->where('language', $selectedLanguage)
+        ->where('goal_id', $goal->id)
+        ->where('day', Carbon::now()->toDateString())
+        ->first();
 
-        if (!$dailyAchivement) {
-            $dailyAchivement = new DailyAchivement();
-            $dailyAchivement->user_id = Auth::user()->id;
-            $dailyAchivement->day = \date('Y-m-d');
-            $dailyAchivement->read_words = 0;
-            $dailyAchivement->reviewed_words = 0;
-            $dailyAchivement->language = $selectedLanguage;
+        if (!$achievement) {
+            $achievement = new GoalAchievement();
+            $achievement->language = $selectedLanguage;
+            $achievement->user_id = Auth::user()->id;
+            $achievement->goal_id = $goal->id;
+            $achievement->achieved_quantity = 0;
+            $achievement->goal_quantity = $goal->quantity;
+            $achievement->day = Carbon::now()->toDateString();
         }
+        
 
-        $dailyAchivement->read_words += $request->readWords;
-        $dailyAchivement->reviewed_words += $request->reviewCount;
-        $dailyAchivement->save();
+        $achievement->achieved_quantity += $request->readWords;
+        $achievement->save();
+
+        //$request->readWords
 
         return 'success';
     }

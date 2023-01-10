@@ -7,11 +7,15 @@ use App\Models\User;
 use App\Models\EncounteredWord;
 use App\Models\Book;
 use App\Models\Lesson;
+use App\Models\Goal;
+use App\Models\GoalAchievement;
 use App\Models\Phrase;
-use App\Models\DailyAchivement;
+use App\Models\DailyAchievement;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -27,250 +31,217 @@ class HomeController extends Controller
     }
 
     public function dev() {
-        $fstart = microtime(true);
-        $twords = 0;
-        $devLessons = Lesson::where('language', 'japanese')->get();
-        $index = 1;
-        ob_implicit_flush(true);
-        foreach ($devLessons as $devLesson) {
-            $start = microtime(true);
-            //if ($index > 10) break;
-            $selectedLanguage = Auth::user()->selected_language;
-            $kanjipattern = "/[a-zA-Z0-9０-９あ-んア-ンー。、:？！＜＞： 「」（）｛｝≪≫〈〉《》【】
-                『』〔〕［］・\n\r\t\s\(\)　]/u";
+        $selectedLanguage = Auth::user()->selected_language;
+        Goal::truncate();
+        GoalAchievement::truncate();
+        
+        $goal = new Goal();
+        $goal->name = 'Reviews';
+        $goal->user_id = Auth::user()->id;
+        $goal->language = $selectedLanguage;
+        $goal->type = 'review';
+        $goal->quantity = 366;
+        $goal->save();
 
-            if (isset($devLesson->id)) {
-                $lesson = Lesson::where('id', $devLesson->id)->where('user_id', Auth::user()->id)->first();
-            } else {
-                $lesson = new Lesson();
+        $achievement = new GoalAchievement();
+        $achievement->language = $selectedLanguage;
+        $achievement->user_id = Auth::user()->id;
+        $achievement->goal_id = $goal->id;
+        $achievement->achieved_quantity = 42;
+        $achievement->goal_quantity = $goal->quantity;
+        $achievement->day = Carbon::now()->subDays(1)->toDateString();
+        $achievement->save();
+
+        $achievement = new GoalAchievement();
+        $achievement->language = $selectedLanguage;
+        $achievement->user_id = Auth::user()->id;
+        $achievement->goal_id = $goal->id;
+        $achievement->achieved_quantity = 84;
+        $achievement->goal_quantity = $goal->quantity + 14;
+        $achievement->day = Carbon::now()->subDays(2)->toDateString();
+        $achievement->save();
+
+        $achievement = new GoalAchievement();
+        $achievement->language = $selectedLanguage;
+        $achievement->user_id = Auth::user()->id;
+        $achievement->goal_id = $goal->id;
+        $achievement->achieved_quantity = $goal->quantity - 24;
+        $achievement->goal_quantity = $goal->quantity - 24;
+        $achievement->day = Carbon::now()->subDays(3)->toDateString();
+        $achievement->save();
+
+        $goal = new Goal();
+        $goal->name = 'Reading';
+        $goal->user_id = Auth::user()->id;
+        $goal->language = $selectedLanguage;
+        $goal->type = 'read_words';
+        $goal->quantity = 3000;
+        $goal->save();
+
+        $readingData = DailyAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
+        foreach ($readingData as $data) {
+            if (!$data->read_words) {
+                continue;
             }
             
-            $lesson->user_id = Auth::user()->id;
-            $lesson->name = $devLesson->name;
-            $lesson->read_count = isset($devLesson->id) ? $lesson->read_count : 0;
-            $lesson->word_count = 0;
-            $lesson->book_id = $devLesson->book_id;
-            $lesson->language = $selectedLanguage;
-            $lesson->processed_text = '';
-            $lesson->unique_words = '';
-
-            $response = Http::post('127.0.0.1:8678/tokenizer/', [
-                'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $devLesson->raw_text)),
-            ]);
-
-            $lesson->processed_text = $response;
-
-            $words = json_decode($response);
-            $wordsToSkip = config('langapp.wordsToSkip');
-            $wordCount = 0;
-            $uniqueWords = [];
-            $uniqueWordIds = [];
-
-            $processedWords = [];
-            $processedWordCount = 0;
-            for ($i = 0; $i < count($words); $i++) {
-                $word = new \StdClass();
-                $word->word = $words[$i]->w;
-                $word->reading = $words[$i]->r;
-                $word->lemma = $words[$i]->l;
-                $word->lemmaReading = $words[$i]->lr;
-                $word->sentenceIndex = $words[$i]->si;
-
-                if ($i < count($words) - 1 && $words[$i]->pos == 'VERB' && $words[$i + 1]->pos == 'VERB'  && !in_array($words[$i]->w, $wordsToSkip, true)) {
-                    $i ++;
-                    $word->word .= $words[$i]->w;
-                    $word->reading .= $words[$i]->r;
-                    $word->lemmaReading = $words[$i - 1]->r . $words[$i]->lr;
-                    $word->lemma = $words[$i - 1]->w . $words[$i]->l;
-                }
-                
-                if ($words[$i]->pos == 'VERB' && $words[$i]->w !== $words[$i]->l && $i < count($words) - 1 && $words[$i + 1]->pos == 'AUX') {
-                    do {
-                        $i ++;
-                        if ($words[$i]->pos == 'AUX') {
-                            $word->word .= $words[$i]->w;
-                            $word->reading .= $words[$i]->r;
-                        } else {
-                            $i --; break;
-                        }
-                    } while($words[$i]->pos == 'AUX' && $i < count($words) - 1);
-                } else if ($words[$i]->pos == 'VERB' && $words[$i]->w !== $words[$i]->l && $i < count($words) - 1 && $words[$i + 1]->pos == 'SCONJ') {
-                    do {
-                        $i ++;
-                        if ($words[$i]->pos == 'SCONJ') {
-                            $word->word .= $words[$i]->w;
-                            $word->reading .= $words[$i]->r;
-                        } else {
-                            $i --; break;
-                        }
-                    } while($words[$i]->pos == 'SCONJ' && $i < count($words) - 1);
-                }
-
-                $word->phraseIds = [];
-                
-                if (!in_array($word->word, $wordsToSkip, true)) {
-                    $wordCount ++;
-                }
-                
-                $processedWords[$processedWordCount] = $word;
-                $processedWordCount ++;
-
-                if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {
-                    array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
-                    
-                    $encounteredWord = EncounteredWord::select('id')->where('word', mb_strtolower($processedWords[$processedWordCount - 1]->word, 'UTF-8'))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->first();
-                    if (!$encounteredWord) {
-                        if ($selectedLanguage == 'japanese') {
-                            $kanji = preg_replace($kanjipattern, "", $processedWords[$processedWordCount - 1]->word);
-                            $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
-                        }
-
-                        $encounteredWord = new EncounteredWord();
-                        $encounteredWord->user_id = Auth::user()->id;
-                        $encounteredWord->language = $selectedLanguage;
-                        $encounteredWord->word = mb_strtolower($processedWords[$processedWordCount - 1]->word, 'UTF-8');
-                        $encounteredWord->lemma = $processedWords[$processedWordCount - 1]->lemma;
-                        $encounteredWord->kanji = $selectedLanguage == 'japanese' ? implode('', $kanji) : '';
-                        $encounteredWord->reading = $processedWords[$processedWordCount - 1]->reading;
-                        $encounteredWord->base_word = mb_strtolower($processedWords[$processedWordCount - 1]->lemma, 'UTF-8');
-                        $encounteredWord->base_word_reading = $processedWords[$processedWordCount - 1]->lemmaReading;
-                        $encounteredWord->example_sentence = '';
-                        $encounteredWord->stage = 2;
-                        $encounteredWord->translation = '';
-
-                        if ($encounteredWord->base_word == $encounteredWord->word) {
-                            $encounteredWord->base_word = '';
-                            $encounteredWord->base_word_reading = '';
-                        }
-
-                        $encounteredWord->save();
-                    }
-
-                    array_push($uniqueWordIds, $encounteredWord->id);
-                }
-            }
-
-            $lesson->word_count = $wordCount;
-            $lesson->processed_text = gzcompress(json_encode($processedWords), 1);
-            $lesson->unique_words = json_encode($uniqueWords);
-            $lesson->unique_word_ids = json_encode($uniqueWordIds);
-            $lesson->save();
-
-            $phrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-            foreach($phrases as $phrase) {
-                $phraseWords = json_decode($phrase->words);
-                if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
-                    continue;
-                }
-
-                $lesson->updatePhraseIds($phrase->id);
-                
-            }
-            
-            $twords += count($processedWords);
-            echo($index . ': ' . (microtime(true) - $start) . 's ' . count($processedWords) . 'words <br>');
-            $index ++;
-            echo str_pad('',4096);
-            
+            $achievement = new GoalAchievement();
+            $achievement->language = $selectedLanguage;
+            $achievement->user_id = Auth::user()->id;
+            $achievement->goal_id = $goal->id;
+            $achievement->achieved_quantity = $data->read_words;
+            $achievement->goal_quantity = 3000;
+            $achievement->day = $data->day;
+            $achievement->save();
         }
 
-        echo('runtime: ' . (microtime(true) - $fstart) . 's ' . $twords . 'words <br>');
-        ob_implicit_flush(false);
+        $goal = new Goal();
+        $goal->name = 'New words';
+        $goal->user_id = Auth::user()->id;
+        $goal->language = $selectedLanguage;
+        $goal->type = 'learn_words';
+        $goal->quantity = 10;
+        $goal->save();
+
+        $achievement = new GoalAchievement();
+        $achievement->user_id = Auth::user()->id;
+        $achievement->language = $selectedLanguage;
+        $achievement->goal_id = $goal->id;
+        $achievement->achieved_quantity = 4;
+        $achievement->goal_quantity = $goal->quantity;
+        $achievement->day = Carbon::now()->subDays(1)->toDateString();
+        $achievement->save();
+
+        $achievement = new GoalAchievement();
+        $achievement->user_id = Auth::user()->id;
+        $achievement->language = $selectedLanguage;
+        $achievement->goal_id = $goal->id;
+        $achievement->achieved_quantity = 13;
+        $achievement->goal_quantity = $goal->quantity;
+        $achievement->day = Carbon::now()->subDays(2)->toDateString();
+        $achievement->save();
+
+        $achievement = new GoalAchievement();
+        $achievement->user_id = Auth::user()->id;
+        $achievement->language = $selectedLanguage;
+        $achievement->goal_id = $goal->id;
+        $achievement->achieved_quantity = 15;
+        $achievement->goal_quantity = $goal->quantity;
+        $achievement->day = Carbon::now()->subDays(3)->toDateString();
+        $achievement->save();
     }
 
-    public function dev2() {
-        ob_implicit_flush(true);
-        $fstart = microtime(true);
-        $twords = 0;
-        
-        $affected = EncounteredWord::where('language', 'japanese')->where('example_sentence', '<>', '')->where('translation', '')->update(['example_sentence' => '']);
-        echo('Deleted examples where there is no translation: ' . $affected . '<br>');
-        $affected = EncounteredWord::where('language', 'japanese')->where('example_sentence', '<>', '')->where('stage', '>', -1)->update(['example_sentence' => '']);
-        echo('Deleted examples where stage > -1: ' . $affected . '<br>');
-        $words = EncounteredWord::where('language', 'japanese')->where('example_sentence', '<>', '')->orderBy('id', 'desc')->get();
-        echo('Words to modify: ' . count($words) . '<br><br>');
-        $uniqueWords = [];
-        
-        foreach ($words as $word) {
-            $lessons = Lesson::where('language', 'japanese')->orderBy('id', 'desc')->get();
-            foreach($lessons as $lesson) {
-                $uniqueWords = json_decode($lesson->unique_words);
-                if (!in_array($word->word, $uniqueWords, true)) {
-                    continue;
-                }
-
-                $lessonWords = json_decode(gzuncompress($lesson->processed_text));
-                $sentenceStart = 0;
-                $sentenceStartIndex = 0;
-                for ($i = 0; $i < count($lessonWords); $i++) {
-                    // sentence start
-                    if ($i && $lessonWords[$i]->sentenceIndex !== $sentenceStartIndex) {
-                        $sentenceStart = $i;
-                        $sentenceStartIndex = $lessonWords[$i]->sentenceIndex;
-                    }
-
-                    // if word is found, save new example sentence
-                    if ($lessonWords[$i]->word == mb_strtolower($word->word)) {                        
-                        $exampleSentence = [];
-                        $j = $sentenceStart;
-                        while($j < count($lessonWords) - 1 && $lessonWords[$j]->sentenceIndex == $sentenceStartIndex) {
-                            if ($lessonWords[$j]->word !== 'NEWLINE') {
-                                array_push($exampleSentence, $lessonWords[$j]->word);
-                            }
-
-                            $j ++;
-                        }
-
-                        
-                        if ($exampleSentence !== json_decode($word->example_sentence)) {
-                            echo('<br><br><br>Word: ' . $word->word);
-                            echo('<br>Sentence:' . $sentenceStart . ' - ' . $j . '');
-                            echo('<br>New example:<br>');
-                            var_dump(implode('', $exampleSentence));
-                            echo('<br><br>Old example:');
-                            var_dump(implode('', json_decode($word->example_sentence)));
-                        }
-                        
-
-                        $word->example_sentence = json_encode($exampleSentence);
-                        $word->save();
-                        break;
-                    }
-                }
-
-
-                // stops at the first example sentence
-                break;
-            }
-        }
-
-        ob_implicit_flush(false);
-    }
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
+    public function index() {
+        $selectedLanguage = Auth::user()->selected_language;
+        
         return view('home', [
-            'language' => Auth::user()->selected_language,
+            'language' => $selectedLanguage
         ]);
     }
 
-    public function statistics()
-    {
+    public function getGoals() {
+        $selectedLanguage = Auth::user()->selected_language;
+        $goals = Goal::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
+
+        foreach ($goals as $goal) {
+            $goal->todaysQuantity = $goal->getTodaysQuantity();
+        }
+
+        return json_encode($goals);
+    }
+
+    public function getCalendarData() {
+        $selectedLanguage = Auth::user()->selected_language;
+        $calendarData = [];
+
+        // query goal achievements
+        $goalAchievements = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
+        $goalAchievements = DB::table('goal_achievements')
+            ->leftJoin('goals', 'goal_achievements.goal_id', '=', 'goals.id')
+            ->select('goals.name', 'goals.type', 'goal_achievements.day', 'goal_achievements.achieved_quantity', 'goal_achievements.goal_quantity')
+            ->where('goals.user_id', Auth::user()->id)
+            ->where('goals.language', $selectedLanguage)->get();
+
+        // add goal achievements to calendar data
+        foreach ($goalAchievements as $achievement) {
+            // look for achievement date in calendar data
+            $dayIndex = -1;
+            foreach ($calendarData as $index => $day) {
+                if ($day->day == $achievement->day) {
+                    $dayIndex = $index;
+                    break;
+                }
+            }
+
+            // update or append calendar data
+            $achievementData = new \StdClass();
+            $achievementData->name = $achievement->name;
+            $achievementData->type = $achievement->type;
+            $achievementData->day = $achievement->day;
+            $achievementData->achievedQuantity = $achievement->achieved_quantity;
+            $achievementData->goalQuantity = $achievement->goal_quantity;
+            
+            if ($dayIndex !== -1) {
+                array_push($calendarData[$dayIndex]->achievements, $achievementData);
+            } else {
+                $dayData = new \StdClass();
+                $dayData->day = $achievement->day;
+                $dayData->achievements = [$achievementData];
+                $dayData->reviewsDue = 0;
+                array_push($calendarData, $dayData);
+            }
+        }
+
+        // query the count of reviews for each day
+        $reviewsDue = EncounteredWord::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->whereNotNull('next_review')
+            ->selectRaw(DB::raw('next_review as day, count(id) as quantity'))
+            ->groupBy('next_review')->get();
+
+
+        // add reviews due to calendar data
+        foreach ($reviewsDue as $review) {
+            // look for review date in calendar data
+            $dayIndex = -1;
+            foreach ($calendarData as $index => $day) {
+                if ($day->day == $review->day) {
+                    $dayIndex = $index;
+                    break;
+                }
+            }
+
+            // update or append calendar data
+            if ($dayIndex !== -1) {
+                $calendarData[$dayIndex]->reviewsDue = $review->quantity;
+            } else {
+                $dayData = new \StdClass();
+                $dayData->day = $review->day;
+                $dayData->achievements = [];
+                $dayData->reviewsDue = $review->quantity;
+                array_push($calendarData, $dayData);
+            }
+        }
+
+        return json_encode($calendarData);
+    }
+
+    public function getStatistics() {
         // language statistics
         $today = date('Y-m-d');
         $selectedLanguage = Auth::user()->selected_language;
         $languageStatistics = new \stdClass();
-        $languageStatistics->readWordCount = DailyAchivement::select('read_words')->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->sum('read_words');
-        $languageStatistics->readWordCountToday = DailyAchivement::select('read_words')->where('day', \date('Y-m-d'), Auth::user()->id)->where('language', $selectedLanguage)->sum('read_words');
+        $languageStatistics->readWordCount = 0;
+        $languageStatistics->readWordCountToday = 0;
         $languageStatistics->learned = EncounteredWord::select('id')->where('stage', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
         $languageStatistics->learning = EncounteredWord::select('id')->where('stage', '<', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
         $languageStatistics->learning_levels = EncounteredWord::select('stage')->where('stage', '<', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->sum('stage');
-        $languageStatistics->days_of_learning = DailyAchivement::where('read_words', '>', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
+        $languageStatistics->days_of_learning = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->distinct('day')->count('day');
         $languageStatistics->words_to_review = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->inRandomOrder()->limit(50)->count('id');
         $languageStatistics->words_to_review_total = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->inRandomOrder()->limit(50)->count('id');
 

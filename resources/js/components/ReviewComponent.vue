@@ -184,6 +184,7 @@
                 this.language = data.language;
                 
                 this.afterMounted();
+                console.log(this.reviews);
             }.bind(this)).catch(function (error) {
             }).then(function () {
 
@@ -303,14 +304,17 @@
                 }
 
                 var saveData = {
-                    id: this.reviews[this.currentReviewIndex].id
+                    id: this.reviews[this.currentReviewIndex].id,
+                    changedWhileReviewing: true
                 };
 
                 if (this.reviews[this.currentReviewIndex].relearning) {
+                    console.log(this.reviews[this.currentReviewIndex].word + '|correct| removed from relearning phase, no stage change');
                     saveData.relearning = false;
                     this.reviews[this.currentReviewIndex].relearning = false;
                 } else {
                     saveData.stage = this.reviews[this.currentReviewIndex].stage + 1;
+                    console.log(this.reviews[this.currentReviewIndex].word + '|correct| stage increased from ' + (saveData.stage - 1) + ' to ' + saveData.stage);
                 }
 
                 if (!this.practiceMode) {
@@ -323,7 +327,6 @@
                         }
                     });
                 } else {
-                    console.log('practicemode, update skipped');
                     if (this.reviews.length == 1) {
                         this.finish();
                     } else {
@@ -347,18 +350,30 @@
                 }
 
                 var saveData = {
-                    id: this.reviews[this.currentReviewIndex].id
+                    id: this.reviews[this.currentReviewIndex].id,
+                    changedWhileReviewing: true
                 };
                 
+                if (this.reviews[this.currentReviewIndex].relearning) {
+                    console.log(this.reviews[this.currentReviewIndex].word + '|missed| was already in relearning mode, nothing happens');
+                }
+
                 if (!this.reviews[this.currentReviewIndex].relearning && !this.practiceMode) {
-                    saveData.relearning = true;
-
                     if (this.reviews[this.currentReviewIndex].stage > -7) {
-                        saveData.stage = this.reviews[this.currentReviewIndex].stage - 1;
-                    } else {
-                        saveData.stage = -7;
-                    }
+                        if (this.reviews[this.currentReviewIndex].stage > -6) {
+                            saveData.relearning = true;
+                            this.reviews[this.currentReviewIndex].relearning = true;
+                        }
 
+                        this.reviews[this.currentReviewIndex].stage = this.reviews[this.currentReviewIndex].stage - 1;
+                        saveData.stage = this.reviews[this.currentReviewIndex].stage;
+                        console.log(this.reviews[this.currentReviewIndex].word + '|missed| placed into relearning mode, stage decreased from ' + (saveData.stage + 1) + ' to ' + (saveData.stage));
+                    } else {
+                        console.log(this.reviews[this.currentReviewIndex].word + '|missed| placed into relearning mode, stage stayed the same -7');
+                    }
+                }                
+
+                if (!this.practiceMode) {
                     axios.post(url, saveData).then(() => {
                         setTimeout(this.next, this.settings.transitionDuration);
                     });

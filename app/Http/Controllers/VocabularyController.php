@@ -11,12 +11,47 @@ use App\Models\Book;
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
+use App\Models\Goal;
+use App\Models\GoalAchievement;
 
 class VocabularyController extends Controller
 {
     public function saveWord(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
         $word = EncounteredWord::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
+        
+        // if the reviewed item got leveled up or relearning state got removed
+        // while being reviewed, then increase the daily review goal
+        if (!is_null($request->changedWhileReviewing) && $request->changedWhileReviewing) {
+            if (($request->stage <= 0 && $request->stage > $word->stage) || 
+                (isset($request->relearning) && $request->relearning === false && boolval($word->relearning))) {
+                
+                $goal = Goal::where('user_id', Auth::user()->id)
+                    ->where('language', $selectedLanguage)
+                    ->where('type', 'review')
+                    ->first();
+
+                $achievement = GoalAchievement::where('user_id', Auth::user()->id)
+                ->where('language', $selectedLanguage)
+                ->where('goal_id', $goal->id)
+                ->where('day', Carbon::now()->toDateString())
+                ->first();
+        
+                if (!$achievement) {
+                    $achievement = new GoalAchievement();
+                    $achievement->language = $selectedLanguage;
+                    $achievement->user_id = Auth::user()->id;
+                    $achievement->goal_id = $goal->id;
+                    $achievement->achieved_quantity = 0;
+                    $achievement->goal_quantity = $goal->quantity;
+                    $achievement->day = Carbon::now()->toDateString();
+                }
+        
+                $achievement->achieved_quantity ++;
+                $achievement->save();
+            }
+        }
 
         if (isset($request->translation)) {
             $word->translation = $request->translation;
@@ -51,7 +86,7 @@ class VocabularyController extends Controller
         }
 
         if (isset($request->relearning)) {
-            $word->relearning = $request->relearning;
+            $word->relearning = boolval($request->relearning);
         }
         
         $word->save();
@@ -62,6 +97,7 @@ class VocabularyController extends Controller
     public function savePhrase(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
         $isNewPhrase = false;
+
 
         if (is_null($request->id)) {
             $phrase = new Phrase();
@@ -74,6 +110,37 @@ class VocabularyController extends Controller
             $phrase = Phrase::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
         }
 
+        // if the reviewed item got leveled up or relearning state got removed
+        // while being reviewed, then increase the daily review goal
+        if (!is_null($request->changedWhileReviewing) && $request->changedWhileReviewing) {
+            if (($request->stage <= 0 && $request->stage > $phrase->stage) || 
+                (isset($request->relearning) && $request->relearning === false && boolval($phrase->relearning))) {
+                
+                $goal = Goal::where('user_id', Auth::user()->id)
+                    ->where('language', $selectedLanguage)
+                    ->where('type', 'review')
+                    ->first();
+
+                $achievement = GoalAchievement::where('user_id', Auth::user()->id)
+                ->where('language', $selectedLanguage)
+                ->where('goal_id', $goal->id)
+                ->where('day', Carbon::now()->toDateString())
+                ->first();
+        
+                if (!$achievement) {
+                    $achievement = new GoalAchievement();
+                    $achievement->language = $selectedLanguage;
+                    $achievement->user_id = Auth::user()->id;
+                    $achievement->goal_id = $goal->id;
+                    $achievement->achieved_quantity = 0;
+                    $achievement->goal_quantity = $goal->quantity;
+                    $achievement->day = Carbon::now()->toDateString();
+                }
+        
+                $achievement->achieved_quantity ++;
+                $achievement->save();
+            }
+        }
 
         $phrase->user_id = Auth::user()->id;
         $phrase->language = $selectedLanguage;
@@ -95,7 +162,7 @@ class VocabularyController extends Controller
         }
 
         if (isset($request->relearning)) {
-            $phrase->relearning = $request->relearning;
+            $phrase->relearning = boolval($request->relearning);
         }
         
         $phrase->save();

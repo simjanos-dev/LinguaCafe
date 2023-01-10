@@ -35,7 +35,9 @@ Route::group(['middleware' => 'web'], function () {
 
     
     // home
-    Route::post('/statistics', [App\Http\Controllers\HomeController::class, 'statistics']);
+    Route::post('/statistics/get', [App\Http\Controllers\HomeController::class, 'getStatistics']);
+    Route::post('/goals/get', [App\Http\Controllers\HomeController::class, 'getGoals']);
+    Route::post('/get-calendar-data', [App\Http\Controllers\HomeController::class, 'getCalendarData']);
     Route::get('/language/change/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
     Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);

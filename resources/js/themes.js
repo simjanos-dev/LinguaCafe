@@ -1,5 +1,6 @@
 export default {
     light: {
+        foreground: '#ffffff',
         background: '#fafafa',
         backgroundHighlight: '#ebebeb',
         navigation: '#f4f4f5',
@@ -19,8 +20,15 @@ export default {
         highlightedWord: '#61df6b',
         
         readerWordSelection: '#d8d8d8',
+
+        calendarBorders: '#dbdbdb',
+        dailyGoalReview: '#61df6b',
+        dailyGoalReading: '#64B5F6',
+        dailyGoalNew: '#ffdd4b',
+        
     },
     dark: {
+        foreground: '#1e1e1e',
         background: '#fafafa',
         backgroundHighlight: '#ebebeb',
         navigation: '#f4f4f5',
@@ -40,10 +48,15 @@ export default {
         highlightedWord: '#61df6b',
 
         readerWordSelection: '#d8d8d8',
+        
+        calendarBorders: '#aaaaaa',
+        dailyGoalReview: '#61df6b',
+        dailyGoalReading: '#64B5F6',
+        dailyGoalNew: '#ffdd4b',
     },
     eink: {
         name: '#000000',
-
+        foreground: '#ffffff',
         background: '#ffffff',
         backgroundHighlight: '#aaaaaa',
         navigation: '#ffffff',
@@ -63,6 +76,10 @@ export default {
         highlightedWord: '#000000',
 
         readerWordSelection: '#888888',
-
+        
+        calendarBorders: '#000000',
+        dailyGoalReview: '#000000',
+        dailyGoalReading: '#000000',
+        dailyGoalLearning: '#000000',
     },
 }

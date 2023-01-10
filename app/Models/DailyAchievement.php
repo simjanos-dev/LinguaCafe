@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyAchivement extends Model
+class DailyAchievement extends Model
 {
     use HasFactory;
+    protected $table = 'daily_achivements';
 
     protected $fillable = [
         'user_id',

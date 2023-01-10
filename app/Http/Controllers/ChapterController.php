@@ -8,10 +8,12 @@ use App\Models\EncounteredWord;
 use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\Phrase;
-use App\Models\DailyAchivement;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
+use App\Models\Goal;
+use App\Models\GoalAchievement;
 
 class ChapterController extends Controller
 {
@@ -155,20 +157,32 @@ class ChapterController extends Controller
         $lesson->read_count ++;
         $lesson->save();
 
-        // increase read word count
-        $dailyAchivement = DailyAchivement::where('user_id', Auth::user()->id)->where('day', \date('Y-m-d'))->where('language', $selectedLanguage)->first();
-        if (!$dailyAchivement) {
-            $dailyAchivement = new DailyAchivement();
-            $dailyAchivement->user_id = Auth::user()->id;
-            $dailyAchivement->day = \date('Y-m-d');
-            $dailyAchivement->read_words = 0;
-            $dailyAchivement->reviewed_words = 0;
-            $dailyAchivement->language = $request->language;
+        // updage today's reading achievement
+        $goal = Goal::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->where('type', 'read_words')
+            ->first();
+        
+        $achievement = GoalAchievement::where('user_id', Auth::user()->id)
+        ->where('language', $selectedLanguage)
+        ->where('goal_id', $goal->id)
+        ->where('day', Carbon::now()->toDateString())
+        ->first();
+
+        if (!$achievement) {
+            $achievement = new GoalAchievement();
+            $achievement->language = $selectedLanguage;
+            $achievement->user_id = Auth::user()->id;
+            $achievement->goal_id = $goal->id;
+            $achievement->achieved_quantity = 0;
+            $achievement->goal_quantity = $goal->quantity;
+            $achievement->day = Carbon::now()->toDateString();
         }
+        
 
-        $dailyAchivement->read_words += $lesson->word_count;
-        $dailyAchivement->save();
-
+        $achievement->achieved_quantity += $lesson->word_count;
+        $achievement->save();
+        
         return 'success';
     }
 

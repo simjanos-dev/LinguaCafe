@@ -5,7 +5,6 @@
  */
 import axios from 'axios'
 import Vue from 'vue';
-import VueSlider from 'vue-slider-component';
 import VueRouter from 'vue-router';
 import vuetify from './vuetify';
 
@@ -25,8 +24,16 @@ window.Vue.use(VueRouter);
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
+
+import VueSlider from 'vue-slider-component';
+import LayoutComponent from './components/LayoutComponent.vue';
+import GoalComponent from './components/GoalComponent.vue';
 Vue.component('vue-slider', VueSlider);
-Vue.component('layout-component', require('./components/LayoutComponent.vue').default);
+Vue.component('layout-component', LayoutComponent);
+Vue.component('goal-component', GoalComponent);
+
+
 
 
 

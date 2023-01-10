@@ -5,6 +5,7 @@
 @import '~bootstrap/scss/bootstrap';
 
 // Pages
+@import 'home';
 @import 'vocabulary_practice';
 @import 'flash_card_collections';
 @import 'edit_flash_card_collection';
@@ -27,10 +28,20 @@
     font-family: sans-serif !important;
 }
 
-.v-overlay {
+// it's required because otherwise it had 
+// weird white background outside of rounded corners
+.v-dialog.date-picker-dialog {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+
+    .v-picker.v-card.v-picker--date {
+        border-radius: 0px !important;
+        overflow: hidden !important;
+        background: linear-gradient(180deg, var(--v-primary-base) 0%, #ffffff 50%) !important;
+    }
 }
 
-.v-dialog__content {
+.v-overlay {
 }
 
 .v-sheet.v-app-bar.v-toolbar:not(.v-sheet--outlined) {
