@@ -14,6 +14,11 @@
     cursor: pointer;
 }
 
+.v-menu__content.date-picker-dialog {
+    width: 290px !important;
+    min-width: 290px !important;
+}
+
 .calendar-popup-menu {
     background-color: var(--v-foreground-base);
     width: 220px;
@@ -50,37 +55,19 @@
     }
 }
 
+#goal-selection-text-small {
+    display: none;
+}
+
+#calendar-date-button {
+    width: 170px;
+}
+
 #calendar {
     position: relative;
     background-color: var(--v-foreground-base);
-    height: 250px;
+    height: 200px;    
     
-    #calendar-buttons {
-        display: flex;
-        width: 100%;
-        height: 32px;
-
-    }
-
-    .day-review-toggle-button {
-        border-top-left-radius: 16px;
-        border-bottom-left-radius: 16px;
-        border-top-right-radius: 0px;
-        border-bottom-right-radius: 0px;
-
-        &:last-child {
-            border-top-left-radius: 0px;
-            border-bottom-left-radius: 0px;
-            border-top-right-radius: 16px;
-            border-bottom-right-radius: 16px;
-        }
-
-        i {
-            font-size: 20px;
-            color: var(--v-text-base);
-        }
-    }
-
     #calendar-months {
         box-sizing: border-box;
         display: flex;
@@ -90,21 +77,22 @@
         align-content: flex-start;
         overflow: hidden;
         width: 100%;
-        height: 200px;
+        height: 166px;
 
         .calendar-month {
             display: block;
             width: 200px;
-            height: 184px;
-            margin: 0px 9px;
+            height: 166px;
             margin-bottom: 20px;
 
             .calendar-month-title {
-                font-size: 12px;
+                font-size: 14px;
+                font-weight: bold;
                 color: var(--v-text-base);
                 display: block;
                 width: 100%;
-                height: 20px;
+                height: 28px;
+                padding-left: 8px;
             }
 
             .calendar-month-days {
@@ -123,9 +111,9 @@
                     height: 24px;
                     line-height: 22px;
                     margin: 2px;
-                    background-color: rgba(0, 0, 0, 0.06);
-                    border: 1px solid rgba(0, 0, 0, 0.06);
-                    border-radius: 6px;
+                    background-color: rgba(0, 0, 0, 0.03);
+                    border: 1px solid rgba(0, 0, 0, 0.03);
+                    border-radius: 8px;
                     font-size: 9px;
                     text-align: center;
                     user-select: none;
@@ -146,11 +134,18 @@
                         width: 150%;
                         height: 150%;
                         z-index: 1;
-                        
-                        &.half-achievement {
-                            transform-origin: center;
-                            transform: translate(-6px, -6px) rotate(45deg) translate(0, 16px);
-                        }
+                        transition: .3s;
+                    }
+                    
+                    &.no-achievement .calendar-day-background {
+                        background-color: rgba(0, 0, 0, 0) !important;
+                        transform-origin: center;
+                        transform: translate(0, 0) rotate(0) translate(0, 0);
+                    }
+
+                    &.half-achievement .calendar-day-background {
+                        transform-origin: center;
+                        transform: translate(-6px, -6px) rotate(45deg) translate(0, 16px);
                     }
 
                     .calendar-day-text {
@@ -172,7 +167,7 @@
     flex-wrap: wrap;
 
     .goal {
-        width: 280px;
+        width: 292px;
         height: 380px;
 
         .v-progress-circular__info {
@@ -180,12 +175,285 @@
             color: var(--v-text-base);
         }
     }
-
 }
 
-@media (max-width: 500px) {
-    #calendar {
-        .calendar-entry {
+#statistics {
+    display: flex;
+    flex-wrap: wrap;
+
+    .statistic {
+        display: flex;
+        width: 290px;
+        height: 100px;
+
+        .statistic-icon {
+            width: 86px;
+            i {
+                font-size: 42px;
+            }
         }
-    }   
+
+        .statistic-data {
+            width: calc(100% - 86px);
+
+            .statistic-value {
+                width: 100%;
+                height: 34px;
+                line-height: 30px;
+                font-size: 28px;
+                text-align: right;
+            }
+
+            .statistic-name {
+                width: 100%;
+                height: 22px;
+                font-size: 14px;
+                text-align: right;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    #goals {
+        .goal {
+            width: 246px;
+            height: 400px;
+            
+            &:nth-child(even) {
+                margin-right: 0px !important;
+            }
+
+            .v-progress-circular__info {
+                font-size: 20px;
+            }
+        }
+    }
+
+    #statistics {
+        .statistic {
+            width: 246px;
+
+            &:nth-child(even) {
+                margin-right: 0px !important;
+            }
+
+            .statistic-data {
+                .statistic-value {
+                    font-size: 26px;
+                }
+
+                .statistic-name {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    .subheader.subheader-home {
+        max-width: 358px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #calendar {
+        max-width: 360px;
+        height: 255px;
+        margin-left: auto;
+        margin-right: auto;
+        
+        #calendar-months {
+            width: 100%;
+            height: 224px;
+
+            .calendar-month {
+                width: 268px;
+                height: 210px;
+                margin-bottom: 10px;
+
+                .calendar-month-title {
+                    font-size: 16px;
+                    height: 32px;
+                }
+
+                .calendar-month-days {
+                    .calendar-day {
+                        width: 34px;
+                        height: 34px;
+                        line-height: 34px;
+                        margin: 2px;
+                        font-size: 10px;
+                    }
+                }
+            }
+        }
+    }    
+
+    #calendar-date-button {
+        width: unset;
+
+        #calendar-date-button-text {
+            display: none;
+        }
+    }
+
+    #goals {
+        justify-content: center;
+
+        .goal {
+            width: 360px;
+            max-width: 360px;
+            height: 410px;
+            margin-left: 8px !important;
+            margin-right: 8px !important;
+
+            .v-progress-circular__info {
+                font-size: 20px;
+            }
+
+            &:nth-child(even) {
+                margin-right: 8px !important;
+            }
+        }
+    }
+
+    #statistics {
+        justify-content: center;
+
+        .statistic {
+            width: 360px;
+            max-width: 360px;
+            margin-left: 8px !important;
+            margin-right: 8px !important;
+
+            .statistic-data {
+                .statistic-value {
+                    font-size: 26px;
+                }
+
+                .statistic-name {
+                    font-size: 14px;
+                }
+            }
+
+            &:nth-child(even) {
+                margin-right: 8px !important;
+            }
+        }
+    }
+}
+
+@media (max-width: 451px) {
+    #calendar {
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    #goal-selection-text {
+        display: none;
+    }
+
+    #goal-selection-text-small {
+        display: block;
+    }
+}
+
+@media (max-width: 355px) {
+
+    #calendar {
+        max-width: 360px;
+        height: 230px;
+        
+        #calendar-months {
+            width: 100%;
+            height: 204px;
+
+            .calendar-month {
+                width: 232px;
+                height: 190px;
+
+                .calendar-month-days {
+                    .calendar-day {
+                        width: 29px;
+                        height: 29px;
+                        line-height: 29px;
+                        margin: 2px;
+                    }
+                }
+            }
+        }
+    }    
+
+    #calendar-date-button {
+        width: unset;
+
+        #calendar-date-button-text {
+            display: none;
+        }
+    }
+
+    #goals {
+        justify-content: center;
+
+        .goal {
+            width: 360px;
+            max-width: 360px;
+            height: 410px;
+            margin-left: 8px !important;
+            margin-right: 8px !important;
+
+            .v-progress-circular__info {
+                font-size: 20px;
+            }
+
+            &:nth-child(even) {
+                margin-right: 8px !important;
+            }
+        }
+    }
+
+    #statistics {
+        justify-content: center;
+
+        .statistic {
+            width: 360px;
+            max-width: 360px;
+            margin-left: 8px !important;
+            margin-right: 8px !important;
+
+            .statistic-data {
+                .statistic-value {
+                    font-size: 26px;
+                }
+
+                .statistic-name {
+                    font-size: 14px;
+                }
+            }
+
+            &:nth-child(even) {
+                margin-right: 8px !important;
+            }
+        }
+    }
+}
+
+#app main.eink #calendar {
+    #calendar-months .calendar-month .calendar-month-days .calendar-day {
+        &.half-achievement .calendar-day-background {
+            transform: translate(-12px, -12px) rotate(45deg) translate(0, 24px);
+        }
+
+        .calendar-day-text {
+            color: black;
+        }
+
+        &.full-achievement .calendar-day-text {
+            color: white;
+        }
+    }
 }

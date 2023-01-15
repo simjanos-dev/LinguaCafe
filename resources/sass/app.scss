@@ -41,6 +41,10 @@
     }
 }
 
+.v-date-picker-table--month td .v-btn {
+    border-radius: 18px !important;
+}
+
 .v-overlay {
 }
 
@@ -83,6 +87,14 @@
 
 .v-tab {
     color: rgba(255, 255, 255, 1);
+}
+
+.v-menu__content {
+    border-radius: 8px !important;
+
+    &.rounded {
+        border-radius: 8px !important;
+    }
 }
 
 .v-btn.menu-button,

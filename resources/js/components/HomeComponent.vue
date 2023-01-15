@@ -1,59 +1,41 @@
 <template>
-    <v-container id="home">
-        <!--
-        <table class="table table-bordered table-sm col-md-6 offset-md-3" v-if="this.statistics !== null">
-            <thead></thead>
-            <tbody>
-                <tr>
-                    <td>Days of reading:</td>
-                    <td>{{ statistics.days_of_learning }}</td>
-                </tr>
-                <tr>
-                    <td>Known words:</td>
-                    <td>{{ statistics.learned }}</td>
-                </tr>
-                <tr>
-                    <td>Words to review:</td>
-                    <td>{{ statistics.words_to_review }} / {{ statistics.words_to_review_total }}</td>
-                </tr>
-                <tr>
-                    <td>Read words:</td>
-                    <td>{{ statistics.readWordCount }} ({{ statistics.readWordCountToday }})</td>
-                </tr>                
-                <tr v-if="statistics.kanjiCount !== undefined">
-                    <td>Kanji:</td>
-                    <td>{{ statistics.kanjiCount }}</td>
-                </tr>
-            </tbody>
-        </table>
-        -->
-        
-        <div class="subheader d-flex">
+    <v-container id="home" class="pb-12">
+        <div class="subheader subheader-home d-flex">
             Calendar
 
             <v-spacer></v-spacer>
-            <v-btn icon class="calendar-title-button" @click="previousMonth">
-                <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
-            <v-dialog
+            <v-menu offset-y class="rounded-lg">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn :color="theme == 'eink' ? 'white' : ''" rounded depressed v-bind="attrs" v-on="on">
+                        <span id="goal-selection-text-small">Goal</span>
+                        <span id="goal-selection-text">Displayed goal</span>
+                        <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
+                        <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                    </v-btn>
+                </template>
+                <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'reviews_due'; updateCalendar();">Reviews due today</v-btn>
+                <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'read_words'; updateCalendar();">Reading</v-btn>
+                <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'review'; updateCalendar();">Review</v-btn>
+                <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'learn_words'; updateCalendar();">New words</v-btn>
+            </v-menu>
+            <v-menu
                 v-model="showDatePicker"
-                persistent
                 width="290px"
-                class="rounded-xl"
+                offset-y
+                left
                 content-class="date-picker-dialog"
             >
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn 
+                        id="calendar-date-button"
                         rounded
-                        text
-                        color="text"
+                        depressed
                         @click="showDatePicker = true;"
                     >
-                        <v-icon>mdi-calendar</v-icon>&nbsp;{{ pickerDateFormated }}
+                        <span id="calendar-date-button-text">{{ pickerDateFormated }}&nbsp;</span><v-icon>mdi-calendar</v-icon>
                     </v-btn>
                 </template>
                 <v-date-picker 
-                    class="rounded-xl"
                     v-model="pickerDate"
                     scrollable
                     type="month"
@@ -65,13 +47,10 @@
                     <v-spacer></v-spacer>
                     <v-btn text rounded @click="showDatePicker = false">Close</v-btn>
                 </v-date-picker>
-            </v-dialog>
-            <v-btn icon class="calendar-title-button" @click="nextMonth">
-                <v-icon>mdi-arrow-right</v-icon>
-            </v-btn>
+            </v-menu>
         </div>
         
-        <div id="calendar" class="rounded-lg border ma-3 pa-2 mx-auto">
+        <v-card outlined id="calendar" class="rounded-lg pa-4">
             <v-menu
                 content-class="calendar-popup-menu rounded-lg pa-4"
                 v-model="showCalendarMenu"
@@ -110,17 +89,17 @@
                         <div 
                             :class="{
                                 'calendar-day': true, 
-                                'achievement': day.achievement !== null,
+                                'no-achievement': (selectedGoal == 'reviews_due' && !day.reviewsDue) || (selectedGoal !== 'reviews_due' && (day.achievement == null || day.achievement.achievedQuantity == 0)),
+                                'half-achievement': selectedGoal !== 'reviews_due' && day.achievement !== null && day.achievement.achievedQuantity < day.achievement.goalQuantity,
+                                'full-achievement': (selectedGoal == 'reviews_due' && day.reviewsDue) || (selectedGoal !== 'reviews_due' && day.achievement !== null && day.achievement.achievedQuantity >= day.achievement.goalQuantity),
                             }"
+                            transition="fade-transition"
                             @click.stop="openCalendarDayPopup($event, day)"
                             v-for="(day, dayIndex) in month.days" 
                             :key="index + '-' + dayIndex"
                         >
-                            <div :class="{
-                                'calendar-day-background': true,
-                                'half-achievement': selectedGoal !== 'reviews_due' && day.achievement !== null && day.achievement.achievedQuantity < day.achievement.goalQuantity,
-                                }"
-                                v-if="day.achievement !== null || (selectedGoal == 'reviews_due' && day.reviewsDue)"
+                            <div 
+                                class="calendar-day-background"
                                 :style="{'background-color': goalColors[selectedGoal]}"
                             ></div>
                             <div class="calendar-day-text" v-if="selectedGoal !== 'reviews_due'">{{ day.day }}</div>
@@ -132,40 +111,9 @@
                     </div>
                 </div>
             </div>
+        </v-card>
 
-            <div id="calendar-buttons">
-                <v-chip 
-                    class="calendar-goal-button" 
-                    :color="selectedGoal == 'reviews_due' ? goalColors[selectedGoal] : ''" 
-                    @click="selectedGoal = 'reviews_due'; updateCalendar();"
-                >
-                    Reviews due
-                </v-chip>
-                <v-chip 
-                    class="calendar-goal-button ml-1" 
-                    :color="selectedGoal == 'review' ? goalColors[selectedGoal] : ''" 
-                    @click="selectedGoal = 'review'; updateCalendar();"
-                >
-                    Reviews
-                </v-chip>
-                <v-chip 
-                    class="calendar-goal-button mx-1" 
-                    :color="selectedGoal == 'read_words' ? goalColors[selectedGoal] : ''" 
-                    @click="selectedGoal = 'read_words'; updateCalendar();"
-                >
-                    Reading
-                </v-chip>
-                <v-chip 
-                    class="calendar-goal-button" 
-                    :color="selectedGoal == 'learn_words' ? goalColors[selectedGoal] : ''" 
-                    @click="selectedGoal = 'learn_words'; updateCalendar();"
-                >
-                    New words
-                </v-chip>
-            </div>
-        </div>
-
-        <div class="subheader">Daily goals</div>
+        <div class="subheader subheader-home">Daily goals</div>
         <div id="goals">
             <goal-component 
                 v-for="(goal, index) in goals" :key="index"
@@ -176,15 +124,47 @@
                 >
             </goal-component>
         </div>
+
+        <div class="subheader subheader-home d-flex">
+            Statistics
+        </div>
+
+        <div id="statistics">
+            <v-card 
+                outlined 
+                class="statistic rounded-lg mr-4 mb-4 pa-4"
+                v-for="(statistic, index) in statistics"
+                :key="index"
+            >
+                <div class="statistic-icon">
+                    <v-icon :color="$vuetify.theme.currentTheme[statistic.color]">{{ statistic.icon }}</v-icon>
+                </div>
+
+                <div class="statistic-data">
+                    <div 
+                        class="statistic-value" 
+                        :style="{color: $vuetify.theme.currentTheme[statistic.color]}"
+                    >
+                        {{ formatNumber(statistic.value) }}
+                    </div>
+                    <div class="statistic-name">{{ statistic.name }}</div>
+                </div>
+            </v-card>
+        </div>
+
     </v-container>
 </template>
 
+
 <script>
+    import {formatNumber} from './../helper.js';
     const moment = require('moment');
     export default {
         data: function() {
             return {
-                statistics : null,
+                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                datePickerDialog: window.innerWidth <= 545 ? true : false,
+                statistics : [],
                 
                 // goal data
                 goals: [],
@@ -360,6 +340,7 @@
 
                 this.selectedMonths.reverse();
             },
+            formatNumber: formatNumber,
         }
     }
 </script>

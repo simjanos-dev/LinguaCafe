@@ -1,9 +1,9 @@
 export default {
     light: {
         foreground: '#ffffff',
-        background: '#fafafa',
+        background: '#F2F3F5',
         backgroundHighlight: '#ebebeb',
-        navigation: '#f4f4f5',
+        navigation: '#F2F3F5',
         primary: '#aa8476',
         primaryDark: '#7e6257',
         secondary: '#aa8476',
@@ -25,6 +25,12 @@ export default {
         dailyGoalReview: '#61df6b',
         dailyGoalReading: '#64B5F6',
         dailyGoalNew: '#ffdd4b',
+
+        statisticsDays: '#9830f6',
+        statisticsReadWords: '#00b452',
+        statisticsKnownWords: '#f6304c',
+        statisticsLearningWords: '#FEBB13',
+        statisticsKanji: '#2C97DF',
         
     },
     dark: {
@@ -53,6 +59,12 @@ export default {
         dailyGoalReview: '#61df6b',
         dailyGoalReading: '#64B5F6',
         dailyGoalNew: '#ffdd4b',
+
+        statisticsDays: '#9830f6',
+        statisticsReadWords: '#00b452',
+        statisticsKnownWords: '#f6304c',
+        statisticsLearningWords: '#FEBB13',
+        statisticsKanji: '#2C97DF',
     },
     eink: {
         name: '#000000',
@@ -81,5 +93,11 @@ export default {
         dailyGoalReview: '#000000',
         dailyGoalReading: '#000000',
         dailyGoalLearning: '#000000',
+
+        statisticsDays: '#000000',
+        statisticsReadWords: '#000000',
+        statisticsKnownWords: '#000000',
+        statisticsLearningWords: '#000000',
+        statisticsKanji: '#000000',
     },
 }

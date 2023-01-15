@@ -31,6 +31,7 @@ class HomeController extends Controller
     }
 
     public function dev() {
+        return;
         $selectedLanguage = Auth::user()->selected_language;
         Goal::truncate();
         GoalAchievement::truncate();
@@ -236,19 +237,28 @@ class HomeController extends Controller
         $today = date('Y-m-d');
         $selectedLanguage = Auth::user()->selected_language;
         $languageStatistics = new \stdClass();
-        $languageStatistics->readWordCount = 0;
-        $languageStatistics->readWordCountToday = 0;
-        $languageStatistics->learned = EncounteredWord::select('id')->where('stage', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
-        $languageStatistics->learning = EncounteredWord::select('id')->where('stage', '<', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
-        $languageStatistics->learning_levels = EncounteredWord::select('stage')->where('stage', '<', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->sum('stage');
-        $languageStatistics->days_of_learning = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->distinct('day')->count('day');
-        $languageStatistics->words_to_review = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->inRandomOrder()->limit(50)->count('id');
-        $languageStatistics->words_to_review_total = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0')->where('example_sentence', '!=', '')->inRandomOrder()->limit(50)->count('id');
+
+        $readingGoal = Goal::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->where('type', 'read_words')
+            ->first();
+
+        $languageStatistics->days = new \stdClass();
+        $languageStatistics->days->name = 'Days of activity';
+        $languageStatistics->days->value = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->distinct('day')->count('day');
+        $languageStatistics->days->color = 'statisticsDays';
+        $languageStatistics->days->icon = 'mdi-calendar-check';
+
+        $languageStatistics->readWordCount = new \stdClass();
+        $languageStatistics->readWordCount->name = 'Read words';
+        $languageStatistics->readWordCount->value = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('goal_id', $readingGoal->id)->sum('achieved_quantity');
+        $languageStatistics->readWordCount->color = 'statisticsReadWords';
+        $languageStatistics->readWordCount->icon = 'mdi-book-open-variant';
 
         if ($selectedLanguage == 'japanese') {
             // get unique kanji
             $uniqueKanji = [];
-            $words = EncounteredWord::where('stage', 0)->where('language', 'Japanese')->where('user_id', Auth::user()->id)->get();
+            $words = EncounteredWord::where('stage', '<=', 0)->where('language', 'japanese')->where('user_id', Auth::user()->id)->get();
             foreach ($words as $word) {
                 $kanji = preg_split("//u", $word->kanji, -1, PREG_SPLIT_NO_EMPTY);
                 foreach($kanji as $currentKanji) {
@@ -257,8 +267,25 @@ class HomeController extends Controller
                     }
                 }
             }
-            $languageStatistics->kanjiCount = count($uniqueKanji);
+            
+            $languageStatistics->kanji = new \stdClass();
+            $languageStatistics->kanji->name = 'Kanji';
+            $languageStatistics->kanji->value = count($uniqueKanji);
+            $languageStatistics->kanji->color = 'statisticsKanji';
+            $languageStatistics->kanji->icon = 'mdi-ideogram-cjk';
         }
+        
+        $languageStatistics->known = new \stdClass();
+        $languageStatistics->known->name = 'Known words';
+        $languageStatistics->known->value = EncounteredWord::select('id')->where('stage', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
+        $languageStatistics->known->color = 'statisticsKnownWords';
+        $languageStatistics->known->icon = 'mdi-credit-card-check';
+
+        $languageStatistics->learning = new \stdClass();
+        $languageStatistics->learning->name = 'Words currently studied';
+        $languageStatistics->learning->value = EncounteredWord::select('id')->where('stage', '<', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
+        $languageStatistics->learning->color = 'statisticsLearningWords';
+        $languageStatistics->learning->icon = 'mdi-school';
         
         return json_encode($languageStatistics);
     }
@@ -269,7 +296,7 @@ class HomeController extends Controller
 
     public function changeLanguage($language) {
         $user = Auth::user();
-        $user->selected_language = $language;
+        $user->selected_language = strtolower($language);
         $user->save();
     }
 }

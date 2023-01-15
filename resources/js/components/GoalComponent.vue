@@ -1,5 +1,5 @@
 <template>
-    <v-card outlined class="goal d-flex flex-column rounded-lg mr-3 mb-3">
+    <v-card outlined class="goal d-flex flex-column rounded-lg mr-4 mb-4">
         <v-card-title>
             {{ titles[type] }}
             <v-spacer></v-spacer>
@@ -7,8 +7,8 @@
         </v-card-title>
         <v-card-text class="d-flex flex-column align-center">
             <v-progress-circular
-                :size="180"
-                :width="20"
+                :size="progressCircleSize"
+                :width="progressCircleWidth"
                 :value="percentage"
                 :rotate="270"
                 :color="color"
@@ -40,6 +40,8 @@
     export default {
         data: function() {
             return {
+                progressCircleSize: window.innerWidth <= 545 ? 200 : 180,
+                progressCircleWidth: window.innerWidth <= 545 ? 22 : 20,
                 titles: {
                     'review': 'Review',
                     'read_words': 'Reading',

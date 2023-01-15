@@ -7,19 +7,19 @@
             <v-card-text>
                 <v-list nav rounded>
                     <v-list-item-group color="primaryDark" v-model="selectedLanguage">
-                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('Japanese')" value="Japanese">
+                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('japanese')" value="japanese">
                             <v-list-item-avatar tile min-width="60">
                                 <v-img class="border" :src="'/images/flags/japanese'" max-width="43" height="28"></v-img> 
                             </v-list-item-avatar>
                             <v-list-item-content>Japanese</v-list-item-content>
                         </v-list-item>
-                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('Norwegian')" value="Norwegian">
+                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('norwegian')" value="norwegian">
                             <v-list-item-avatar tile min-width="60">
                                 <v-img class="border" :src="'/images/flags/norwegian'" max-width="43" height="28"></v-img> 
                             </v-list-item-avatar>
                             <v-list-item-content>Norwegian</v-list-item-content>
                         </v-list-item>
-                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('German')" value="German">
+                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('german')" value="german">
                             <v-list-item-avatar tile min-width="60">
                                 <v-img class="border" :src="'/images/flags/german'" max-width="43" height="28"></v-img> 
                             </v-list-item-avatar>
@@ -44,7 +44,7 @@
         emits: ['input'],
         data: function() {
             return {
-                selectedLanguage: 'Japanese',
+                selectedLanguage: 'japanese',
             };
         },
         mounted: function() {
