@@ -56,7 +56,7 @@
                     </v-simple-table>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn rounded color="primary" :to="'/chapters/' + book.id">Chapters</v-btn>
+                        <v-btn rounded color="secondary" :to="'/chapters/' + book.id">Chapters</v-btn>
                     </v-card-actions>
                 </v-card-text>
             </div>

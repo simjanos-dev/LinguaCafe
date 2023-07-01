@@ -13,7 +13,7 @@
                         <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
                     </v-btn>
                 </template>
-                <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'reviews_due'; updateCalendar();">Reviews due today</v-btn>
+                <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'reviews_due'; updateCalendar();">Reviews due</v-btn>
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'read_words'; updateCalendar();">Reading</v-btn>
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'review'; updateCalendar();">Review</v-btn>
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'learn_words'; updateCalendar();">New words</v-btn>
@@ -28,6 +28,7 @@
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn 
                         id="calendar-date-button"
+                        :color="theme == 'eink' ? 'white' : ''"
                         rounded
                         depressed
                         @click="showDatePicker = true;"

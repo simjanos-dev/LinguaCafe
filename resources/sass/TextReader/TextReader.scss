@@ -1,5 +1,3 @@
-@import 'variables';
-
 @font-face {
     font-family: notosans;
     src: url('/fonts/noto-sans/NotoSansJP-Regular.otf');
@@ -25,6 +23,16 @@
     }
 }
 
+#text-reader-settings div.row {
+    .switch-container {
+        height: 50px !important;
+    }
+
+    .slider-container {
+        height: 60px !important;
+    }
+}
+
 #reader-box {
     position: relative;
     display: block;
@@ -32,267 +40,30 @@
     min-height: 100%;
     margin: 0px auto;
     padding: 0px;
-    padding-top: 60px;
+    padding-top: 1px;
     overflow-y: visible;
     transition: .2s;
 
-    #finish-reading-button {
-        margin-top: 10px;
-        margin-bottom: 500px;
+    #toolbar-box {
+        display: inline-block;
+        float: right;
+        width: 44px;
+        z-index: 2;
+        background-color: var(--v-background-base);
+        padding: 24px 0px;
     }
 
     #toolbar {
         position: fixed;
+        flex-wrap: wrap;
         box-sizing: border-box;
-        display: flex;
-        margin-top: -60px;
-        height: 60px;
-        max-width: calc(100% - 256px);
-        z-index: 3;
-
-        .toolbar-button-group {
-            display: flex;
-        }
-
-        .toolbar-button {
-            border: none;
-            width: 48px;
-            height: 48px;
-            border-radius: 6px;
-        }
+        width: 44px;
+        padding-left: 4px;
+        transition: .2s;
     }
 
-    #toolbar-header {
-        display: block;
-        position: fixed;
-        height: 50px;
-        line-height: 50px;
-        width: 100%;
-        color: var(--v-text-base);
-        font-size: 22px;
-        z-index: 3;
-        overflow: hidden;
-
-        span {
-            float: right;
-            margin-right: 120px;
-        }
-    }
-
-    #glossary, #settings, #chapters {
-        position: relative;
-        box-sizing: border-box;
-        display: none;
-        width: calc(100%);
-        margin: 0px;
-        height: 100%;
-        padding: 12px 0px;
-        padding-top: 50px;
-        
-        &.visible {
-            display: block;
-        }
-    }
-
-    #settings {
-        .setting {
-            display: block;
-            width: 100%;
-            height: 50px;
-            padding-left: 10px;
-            
-            .setting-label {
-                display: inline-block;
-                float: left;
-                width: 210px;
-                height: 50px;
-                line-height: 50px;
-                font-size: 15px;
-            }
-
-            .setting-input {
-                display: inline-block;
-                float: left;
-                width: calc(100% - 210px);
-                max-width: 300px;
-                height: 50px;
-                
-                &.switch .v-input{
-                    margin-top: 10px;
-                }
-
-                &.slider {
-                    padding-top: 10px;
-                }
-            }
-        }
-    }
-
-    #glossary .glossary-entry {
-        position: relative;
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 100px;
-        padding: 10px;
-
-        &:nth-child(even) {
-            background-color: rgb(232, 232, 232);
-        }
-
-        rt {
-            font-size: 13px;
-            color: var(--v-text-base);
-        }
-
-        .glossary-title {
-            height: 50px;
-        }
-
-        .stage {
-            position: relative;
-            display: inline-block;
-            float: left;
-            width: 40px;
-            height: 26px;
-            line-height: 26px;
-            border-radius: 8px;
-            margin-top: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            overflow: hidden;
-            text-align: center;
-            user-select: none;
-
-            &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"],
-            &[stage="-3"], &[stage="-2"], &[stage="-1"] {
-                background-color: var(--v-highlightedWord-base);
-                color: var(--v-highlightedWordText-base);
-            }
-
-            &[stage="2"] {
-                background-color: var(--v-newWord-base);
-                color: var(--v-highlightedWordText-base);
-            }
-        }
-
-        .word, .reading {
-            display: inline-block;
-            float: left;
-            border-radius: 4px;
-            padding: 1px 5px;
-            margin-left: 10px;
-            font-size: 15px;
-            user-select: none;
-            height: 50px;
-            line-height: 50px;
-            
-            div {
-                display: inline-block;
-            }
-
-            &.word {
-                min-width: 60px;
-            }
-
-            &.reading {
-                color: var(--v-text-base);
-            }
-        }
-
-        .translation {
-            display: block;
-            width: 100%;
-            font-size: 14px;
-            
-            ul {
-                padding-left: 70px;
-            }
-        }
-    }
-
-    #chapters {
-        .chapter-connect-line {
-            position: relative;
-            display: block;
-            width: 10px;
-            height: 10px;
-            margin: 15px calc(50% - 5px);
-            border-radius: 10px;
-            background-color: var(--v-primary-base);
-        }
-
-        .chapter {
-            position: relative;
-            display: block;
-            width: calc(100% - 32px);
-            line-height: 30px;
-            scroll-margin: 50px;
-
-            .chapter-title {
-                font-weight: bold;
-                margin-bottom: 5px;
-
-                div {
-                    display: inline-block;
-                    height: 28px;
-                    line-height: 26px;
-                    float: right;
-                    padding: 1px 5px;
-                    background-color: var(--v-highlightedWord-base);
-                    color: var(--v-highlightedWordText-base);
-                    font-weight: normal;
-                    border-radius: 4px;
-                    font-size: 15px;
-                    user-select: none;
-                }
-            }
-
-            .chapter-read, 
-            .chapter-words,
-            .chapter-unique-words,
-            .chapter-known-words,
-            .chapter-highlighted-words,
-            .chapter-new-words {
-                width: 300px;
-                display: block;
-                margin-left: 20px;
-                margin-top: 1px;
-                font-size: 14px;
-                height: 22px;
-                line-height: 22px;
-
-                span {
-                    float: right;
-                }
-            }
-
-            .chapter-highlighted-words span {
-                width: 60px;
-                background-color: var(--v-highlightedWord-base);
-                color: var(--v-highlightedWordText-base);
-                border-radius: 4px;
-                text-align: center;
-            }
-
-            .chapter-new-words {
-                margin-top: 2px;
-                
-                span {
-                    width: 60px;
-                    background-color: var(--v-newWord-base);
-                    color: var(--v-highlightedWordText-base);
-                    border-radius: 4px;
-                    text-align: center;
-                }
-            }
-
-            button {
-                position: absolute;
-                bottom: 10px;
-                right: 10px;
-            }
-        }
+    #toolbar button {
+        margin: 8px 0px;
     }
 
     #vocab-box {
@@ -490,21 +261,22 @@
     #reader {
         box-sizing: border-box;
         display: block;
-        width: 100%;
+        width: calc(100% - 52px);
+        margin-top: 24px;
+        margin-bottom: 64px;
         line-height: 1.25;
         line-height: 1.3;
-        margin: 0px auto;
         user-select: none;
-        padding: 8px;
         transition: .2s;
         overflow-x: auto;
 
-        &.plain-text-mode {
-            user-select: text !important;
+        #chapter-name {
+            height: 42px;
+            line-height: 42px;
         }
 
-        &.hidden {
-            display: none;
+        &.plain-text-mode {
+            user-select: text !important;
         }
 
         .word {
@@ -512,6 +284,10 @@
             display: inline-block;
             cursor: pointer;
             margin: 1px 0px;
+            height: auto;
+            line-height: 100%;
+            padding-top: 4px; 
+            padding-bottom: 4px;
             transition: .2s;
             color: var(--v-text-base);
             border-radius: 0px;
@@ -545,7 +321,7 @@
             &.no-highlight, &.plain-text-mode {
                 background-color: rgba(0, 0, 0, 0) !important;
                 color: var(--v-text-base) !important;
-                border-bottom: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0);
             }
 
             &.phrase {
@@ -561,7 +337,7 @@
                 }
                 
                 &[phrasestage="0"] {
-                    border-color: rgb(90, 90, 90) !important;
+                    border-color: rgb(180, 180, 180) !important;
                     color: var(--v-text-base);
                 }
 
@@ -658,9 +434,13 @@
 
 
 @media (max-width: 1263px) { 
-    #reader-box #toolbar {
+    #reader-box{
         max-width: calc(100% - 8px);
     }
+}
+
+@media (max-width: 767px) {
+    
 }
 
 @media (max-width: 650px) {
@@ -671,103 +451,49 @@
             width: 90px;
             right: calc(50% - 45px);
         }
+    }
+}
 
-        #settings {
-            .setting {
-                height: auto;
-
-                .setting-label {
-                    display: block;
-                    float: unset;
-                    width: 100%;
-                    height: 30px;
-                    line-height: 30px;
-                }
+@media (max-width: 620px) {
     
-                .setting-input {
-                    display: block;
-                    float: unset;
-                    width: calc(100% - 16px);
-                    max-width: 300px;
-                    margin-bottom: 20px;
-                    
-                    &.switch, &.slider {
-                        padding-top: 0px;
-                    }
-                }
+    #reader-box {
+        padding: 0px 6px;
 
-                &.switch {
-                    height: 50px;
-                    margin-bottom: 20px;
-
-                    .setting-label {
-                        display: inline-block;
-                        float: left;
-                        width: 210px;
-                        margin-bottom: 0px;
-                    }
-        
-                    .setting-input.switch {
-                        display: block;
-                        float: unset;
-                        width: calc(100% - 210px);
-                        margin-bottom: 0px;
-                        padding-top: 0px !important;
-                    }
-                }
+        #reader {
+            .v-card__text {
+                padding: 0px;
             }
+            
+            width: calc(100% - 16px);
+            margin-top: 44px;
+            margin-bottom: 80px;
         }
 
-        #glossary .glossary-entry{
-            .word {
-                font-size: 17px;
-            }
-
-            .translation {
-                font-size: 15px;
-            }
+        #toolbar-box {
+            display: block;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 44px;
+            padding: 0px;
         }
+    
+        #toolbar {
+            top: 0px;
+            left: 0px;
+            height: 44px;
+            width: 100%;
+            overflow: hidden;
 
-        #chapters .chapter {
-            .chapter-read, 
-            .chapter-words,
-            .chapter-unique-words,
-            .chapter-known-words,
-            .chapter-highlighted-words,
-            .chapter-new-words {
-                width: calc(100% - 0px);
-                margin: 1px auto;
-                font-size: 13px;
-            }
-
-            .chapter-highlighted-words span{
-                width: 50px;
-            }
-
-            .chapter-new-words {
-                span {
-                    width: 50px;
-                }
+            button {
+                margin: 4px 8px;
             }
         }
     }
 }
 
 @media (max-width: 500px) {
-    #reader-box {
-        padding-top: 50px;
-
-        #toolbar {
-            height: 50px;
-            margin-top: -50px;
-        
-            .toolbar-button-group .toolbar-button{
-                min-width: 42px !important;
-                width: 42px !important;
-                height: 42px !important;
-            }
-        }
-    }
 }
 
 @media (max-width: 400px) {
@@ -833,5 +559,9 @@
         
         border-bottom-left-radius: 0px;
         border-bottom-right-radius: 0px;
+    }
+
+    #reader .word.phrase {
+        border-color: var(--v-text-base) !important;
     }
 }

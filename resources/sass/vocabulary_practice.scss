@@ -8,6 +8,7 @@
     margin: auto;
     text-align: center;
     font-family: notosans !important;
+    background-color: var(--v-background-base);
 
     #review-reveal-button,
     #review-correct-button,
@@ -21,25 +22,8 @@
         display: block;
         height: 280px;
         width: 40px;
-        left: calc(50% - 280px);
-        top: 90px;
-
-        .toolbar-button {
-            box-sizing: border-box !important;
-            width: 48px !important;
-            height: 48px !important;
-            margin: 0px auto;
-            transition: .2s;
-            border-radius: 6px;
-            
-            i {
-                font-size: 22px;
-            }
-    
-            &:active, &:focus {
-                outline: none;
-            }    
-        }
+        right: calc(50% - 276px);
+        top: 100px;
     }
     
     #review {
@@ -212,11 +196,15 @@
             
             .word {
                 display: block;
+                font-family: notosans !important;
             }
         }
 
         #review-card-back {
             transform: rotateY( 180deg );
+            .word, .reading {
+                font-family: notosans !important;
+            }
         }
     }
 }
@@ -354,12 +342,6 @@
             max-width: 440px;
             height: 40px;
             margin: 4px auto;
-
-            .toolbar-button {
-                display: inline-block;
-                float: left;
-                margin: 0px 5px;
-            }
         }
 
         #review-reveal-button,

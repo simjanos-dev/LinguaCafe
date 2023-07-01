@@ -9,18 +9,26 @@
                 </div>
                 <div id="progress-bar-remaining-counter" class="border">{{ totalReviews - correctReviews }}</div>
             </div>
-
+    
             <div id="toolbar">
-                <v-btn icon class="toolbar-button pa-0" @click="finished = true"><v-icon>mdi-check-all</v-icon></v-btn>
-                <v-btn-toggle class="ma-0" color="primary" group v-model="settings.fullscreen">
-                    <v-btn icon class="toolbar-button pa-0" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" :value="true" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
-                </v-btn-toggle>
-                <v-btn-toggle class="ma-0" color="primary" group v-model="settings.sentenceMode">
-                    <v-btn icon class="pa-0 ma-0 toolbar-button" :value="true" @click.stop="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon>mdi-card-text</v-icon></v-btn>
-                </v-btn-toggle>
-                <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-format-font-size-increase</v-icon></v-btn>
-                <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize --; saveSettings();"><v-icon>mdi-format-font-size-decrease</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon :color="settings.sentenceMode ? 'primary' : ''">mdi-card-text</v-icon></v-btn>
+
+                <!--
+                    <v-btn icon class="toolbar-button pa-0" @click="finished = true"><v-icon>mdi-check-all</v-icon></v-btn>
+                    <v-btn-toggle class="ma-0" color="primary" group v-model="settings.fullscreen">
+                        <v-btn icon class="toolbar-button pa-0" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                        <v-btn icon class="toolbar-button pa-0" :value="true" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                    </v-btn-toggle>
+                    <v-btn-toggle class="ma-0" color="primary" group v-model="settings.sentenceMode">
+                        <v-btn icon class="pa-0 ma-0 toolbar-button" :value="true" @click.stop="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon>mdi-card-text</v-icon></v-btn>
+                    </v-btn-toggle>
+                    <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-format-font-size-increase</v-icon></v-btn>
+                    <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize --; saveSettings();"><v-icon>mdi-format-font-size-decrease</v-icon></v-btn>
+                -->
             </div>
 
             <div id="review-card" 
@@ -176,7 +184,6 @@
                 data.lessonId = this.$route.params.chapterId;
             }
 
-            console.log(data);
             axios.post('/review', data).then(function (response) {
                 var data = response.data;
                 this.reviews = data.reviews;
@@ -184,7 +191,6 @@
                 this.language = data.language;
                 
                 this.afterMounted();
-                console.log(this.reviews);
             }.bind(this)).catch(function (error) {
             }).then(function () {
 
@@ -378,7 +384,6 @@
                         setTimeout(this.next, this.settings.transitionDuration);
                     });
                 } else {
-                    console.log('practicemode, update skipped');
                     setTimeout(this.next, this.settings.transitionDuration);
                 }
             },
@@ -396,7 +401,6 @@
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
                 
                 // update reviewed and read words data
-                console.log(this.readWords, this.finishedReviews);
                 axios.post('/review/update', {
                     readWords: this.readWords,
                     reviewCount: this.finishedReviews,

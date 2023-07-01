@@ -17,3 +17,6 @@ yarn-error.log
 /public/js/*.js
 !/public/css/awesomefont.css
 /public/js/dmak/kanji/*.svg
+/docker
+/tools/django_server/django_server/__pycache__
+/tools/django_server/tokenizer/__pycache__

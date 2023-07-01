@@ -13,11 +13,10 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .vue()
-    .sass('resources/sass/reader.scss', 'public/css')
     .sass('resources/sass/app.scss', 'public/css')
     .browserSync({
-        proxy: 'langdev.com',
-        host: 'langdev.com',
+        proxy: 'lingua.cafe',
+        host: 'lingua.cafe',
         open: 'external'
     });
     

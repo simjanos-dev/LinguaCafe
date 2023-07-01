@@ -29,10 +29,15 @@ window.Vue.use(VueRouter);
 import VueSlider from 'vue-slider-component';
 import LayoutComponent from './components/LayoutComponent.vue';
 import GoalComponent from './components/GoalComponent.vue';
+import TextReaderSettingsComponent from './components/TextReader/TextReaderSettings.vue';
+import TextReaderGlossaryComponent from './components/TextReader/TextReaderGlossary.vue';
+import TextReaderChapterListComponent from './components/TextReader/TextReaderChapterList.vue';
 Vue.component('vue-slider', VueSlider);
 Vue.component('layout-component', LayoutComponent);
 Vue.component('goal-component', GoalComponent);
-
+Vue.component('text-reader-settings-component', TextReaderSettingsComponent);
+Vue.component('text-reader-glossary-component', TextReaderGlossaryComponent);
+Vue.component('text-reader-chapter-list-component', TextReaderChapterListComponent);
 
 
 

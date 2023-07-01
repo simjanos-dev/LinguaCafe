@@ -51,11 +51,9 @@
         
         <!-- Kanji radicals -->
         <div class="subheader">Radicals</div>
-        <v-card outlined id="kanji-radicals" class="rounded-lg">
-            <v-card-text  class="d-flex flex-wrap">
-                <div class="kanji-radical ma-2" v-for="(radical, index) in radicals">{{ radical.radical }} <span>{{ radical.strokes }} strokes</span></div>
-            </v-card-text>
-        </v-card>
+        <div id="kanji-radicals" class="d-flex flex-wrap">
+            <div class="kanji-radical mr-3" v-for="(radical, index) in radicals">{{ radical.radical }} <span>{{ radical.strokes }} strokes</span></div>
+        </div>
         
         <!-- Kanji words -->
         <div class="subheader">Known words with {{ kanji }}</div>

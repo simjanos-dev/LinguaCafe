@@ -9,7 +9,9 @@
 @import 'vocabulary_practice';
 @import 'flash_card_collections';
 @import 'edit_flash_card_collection';
-@import 'reader';
+@import 'TextReader/TextReader';
+@import 'TextReader/TextReaderChapterList';
+@import 'TextReader/TextReaderGlossary';
 @import 'vocabulary';
 @import 'kanji_list';
 @import 'kanji_details';
@@ -19,13 +21,33 @@
 @import 'chapters';
 @import 'slider';
 
-.vue-slider-ltr .vue-slider-mark-label, 
-.vue-slider-rtl .vue-slider-mark-label {
-    margin-top: 5px !important;
-}
-
 * {
     font-family: sans-serif !important;
+}
+
+.v-slider__track-container {
+    height: 4px !important;
+    border-radius: 4px !important;
+}
+
+.v-slider__thumb-label {
+    opacity: 0 !important;
+    height: 28px !important;
+    width: auto !important;
+    transform: translateY(-20%) translateY(-12px) translateX(-50%) !important;
+    border-radius: 6px !important;
+    padding: 0px 6px !important;
+    font-size: 14px !important;
+    text-align: center;
+    transition: .2s !important;
+    
+    div {
+        transform: none !important;
+    }
+}
+
+.v-slider:hover .v-slider__thumb-label {
+    opacity: 1 !important;
 }
 
 // it's required because otherwise it had 
@@ -77,7 +99,7 @@
     border-radius: 6px;
 
     &:not(.v-pagination__item--active):hover {
-        background-color: rgba(0, 0, 0, .04) !important;
+        background-color: #0000000a !important;
     }
 
     &:not(.v-pagination__item--active):active {
@@ -154,6 +176,11 @@ a.v-btn.menu-button {
     a.navigation-button {
         text-decoration: none !important; 
         padding-left: 16px;
+        
+        &.v-list-item--active {
+            background-color: var(--v-primary-base) !important;
+            color: white !important;
+        }
     }
 
     &.v-navigation-drawer--mini-variant {
@@ -198,7 +225,7 @@ html, body, div#app {
 
 main {
     display: block;
-    overflow-x: hidden;
+    overflow: hidden;
     width: 100%;
 }
 
@@ -228,8 +255,8 @@ a.v-btn {
         text-transform: unset !important;
     }
 
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
 }
 
 .v-bottom-navigation .v-btn,
@@ -283,6 +310,11 @@ div.v-data-table {
     }
 }
 
+@media (max-width: 767px) {
+    .v-slider__thumb-label {
+        // opacity: 1 !important;
+    }
+}
 
 @media (max-width: 600px) {
     .v-bottom-navigation .v-btn,
@@ -306,6 +338,12 @@ div.v-data-table {
 // style for e-ink theme
 #app main.eink * {
     transition: 0s !important;
+}
+
+#app.eink {
+    .v-dialog, .v-overlay {
+        transition: 0s !important;
+    }
 }
 
 #navigation-drawer.eink {

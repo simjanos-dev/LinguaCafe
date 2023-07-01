@@ -1,171 +1,45 @@
 <template>
     <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}" :style="{'background-color': $vuetify.theme.currentTheme.background}">
-        <div id="reader-box" :style="{'max-width': settings.maximumTextWidth}" v-if="lessonId !== null">
-            <div v-if="!finished" id="toolbar" class="d-flex " :style="{'width': settings.maximumTextWidth, 'background-color': $vuetify.theme.currentTheme.background}">
-                <v-btn-toggle group class="toolbar-button-group menus ma-0 mb-16" v-model="toolbarMenu">
-                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('text')" value="text" title="Text"><v-icon>mdi-text-box-outline</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('chapters')" value="chapters" title="Chapters"><v-icon>mdi-bookmark</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('glossary')" value="glossary" title="Glossary"><v-icon>mdi-format-list-bulleted</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="setToolbar('settings')" value="settings" title="Settings"><v-icon>mdi-tune</v-icon></v-btn>
-                </v-btn-toggle>
-
-                
-                <v-btn-toggle class="toolbar-button-group ma-0 d-none d-sm-flex" group multiple v-model="toolbarOptions">
-                    <v-btn icon class="toolbar-button pa-0" @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon>mdi-marker</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="settings.japaneseText = !settings.japaneseText; saveSettings();"><v-icon>mdi-syllabary-hiragana</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="settings.highlightWords = !settings.highlightWords; saveSettings();"><v-icon>mdi-format-letter-matches</v-icon></v-btn>
-                </v-btn-toggle>
-                
-                <v-spacer></v-spacer>
-                <div class="toolbar-button-group zoom ma-0">
-                    <v-btn icon class="toolbar-button pa-0 ma-1" @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0 ma-1" @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+        <div id="reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}" v-if="lessonId !== null">
+            <div id="toolbar-box">
+                <div v-if="!finished" id="toolbar" :class="{'d-flex': true}" :style="{'top': toolbarTop + 'px'}">
+                    <v-btn icon @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                    <v-btn icon @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                    <v-btn icon @click="openDialog('settings')"><v-icon>mdi-cog</v-icon></v-btn>
+                    <v-btn icon @click="openDialog('chapters')"><v-icon>mdi-book-alphabet</v-icon></v-btn>
+                    <v-btn icon @click="openDialog('glossary')"><v-icon>mdi-translate</v-icon></v-btn>
+                    <v-btn icon @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                    <v-btn icon @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                    <v-btn icon @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
                 </div>
-
-                <v-btn-toggle class="toolbar-button-group ma-0" group multiple v-model="toolbarFullscreen">
-                    <v-btn icon class="toolbar-button pa-0" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
-                </v-btn-toggle>
             </div>
 
             <!-- Settings -->
-            <div id="toolbar-header" v-if="toolbar !== 'text'" :style="{'background-color': $vuetify.theme.currentTheme.background}">
-                <template v-if="toolbar == 'chapters'">Chapters</template>
-                <template v-if="toolbar == 'glossary'">Glossary</template>
-                <template v-if="toolbar == 'settings'">Settings</template>
-            </div>
-            <div id="settings" :class="{'visible': toolbar == 'settings'}">
-                <!-- Highlight words -->
-                <div class="setting switch">
-                    <div class="setting-label">Highlight words:</div>
-                    <div class="setting-input switch">
-                        <v-switch
-                            color="primary"
-                            v-model="settings.highlightWords" 
-                            @change="saveSettings(); updateToolbarButtonGroup()"
-                        ></v-switch>
-                    </div>
-                </div>
-
-                <!-- Maximum text width -->
-                <div class="setting">
-                    <div class="setting-label">Maximum text width:</div>
-                    <div class="setting-input slider">
-                        <vue-slider 
-                            :data="{
-                                '800px': '800px',
-                                '1000px': '1000px',
-                                '1200px': '1200px',
-                                '1400px': '1400px',
-                                '1500px': '1600px',
-                                '100%': '100%'
-                            }" 
-                            :marks="{'800px': 'Small', '100%': 'Full'}" 
-                            :drag-on-click="true"
-                            :lazy="true"
-                            :contained="true"
-                            v-model="settings.maximumTextWidth"
-                            @change="saveSettings"
-                        />
-                    </div>
-                </div>
-
-                <!-- Font size -->
-                <div class="setting">
-                    <div class="setting-label">Font size:</div>
-                    <div class="setting-input slider">
-                        <vue-slider 
-                            :min="15"
-                            :max="25"
-                            :interval="1"
-                            :marks="[15, 20, 25]" 
-                            :drag-on-click="true"
-                            :lazy="true"
-                            :contained="true"
-                            v-model="settings.fontSize"
-                            @change="saveSettings"
-                        />
-                    </div>
-                </div>
-
-                <!-- Japanese vertical text -->
-                <div class="setting switch">
-                    <div class="setting-label">Japanese vertical text:</div>
-                    <div class="setting-input switch">
-                        <v-switch
-                            color="primary"
-                            v-model="settings.japaneseText" 
-                            @change="saveSettings(); updateToolbarButtonGroup()"
-                        ></v-switch>
-                    </div>
-                </div>
-
-                <!-- Auto move words to known -->
-                <div class="setting switch">
-                    <div class="setting-label">Auto move words to known:</div>
-                    <div class="setting-input switch">
-                        <v-switch
-                            color="primary"
-                            v-model="settings.autoMoveWordsToKnown" 
-                            @change="saveSettings(); updateToolbarButtonGroup()"
-                        ></v-switch>
-                    </div>
-                </div>
-            </div>
+            <text-reader-settings-component
+                v-model="dialogs.settings"
+                :_highlight-words="settings.highlightWords"
+                :_plain-text-mode="settings.plainTextMode"
+                :_japanese-text="settings.japaneseText"
+                :_font-size="settings.fontSize"
+                :_line-spacing="settings.lineSpacing"
+                :_maximum-text-width="settings.maximumTextWidth"
+                :_display-suggested-translations="settings.displaySuggestedTranslations"
+                :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
+                @changed="updateSettings"   
+            ></text-reader-settings-component>
             
             <!-- Chapters -->
-            <div v-if="!finished" id="chapters" :class="{'visible': toolbar == 'chapters'}">
-                <template v-for="(lesson, index) in lessons">
-                    <div class="chapter-connect-line" v-if="index" v-for="i in 3"></div>
-                    <v-card outlined :id="lesson.id == lessonId ? 'selected-chapter' : ''" class="chapter rounded-lg pa-3 mx-auto" :key="index">
-                        <div class="chapter-title">
-                            {{ lesson.name }}
-                            <div v-if="lesson.id == lessonId"> Current chapter</div>
-                        </div>
-                        <div class="chapter-read">Read count: <span>{{ lesson.read_count}}</span></div>
-                        <div class="chapter-words">Words: <span>{{ lesson.wordCount.total }}</span></div>
-                        <div class="chapter-unique-words">Unique words: <span>{{ lesson.wordCount.unique }}</span></div>
-                        <div class="chapter-known-words">Known words: <span>{{ lesson.wordCount.known }}</span></div>
-                        <div class="chapter-highlighted-words">Highlighted words: <span class="highlighted">{{ lesson.wordCount.highlighted }}</span></div>
-                        <div class="chapter-new-words">New words: <span class="new">{{ lesson.wordCount.new }}</span></div>
-                        <v-card-actions class="pa-0 mt-3">
-                            <v-spacer></v-spacer>
-                            <v-btn rounded width="80px" color="primary" :small="$vuetify.breakpoint.xsOnly" :to="'/chapters/read/' + lesson.id" v-if="lesson.id != lessonId">Read</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </template>
-            </div>
+            <text-reader-chapter-list-component
+                :chapters="lessons"
+                :current-chapter-id="lessonId"
+                v-model="dialogs.chapters"
+            ></text-reader-chapter-list-component>
 
             <!-- Glossary -->
-            <div v-if="!finished" id="glossary" :class="{'visible': toolbar == 'glossary'}">
-                <template v-for="(word, index) in glossary">
-                    <div class="glossary-entry " :key="index">
-                        <div class="glossary-title">
-                            <!-- Glossary entry stage -->
-                            <div class="stage" :stage="word.stage">
-                                {{ Math.abs(word.stage) }}
-                            </div>
-                            
-                            <!-- Glossary entry word-->
-                            <div class="word" v-if="word.base_word == ''">
-                                <ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby>
-                            </div>
-                            <div class="word" v-if="word.base_word !== ''">
-                                <ruby>{{ word.base_word }}<rt>{{ word.base_word_reading }}</rt></ruby>
-                                <i class="fas fa-long-arrow-alt-right"></i> 
-                                <ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby> 
-                            </div>
-                        </div>
-
-                        <!-- Glossary entry translation-->
-                        <div class="translation" v-if="word.translation.length">
-                            <ul>
-                                <li v-for="(translation, index) in word.translation.split(';')">{{ translation }}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </template>
-            </div>
+            <text-reader-glossary-component
+                :glossary="glossary"
+                v-model="dialogs.glossary"
+            ></text-reader-glossary-component>
 
             <!-- Vocab box -->
             <v-card 
@@ -179,7 +53,7 @@
                     'top': vocabBox.position.top + 'px', 
                     'left': vocabBox.position.left + 'px',
                     'width': vocabBox.width + 'px'
-                }" 
+                }"
                 v-if="selection.length && !finished && !selectionOngoing " 
                 @mouseup.stop=";"
             >
@@ -412,25 +286,43 @@
             </v-card>
 
             <!-- Text -->
-            <div v-if="!finished" id="reader" :class="{'plain-text-mode': settings.plainTextMode, 'japanese-text': settings.japaneseText, 'hidden': toolbar !== 'text'}" @mousemove="removePhraseHover">
-                <template v-for="(word, wordIndex) in words">
-                    <template v-if="word.word.indexOf('NEWLINE') == -1 && word.word !== '\r\n' && language !== 'japanese'">
-                        <template v-if="spaceFreeWords.includes(word.word)">
-                            <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div>
-                        </template><!--
-                        --><template v-if="!spaceFreeWords.includes(word.word)"><!--
-                            --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                                @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
-                        --></template>
+            <v-card 
+                :outlined="theme !== 'eink'"
+                :flat="theme == 'eink'"
+                v-if="!finished"
+                id="reader"
+                :class="{
+                    'plain-text-mode': settings.plainTextMode, 
+                    'japanese-text': settings.japaneseText, 
+                    'rounded-lg': true,
+                    'ml-2': true,
+                    'pa-4': true
+                }" 
+                @mousemove="removePhraseHover"
+            >
+                <v-card-text>
+                    <div id="chapter-name" class="mb-4" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
+                        {{ lessonName }}
+                    </div>
 
-                    </template><!--
-                    --><div v-if="word.word.indexOf('NEWLINE') == -1 && language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px'}" 
-                        @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
-                        
-                    --><br v-if="word.word == 'NEWLINE'"><!--
-                --></template>
-                <br><br><br><br><br><br>
+                    <template v-for="(word, wordIndex) in words">
+                        <template v-if="word.word.indexOf('NEWLINE') == -1 && word.word !== '\r\n' && language !== 'japanese'">
+                            <template v-if="spaceFreeWords.includes(word.word)">
+                                <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px', 'margin-bottom': (settings.lineSpacing * 4) + 'px'}" 
+                                    @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div>
+                            </template><!--
+                            --><template v-if="!spaceFreeWords.includes(word.word)"><!--
+                                --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px', 'margin-bottom': (settings.lineSpacing * 4) + 'px'}" 
+                                    @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
+                            --></template>
+
+                        </template><!--
+                        --><div v-if="word.word.indexOf('NEWLINE') == -1 && language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px', 'margin-bottom': (settings.lineSpacing * 4) + 'px'}" 
+                            @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
+                            
+                        --><br v-if="word.word == 'NEWLINE'"><!--
+                    --></template>
+                </v-card-text>
                 <v-alert
                     class="my-3" 
                     border="left"
@@ -439,9 +331,11 @@
                     >
                     Something went wrong. Please try again.
                 </v-alert>
-                <v-btn rounded class="mt-8 mb-16" color="success" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn   >
-                <br><br><br><br>
-            </div>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn rounded class="mt-8" color="primary" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn>
+                </v-card-actions>
+            </v-card>&nbsp;
             
             <!-- Finish -->
             <div v-if="finished" id="finished-box">
@@ -486,6 +380,13 @@
     export default {
         data: function() {
             return {
+                dialogs: {
+                    settings: false,
+                    glossary: false,
+                    chapters: false
+                },
+                maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
+                toolbarTop: 68,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 phraseCurrentlySaving: false,
                 settings: {
@@ -493,15 +394,12 @@
                     plainTextMode: false,
                     japaneseText: false,
                     fontSize: 20,
-                    maximumTextWidth: '800px',
+                    lineSpacing: 1,
+                    maximumTextWidth: 0,
                     displaySuggestedTranslations: false,
                     autoMoveWordsToKnown: false,
-                    fullscreen: false,
+                    fullscreen: false
                 },
-                toolbarMenu: 'text',
-                toolbarOptions: [],
-                toolbarFullscreen: [],
-                toolbar: 'text',
                 spaceFreeWords: ['.', ',', ':', '?', '!', '-', '*', ' ', '\r\n', '\r\n '],
                 finished: false,
                 finishError: false,
@@ -557,7 +455,7 @@
         },
         props: {
         },
-        mounted() {
+        mounted: function () {
             window.oncontextmenu = function(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -591,6 +489,8 @@
             afterMounted: function() {
                 document.getElementById('app').addEventListener('mouseup', this.finishSelection);
                 window.addEventListener('resize', this.updateVocabBoxPosition);
+                window.addEventListener('resize', this.updateToolbarPosition);
+                window.addEventListener('scroll', this.updateToolbarPosition);
                 document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
                 for (let i = 0; i < this.lessons.length; i++) {
                     if (this.lessons[i].id == this.lessonId && i < this.lessons.length - 1 && this.lessons[i + 1].read_count) {
@@ -603,7 +503,8 @@
                 this.settings.plainTextMode = this.$cookie.get('plain-text-mode') === 'true';
                 this.settings.japaneseText = this.$cookie.get('japanese-text') === 'true';
                 this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
-                this.settings.maximumTextWidth =  this.$cookie.get('maximum-text-width');
+                this.settings.lineSpacing =  parseInt(this.$cookie.get('line-spacing'));
+                this.settings.maximumTextWidth =  parseInt(this.$cookie.get('maximum-text-width'));
                 this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
                 this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
 
@@ -623,8 +524,12 @@
                     this.settings.fontSize =  20;
                 }
 
+                if (this.$cookie.get('line-spacing') === null) {
+                    this.settings.lineSpacing =  1;
+                }
+
                 if (this.$cookie.get('maximum-text-width') === null) {
-                    this.settings.maximumTextWidth =  '800px';
+                    this.settings.maximumTextWidth =  3;
                 }
 
                 if (this.$cookie.get('display-suggested-translations') === null) {
@@ -639,7 +544,7 @@
                 this.$forceUpdate();
                 this.updatePhraseBorders();
                 this.updateGlossary();
-                this.updateToolbarButtonGroup();
+                this.updateToolbarPosition();
             },
             fullscreen: function() {
                 if (document.fullscreenEnabled) {
@@ -653,53 +558,57 @@
             },
             updateFullscreen: function() {
                 this.settings.fullscreen = document.fullscreenElement !== null;
+            },
+            updateToolbarPosition: function(event) {
+                this.toolbarTop = 28 - document.documentElement.scrollTop;
 
-                this.toolbarFullscreen = this.settings.fullscreen ? [0] : [];
+                if (document.documentElement.scrollTop > 28 || window.innerWidth < 620) {
+                    this.toolbarTop = 0;
+                }
+            },
+            updateSettings: function(newSettings) {
+                this.settings = newSettings;
+                this.saveSettings();
             },
             saveSettings: function() {
-                if (this.settings.fontSize < 15) {
-                    this.settings.fontSize = 15;
+                if (this.settings.fontSize < 12) {
+                    this.settings.fontSize = 12;
                 }
 
-                if (this.settings.fontSize > 25) {
-                    this.settings.fontSize = 25;
+                if (this.settings.fontSize > 30) {
+                    this.settings.fontSize = 30;
                 }
 
                 this.$cookie.set('highlight-words', this.settings.highlightWords, 3650);
                 this.$cookie.set('plain-text-mode', this.settings.plainTextMode, 3650);
                 this.$cookie.set('japanese-text', this.settings.japaneseText, 3650);
                 this.$cookie.set('font-size', this.settings.fontSize, 3650);
+                this.$cookie.set('line-spacing', this.settings.lineSpacing, 3650);
                 this.$cookie.set('maximum-text-width', this.settings.maximumTextWidth, 3650);
                 this.$cookie.set('display-suggested-translations', this.settings.displaySuggestedTranslations, 3650);
                 this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
+                
             },
-            setToolbar: function(newToolbar) {
+            openDialog: function(dialog) {
+                if (document.fullscreenElement !== null) {
+                    this.exitFullscreen();
+                }
+
                 this.unselectWord();
                 this.updateGlossary();
-                
-                this.toolbar = newToolbar;
-                if (newToolbar == 'chapters') {
-                    setTimeout(() => {
-                        document.getElementById('selected-chapter').scrollIntoView();
-                    }, 305);
-                } else {
-                    document.getElementById('fullscreen-box').scrollTo(0, 0);
+
+                if (dialog == 'settings') {
+                    this.dialogs.settings = true;
+                }
+
+                if (dialog == 'glossary') {
+                    this.dialogs.glossary = true;
+                }
+
+                if (dialog == 'chapters') {
+                    this.dialogs.chapters = true;
                 }
             },
-            updateToolbarButtonGroup: function() {
-                this.toolbarOptions = [];
-                if (this.settings.plainTextMode) {
-                    this.toolbarOptions.push(0);
-                }
-
-                if (this.settings.japaneseText) {
-                    this.toolbarOptions.push(1);
-                }
-
-                if (this.settings.highlightWords) {
-                    this.toolbarOptions.push(2);
-                }
-            },  
             getUniqueWordIndex: function(word) {
                 for (var i = 0; i < this.uniqueWords.length; i++) {
                     if (this.uniqueWords[i].word == word) {
@@ -918,12 +827,12 @@
                     this.vocabBox.reading = '';
                     this.vocabBox.searchField = '';
                     for (let i = 0; i < this.ongoingSelection.length; i++) {
-                        if (this.ongoingSelection.[i].word.toLowerCase() == 'newline') {
+                        if (this.ongoingSelection[i].word.toLowerCase() == 'newline') {
                             continue;
                         }
 
-                        this.vocabBox.searchField += this.ongoingSelection.[i].word;
-                        this.vocabBox.reading += this.ongoingSelection.[i].reading;
+                        this.vocabBox.searchField += this.ongoingSelection[i].word;
+                        this.vocabBox.reading += this.ongoingSelection[i].reading;
                     }
                 }
 

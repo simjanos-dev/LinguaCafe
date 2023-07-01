@@ -5,7 +5,6 @@ export default {
         backgroundHighlight: '#ebebeb',
         navigation: '#F2F3F5',
         primary: '#aa8476',
-        primaryDark: '#7e6257',
         secondary: '#aa8476',
 
         error: '#f24b4f',
@@ -21,7 +20,6 @@ export default {
         
         readerWordSelection: '#d8d8d8',
 
-        calendarBorders: '#dbdbdb',
         dailyGoalReview: '#61df6b',
         dailyGoalReading: '#64B5F6',
         dailyGoalNew: '#ffdd4b',
@@ -32,6 +30,35 @@ export default {
         statisticsLearningWords: '#FEBB13',
         statisticsKanji: '#2C97DF',
         
+        // teszt
+        background: '#F2F3F5',
+        navigation: '#F2F3F5',
+        primary: '#ab8875',
+        secondary: '#ab8875',
+
+        // error: '#f24b4f',
+        // info: '#59a5ee',
+        // success: '#56ca00',
+        // warning: '#ffb448',
+        
+        // text: '#333333',
+        // highlightedWordText: '#333333',
+
+        newWord: '#ffd08b',
+        highlightedWord: '#80e6b3',
+        
+        // readerWordSelection: '#d8d8d8',
+
+        dailyGoalReview: '#80e6b3',
+        dailyGoalNew: '#ffd08b',
+        dailyGoalReading: '#a0b6ff',
+        
+
+        statisticsDays: '#ab8875',
+        statisticsReadWords: '#ab8875',
+        statisticsKnownWords: '#ab8875',
+        statisticsLearningWords: '#ab8875',
+        statisticsKanji: '#ab8875',
     },
     dark: {
         foreground: '#1e1e1e',
@@ -39,7 +66,6 @@ export default {
         backgroundHighlight: '#ebebeb',
         navigation: '#f4f4f5',
         primary: '#aa8476',
-        primaryDark: '#7e6257',
         secondary: '#aa8476',
 
         error: '#f24b4f',
@@ -55,7 +81,6 @@ export default {
 
         readerWordSelection: '#d8d8d8',
         
-        calendarBorders: '#aaaaaa',
         dailyGoalReview: '#61df6b',
         dailyGoalReading: '#64B5F6',
         dailyGoalNew: '#ffdd4b',
@@ -73,7 +98,6 @@ export default {
         backgroundHighlight: '#aaaaaa',
         navigation: '#ffffff',
         primary: '#000000',
-        primaryDark: '#000000',
         secondary: '#000000',
 
         error: '#000000',
@@ -89,7 +113,6 @@ export default {
 
         readerWordSelection: '#888888',
         
-        calendarBorders: '#000000',
         dailyGoalReview: '#000000',
         dailyGoalReading: '#000000',
         dailyGoalLearning: '#000000',

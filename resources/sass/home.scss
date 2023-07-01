@@ -113,7 +113,7 @@
                     margin: 2px;
                     background-color: rgba(0, 0, 0, 0.03);
                     border: 1px solid rgba(0, 0, 0, 0.03);
-                    border-radius: 8px;
+                    border-radius: 6px;
                     font-size: 9px;
                     text-align: center;
                     user-select: none;
@@ -121,19 +121,24 @@
                     transition: .25s;
                     overflow: hidden;
                     cursor: pointer;
+                    z-index: 1;
                     
                     &:hover {
                         background-color: rgba(0, 0, 0, 0.12);
                         border: 1px solid rgba(0, 0, 0, 0.12);
+                        
+                        .calendar-day-background {
+                            filter: brightness(96%);
+                        }
                     }
 
                     .calendar-day-background {
                         position: absolute;
                         left: 0px;
                         top: 0px;
-                        width: 150%;
-                        height: 150%;
-                        z-index: 1;
+                        width: 250%;
+                        height: 250%;
+                        z-index: 2;
                         transition: .3s;
                     }
                     
@@ -145,7 +150,7 @@
 
                     &.half-achievement .calendar-day-background {
                         transform-origin: center;
-                        transform: translate(-6px, -6px) rotate(45deg) translate(0, 16px);
+                        transform: translate(-6px, -6px) rotate(45deg) translate(-12px, 36px);
                     }
 
                     .calendar-day-text {
@@ -154,7 +159,13 @@
                         top: 0px;
                         width: 100%;
                         height: 100%;
-                        z-index: 2;
+                        z-index: 3;
+                        background-color: rgba(0, 0, 0, 0);
+                    }
+                    
+                    &.no-achievement .calendar-day-text,
+                    &.half-achievement .calendar-day-text {
+                        color: var(--v-text-base);
                     }
                 }
             }
@@ -285,6 +296,11 @@
                         line-height: 34px;
                         margin: 2px;
                         font-size: 10px;
+                        
+                        &.half-achievement .calendar-day-background {
+                            transform-origin: center;
+                            transform: translate(-6px, -6px) rotate(45deg) translate(-8px, 40px);
+                        }
                     }
                 }
             }
@@ -363,7 +379,6 @@
 }
 
 @media (max-width: 355px) {
-
     #calendar {
         max-width: 360px;
         height: 230px;
@@ -382,6 +397,11 @@
                         height: 29px;
                         line-height: 29px;
                         margin: 2px;
+
+                        &.half-achievement .calendar-day-background {
+                            transform-origin: center;
+                            transform: translate(-6px, -6px) rotate(45deg) translate(-8px, 34px);
+                        }
                     }
                 }
             }
@@ -445,7 +465,7 @@
 #app main.eink #calendar {
     #calendar-months .calendar-month .calendar-month-days .calendar-day {
         &.half-achievement .calendar-day-background {
-            transform: translate(-12px, -12px) rotate(45deg) translate(0, 24px);
+            transform: translate(-12px, -12px) rotate(45deg) translate(0, 34px);
         }
 
         .calendar-day-text {
@@ -454,6 +474,26 @@
 
         &.full-achievement .calendar-day-text {
             color: white;
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    #app main.eink #calendar {
+        #calendar-months .calendar-month .calendar-month-days .calendar-day {
+            &.half-achievement .calendar-day-background {
+                transform: translate(-12px, -12px) rotate(45deg) translate(0, 50px);
+            }
+        }
+    }
+}
+
+@media (max-width: 355px) {
+    #app main.eink #calendar {
+        #calendar-months .calendar-month .calendar-month-days .calendar-day {
+            &.half-achievement .calendar-day-background {
+                transform: translate(-12px, -12px) rotate(45deg) translate(0, 42px);
+            }
         }
     }
 }
