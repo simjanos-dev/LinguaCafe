@@ -15,7 +15,7 @@
             </div>
 
             <!-- Settings -->
-            <text-reader-settings-component
+            <text-reader-settings
                 v-model="dialogs.settings"
                 :_highlight-words="settings.highlightWords"
                 :_plain-text-mode="settings.plainTextMode"
@@ -26,20 +26,20 @@
                 :_display-suggested-translations="settings.displaySuggestedTranslations"
                 :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
                 @changed="updateSettings"   
-            ></text-reader-settings-component>
+            ></text-reader-settings>
             
             <!-- Chapters -->
-            <text-reader-chapter-list-component
+            <text-reader-chapter-list
                 :chapters="lessons"
                 :current-chapter-id="lessonId"
                 v-model="dialogs.chapters"
-            ></text-reader-chapter-list-component>
+            ></text-reader-chapter-list>
 
             <!-- Glossary -->
-            <text-reader-glossary-component
+            <text-reader-glossary
                 :glossary="glossary"
                 v-model="dialogs.glossary"
-            ></text-reader-glossary-component>
+            ></text-reader-glossary>
 
             <!-- Vocab box -->
             <v-card 

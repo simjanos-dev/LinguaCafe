@@ -116,14 +116,14 @@
 
         <div class="subheader subheader-home">Daily goals</div>
         <div id="goals">
-            <goal-component 
+            <goal 
                 v-for="(goal, index) in goals" :key="index"
                 :type="goal.type"
                 :goal-quantity="goal.quantity"
                 :todays-achieved-quantity="goal.todaysQuantity"
                 :color="goalColors[goal.type]"
                 >
-            </goal-component>
+            </goal>
         </div>
 
         <div class="subheader subheader-home d-flex">
