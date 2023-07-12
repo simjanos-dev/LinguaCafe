@@ -33,6 +33,10 @@
     }
 }
 
+.text-block-group {
+    min-height: 600px;
+}
+
 #reader-box {
     position: relative;
     display: block;
@@ -43,6 +47,10 @@
     padding-top: 1px;
     overflow-y: visible;
     transition: .2s;
+
+    #finish-button {
+        margin-top: 244px;
+    }
 
     #toolbar-box {
         display: inline-block;
@@ -263,12 +271,12 @@
         display: block;
         width: calc(100% - 52px);
         margin-top: 24px;
-        margin-bottom: 64px;
+        margin-bottom: 284px;
         line-height: 1.25;
         line-height: 1.3;
         user-select: none;
         transition: .2s;
-        overflow-x: auto;
+        overflow-x: visible;
 
         #chapter-name {
             height: 42px;

@@ -1,8 +1,6 @@
 #chapters {
-    width: 100%;
-    
     .chapter {
-        width: 800px;
+        width: 100%;
         max-width: 1000px;
         background-color: white;
         
@@ -53,24 +51,22 @@
     }
 }
 
-@media (max-width: 959px) {
-    #chapters .chapter{
-        width: 94%;
+// @media (max-width: 959px) {
+//     #chapters .chapter{
+//         .chapter-title {
+//             font-size: 18px;
+//         }
 
-        .chapter-title {
-            font-size: 18px;
-        }
+//         .chapter-info-table td {
+//             font-size: 13px;
+//         }
+//     }
+// }
 
-        .chapter-info-table td {
-            font-size: 13px;
-        }
-    }
-}
-
-@media (max-width: 600px) {
-    #chapters .chapter{
-        max-width: 400px;
-        width: calc(100% - 40px);
-        height: auto;
-    }
-}
+// @media (max-width: 600px) {
+//     #chapters .chapter{
+//         max-width: 400px;
+//         width: calc(100% - 40px);
+//         height: auto;
+//     }
+// }

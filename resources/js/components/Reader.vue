@@ -8,8 +8,8 @@
                     <v-btn icon @click="openDialog('settings')"><v-icon>mdi-cog</v-icon></v-btn>
                     <v-btn icon @click="openDialog('chapters')"><v-icon>mdi-book-alphabet</v-icon></v-btn>
                     <v-btn icon @click="openDialog('glossary')"><v-icon>mdi-translate</v-icon></v-btn>
-                    <v-btn icon @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                    <v-btn icon @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                    <v-btn icon @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                    <v-btn icon @click="settings.fontSize --; saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                     <v-btn icon @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 :_maximum-text-width="settings.maximumTextWidth"
                 :_display-suggested-translations="settings.displaySuggestedTranslations"
                 :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
-                @changed="updateSettings"   
+                @changed="saveSettings"   
             ></text-reader-settings>
             
             <!-- Chapters -->
@@ -41,250 +41,6 @@
                 v-model="dialogs.glossary"
             ></text-reader-glossary>
 
-            <!-- Vocab box -->
-            <v-card 
-                id="vocab-box" 
-                :class="{
-                    'new-phrase': selection.length > 1 && selectedPhrase == -1, 
-                    'rounded-lg': true,
-                    'closed': vocabBox.closed
-                }" 
-                :style="{
-                    'top': vocabBox.position.top + 'px', 
-                    'left': vocabBox.position.left + 'px',
-                    'width': vocabBox.width + 'px'
-                }"
-                v-if="selection.length && !finished && !selectionOngoing " 
-                @mouseup.stop=";"
-            >
-                <v-tabs id="vocab-box-tabs" grow background-color="primary" height="36" v-model="vocabBox.tab" @change="scrollToVocabBox">
-                    <v-tab class="px-2" v-if="selection.length == 1">Word</v-tab>
-                    <v-tab class="px-2" v-if="selection.length > 1">Phrase</v-tab>
-                    <v-tab class="px-2">Edit</v-tab>
-                    <v-tab class="px-2">Inflections</v-tab>
-                </v-tabs>
-                <v-overlay class="text-center rounded-lg" absolute :value="phraseCurrentlySaving" opacity="0.6" v-if="selection.length > 1 && phraseCurrentlySaving">
-                    <span class="h5">Saving phrase, please wait a second.</span><br><br>
-                    <v-progress-circular indeterminate size="64" color="white"></v-progress-circular>
-                </v-overlay>
-                <v-card-text class="pa-2">
-                    <v-tabs-items v-model="vocabBox.tab">
-                        <!-- Word/phrase tab -->
-                        <v-tab-item :transition="theme !== 'eink'" :value="0">
-                            <!-- Single word -->
-                            <template v-if="selection.length == 1">
-                                <div class="vocab-box-subheader">Word</div>
-                                <!-- With base word -->
-                                <div id="word" class="pl-2" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
-                                    <ruby>{{uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
-                                    <v-icon>mdi-arrow-right-thick</v-icon>
-                                    <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
-                                </div>
-                                
-                                <!-- No base word -->
-                                <div id="word" class="pl-2" v-if="uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
-                                    <ruby>{{uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
-                                </div>
-                            </template>
-                            
-                            <!-- Phrase -->
-                            <template v-if="selection.length > 1">
-                                <div class="vocab-box-subheader">Phrase</div>
-                                <!-- Phrase text -->
-                                <div id="phrase" class="pl-2">
-                                    <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
-                                </div>
-
-                                <!-- Phrase reading -->
-                                <template>
-                                    <div class="vocab-box-subheader mt-2">Reading</div>
-                                    <div id="reading" class="pl-2">{{ vocabBox.reading }}</div>
-                                </template>
-                            </template>
-
-                            <!-- Translation -->
-                            <template v-if="vocabBox.translationText.length">
-                                <div class="vocab-box-subheader mt-2">Definitions</div>
-                                <ul id="definitions" class="ma-0">
-                                    <template>
-                                        <li v-for="translation, index in vocabBox.translationList" :key="index">{{ translation }}</li>
-                                    </template>
-                                </ul>
-                            </template>
-
-                            <!-- Stage buttons-->
-                            <template v-if="selection.length == 1 || selectedPhrase !== -1">
-                                <div class="vocab-box-subheader mt-2">Stage</div>
-                                <div :class="{'d-block': true, 'text-center': true, 'mt-1': false, 'mb-6': selection.length == 1}">
-                                    <div id="stage-buttons" class="v-item-group theme--light v-btn-toggle v-btn-toggle--rounded primary--text">
-                                        <v-btn :value="-7" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
-                                        <v-btn :value="-6" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
-                                        <v-btn :value="-5" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
-                                        <v-btn :value="-4" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
-                                        <v-btn :value="-3" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
-                                        <v-btn :value="-2" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
-                                        <v-btn :value="-1" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
-                                        <v-btn :value="0" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == 0}" @click="setStage(0)"><v-icon>mdi-check</v-icon></v-btn>
-                                        <v-btn :value="1" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == 1}" @click="setStage(1)" v-if="selection.length == 1"><v-icon>mdi-close</v-icon></v-btn>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- Save and delete phrase buttons -->
-                            <v-card-actions class="pa-0">
-                                <v-spacer></v-spacer>
-                                <v-btn 
-                                    class="mt-2"
-                                    small
-                                    rounded
-                                    color="success"
-                                    @click="addNewPhrase"
-                                    v-if="selection.length > 1 && selectedPhrase == -1"
-                                >Save phrase</v-btn>
-                                <v-btn 
-                                    class="mt-2"
-                                    small
-                                    rounded
-                                    color="error"
-                                    @click="deletePhrase"
-                                    v-if="selectedPhrase != -1"
-                                >Delete phrase</v-btn>
-                            </v-card-actions>
-                        </v-tab-item>
-
-                        <!-- Edit tab -->
-                        <v-tab-item :transition="theme !== 'eink'" :value="1">
-                            <!-- Word editing -->
-                            <v-simple-table dense id="word-edit-table" class="no-hover mx-auto" v-if="selection.length == 1">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Base</th>
-                                        <th></th>
-                                        <th>Selected</th>
-                                    </tr>
-                                </thead>
-                                    <tbody>
-                                    <tr>
-                                        <th>Word</th>
-                                        <td>
-                                            <v-text-field 
-                                                class="word-input"
-                                                filled
-                                                dense
-                                                hide-details
-                                                v-model="vocabBox.base_word"
-                                            ></v-text-field>
-                                        </td>
-                                        <td><v-icon>mdi-arrow-right-thick</v-icon></td>
-                                        <td id="selected-word-field" class="text-left pl-4">{{ uniqueWords[selection[0].uniqueWordIndex].word }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Reading</th>
-                                        <td>
-                                            <v-text-field 
-                                                class="word-input my-1"
-                                                filled
-                                                dense
-                                                hide-details
-                                                v-model="vocabBox.base_word_reading"
-                                            ></v-text-field>
-                                        </td>
-                                        <td><v-icon>mdi-arrow-right-thick</v-icon></td>
-                                        <td>
-                                            <v-text-field 
-                                                class="word-input my-1"
-                                                filled
-                                                dense
-                                                hide-details
-                                                v-model="vocabBox.reading"
-                                            ></v-text-field>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </v-simple-table>
-                            
-                            <!-- Phrase editing -->
-                            <template v-if="selection.length > 1">
-                                <div class="vocab-box-subheader">Phrase reading</div>
-                                <v-textarea
-                                    filled
-                                    dense
-                                    no-resize
-                                    hide-details
-                                    height="80px"
-                                    v-model="vocabBox.reading"
-                                ></v-textarea>
-                            </template>
-
-                            <!-- Translation editing -->
-                            <div class="vocab-box-subheader mt-2">Translation</div>
-                            <v-textarea
-                                filled
-                                dense
-                                no-resize
-                                hide-details
-                                height="80px"
-                                v-model="vocabBox.translationText"
-                                @change="updateVocabBoxTranslationList"
-                            ></v-textarea>
-
-                            <!-- Search term -->
-                            <div class="vocab-box-subheader mt-2">Dictionary search</div>
-                            <v-text-field 
-                                class="mb-3"
-                                filled
-                                dense
-                                hide-details
-                                width="100%"
-                                v-model="vocabBox.searchField"
-                                @change="makeSearchRequest"
-                            ></v-text-field>
-
-                            <!-- Search results -->
-                            <div id="search-results" class="mb-4 pa-2">
-                                <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in vocabBox.searchResults" :key="searchresultIndex">
-                                    <div class="search-result-title rounded px-2">{{ searchResult.word }} <div class="dictionary">jmdict</div></div>
-                                    <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in searchResult.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
-                                        {{ definition }} <v-icon>mdi-plus</v-icon>
-                                    </div>
-                                    <template v-if="searchResult.otherForms.length">
-                                        <div class="vocab-box-subheader">Other forms:</div>
-                                        <div class="d-flex flex-wrap">
-                                            <div v-for="(form, formIndex) in searchResult.otherForms" :key="formIndex">
-                                                {{ form }}<span class="mr-2" v-if="formIndex < searchResult.otherForms.length - 1">, </span>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                            
-                        </v-tab-item>
-
-                        <!-- Inflections tab -->
-                        <v-tab-item :transition="theme !== 'eink'" :value="2" class="pb-4">
-                            <v-simple-table dense id="inflections-table" class="no-hover mx-auto" v-if="inflections.length">
-                                <thead>
-                                    <tr>
-                                        <th>Form</th>
-                                        <th>Affirmative</th>
-                                        <th>Negative</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(inflection, index) in inflections" :key="index">
-                                        <td class="px-2">{{ inflection.name }}</td>
-                                        <td class="px-1">{{ inflection.affPlain }}</td>
-                                        <td class="px-1">{{ inflection.negPlain }}</td>
-                                    </tr>
-                                </tbody>
-                            </v-simple-table>
-                        </v-tab-item>
-                    </v-tabs-items>
-                </v-card-text>
-                <v-btn id="close-vocab-box-button" rounded elevation="2" color="error" @click="unselectWord()"><v-icon>mdi-close</v-icon> Close</v-btn>
-            </v-card>
-
             <!-- Text -->
             <v-card 
                 :outlined="theme !== 'eink'"
@@ -296,32 +52,27 @@
                     'japanese-text': settings.japaneseText, 
                     'rounded-lg': true,
                     'ml-2': true,
-                    'pa-4': true
+                    'pa-4': $vuetify.breakpoint.smAndUp,
+                    'pa-3': $vuetify.breakpoint.xsOnly
                 }" 
-                @mousemove="removePhraseHover"
             >
                 <v-card-text>
                     <div id="chapter-name" class="mb-4" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
                         {{ lessonName }}
                     </div>
 
-                    <template v-for="(word, wordIndex) in words">
-                        <template v-if="word.word.indexOf('NEWLINE') == -1 && word.word !== '\r\n' && language !== 'japanese'">
-                            <template v-if="spaceFreeWords.includes(word.word)">
-                                <div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px', 'margin-bottom': (settings.lineSpacing * 4) + 'px'}" 
-                                    @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div>
-                            </template><!--
-                            --><template v-if="!spaceFreeWords.includes(word.word)"><!--
-                                --><div :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-': true, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px', 'margin-bottom': (settings.lineSpacing * 4) + 'px'}" 
-                                    @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
-                            --></template>
-
-                        </template><!--
-                        --><div v-if="word.word.indexOf('NEWLINE') == -1 && language == 'japanese'" :wordindex="wordIndex" :stage="word.stage" :phrasestage="word.phraseStage" :class="{'no-highlight': !settings.highlightWords, 'plain-text-mode': settings.plainTextMode, word: true, highlighted: word.selected || word.hover, phrase: word.phraseIndexes.length > 0, 'phrase-start': word.phraseStart, 'phrase-end': word.phraseEnd}" :style="{'font-size': settings.fontSize + 'px', 'margin-bottom': (settings.lineSpacing * 4) + 'px'}" 
-                            @mousedown.stop="startSelection($event, wordIndex)" @touchstart="startSelectionTouch($event, wordIndex)" @mouseup.stop="finishSelection($event)" @touchend.stop="finishSelection($event)" @touchmove="updateSelectionTouch($event, wordIndex);" @mousemove.stop="updateSelectionMouse($event, wordIndex);" @pointerenter="hoverPhraseSelection(wordIndex);" @mouseleave=";">{{ word.word }}</div><!--
-                            
-                        --><br v-if="word.word == 'NEWLINE'"><!--
-                    --></template>
+                    <text-block-group
+                        v-if="textBlocks.length"
+                        ref="textBlock"
+                        :theme="theme"
+                        :fullscreen="settings.fullscreen"
+                        :_text-blocks="textBlocks"
+                        :language="language"
+                        :highlight-words="settings.highlightWords"
+                        :plain-text-mode="settings.plainTextMode"
+                        :font-size="settings.fontSize"
+                        :line-spacing="settings.lineSpacing"
+                    ></text-block-group>    
                 </v-card-text>
                 <v-alert
                     class="my-3" 
@@ -333,7 +84,7 @@
                 </v-alert>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn rounded class="mt-8" color="primary" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn>
+                    <v-btn rounded color="primary" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn>
                 </v-card-actions>
             </v-card>&nbsp;
             
@@ -380,6 +131,7 @@
     export default {
         data: function() {
             return {
+                textBlocks: [],
                 dialogs: {
                     settings: false,
                     glossary: false,
@@ -387,8 +139,7 @@
                 },
                 maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 toolbarTop: 68,
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
-                phraseCurrentlySaving: false,
+                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),                
                 settings: {
                     highlightWords: true,
                     plainTextMode: false,
@@ -400,50 +151,14 @@
                     autoMoveWordsToKnown: false,
                     fullscreen: false
                 },
-                spaceFreeWords: ['.', ',', ':', '?', '!', '-', '*', ' ', '\r\n', '\r\n '],
                 finished: false,
                 finishError: false,
                 newlySavedWords: 0,
                 learnedWords: 0,
                 progressedWords: 0,
                 glossary: [],
-                words: [],
-                uniqueWords: [],
-                phrases: [],
-                selection: [],
-                selectedPhrase: -1,
-                ongoingSelection: [],
-                ongoingSelectionStartingWord: {
-                    wordIndex: -1,
-                },
-                touchTimer: null,
-                vocabBox: {
-                    tab: 0,
-                    closed: true,
-                    selectedStageButton: 0,
-                    width: window.innerWidth > 440 ? 400 : window.innerWidth - 20,
-                    position: {
-                        left: 0,
-                        top: 0
-                    },
-                    searchField: '',
-                    searchResults: [],
-                    translationText: '',
-                    translationList: [],
-                    reading: '',
-                    base_word: '',
-                    base_word_reading: '',
-                },
-                selectionOngoing: false,
-                allSearchResultsVisible: false,
-                showAllSearchResults: false,
                 nextLesson: -1,
 
-
-                // to load:
-                words: [],
-                uniqueWords: [],
-                phrases: [],
                 bookName: null,
                 lessonId: null,
                 wordCount: 0,
@@ -465,11 +180,14 @@
 
             axios.post('/chapter/get/reader', {
                 'chapterId': this.$route.params.chapterId,
-            }).then(function (response) {
+            }).then((response) => {
                 var data = response.data;
-                this.words = data.words;
-                this.uniqueWords = data.uniqueWords;
-                this.phrases = data.phrases;
+                this.textBlocks.push({
+                    id: 0,
+                    words: JSON.parse(JSON.stringify(data.words)),
+                    phrases: JSON.parse(JSON.stringify(data.phrases)),
+                    uniqueWords: JSON.parse(JSON.stringify(data.uniqueWords))
+                });
                 this.bookName = data.bookName;
                 this.lessonId = data.lessonId;
                 this.wordCount = data.wordCount;
@@ -479,8 +197,6 @@
                 this.lessons = data.lessons;
 
                 this.afterMounted();
-            }.bind(this)).catch(function (error) {
-            }).then(function () {
             });
         },
         // this runs after the initial data
@@ -488,7 +204,6 @@
         methods: {
             afterMounted: function() {
                 document.getElementById('app').addEventListener('mouseup', this.finishSelection);
-                window.addEventListener('resize', this.updateVocabBoxPosition);
                 window.addEventListener('resize', this.updateToolbarPosition);
                 window.addEventListener('scroll', this.updateToolbarPosition);
                 document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
@@ -542,7 +257,6 @@
 
                 this.saveSettings();
                 this.$forceUpdate();
-                this.updatePhraseBorders();
                 this.updateGlossary();
                 this.updateToolbarPosition();
             },
@@ -566,11 +280,11 @@
                     this.toolbarTop = 0;
                 }
             },
-            updateSettings: function(newSettings) {
-                this.settings = newSettings;
-                this.saveSettings();
-            },
-            saveSettings: function() {
+            saveSettings: function(newSettings = null) {
+                if (newSettings !== null) {
+                    this.settings = newSettings;
+                }
+
                 if (this.settings.fontSize < 12) {
                     this.settings.fontSize = 12;
                 }
@@ -594,7 +308,7 @@
                     this.exitFullscreen();
                 }
 
-                this.unselectWord();
+                this.$refs.textBlock.unselectAllWords();
                 this.updateGlossary();
 
                 if (dialog == 'settings') {
@@ -609,40 +323,33 @@
                     this.dialogs.chapters = true;
                 }
             },
-            getUniqueWordIndex: function(word) {
-                for (var i = 0; i < this.uniqueWords.length; i++) {
-                    if (this.uniqueWords[i].word == word) {
-                        return i;
-                    }
-                }
-
-                return -1;
-            },
             updateGlossary: function() {
                 this.glossary = [];
-                for (let i = 0; i < this.phrases.length; i++) {
-                    if (this.phrases[i].stage < 0) {
-                        this.glossary.push({
-                            word: this.phrases[i].words.join(''),
-                            stage: this.phrases[i].stage,
-                            reading: this.phrases[i].reading,
-                            base_word: '',
-                            base_word_reading: '',
-                            translation: this.phrases[i].translation,
-                        });
+                for (let j = 0; j < this.textBlocks.length; j++) {
+                    for (let i = 0; i < this.textBlocks[j].phrases.length; i++) {
+                        if (this.textBlocks[j].phrases[i].stage < 0) {
+                            this.glossary.push({
+                                word: this.textBlocks[j].phrases[i].words.join(''),
+                                stage: this.textBlocks[j].phrases[i].stage,
+                                reading: this.textBlocks[j].phrases[i].reading,
+                                base_word: '',
+                                base_word_reading: '',
+                                translation: this.textBlocks[j].phrases[i].translation,
+                            });
+                        }
                     }
-                }
 
-                for (let i = 0; i < this.uniqueWords.length; i++) {
-                    if (this.uniqueWords[i].stage < 0 || this.uniqueWords[i].stage == 2) {
-                        this.glossary.push({
-                            word: this.uniqueWords[i].word,
-                            stage: this.uniqueWords[i].stage,
-                            reading: this.uniqueWords[i].reading,
-                            base_word: this.uniqueWords[i].base_word,
-                            base_word_reading: this.uniqueWords[i].base_word_reading,
-                            translation: this.uniqueWords[i].translation,
-                        });
+                    for (let i = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
+                        if (this.textBlocks[j].uniqueWords[i].stage < 0 || this.textBlocks[j].uniqueWords[i].stage == 2) {
+                            this.glossary.push({
+                                word: this.textBlocks[j].uniqueWords[i].word,
+                                stage: this.textBlocks[j].uniqueWords[i].stage,
+                                reading: this.textBlocks[j].uniqueWords[i].reading,
+                                base_word: this.textBlocks[j].uniqueWords[i].base_word,
+                                base_word_reading: this.textBlocks[j].uniqueWords[i].base_word_reading,
+                                translation: this.textBlocks[j].uniqueWords[i].translation,
+                            });
+                        }
                     }
                 }
 
@@ -650,759 +357,22 @@
                     return a.stage - b.stage;
                 });
             },
-            updateVocabBoxTranslationList: function() {
-                this.vocabBox.translationList = this.vocabBox.translationText.split(';');
-            },
-            startSelectionTouch: function(event, wordIndex) {
-                this.touchTimer = setTimeout(() => {
-                    this.startSelection(event, wordIndex);
-                }, 500);
-                
-            },
-            startSelection: function(event, wordIndex) {
-                this.touchTimer = null;
-                if (event == undefined) {
-                    return;
-                }
-
-                if (event.cancelable) {
-                    event.preventDefault();
-                }
-
-                this.selectionOngoing = true;
-                
-                if (this.ongoingSelection.length == 1 && this.ongoingSelection[0].wordIndex == wordIndex) {
-                    this.unselectWord();
-                    return;
-                }
-
-                if (this.settings.plainTextMode) {
-                    this.unselectWord();
-                    return;
-                }
-
-                for (let i  = 0; i < this.words.length; i++) {
-                    this.words[i].selected = false;
-                }
-                
-                // set selected word          
-                var selectedWord = {
-                    word: event.srcElement.outerText,
-                    wordIndex: wordIndex,
-                    uniqueWordIndex: this.getUniqueWordIndex(event.srcElement.outerText.toLowerCase()),
-                    reading: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].reading,
-                    sentenceIndex: this.words[wordIndex].sentenceIndex,
-                    position: event.target.getBoundingClientRect(),
-                };
-                
-                this.ongoingSelection = [selectedWord];
-                this.words[wordIndex].selected = true;
-                this.ongoingSelectionStartingWord.wordIndex = wordIndex;
-                this.updateSelectedWordLookupCount(selectedWord.word, selectedWord.uniqueWordIndex);
-            },
-            updateSelectionMouse: function(event, wordIndex) {
-                if (!this.ongoingSelection.length || event == undefined || event.buttons !== 1 || this.touchTimer) {
-                    return;
-                }
-
-                this.updateSelection(wordIndex);
-            },
-            updateSelectionTouch: function(event, wordIndex) {
-                if (this.touchTimer) {
-                    clearTimeout(this.touchTimer);
-                    this.touchTimer = null;
-                    return;
-                } else {
-                    if (event.cancelable) {
-                        event.preventDefault();
-                    }
-                }
-                
-                var touch = event.changedTouches[0];
-                var element = document.elementFromPoint( touch.clientX, touch.clientY );
-
-                var wordIndex = null;
-                if (element !== null && element.classList.contains('word')) {
-                    wordIndex = element.getAttribute('wordindex');
-                }
-
-                if (wordIndex !== null && this.ongoingSelection.length) {
-                    
-                    this.updateSelection(wordIndex);
-                }
-            },
-            updateSelection: function(wordIndex) {
-                if (this.touchTimer) {
-                    return;
-                }
-
-                if (wordIndex == this.ongoingSelection[0].wordIndex ||
-                    wordIndex == this.ongoingSelection[this.ongoingSelection.length - 1].wordIndex) {
-                        return;
-                }
-
-                var firstWordIndex = this.ongoingSelectionStartingWord.wordIndex;
-                var lastWordIndex = wordIndex;
-                
-                if (firstWordIndex > lastWordIndex) {
-                    var firstWordIndex = wordIndex;
-                    var lastWordIndex = this.ongoingSelectionStartingWord.wordIndex;
-                }
-                
-                if (firstWordIndex < this.ongoingSelectionStartingWord.wordIndex - 14) {
-                    firstWordIndex = this.ongoingSelectionStartingWord.wordIndex - 14;
-                }
-
-                if (lastWordIndex - firstWordIndex > 14) {
-                    lastWordIndex -= lastWordIndex - firstWordIndex - 14;
-                }
-
-                this.ongoingSelection = [];
-                for (let i  = 0; i < this.words.length; i++) {
-                    this.words[i].selected = false;
-
-                    if (i < firstWordIndex || i > lastWordIndex) {
-                        continue;
-                    }
-
-                    this.words[i].selected = true;
-                    var selectedWord = {
-                        word: this.words[i].word,
-                        wordIndex: i,
-                        uniqueWordIndex: this.getUniqueWordIndex(this.words[i].word.toLowerCase()),
-                        reading: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].reading,
-                        sentenceIndex: this.words[i].sentenceIndex
-                    };
-
-                    this.ongoingSelection.push(selectedWord);
-                }
-            },
-            finishSelection: function(event) {
-                if (!event.cancelable) {
-                    return;
-                }
-
-                if (this.touchTimer) {
-                    clearTimeout(this.touchTimer);
-                    this.touchTimer = null;
-                    return;
-                }
-
-                if (this.selection.length == 1) {
-                    this.saveWord();
-                } else if (this.selectedPhrase !== -1) {
-                    this.savePhrase();
-                }
-
-                this.selectionOngoing = false;
-                if (this.ongoingSelection.length == 1) {
-                    // if the selected word is in an expression, select the expression instead
-                    var selectedPhrase = this.getSelectedPhraseIndex();
-                    var newWordSelected = this.selection.find(o => o.wordIndex == this.ongoingSelection[0].wordIndex) !== undefined;
-                    var phraseIndexes = this.words[this.ongoingSelection[0].wordIndex].phraseIndexes;
-                    if (phraseIndexes.length && selectedPhrase !== phraseIndexes[phraseIndexes.length - 1]) {
-                        if (selectedPhrase == -1 || !newWordSelected) {
-                            this.selectPhraseInstanceByWord(this.ongoingSelection[0].wordIndex, phraseIndexes[0]);
-                        } else {
-                            for (let i = 0; i < phraseIndexes.length; i++) {
-                                if (phraseIndexes[i] == selectedPhrase && i < phraseIndexes.length - 1) {
-                                    this.selectPhraseInstanceByWord(this.ongoingSelection[0].wordIndex, phraseIndexes[i + 1]);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (this.ongoingSelection.length == 1) {
-                        if (this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word !== '') {
-                            this.vocabBox.searchField = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].base_word;
-                        } else {
-                            this.vocabBox.searchField = this.uniqueWords[this.ongoingSelection[0].uniqueWordIndex].word;
-                        }
-                        
-                    }
-                }
-
-                if (this.ongoingSelection.length > 1) {
-                    this.vocabBox.reading = '';
-                    this.vocabBox.searchField = '';
-                    for (let i = 0; i < this.ongoingSelection.length; i++) {
-                        if (this.ongoingSelection[i].word.toLowerCase() == 'newline') {
-                            continue;
-                        }
-
-                        this.vocabBox.searchField += this.ongoingSelection[i].word;
-                        this.vocabBox.reading += this.ongoingSelection[i].reading;
-                    }
-                }
-
-                // update selected word classes after automatic phrase selection
-                for (let i  = 0; i < this.words.length; i++) {
-                    this.words[i].selected = false;
-                }
-
-                for (let i = 0; i < this.ongoingSelection.length; i++) {
-                    this.words[this.ongoingSelection[i].wordIndex].selected = true;
-                }
-
-                this.selection = this.ongoingSelection;
-                this.selectedPhrase = this.getSelectedPhraseIndex();
-
-                this.vocabBox.translationText = this.selectedPhrase !== -1 ? this.phrases[this.selectedPhrase].translation : '';
-                this.ongoingSelection = [];
-                this.updateSelectedWordStage();
-                this.updateExampleSentence();
-                
-                // reading
-                if (this.selection.length == 1) {
-                    this.vocabBox.translationText = this.uniqueWords[this.selection[0].uniqueWordIndex].translation;
-                    this.vocabBox.reading = this.uniqueWords[this.selection[0].uniqueWordIndex].reading;
-                    this.vocabBox.base_word = this.uniqueWords[this.selection[0].uniqueWordIndex].base_word;
-                    this.vocabBox.base_word_reading = this.uniqueWords[this.selection[0].uniqueWordIndex].base_word_reading;
-                } else {
-                    this.vocabBox.reading = this.selectedPhrase !== -1 ? this.phrases[this.selectedPhrase].reading : this.vocabBox.reading;
-                }
-
-                this.updateVocabBoxPosition();
-                this.makeSearchRequest();
-                this.updatePhraseBorders();
-                this.updateVocabBoxTranslationList();
-                this.vocabBox.tab = 0;
-                this.vocabBox.closed = false;
-            },
-            removePhraseHover: function() {
-                for (let i  = 0; i < this.words.length; i++) {
-                    this.words[i].hover = false;
-                }
-            },
-            updateSelectedWordStage: function() {
-                if (this.selectedPhrase == -1 && this.selection.length) {
-                    this.vocabBox.selectedStageButton = parseInt(this.uniqueWords[this.selection[0].uniqueWordIndex].stage);
-                } else if (this.selectedPhrase !== -1){
-                    this.vocabBox.selectedStageButton = parseInt(this.phrases[this.selectedPhrase].stage);
-                }
-
-                if (this.vocabBox.selectedStageButton == 2) {
-                    this.vocabBox.selectedStageButton = undefined;
-                }
-            },
-            updateExampleSentence: function() {
-                if (this.selection.length == 1) {
-                    var exampleSentence = [];
-
-                    for (var i = 0; i < this.words.length; i++) {
-                        if (this.words[i].word == 'NEWLINE' || this.words[i].sentenceIndex !== this.selection[0].sentenceIndex) {
-                            continue;
-                        }
-
-                        exampleSentence.push(this.words[i].word);
-                    }
-
-                    this.uniqueWords[this.selection[0].uniqueWordIndex].example_sentence = JSON.stringify(exampleSentence);
-                }
-            },
-            updateVocabBoxPosition: function() {
-                this.vocabBox.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
-
-                if (!this.selection.length) {
-                    return;
-                }
-
-                var reader = document.getElementById('reader-box').getBoundingClientRect();
-                if (this.selection.length == 1) {
-                    var positions = document.querySelector('[wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
-                } else if (this.selection.length > 1) {
-                    var positions = document.querySelector('[wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
-                }
-
-                this.vocabBox.position.left = positions.right - reader.left - this.vocabBox.width / 2 - (positions.right - positions.left) / 2;
-
-
-                if (window.innerWidth  < 440) {
-                    this.vocabBox.position.left = 8;
-                } else if (this.vocabBox.position.left < 5) {
-                    this.vocabBox.position.left = 5;
-                } else if (this.vocabBox.position.left > reader.right - reader.left - this.vocabBox.width) {
-                    this.vocabBox.position.left = reader.right - reader.left - this.vocabBox.width;
-                }
-
-                if (this.settings.fullscreen) {
-                    this.vocabBox.position.top = positions.bottom + 12 + document.getElementById('fullscreen-box').scrollTop;
-                } else {
-                    this.vocabBox.position.top = positions.bottom + 12 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
-                }
-
-                this.scrollToVocabBox();
-            },
-            scrollToVocabBox: function() {
-                setTimeout(() => {
-                    var vocabBox = document.getElementById('vocab-box');
-                    if (vocabBox) {
-                        vocabBox.scrollIntoViewIfNeeded(false);
-                    }
-                }, 450);
-            },
-            updateSelectedWordLookupCount: function(word, uniqueWordIndex) {
-                this.uniqueWords[uniqueWordIndex].lookup_count ++;
-                axios.post('/vocabulary/update', {
-                    id: this.uniqueWords[uniqueWordIndex].id,
-                    lookup_count: this.uniqueWords[uniqueWordIndex].lookup_count
-                });
-
-                for (var i  = 0; i < this.words.length; i++) {
-                    if (this.words[i].word.toLowerCase() == word) {
-                        this.words[i].lookup_count = this.uniqueWords[uniqueWordIndex].lookup_count;
-                    }
-                }
-            },
-            makeSearchRequest: function() {
-                this.vocabBox.searchResults = [];
-                this.inflections = [];
-                if (!this.selection.length) {
-                    return;
-                }
-
-                // search inflections
-                axios.post('/dictionary/search/inflections', {
-                    dictionary: 'jmdict',
-                    term: this.vocabBox.searchField
-                })
-                .then(function (response) {
-                    var data = response.data;
-                    var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
-                    
-                    for (var i = 0; i < data.length; i++) {
-                        if (!displayedInflections.includes(data[i].name)) {
-                            continue;
-                        }
-
-                        var index = this.inflections.findIndex(item => item.name === data[i].name);
-                        if (index == -1) {
-                            this.inflections.push({
-                                name: data[i].name,
-                            });
-
-                            index = this.inflections.length - 1;
-                        }
-
-                        // add different forms to the item
-                        if (data[i].form == 'aff-plain:') {
-                            this.inflections[index].affPlain = data[i].value;
-                        }
-
-                        if (data[i].form == 'aff-formal:') {
-                            this.inflections[index].affFormal = data[i].value;
-                        }
-
-                        if (data[i].form == 'neg-plain:') {
-                            this.inflections[index].negPlain = data[i].value;
-                        }
-
-                        if (data[i].form == 'neg-formal:') {
-                            this.inflections[index].negFormal = data[i].value;
-                        }
-                    }
-                }.bind(this))
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                });
-
-                // search word
-                axios.post('/dictionary/search', {
-                    dictionary: 'jmdict',
-                    term: this.vocabBox.searchField
-                })
-                .then(function (response) {
-                    this.processSearchRequest(response.data);
-                }.bind(this))
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                });
-            },
-            processSearchRequest: function(data) {
-                this.vocabBox.searchResults = [];
-                for (var i = 0; i < data.length; i++) {
-                    this.vocabBox.searchResults.push({
-                        word: data[i].words.shift(),
-                        otherForms: data[i].words,
-                        definitions: data[i].definitions
-                    });
-                }
-
-                this.$nextTick(() => {
-                    var element = document.getElementById('translations');
-                    if (element == null) {
-                        return;
-                    }
-
-                    this.allSearchResultsVisible = element.scrollHeight <= element.clientHeight;
-                    this.showAllSearchResults = false;
-                });
-            },
-            unselectWord() {
-                if (this.selection.length == 1) {
-                    this.saveWord();
-                } else if (this.selectedPhrase !== -1) {
-                    this.savePhrase();
-                }
-
-                this.vocabBox.closed = true;
-                setTimeout(() => {
-                    this.selectedPhrase = -1;
-                    this.selection = [];
-                    
-                    for (let i  = 0; i < this.words.length; i++) {
-                        this.words[i].selected = false;
-                        this.words[i].hover = false;
-                    }
-                }, 120);
-            },
-            addDefinitionToInput: function(definition) {
-                if (this.vocabBox.translationText.length) {
-                    this.vocabBox.translationText += ';';
-                }
-
-                this.vocabBox.translationText += definition;
-                this.updateVocabBoxTranslationList();
-            },
-            setStage: function(stage) {
-                // determine if saving is needed
-                var save = 'none';
-                if (this.selection.length == 1 && this.uniqueWords[this.selection[0].uniqueWordIndex].stage !== stage) {
-                    save = 'word';
-                } else if (this.selection.length > 1 && this.phrases[this.selectedPhrase].stage !== stage) {
-                    save = 'phrase';
-                }
-                
-
-                if (this.selectedPhrase == -1 && this.selection.length == 1) {
-                    this.uniqueWords[this.selection[0].uniqueWordIndex].stage = stage;
-                    if (stage == 0) {
-                        this.learnedWords ++;
-                    }
-
-                    // set all the required words' stages in the text
-                    for (var i  = 0; i < this.words.length; i++) {
-                        if (this.words[i].word.toLowerCase() == this.selection[0].word.toLowerCase()) {
-                            this.words[i].stage = stage;
-                        }
-                    }
-                } else if (this.selectedPhrase !== -1) {
-                    this.phrases[this.selectedPhrase].stage = stage;
-                    this.updatePhraseBorders();
-                }
-
-                this.updateSelectedWordStage();
-                
-                if (save == 'word') {
-                    this.saveWord(true);
-                } else if (save == 'phrase') {
-                    this.savePhrase(true);
-                }
-                
-            },
-            stageChanged: function() {
-                if (this.selectedPhrase == -1) {
-                    this.vocabBox.selectedStageButton = this.uniqueWords[this.selection[0].uniqueWordIndex].stage;
-                } else {
-                    this.vocabBox.selectedStageButton = this.phrases[this.selectedPhrase].stage;
-                }
-            },
-            saveWord: function(withStage = false) {
-                // save vocab box data to word
-                this.uniqueWords[this.selection[0].uniqueWordIndex].translation = this.vocabBox.translationText;
-                this.uniqueWords[this.selection[0].uniqueWordIndex].reading = this.vocabBox.reading;
-                this.uniqueWords[this.selection[0].uniqueWordIndex].base_word = this.vocabBox.base_word;
-                this.uniqueWords[this.selection[0].uniqueWordIndex].base_word_reading = this.vocabBox.base_word_reading;
-
-                var selectedWord = this.uniqueWords[this.selection[0].uniqueWordIndex];
-                var saveData = {
-                    id: selectedWord.id,
-                    translation: selectedWord.translation,
-                    reading: selectedWord.reading,
-                    base_word: selectedWord.base_word,
-                    base_word_reading: selectedWord.base_word_reading,
-                    example_sentence: selectedWord.example_sentence,
-                    lookup_count: selectedWord.lookup_count,
-                };
-
-                if (withStage) {
-                    saveData.stage = selectedWord.stage;
-                }
-
-                axios.post('/vocabulary/update', saveData).then(function (response) {
-                }.bind(this))
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                });
-            },
-            deletePhrase: function() {
-                if (this.selectedPhrase == -1) {
-                    return;
-                }
-
-                var phraseText = this.phrases[this.selectedPhrase].words.join('');
-                for (var i  = 0; i < this.words.length; i++) {
-                    var index = this.words[i].phraseIndexes.indexOf(this.selectedPhrase);
-                    if (index !== -1) {
-                        this.words[i].phraseIndexes.splice(index, 1);
-                    }
-
-                    for (let p = 0; p < this.words[i].phraseIndexes.length; p++) {
-                        if (this.words[i].phraseIndexes[p] > this.selectedPhrase) {
-                            this.words[i].phraseIndexes[p] -= 1;
-                        }
-                    }
-
-                    this.words[i].selected = false;
-                    this.words[i].hover = false;
-                }
-
-                var deletedPhrase = this.phrases.splice(this.selectedPhrase, 1)[0];
-                axios.post('/vocabulary/phrase/delete', {
-                    id: deletedPhrase.id,
-                }).then(function (response) {
-
-                }.bind(this)).catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                });
-
-                this.selectedPhrase = -1;
-                this.selection = [];
-                this.updatePhraseBorders();
-            },
-            addNewPhrase: function() {
-                // create phrase object
-                var phrase = {
-                    id: -1,
-                    stage: 0,
-                    words: [],
-                    reading: this.vocabBox.reading,
-                    translation: '',
-                };
-
-                for (var i = 0; i < this.selection.length; i++) {
-                    if (this.selection[i].word.toLowerCase() == 'newline') {
-                        continue;
-                    }
-                    
-                    phrase.words.push(this.selection[i].word.toLowerCase());
-                }
-
-                // find all instance of the new phrase in the text
-                var phraseOccurences = [];
-                for (var i = 0; i < this.words.length; i++) {
-                    // check if the current word is the start of the phrase
-                    if (this.words[i].word.toLowerCase() == phrase.words[0]) {
-                        phraseOccurences.push([
-                            {
-                                word: this.words[i].word.toLowerCase(),
-                                wordIndex: i,
-                                newLineCount: 0
-                            }
-                        ]);
-                    }
-
-                    // check if the current word is the continuation of a phrase
-                    for (let p = 0 ; p < phraseOccurences.length; p++) {
-                        if (phraseOccurences[p].length == phrase.words.length) {
-                            continue;
-                        }
-
-                        if (phrase.words[phraseOccurences[p].length] == this.words[i].word.toLowerCase() &&
-                            (i - 1) == phraseOccurences[p][phraseOccurences[p].length - 1].wordIndex + phraseOccurences[p][phraseOccurences[p].length - 1].newLineCount) {
-                            phraseOccurences[p].push({
-                                word: this.words[i].word.toLowerCase(),
-                                wordIndex: i,
-                                newLineCount: 0
-                            });
-                        }
-
-                        // count 'NEWLINE' words for comparison
-                        if (this.words[i].word.toLowerCase() == 'newline') {
-                            phraseOccurences[p][phraseOccurences[p].length - 1].newLineCount ++;
-                        }
-                    }
-
-                }
-
-                // mark all instance of the new phrase in the text
-                for (let p = 0 ; p < phraseOccurences.length; p++) {
-                    if (phraseOccurences[p].length < phrase.words.length) {
-                        continue;
-                    }
-
-                    for (let i = 0; i < phraseOccurences[p].length; i++) {
-                        this.words[phraseOccurences[p][i].wordIndex].phraseIndexes.push(this.phrases.length);
-                    }
-                }
-
-                this.phrases.push(phrase);
-                this.updatePhraseBorders();
-                this.selectedPhrase = this.getSelectedPhraseIndex();
-
-                this.updateSelectedWordStage();
-                this.updateVocabBoxPosition();
-                this.savePhrase();
-            },
-            savePhrase: function(withStage = false) {
-                var selectedPhraseIndex = this.selectedPhrase;
-                if (this.phraseCurrentlySaving) {
-                    return;
-                }
-
-                this.phraseCurrentlySaving = true;
-                this.phrases[selectedPhraseIndex].translation = this.vocabBox.translationText;
-                this.phrases[selectedPhraseIndex].reading = this.vocabBox.reading;
-
-                var saveData = {
-                    words: this.phrases[selectedPhraseIndex].words,
-                    reading: this.phrases[selectedPhraseIndex].reading,
-                    translation: this.phrases[selectedPhraseIndex].translation,
-                };
-
-                if (this.phrases[selectedPhraseIndex].id == -1) {
-                    saveData.stage = this.phrases[selectedPhraseIndex].stage;
-                } else {
-                    saveData.id = this.phrases[selectedPhraseIndex].id;
-                }
-
-                if (withStage) {
-                    saveData.stage = this.phrases[selectedPhraseIndex].stage;
-                }
-
-                axios.post('/vocabulary/phrase/update', saveData).then(function (response) {
-                    if (this.phrases[selectedPhraseIndex].id == -1) {
-                        this.phrases[selectedPhraseIndex].id = parseInt(response.data);
-                    }
-
-
-                    this.phraseCurrentlySaving = false;
-                }.bind(this))
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                });
-            },
-            updatePhraseBorders: function() {
-                for (var i = 0; i < this.words.length; i++) {
-                    if (this.words[i].phraseIndexes.length) {
-                        var lowestPhraseStage = 1000;
-                        for (let p = 0; p < this.words[i].phraseIndexes.length; p++) {
-                            if (parseInt(this.phrases[this.words[i].phraseIndexes[p]].stage) < lowestPhraseStage) {
-                                lowestPhraseStage = parseInt(this.phrases[this.words[i].phraseIndexes[p]].stage);
-                            }
-                        }
-
-                        this.words[i].phraseStage = lowestPhraseStage;
-                    }
-                    
-                    // phrase start
-                    this.words[i].phraseStart = false;
-                    this.words[i].phraseEnd = false;
-                    if (this.words[i].phraseIndexes.length && (i == 0 || !this.words[i - 1].phraseIndexes.length)) {
-                        this.words[i].phraseStart = true;
-                    }
-                    
-                    // phrase end
-                    if (this.words[i].phraseIndexes.length && (i + 1 == this.words.length || !this.words[i + 1].phraseIndexes.length)) {
-                        this.words[i].phraseEnd = true;
-                    }
-                }
-            },
-            selectPhraseInstanceByWord: function(wordIndex, phraseIndex) {
-                var currentWordIndex = wordIndex;
-                var newSelection = [];
-
-                // find the first word of the phrase
-                while (currentWordIndex > 0 && (this.words[currentWordIndex - 1].word == 'NEWLINE' || this.words[currentWordIndex - 1].phraseIndexes.includes(phraseIndex))) {
-                    currentWordIndex --;
-                }
-
-                // select the phrase
-                do {
-                    if (this.words[currentWordIndex].word !== 'NEWLINE') {
-                        newSelection.push({
-                            word: this.words[currentWordIndex].word,
-                            reading: this.uniqueWords[this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase())].reading,
-                            sentenceIndex: this.words[currentWordIndex].sentenceIndex,
-                            wordIndex: currentWordIndex,
-                            uniqueWordIndex: this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase()),
-                        });
-
-                    }
-
-                    currentWordIndex ++;
-                } while(currentWordIndex < this.words.length && (this.words[currentWordIndex].word == 'NEWLINE' || this.words[currentWordIndex].phraseIndexes.includes(phraseIndex)));
-                
-                this.ongoingSelection = newSelection;
-            },
-            hoverPhraseSelection: function(wordIndex) {
-                this.removePhraseHover();
-                var phraseIndexes = this.words[wordIndex].phraseIndexes;
-                if (!phraseIndexes.length) {
-                    return;
-                }
-
-                // find the first word of the phrase
-                var currentWordIndex = wordIndex;
-                while (currentWordIndex > 0 && (this.words[currentWordIndex - 1].word == 'NEWLINE' || this.words[currentWordIndex - 1].phraseIndexes.some(el => phraseIndexes.includes(el)))) {
-                    currentWordIndex--;
-                }
-
-                // highlight the phrase
-                do {
-                    this.words[currentWordIndex].hover = true;
-                    currentWordIndex ++;
-                } while(currentWordIndex < this.words.length && (this.words[currentWordIndex].word == 'NEWLINE' || this.words[currentWordIndex].phraseIndexes.some(el => phraseIndexes.includes(el))));
-            },
-            getSelectedPhraseIndex: function() {
-                var phraseIndex = -1;
-                var selectedText = this.selection.map(a => a.word.toLowerCase()).join('');
-                
-                while (selectedText.indexOf('newline') !== -1) {
-                    selectedText = selectedText.replace('newline', '');
-                }
-                
-
-                for (let i = 0; i < this.phrases.length; i++) {
-                    if (selectedText == this.phrases[i].words.join('')) {
-                        phraseIndex = i;
-                        break;
-                    }
-                }
-
-                return phraseIndex;
-            },
             finish: function() {
                 axios.post('/chapter/finish', {
-                    uniqueWords: JSON.stringify(this.uniqueWords),
-                    sentences: JSON.stringify(this.sentences),
+                    uniqueWords: JSON.stringify(this.textBlocks[0].uniqueWords),
+                    sentences: JSON.stringify(this.textBlocks[0].sentences),
                     language: this.language,
                     lessonId: this.lessonId,
                     autoMoveWordsToKnown: this.settings.autoMoveWordsToKnown
-                })
-                .then(function (response) {
+                }).then((response) => {
                     if (response.data == 'success') {
 
                         this.finished = true;
                     } else {
                         this.finishError = true;
                     }
-                }.bind(this))
-                .catch(function (error) {
+                }).catch(function (error) {
                     console.log(error);
-                })
-                .then(function () {
                 });
             }
         }

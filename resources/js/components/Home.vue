@@ -101,7 +101,6 @@
                         >
                             <div 
                                 class="calendar-day-background"
-                                :style="{'background-color': goalColors[selectedGoal]}"
                             ></div>
                             <div class="calendar-day-text" v-if="selectedGoal !== 'reviews_due'">{{ day.day }}</div>
                             <div class="calendar-day-text" v-if="selectedGoal == 'reviews_due'">

@@ -28,11 +28,20 @@ window.Vue.use(VueRouter);
 
 import Layout from './components/Layout.vue';
 import Goal from './components/Goal.vue';
+Vue.component('layout', Layout);
+Vue.component('goal', Goal);
+
+
+// text 
+import TextBlock from './components/Text/TextBlock.vue';
+import TextBlockGroup from './components/Text/TextBlockGroup.vue';
+Vue.component('text-block', TextBlock);
+Vue.component('text-block-group', TextBlockGroup);
+
+// text reader
 import TextReaderSettings from './components/TextReader/TextReaderSettings.vue';
 import TextReaderGlossary from './components/TextReader/TextReaderGlossary.vue';
 import TextReaderChapterList from './components/TextReader/TextReaderChapterList.vue';
-Vue.component('layout', Layout);
-Vue.component('goal', Goal);
 Vue.component('text-reader-settings', TextReaderSettings);
 Vue.component('text-reader-glossary', TextReaderGlossary);
 Vue.component('text-reader-chapter-list', TextReaderChapterList);

@@ -184,22 +184,23 @@ a.v-btn.menu-button {
     }
 
     &.v-navigation-drawer--mini-variant {
-        width: 80px !important;
+
+        width: 64px;
 
         a.navigation-button {
-            display:block;
-            width: 64px;
-            height: 64px;
-            font-size: 11px;
-            text-align: center;
-            padding: 0px;
-            padding-top: 12px;
+            padding-left: 12px !important;
+            padding-right: 0px !important;
+        }
 
-            i, span {
-                display:block;
-                width: 100%;
-                height: auto;
-            }
+        .mini-drawer-button {
+            box-sizing: border-box;
+            width: 46px !important;
+            min-width: 46px !important;
+            max-width: 46px !important;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+            height: 46px !important;
+            margin: 2px 4px;
         }
     }
 }
@@ -305,8 +306,18 @@ div.v-data-table {
         scroll-padding-bottom: 90px;
     }
 
+    main.v-main {
+        padding-left: 60px !important;
+    }
+
     .v-main__wrap > .container {
         padding-bottom: 100px !important;
+    }
+}
+
+@media (max-width: 959px) {
+    main.v-main {
+        padding-left: 0px !important;
     }
 }
 
