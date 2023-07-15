@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Lesson;
+use App\Models\LessonWord;
 use App\Models\Phrase;
 use App\Models\EncounteredWord;
 use Illuminate\Support\Facades\Auth;
@@ -58,8 +59,16 @@ class ReviewController extends Controller
         
         // limit query to 1 lesson
         if ($lessonId !== -1) {
-            $lesson = Lesson::where('id', $lessonId)->where('user_id', Auth::user()->id)->first();            
-            $words = json_decode(gzuncompress($lesson->processed_text));
+            $lesson = Lesson
+                ::where('id', $lessonId)
+                ->where('user_id', Auth::user()->id)
+                ->first();
+
+            $words = LessonWord
+                ::where('user_id', Auth::user()->id)
+                ->where('lesson_id', $lesson->id)
+                ->get();
+
             $uniqueWords = [];
             $uniquePhraseIds = [];
 
@@ -68,7 +77,8 @@ class ReviewController extends Controller
                     array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
                 }
 
-                foreach ($word->phraseIds as $phraseId) {
+                $word->phrase_ids = json_decode($word->phrase_ids);
+                foreach ($word->phrase_ids as $phraseId) {
                     if (!in_array($phraseId, $uniquePhraseIds, true)) {
                         array_push($uniquePhraseIds, $phraseId);
                     }
@@ -83,18 +93,27 @@ class ReviewController extends Controller
         if ($bookId !== -1 && $lessonId == -1) {
             $uniqueWords = [];
             $uniquePhraseIds = [];
-            $lessons = Lesson::where('book_id', $bookId)->where('user_id', Auth::user()->id)->get();
-            foreach ($lessons as $lesson) {
-                $words = json_decode(gzuncompress($lesson->processed_text));
-                foreach ($words as $word) {
-                    if (!in_array(mb_strtolower($word->word, 'UTF-8'), $uniqueWords, true)) {
-                        array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
-                    }
-                    
-                    foreach ($word->phraseIds as $phraseId) {
-                        if (!in_array($phraseId, $uniquePhraseIds, true)) {
-                            array_push($uniquePhraseIds, $phraseId);
-                        }
+            $lessonIds = Lesson
+                ::select('id')
+                ->where('user_id', Auth::user()->id)    
+                ->where('book_id', $bookId)
+                ->pluck('id')
+                ->toArray();
+
+            $words = LessonWord
+                ::where('user_id', Auth::user()->id)
+                ->whereIn('lesson_id', $lessonIds)
+                ->get();
+
+            foreach ($words as $word) {
+                if (!in_array(mb_strtolower($word->word, 'UTF-8'), $uniqueWords, true)) {
+                    array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
+                }
+                
+                $word->phrase_ids = json_decode($word->phrase_ids);
+                foreach ($word->phrase_ids as $phraseId) {
+                    if (!in_array($phraseId, $uniquePhraseIds, true)) {
+                        array_push($uniquePhraseIds, $phraseId);
                     }
                 }
             }

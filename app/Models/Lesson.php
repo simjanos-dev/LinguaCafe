@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Phrase;
+use App\Models\LessonWord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Lesson extends Model
 {
@@ -19,13 +21,12 @@ class Lesson extends Model
         'word_count',
         'language',
         'raw_text',
-        'processed_text',
     ];
 
     function getWordCounts($words) {
         $lessons = Lesson::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
         $uniqueWordIds = json_decode($this->unique_word_ids);
-        $wordCounts = new \StdClass();
+        $wordCounts = new \stdClass();
         $wordCounts->total = $this->word_count;
         $wordCounts->unique = count($uniqueWordIds);
         $wordCounts->known = 0;
@@ -49,72 +50,83 @@ class Lesson extends Model
         return $wordCounts;
     }
 
-    function updatePhraseIds($phraseId) {
-        $words = json_decode(gzuncompress($this->processed_text));
-        $phrase = Phrase::where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->where('id', $phraseId)->first();
+    /*
+        Loops through the text of the lesson and 
+        adds the phrase's id to each word where
+        the phrase containes the word. 
+
+        The words must be saved after the function
+        has finished. It works this way to increase
+        performance.
+    */
+    function updatePhraseIds($phraseId, &$words) {
+        // Retrieve phrase based on id given in argument.
+        $phrase = Phrase
+            ::where('user_id', Auth::user()->id)
+            ->where('language', Auth::user()->selected_language)
+            ->where('id', $phraseId)
+            ->first();
+
+        // Decode json content.
         $phrase->words = json_decode($phrase->words);
+        $phraseLength = count($phrase->words);
+
         $phraseOccurences = [];
-        foreach($words as $i => $word) {
+        foreach($words as $wordIndex => $word) {
             $lowercaseWord = mb_strtolower($word->word, 'UTF-8');
-            // find all instance of the new phrase in the text       
-            // check if the current word is the start of the phrase
+            
+            // Check if the current word is the start of the phrase.
             if ($lowercaseWord == $phrase->words[0]) {
                 $phraseOccurence = new \StdClass();
                 $phraseOccurence->word = $lowercaseWord;
-                $phraseOccurence->wordIndex = $i;
+                $phraseOccurence->wordIndex = $wordIndex;
                 $phraseOccurence->newLineCount = 0;
                 array_push($phraseOccurences, array($phraseOccurence));
             }
 
-            // check if the current word is the continuation of a phrase
+            // Check if the current word is the continuation of a phrase.
             for ($p = 0 ; $p < count($phraseOccurences); $p++) {
-                if (count($phraseOccurences[$p]) === count($phrase->words)) {
+                $phraseOccurenceLength = count($phraseOccurences[$p]);
+                
+                // If the phrase occurance length equals with phrase length
+                // then it means it's an exact match match. There is no need 
+                // for further comparison, so the loop can be skipped.
+                if ($phraseOccurenceLength === $phraseLength) {
                     continue;
                 }
 
-                if ($i - 1 === $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->wordIndex + $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->newLineCount 
-                    && $phrase->words[count($phraseOccurences[$p])] === $lowercaseWord) {
+                if ($wordIndex - 1 === $phraseOccurences[$p][$phraseOccurenceLength - 1]->wordIndex + $phraseOccurences[$p][$phraseOccurenceLength - 1]->newLineCount 
+                    && $phrase->words[$phraseOccurenceLength] === $lowercaseWord) {
                     
                     $phraseOccurence = new \StdClass();
                     $phraseOccurence->word = $lowercaseWord;
-                    $phraseOccurence->wordIndex = $i;
+                    $phraseOccurence->wordIndex = $wordIndex;
                     $phraseOccurence->newLineCount = 0;
                     array_push($phraseOccurences[$p], $phraseOccurence);
                 }
-
-                // count 'NEWLINE' words for comparison
+ 
+                // Count 'NEWLINE' words. This is needed because phrases doesn't 
+                // have them, so it must be skipped when comparing them with text. 
                 if ($word->word === 'NEWLINE') {
-                    $phraseOccurences[$p][count($phraseOccurences[$p]) - 1]->newLineCount ++;
+                    $phraseOccurences[$p][$phraseOccurenceLength - 1]->newLineCount ++;
                 }
             }
         }
         
-        // mark all instance of the new phrase in the text
+        // Mark all instance of the phrase in text.
         for ($p = 0 ; $p < count($phraseOccurences); $p++) {
+
+            // Skip partial phrase matches. 
             if (count($phraseOccurences[$p]) < count($phrase->words)) {
                 continue;
             }
 
             for ($i = 0; $i < count($phraseOccurences[$p]); $i++) {
-                array_push($words[$phraseOccurences[$p][$i]->wordIndex]->phraseIds, $phrase->id);
+                $tempArray = $words[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids;
+                
+                array_push($tempArray, $phrase->id);
+                $words[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids = $tempArray;
             }
         }
-        
-        $this->processed_text = gzcompress(json_encode($words), 1);
-        $this->save();
-    }
-
-    function deletePhraseIds($phraseId) {
-        $words = json_decode(gzuncompress($this->processed_text));
-        for ($i = count($words) - 1; $i >= 0; $i--) {
-            $index = array_search($phraseId, $words[$i]->phraseIds);
-            if ($index !== false) {
-                array_splice($words[$i]->phraseIds, $index, 1);
-            }
-        }
-        
-        
-        $this->processed_text = gzcompress(json_encode($words), 1);
-        $this->save();
     }
 }

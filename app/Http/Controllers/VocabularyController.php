@@ -9,6 +9,7 @@ use App\Models\Kanji;
 use App\Models\Radical;
 use App\Models\Book;
 use App\Models\Lesson;
+use App\Models\LessonWord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -169,15 +170,38 @@ class VocabularyController extends Controller
 
         // mark the phrase in every text
         if ($isNewPhrase) {
-            $lessons = Lesson::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-            foreach ($lessons as $currentLesson) {
+            $lessons = Lesson
+                ::where('user_id', Auth::user()->id)
+                ->where('language', $selectedLanguage)
+                ->get();
+
+            foreach ($lessons as $lesson) {
                 $phraseWords = array_unique($request->words);
-                $uniqueWords = json_decode($currentLesson->unique_words);
+                $uniqueWords = json_decode($lesson->unique_words);
                 if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
                     continue;
                 }
 
-                $currentLesson->updatePhraseIds($phrase->id);
+                $words = LessonWord
+                    ::where('user_id', Auth::user()->id)
+                    ->where('lesson_id', $lesson->id)
+                    ->get();
+                    
+                foreach ($words as $word) {
+                    $word->phrase_ids = json_decode($word->phrase_ids);
+                }
+
+                $lesson->updatePhraseIds($phrase->id, $words);
+
+                // save lesson words
+                DB::beginTransaction();
+                foreach ($words as $word) {
+                    $word->phrase_ids = json_encode($word->phrase_ids);
+                    $word->save();
+                }
+
+                DB::commit();
+                
             }
         }
 
@@ -186,12 +210,36 @@ class VocabularyController extends Controller
 
     public function deletePhrase(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
-        $lessons = Lesson::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-        foreach ($lessons as $currentLesson) {
-            $currentLesson->deletePhraseIds($request->id);
+        $phraseId = $request->id;
+        $lessonIds = Lesson
+            ::select('id')
+            ->where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->pluck('id')
+            ->toArray();
+            
+        $words = LessonWord
+            ::where('user_id', Auth::user()->id)
+            ->where('phrase_ids', '<>', '[]')
+            ->whereIn('lesson_id', $lessonIds)
+            ->get();
+
+        foreach ($words as $word) {
+            $word->phrase_ids = json_decode($word->phrase_ids);
+            $index = array_search($phraseId, $word->phrase_ids);
+            if ($index !== false) {
+                $modifiedPhraseIds = $word->phrase_ids;
+                array_splice($modifiedPhraseIds, $index, 1);
+                $word->phrase_ids = json_encode($modifiedPhraseIds);
+                $word->save();
+            }
         }
         
-        Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('id', $request->id)->delete();
+        Phrase
+            ::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->where('id', $request->id)
+            ->delete();
     }
 
     public function search(Request $request) {
@@ -240,9 +288,14 @@ class VocabularyController extends Controller
         if ($bookId !== 'any') {
             foreach ($filteredChapters as $filteredChapter) {
                 // add filtered phrase ids
-                $filteredChapterText = json_decode(gzuncompress($filteredChapter->processed_text));
+                $filteredChapterText = LessonWord
+                ::where('user_id', Auth::user()->id)
+                ->where('lesson_id', $filteredChapter->id)
+                ->get();
+
                 foreach ($filteredChapterText as $filteredChapterWord) {
-                    foreach ($filteredChapterWord->phraseIds as $phraseId) {
+                    $filteredChapterWord->phrase_ids = json_decode($filteredChapterWord->phrase_ids);
+                    foreach ($filteredChapterWord->phrase_ids as $phraseId) {
                         if (!in_array($phraseId, $filteredPhraseIds, true)) {
                             array_push($filteredPhraseIds, $phraseId);
                         }
