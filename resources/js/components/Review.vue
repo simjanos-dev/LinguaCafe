@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="currentReviewIndex !== -1" id="review-box">
+    <v-container v-if="currentReviewIndex !== -1" id="review-box" :class="{'pa-0': $vuetify.breakpoint.smAndDown}">
         <div id="review" v-if="!finished">
             <div id="review-progress-line">
                 <div id="progress-bar-correct-counter" class="border" :style="{'background-color': $vuetify.theme.currentTheme.success}">{{ correctReviews }}</div>
@@ -16,19 +16,6 @@
                 <v-btn icon class="my-2" @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
                 <v-btn icon class="my-2" @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                 <v-btn icon class="my-2" @click="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon :color="settings.sentenceMode ? 'primary' : ''">mdi-card-text</v-icon></v-btn>
-
-                <!--
-                    <v-btn icon class="toolbar-button pa-0" @click="finished = true"><v-icon>mdi-check-all</v-icon></v-btn>
-                    <v-btn-toggle class="ma-0" color="primary" group v-model="settings.fullscreen">
-                        <v-btn icon class="toolbar-button pa-0" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
-                        <v-btn icon class="toolbar-button pa-0" :value="true" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
-                    </v-btn-toggle>
-                    <v-btn-toggle class="ma-0" color="primary" group v-model="settings.sentenceMode">
-                        <v-btn icon class="pa-0 ma-0 toolbar-button" :value="true" @click.stop="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon>mdi-card-text</v-icon></v-btn>
-                    </v-btn-toggle>
-                    <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-format-font-size-increase</v-icon></v-btn>
-                    <v-btn icon class="toolbar-button pa-0" @click="settings.fontSize --; saveSettings();"><v-icon>mdi-format-font-size-decrease</v-icon></v-btn>
-                -->
             </div>
 
             <div id="review-card" 
@@ -38,38 +25,30 @@
                     'into-the-correct-deck-animation': intoTheCorrectDeckAnimation, 
                     'draw-new-card-animation': newCardAnimation
                 }">
-                <div id="review-card-content">
+                <div id="review-card-content" class="vocab-box-area">
                     <!-- Review card front -->
                     <div id="review-card-front" class="rounded-lg border"> 
                         <!-- Word review -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
+                        <template v-if="reviews[currentReviewIndex] !== undefined">
                             <!-- Example sentence mode -->
-                            <div class="phrase" v-if="settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-for="(word, index) in JSON.parse(reviews[currentReviewIndex].example_sentence)">
-                                    <div 
-                                        :class="{
-                                            'phrase-word': true, 
-                                            'highlighted': word.toLowerCase() == reviews[currentReviewIndex].word
-                                        }"
-                                        v-if="word !== 'NEWLINE'" 
-                                        :key="index"
-                                    >
-                                        {{ word }}
-                                    </div>
-                                </template>
+                            <div class="phrase-words" v-show="settings.sentenceMode || reviews[currentReviewIndex].type == 'phrase'" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <text-block-group
+                                    ref="textBlock"
+                                    :theme="theme"
+                                    :fullscreen="settings.fullscreen"
+                                    :_text-blocks="textBlocks"
+                                    :language="language"
+                                    :highlight-words="true"
+                                    :plain-text-mode="false"
+                                    :font-size="settings.fontSize"
+                                    :line-spacing="0"
+                                ></text-block-group>
                             </div>
                             
                             <!-- Single word  mode -->
-                            <div class="word" v-if="!settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <div class="single-word" v-if="!settings.sentenceMode && reviews[currentReviewIndex].type == 'word'" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}
-                            </div>
-                        </template>
-
-                        <!-- Phrase -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
-                            <div class="phrase" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
                             </div>
                         </template>
                     </div>
@@ -107,9 +86,11 @@
                 </div>
             </div>
 
-            <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
-            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
-            <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+            <div class="text-center">
+                <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+                <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+                <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+            </div>
         </div>
         <div id="finished-box" v-if="finished">
             <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ finishedReviews }} sentences!</div>
@@ -141,7 +122,15 @@
     export default {
         data: function() {
             return {
-                //card state and animations
+                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                textBlocks: [
+                    {
+                        id: -1,
+                        words: [],
+                        phrases: [],
+                        uniqueWords: [],
+                    }
+                ],
                 language: '',
                 practiceMode: false,
                 revealed: false,
@@ -184,28 +173,11 @@
                 data.lessonId = this.$route.params.chapterId;
             }
 
-            axios.post('/review', data).then(function (response) {
+            axios.post('/review', data).then((response) => {
                 var data = response.data;
                 this.reviews = data.reviews;
                 this.totalReviews = data.reviews.length;
                 this.language = data.language;
-                
-                this.afterMounted();
-            }.bind(this)).catch(function (error) {
-            }).then(function () {
-
-            });
-        },
-        beforeDestroy: function () {
-            window.removeEventListener('keyup', this.hotkey);
-        },
-        methods: {
-            afterMounted: function() {
-                if (this.reviews.length) {
-                    this.next();
-                } else {
-                    window.location.href = '/';
-                }
 
                 this.settings.fontSize =  parseInt(this.$cookie.get('review-font-size'));
                 this.settings.sentenceMode =  this.$cookie.get('sentence-mode') == 'true';
@@ -219,11 +191,25 @@
                 }
 
                 this.saveSettings();
+
+                if (this.reviews.length) {
+                    this.$nextTick(() => {
+                        this.next();
+                        this.$nextTick(() => {
+                            document.getElementById('review-box').addEventListener('fullscreenchange', this.updateFullscreen);
+                        });
+                    });
+                } else {
+                    window.location.href = '/';
+                }
+
                 window.addEventListener('keyup', this.hotkey);
-                this.$nextTick(() => {
-                    document.getElementById('review-box').addEventListener('fullscreenchange', this.updateFullscreen);
-                });
-            },
+            });
+        },
+        beforeDestroy: function () {
+            window.removeEventListener('keyup', this.hotkey);
+        },
+        methods: {
             hotkey (event) {
                 if (!this.finished && !this.revealed && event.which == 13) {
                     this.reveal();
@@ -255,37 +241,24 @@
                     return;
                 }
                 
+                this.$refs.textBlock.unselectAllWords(true);
                 this.revealed = true;
                 this.newCardAnimation = false;
             },
             countReadWords() {
-                if (this.reviews[this.currentReviewIndex].type == 'word') {
-                    var exampleSentence = JSON.parse(this.reviews[this.currentReviewIndex].example_sentence);
-                    var wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
-                            '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
-                            '«', '»', "'", '’', '–', 'NEWLINE'];
+                var wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
+                        '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
+                        '«', '»', "'", '’', '–', 'NEWLINE'];
 
-                    if (!this.settings.sentenceMode) {
+                if (!this.settings.sentenceMode) {
+                    if (this.reviews[this.currentReviewIndex].type == 'word') {
                         this.readWords ++;
                     } else {
-                        for (var i = 0; i < exampleSentence.length; i++) {
-                            if (wordsToSkip.includes(exampleSentence[i])) {
-                                continue;
-                            }
 
-                            this.readWords ++;
-                        }
                     }
-                }
-
-                if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    var phraseWords = JSON.parse(this.reviews[this.currentReviewIndex].words);
-                    var wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
-                            '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
-                            '«', '»', "'", '’', '–', 'NEWLINE'];
-
-                    for (var i = 0; i < phraseWords.length; i++) {
-                        if (wordsToSkip.includes(phraseWords[i])) {
+                } else {
+                    for (var i = 0; i < this.textBlocks[0].words.length; i++) {
+                        if (wordsToSkip.includes(this.textBlocks[0].words[i].word)) {
                             continue;
                         }
 
@@ -315,12 +288,10 @@
                 };
 
                 if (this.reviews[this.currentReviewIndex].relearning) {
-                    console.log(this.reviews[this.currentReviewIndex].word + '|correct| removed from relearning phase, no stage change');
                     saveData.relearning = false;
                     this.reviews[this.currentReviewIndex].relearning = false;
                 } else {
                     saveData.stage = this.reviews[this.currentReviewIndex].stage + 1;
-                    console.log(this.reviews[this.currentReviewIndex].word + '|correct| stage increased from ' + (saveData.stage - 1) + ' to ' + saveData.stage);
                 }
 
                 if (!this.practiceMode) {
@@ -360,10 +331,6 @@
                     changedWhileReviewing: true
                 };
                 
-                if (this.reviews[this.currentReviewIndex].relearning) {
-                    console.log(this.reviews[this.currentReviewIndex].word + '|missed| was already in relearning mode, nothing happens');
-                }
-
                 if (!this.reviews[this.currentReviewIndex].relearning && !this.practiceMode) {
                     if (this.reviews[this.currentReviewIndex].stage > -7) {
                         if (this.reviews[this.currentReviewIndex].stage > -6) {
@@ -373,9 +340,6 @@
 
                         this.reviews[this.currentReviewIndex].stage = this.reviews[this.currentReviewIndex].stage - 1;
                         saveData.stage = this.reviews[this.currentReviewIndex].stage;
-                        console.log(this.reviews[this.currentReviewIndex].word + '|missed| placed into relearning mode, stage decreased from ' + (saveData.stage + 1) + ' to ' + (saveData.stage));
-                    } else {
-                        console.log(this.reviews[this.currentReviewIndex].word + '|missed| placed into relearning mode, stage stayed the same -7');
                     }
                 }                
 
@@ -394,12 +358,37 @@
                 this.backgroundColor = 'white';
 
                 setTimeout(() => {
+                    this.$refs.textBlock.unselectAllWords(true);
                     this.newCardAnimation = false;
                 }, this.settings.transitionDuration);
 
                 this.finishedReviews ++;
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
                 
+                this.textBlocks[0] = {
+                    id: -1,
+                    words: [],
+                    phrases: [],
+                    uniqueWords: [],
+                };
+
+                axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].id + '/' + this.reviews[this.currentReviewIndex].type).then((response) => {
+                    let firstTime = (this.textBlocks[0].id == -1);
+
+                    if (response.data !== 'no example sentence') {
+                        this.textBlocks[0] = {
+                            id: 0,
+                            words: response.data.words,
+                            phrases: response.data.phrases,
+                            uniqueWords: response.data.uniqueWords,
+                        };
+                    }
+
+                    if (firstTime) {
+                        this.$refs.textBlock.$forceUpdate();
+                    }
+                });
+
                 // update reviewed and read words data
                 axios.post('/review/update', {
                     readWords: this.readWords,

@@ -6,7 +6,6 @@
     width: 100%;
     height: 100%;
     margin: auto;
-    text-align: center;
     font-family: notosans !important;
     background-color: var(--v-background-base);
 
@@ -22,7 +21,7 @@
         display: block;
         height: 280px;
         width: 40px;
-        right: calc(50% - 276px);
+        right: calc(50% - 316px);
         top: 100px;
     }
     
@@ -36,7 +35,7 @@
     #review-progress-line {
         position: relative; 
         display: block;
-        width: 960px;
+        width: 100%;
         height: 40px;
         margin: 0px auto;
         padding: 0px;
@@ -73,7 +72,7 @@
             position: relative;
             display: inline-block;
             float: left;
-            width: 800px;
+            width: calc(100% - 150px);
             height: 30px;
             border-radius: 30px;
             overflow-x: hidden;
@@ -106,10 +105,11 @@
     }
 
     #review-card {
+        z-index: 5;
         position: relative;
         display: block;
         margin: 10px auto;
-        width: 460px;
+        width: 540px;
         height: 280px;
         perspective: 800px;
         margin-top: 25px;
@@ -161,6 +161,7 @@
         
         #review-card-front,
         #review-card-back {
+            text-align: center;
             display: block;
             position: absolute;
             height: 100%;
@@ -169,23 +170,11 @@
             color: var(--v-text-base);
             backface-visibility: hidden;
             padding: 10px;
-            overflow: hidden;
+            overflow: visible;
 
-            .phrase {
+            .phrase-words {
+                width: 100%;
                 display: block;
-                
-                .phrase-word {
-                    display: inline-block;
-                    float: left;
-                    
-                    &.highlighted {
-                        background-color: var(--v-highlightedWord-base);
-                        color: var(--v-highlightedWordText-base);
-                        border-radius: 5px;
-                        padding: 0px 4px;
-                        margin: 0px 5px;
-                    }
-                }
             }
         }
 
@@ -194,7 +183,7 @@
             align-items: center;
             justify-content: center;
             
-            .word {
+            .single-word {
                 display: block;
                 font-family: notosans !important;
             }
@@ -202,7 +191,7 @@
 
         #review-card-back {
             transform: rotateY( 180deg );
-            .word, .reading {
+            .single-word, .reading {
                 font-family: notosans !important;
             }
         }
@@ -335,8 +324,9 @@
         #toolbar {
             position: relative;
             top: unset;
-            left: unset;
+            right: unset;
             display: block;
+            text-align: left;
             width: 90%;
             min-width: 260px;
             max-width: 440px;

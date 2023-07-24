@@ -48,6 +48,7 @@
                 v-if="!finished"
                 id="reader"
                 :class="{
+                    'vocab-box-area': true, 
                     'plain-text-mode': settings.plainTextMode, 
                     'japanese-text': settings.japaneseText, 
                     'rounded-lg': true,
@@ -139,7 +140,7 @@
                 },
                 maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 toolbarTop: 68,
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),                
+                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 settings: {
                     highlightWords: true,
                     plainTextMode: false,
@@ -188,6 +189,7 @@
                     phrases: JSON.parse(JSON.stringify(data.phrases)),
                     uniqueWords: JSON.parse(JSON.stringify(data.uniqueWords))
                 });
+
                 this.bookName = data.bookName;
                 this.lessonId = data.lessonId;
                 this.wordCount = data.wordCount;

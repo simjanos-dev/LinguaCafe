@@ -10,6 +10,7 @@ use App\Models\Radical;
 use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\LessonWord;
+use App\Models\ExampleSentence;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -68,10 +69,6 @@ class VocabularyController extends Controller
 
         if (isset($request->base_word_reading)) {
             $word->base_word_reading = $request->base_word_reading;
-        }
-
-        if (isset($request->example_sentence)) {
-            $word->example_sentence = $request->example_sentence;
         }
 
         if (isset($request->lookup_count)) {
@@ -168,15 +165,15 @@ class VocabularyController extends Controller
         
         $phrase->save();
 
-        // mark the phrase in every text
+        // update phrase ids in lesson texts
         if ($isNewPhrase) {
+            $phraseWords = array_unique($request->words);
             $lessons = Lesson
                 ::where('user_id', Auth::user()->id)
                 ->where('language', $selectedLanguage)
                 ->get();
 
             foreach ($lessons as $lesson) {
-                $phraseWords = array_unique($request->words);
                 $uniqueWords = json_decode($lesson->unique_words);
                 if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
                     continue;
@@ -205,6 +202,30 @@ class VocabularyController extends Controller
             }
         }
 
+        // update phrase ids in example sentences
+        if ($isNewPhrase) {
+            $exampleSentences = ExampleSentence
+                ::where('user_id', Auth::user()->id)
+                ->where('language', $selectedLanguage)
+                ->get();
+
+            DB::beginTransaction();
+            foreach ($exampleSentences as $exampleSentence) {
+                $uniqueWords = json_decode($exampleSentence->unique_words);
+                if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
+                    continue;
+                }
+
+                $words = json_decode($exampleSentence->words);
+                $exampleSentence->updatePhraseIds($phrase->id, $words);
+                
+                $exampleSentence->words = $words;
+                $exampleSentence->save();
+            }
+
+            DB::commit();
+        }
+
         return $phrase->id;
     }
 
@@ -224,6 +245,7 @@ class VocabularyController extends Controller
             ->whereIn('lesson_id', $lessonIds)
             ->get();
 
+        // delete phrase id from lesson words
         foreach ($words as $word) {
             $word->phrase_ids = json_decode($word->phrase_ids);
             $index = array_search($phraseId, $word->phrase_ids);
@@ -234,12 +256,100 @@ class VocabularyController extends Controller
                 $word->save();
             }
         }
+
+
+        // delete phrase id from example sentences
+        $exampleSentences = ExampleSentence
+            ::where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->get();
+
+        DB::beginTransaction();
+        foreach ($exampleSentences as $exampleSentence) {
+            $exampleSentence->deletePhraseId($phraseId);
+        }
+
+        DB::commit();
         
+        ExampleSentence
+            ::where('user_id', Auth::user()->id)
+            ->where('target_type', 'phrase')
+            ->where('target_id', $request->id)
+            ->delete();
+
         Phrase
             ::where('user_id', Auth::user()->id)
             ->where('language', $selectedLanguage)
             ->where('id', $request->id)
             ->delete();
+    }
+
+    public function getExampleSentence($targetId, $targetType) {
+        $exampleSentence = ExampleSentence
+            ::where('user_id', Auth::user()->id)
+            ->where('target_type', $targetType)
+            ->where('target_id', $targetId)
+            ->first();
+        
+        if ($exampleSentence) {
+            $exampleSentence = $exampleSentence->getTextBlockData();
+            return $exampleSentence;
+        } else {
+            return 'no example sentence';
+        }
+        
+    }
+
+    public function saveExampleSentence(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
+        $userId = Auth::user()->id;
+        $targetType = $request->targetType;
+        $targetId = $request->targetId;
+        $exampleSentenceWords = $request->exampleSentenceWords;
+
+        // Retrieve example sentence.
+        $exampleSentence = ExampleSentence
+            ::where('user_id', $userId)
+            ->where('target_type', $targetType)
+            ->where('target_id', $targetId)
+            ->first();
+
+
+        // Create new example sentence record if it didn't exist, and update words.
+        $exampleSentenceWords = json_decode($exampleSentenceWords);
+        if (!$exampleSentence) {
+            $exampleSentence = new ExampleSentence();
+            $exampleSentence->user_id = $userId;
+            $exampleSentence->language = $selectedLanguage;
+            $exampleSentence->target_type = $targetType;
+            $exampleSentence->target_id = $targetId;
+            $exampleSentence->unique_words = [];
+        }
+
+        // Update unique words.
+        $uniqueWords = [];
+        foreach ($exampleSentenceWords as $word) {
+            $lowerCaseWord = mb_strtolower($word->word, 'UTF-8');
+            if (!in_array($lowerCaseWord, $uniqueWords, true)) {
+                array_push($uniqueWords, $lowerCaseWord);
+            }
+        }
+        
+        // Update phrase ids
+        $phrases = Phrase
+            ::where('user_id', Auth::user()->id)
+            ->where('language', 'japanese')
+            ->where('stage', '<', 0)
+            ->get();
+
+        foreach ($phrases as $phrase) {
+            $exampleSentence->updatePhraseIds($phrase->id, $exampleSentenceWords);
+        }
+
+        // Save example sentence.
+        $exampleSentence->words = json_encode($exampleSentenceWords);
+        $exampleSentence->unique_words = json_encode($uniqueWords);
+        $exampleSentence->save();
     }
 
     public function search(Request $request) {

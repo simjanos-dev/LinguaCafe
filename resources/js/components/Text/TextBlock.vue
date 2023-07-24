@@ -15,7 +15,7 @@
                     'phrase': word.phraseIndexes.length > 0, 
                     'phrase-start': word.phraseStart, 
                     'phrase-end': word.phraseEnd
-                }" 
+                }"
                 :style="{
                     'font-size': fontSize + 'px', 
                     'margin-bottom': (lineSpacing * 4) + 'px'
@@ -27,8 +27,8 @@
                 @mousedown.stop="startSelection($event, wordIndex)" 
                 @touchmove="updateSelectionTouch($event, wordIndex);" 
                 @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
-                @touchend.stop="finishSelection($event, 1)"
-                @mouseup.stop="finishSelection($event, 2)"
+                @touchend.stop="finishSelection($event)"
+                @mouseup.stop="finishSelection($event)"
                 @mouseleave=";"
             >{{ word.word }}</div><!--
             --><br v-if="word.word == 'NEWLINE'"><!--
@@ -40,6 +40,9 @@
     export default {    
         data: function() {
             return {
+                words: this.$props._words,
+                phrases: this.$props._phrases,
+                uniqueWords: this.$props._uniqueWords,
                 touchTimer: null,
                 selectionOngoing: false,
                 selection: [],
@@ -68,14 +71,36 @@
         },
         props: {
             textBlockId: Number,
-            words: Array,
-            phrases: Array,
-            uniqueWords: Array,
+            _words: Array,
+            _phrases: Array,
+            _uniqueWords: Array,
             language: String,
             highlightWords: Boolean,
             plainTextMode: Boolean,
             fontSize: Number,
             lineSpacing: Number
+        },
+        watch: { 
+            _words: {
+                handler: function(newVal, oldVal) {
+                    this.words = newVal;
+                },
+                flush: 'post'
+            },
+
+            _phrases: {
+                handler: function(newVal, oldVal) {
+                    this.phrases = newVal;
+                },
+                flush: 'post'
+            },
+            _uniqueWords: {
+                handler: function(newVal, oldVal) {
+                    this.uniqueWords = newVal;
+                    this.updatePhraseBorders();
+                },
+                flush: 'post'
+            }
         },
         mounted() {
             this.updatePhraseBorders();
@@ -115,17 +140,16 @@
                     currentWordIndex --;
                 }
 
-                // select the phrase
+                // select the phrasew
                 do {
                     if (this.words[currentWordIndex].word !== 'NEWLINE') {
                         newSelection.push({
                             word: this.words[currentWordIndex].word,
                             reading: this.uniqueWords[this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase())].reading,
-                            sentenceIndex: this.words[currentWordIndex].sentenceIndex,
+                            sentence_index: this.words[currentWordIndex].sentence_index,
                             wordIndex: currentWordIndex,
                             uniqueWordIndex: this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase()),
                         });
-
                     }
 
                     currentWordIndex ++;
@@ -169,7 +193,7 @@
                     wordIndex: wordIndex,
                     uniqueWordIndex: this.getUniqueWordIndex(event.srcElement.outerText.toLowerCase()),
                     reading: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].reading,
-                    sentenceIndex: this.words[wordIndex].sentenceIndex,
+                    sentence_index: this.words[wordIndex].sentence_index,
                     position: event.target.getBoundingClientRect(),
                 };
                 
@@ -248,13 +272,13 @@
                         wordIndex: i,
                         uniqueWordIndex: this.getUniqueWordIndex(this.words[i].word.toLowerCase()),
                         reading: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].reading,
-                        sentenceIndex: this.words[i].sentenceIndex
+                        sentence_index: this.words[i].sentence_index
                     };
 
                     this.ongoingSelection.push(selectedWord);
                 }
             },
-            finishSelection: function(event, test) {
+            finishSelection: function(event) {
                 if (!event.cancelable) {
                     return;
                 }
@@ -298,10 +322,8 @@
                 this.ongoingSelection = [];
 
                 if (this.selection.length) {
-                    this.selectedPhrase = this.getSelectedPhraseIndex();
-
+                    this.selectedPhrase = this.getSelectedPhraseIndex();                    
                     
-                    this.updateExampleSentence();
                     this.updatePhraseBorders();
                     this.$emit('textSelected', this.selection, this.selectedPhrase, this.$props.textBlockId);
                 }
@@ -309,21 +331,6 @@
             unselectWord() {
                 this.selectedPhrase = -1;
                 this.selection = [];
-            },
-            updateExampleSentence: function() {
-                if (this.selection.length == 1) {
-                    var exampleSentence = [];
-
-                    for (var i = 0; i < this.words.length; i++) {
-                        if (this.words[i].word == 'NEWLINE' || this.words[i].sentenceIndex !== this.selection[0].sentenceIndex) {
-                            continue;
-                        }
-
-                        exampleSentence.push(this.words[i].word);
-                    }
-
-                    this.uniqueWords[this.selection[0].uniqueWordIndex].example_sentence = JSON.stringify(exampleSentence);
-                }
             },
             getUniqueWordIndex: function(word) {
                 for (var i = 0; i < this.uniqueWords.length; i++) {

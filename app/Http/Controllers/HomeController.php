@@ -2,19 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\ExampleSentence;
 use App\Models\EncounteredWord;
-use App\Models\Book;
-use App\Models\Lesson;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 use App\Models\Phrase;
-use App\Models\DailyAchievement;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -31,104 +25,37 @@ class HomeController extends Controller
     }
 
     public function dev() {
-        return;
-        $selectedLanguage = Auth::user()->selected_language;
-        Goal::truncate();
-        GoalAchievement::truncate();
+        $exampleSentences = ExampleSentence::get();
         
-        $goal = new Goal();
-        $goal->name = 'Reviews';
-        $goal->user_id = Auth::user()->id;
-        $goal->language = $selectedLanguage;
-        $goal->type = 'review';
-        $goal->quantity = 366;
-        $goal->save();
+        foreach ($exampleSentences as $exampleSentence) {
+            // update phrase ids
+            $phrases = Phrase::where('user_id', 1)->where('language', 'japanese')->get();
+            foreach($phrases as $phrase) {
+                $words = json_decode($exampleSentence->words);
+                $uniqueWords = json_decode($exampleSentence->unique_words);
+                $phraseWords = array_unique(json_decode($phrase->words));
 
-        $achievement = new GoalAchievement();
-        $achievement->language = $selectedLanguage;
-        $achievement->user_id = Auth::user()->id;
-        $achievement->goal_id = $goal->id;
-        $achievement->achieved_quantity = 42;
-        $achievement->goal_quantity = $goal->quantity;
-        $achievement->day = Carbon::now()->subDays(1)->toDateString();
-        $achievement->save();
+                // check if the lesson contains the phrase
+                // otherwise skip the algorithm. 
+                $containesPhrase = true;
+                foreach ($phraseWords as $phraseWord) {
+                    if (!in_array($phraseWord, $uniqueWords, true)) {
+                        $containesPhrase = false;
+                        break;
+                    }
+                }
 
-        $achievement = new GoalAchievement();
-        $achievement->language = $selectedLanguage;
-        $achievement->user_id = Auth::user()->id;
-        $achievement->goal_id = $goal->id;
-        $achievement->achieved_quantity = 84;
-        $achievement->goal_quantity = $goal->quantity + 14;
-        $achievement->day = Carbon::now()->subDays(2)->toDateString();
-        $achievement->save();
+                if (!$containesPhrase) {
+                    continue;
+                }
 
-        $achievement = new GoalAchievement();
-        $achievement->language = $selectedLanguage;
-        $achievement->user_id = Auth::user()->id;
-        $achievement->goal_id = $goal->id;
-        $achievement->achieved_quantity = $goal->quantity - 24;
-        $achievement->goal_quantity = $goal->quantity - 24;
-        $achievement->day = Carbon::now()->subDays(3)->toDateString();
-        $achievement->save();
-
-        $goal = new Goal();
-        $goal->name = 'Reading';
-        $goal->user_id = Auth::user()->id;
-        $goal->language = $selectedLanguage;
-        $goal->type = 'read_words';
-        $goal->quantity = 3000;
-        $goal->save();
-
-        $readingData = DailyAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-        foreach ($readingData as $data) {
-            if (!$data->read_words) {
-                continue;
+                //echo('<pre>');var_dump($words);echo('</pre>');exit;
+                // update phrase ids of the lesson
+                $exampleSentence->updatePhraseIds($phrase->id, $words);
+                $exampleSentence->words = json_encode($words);
+                $exampleSentence->save();
             }
-            
-            $achievement = new GoalAchievement();
-            $achievement->language = $selectedLanguage;
-            $achievement->user_id = Auth::user()->id;
-            $achievement->goal_id = $goal->id;
-            $achievement->achieved_quantity = $data->read_words;
-            $achievement->goal_quantity = 3000;
-            $achievement->day = $data->day;
-            $achievement->save();
         }
-
-        $goal = new Goal();
-        $goal->name = 'New words';
-        $goal->user_id = Auth::user()->id;
-        $goal->language = $selectedLanguage;
-        $goal->type = 'learn_words';
-        $goal->quantity = 10;
-        $goal->save();
-
-        $achievement = new GoalAchievement();
-        $achievement->user_id = Auth::user()->id;
-        $achievement->language = $selectedLanguage;
-        $achievement->goal_id = $goal->id;
-        $achievement->achieved_quantity = 4;
-        $achievement->goal_quantity = $goal->quantity;
-        $achievement->day = Carbon::now()->subDays(1)->toDateString();
-        $achievement->save();
-
-        $achievement = new GoalAchievement();
-        $achievement->user_id = Auth::user()->id;
-        $achievement->language = $selectedLanguage;
-        $achievement->goal_id = $goal->id;
-        $achievement->achieved_quantity = 13;
-        $achievement->goal_quantity = $goal->quantity;
-        $achievement->day = Carbon::now()->subDays(2)->toDateString();
-        $achievement->save();
-
-        $achievement = new GoalAchievement();
-        $achievement->user_id = Auth::user()->id;
-        $achievement->language = $selectedLanguage;
-        $achievement->goal_id = $goal->id;
-        $achievement->achieved_quantity = 15;
-        $achievement->goal_quantity = $goal->quantity;
-        $achievement->day = Carbon::now()->subDays(3)->toDateString();
-        $achievement->save();
     }
 
 

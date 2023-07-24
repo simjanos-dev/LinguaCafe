@@ -60,7 +60,7 @@ class Lesson extends Model
         performance.
     */
     function updatePhraseIds($phraseId, &$words) {
-        // Retrieve phrase based on id given in argument.
+        // Retrieve phrase.
         $phrase = Phrase
             ::where('user_id', Auth::user()->id)
             ->where('language', Auth::user()->selected_language)
@@ -77,7 +77,7 @@ class Lesson extends Model
             
             // Check if the current word is the start of the phrase.
             if ($lowercaseWord == $phrase->words[0]) {
-                $phraseOccurence = new \StdClass();
+                $phraseOccurence = new \stdClass();
                 $phraseOccurence->word = $lowercaseWord;
                 $phraseOccurence->wordIndex = $wordIndex;
                 $phraseOccurence->newLineCount = 0;
@@ -98,7 +98,7 @@ class Lesson extends Model
                 if ($wordIndex - 1 === $phraseOccurences[$p][$phraseOccurenceLength - 1]->wordIndex + $phraseOccurences[$p][$phraseOccurenceLength - 1]->newLineCount 
                     && $phrase->words[$phraseOccurenceLength] === $lowercaseWord) {
                     
-                    $phraseOccurence = new \StdClass();
+                    $phraseOccurence = new \stdClass();
                     $phraseOccurence->word = $lowercaseWord;
                     $phraseOccurence->wordIndex = $wordIndex;
                     $phraseOccurence->newLineCount = 0;

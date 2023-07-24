@@ -58,8 +58,7 @@ class ChapterController extends Controller
         $uniqueWordsForWordCounts = EncounteredWord
             ::select(['id', 'word', 'stage'])
             ->where('user_id', Auth::user()->id)
-            ->where('language', Auth::user()
-            ->selected_language)
+            ->where('language', $selectedLanguage)
             ->get()
             ->keyBy('id')
             ->toArray();
@@ -93,7 +92,7 @@ class ChapterController extends Controller
             $word['phraseIndexes'] = [];
 
             // replace phrase ids with phrase indexes
-            foreach($word['phrase_ids'] as $phraseIndex => $phraseId) {
+            foreach($word['phrase_ids'] as $phraseId) {
                 $index = array_search($phraseId, $phraseIds);
                 array_push($word['phraseIndexes'], $index);
             }
@@ -222,6 +221,7 @@ class ChapterController extends Controller
         $lesson->language = $selectedLanguage;
         $lesson->raw_text = $request->raw_text;
         $lesson->unique_words = '';
+        $lesson->save();
         
         // tokenizing raw text
         $response = Http::post('langapp-python-service-dev:8678/tokenizer/', [

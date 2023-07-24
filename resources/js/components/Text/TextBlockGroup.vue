@@ -6,9 +6,9 @@
             :key="textBlock.id"
             ref="textBlock"
             :textBlockId="textBlock.id"
-            :words="textBlock.words"
-            :phrases="textBlock.phrases"
-            :uniqueWords="textBlock.uniqueWords"
+            :_words="textBlock.words"
+            :_phrases="textBlock.phrases"
+            :_uniqueWords="textBlock.uniqueWords"
             :language="language"
             :highlightWords="highlightWords"
             :plainTextMode="plainTextMode"
@@ -302,6 +302,11 @@
             fontSize: Number,
             lineSpacing: Number
         },
+        watch: {
+            _textBlocks: function(newVal, oldVal) {
+                this.textBlocks = newVal;
+            }
+        },
         mounted() {
             window.addEventListener('resize', this.updateVocabBoxPosition);
         },  
@@ -542,7 +547,7 @@
                 this.unselectAllWords();
                 this.updatePhraseBorders();
             },
-            savePhrase: function(withStage = false) {
+            savePhrase: function(withStage = false, exampleSentenceChanged = false) {
                 if (this.phraseCurrentlySaving) {
                     return;
                 }
@@ -584,10 +589,12 @@
                     }
 
                     this.phraseCurrentlySaving = false;
-                }).catch(function (error) {
+                }).catch((error) => {
                     console.log(error);
-                })
-                .then(function () {
+                }).then(() => {
+                    if (exampleSentenceChanged) {
+                        this.updateExampleSentence();
+                    }
                 });
             },
             updatePhraseBorders: function() {
@@ -618,7 +625,7 @@
                     }
                 }
             },
-            saveWord: function(withStage = false) {
+            saveWord: function(withStage = false, exampleSentenceChanged = false) {
                 var selectedWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
                 
 
@@ -647,12 +654,13 @@
                     saveData.stage = selectedWord.stage;
                 }
 
-                axios.post('/vocabulary/update', saveData).then(function (response) {
-                }.bind(this))
-                .catch(function (error) {
+                axios.post('/vocabulary/update', saveData).then((response) => {
+                }).catch(function (error) {
                     console.log(error);
-                })
-                .then(function () {
+                }).then(() => {
+                    if (exampleSentenceChanged) {
+                        this.updateExampleSentence();
+                    }
                 });
             },
             setStage: function(stage) {
@@ -680,7 +688,6 @@
                         }
                     }
                 } else if (this.selectedPhrase !== -1) {
-                    
                     // set stage for all phrases that match the selected word
                     for (var j  = 0; j < this.textBlocks.length; j++) {
                         for (var i  = 0; i < this.textBlocks[j].phrases.length; i++) {
@@ -693,12 +700,14 @@
                     this.updatePhraseBorders();
                 }
 
+
                 this.updateSelectedWordStage();
                 
+
                 if (save == 'word') {
-                    this.saveWord(true);
+                    this.saveWord(true, stage < 0);
                 } else if (save == 'phrase') {
-                    this.savePhrase(true);
+                    this.savePhrase(true, stage < 0);
                 }
                 
             },
@@ -712,6 +721,40 @@
                 if (this.vocabBox.selectedStageButton == 2) {
                     this.vocabBox.selectedStageButton = undefined;
                 }
+            },
+            updateExampleSentence: function() {
+                var sentenceIndexes = [];
+                for (var i = 0; i < this.selection.length; i++) {
+                    if (sentenceIndexes.indexOf(this.selection[i].sentence_index) == -1) {
+                        sentenceIndexes.push(this.selection[i].sentence_index);
+                    }
+                }
+
+                var exampleSentence = [];
+                for (var i = 0; i < this.textBlocks[this.selectedTextBlock].words.length; i++) {
+                    if (this.textBlocks[this.selectedTextBlock].words[i].word == 'NEWLINE' 
+                        || sentenceIndexes.indexOf(this.textBlocks[this.selectedTextBlock].words[i].sentence_index) == -1) {
+                        continue;
+                    }
+
+                    exampleSentence.push({
+                        word: this.textBlocks[this.selectedTextBlock].words[i].word.toLowerCase(),
+                        phrase_ids: []
+                    });
+                }
+
+                var targetType = this.selection.length > 1 ? 'phrase' : 'word';
+                var targetId = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].id;
+
+                if (targetType == 'phrase') {
+                    targetId = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id;
+                }
+
+                axios.post('/vocabulary/save-example-sentence', {
+                    targetType: targetType,
+                    targetId: targetId,
+                    exampleSentenceWords: JSON.stringify(exampleSentence),
+                });
             },
             makeSearchRequest: function() {
                 this.vocabBox.searchResults = [];
@@ -810,35 +853,38 @@
                 this.updateVocabBoxTranslationList();
             },
             updateVocabBoxPosition: function() {
+                var margin = 8;
                 this.vocabBox.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
 
                 if (!this.selection.length) {
                     return;
                 }
 
-                var reader = document.getElementById('reader').getBoundingClientRect();
+                var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
+                var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
                 if (this.selection.length == 1) {
-                    var positions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
+                    var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
                 } else if (this.selection.length > 1) {
-                    var positions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                    var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                this.vocabBox.position.left = positions.right - reader.left - this.vocabBox.width / 2 - (positions.right - positions.left) / 2;
-
+                this.vocabBox.position.left = selectedWordPositions.right - vocabBoxArea.left - this.vocabBox.width / 2 - (selectedWordPositions.right - selectedWordPositions.left) / 2;
 
                 if (window.innerWidth  < 440) {
                     this.vocabBox.position.left = 0;
-                } else if (this.vocabBox.position.left < 0) {
-                    this.vocabBox.position.left = 0;
-                } else if (this.vocabBox.position.left > reader.right - reader.left - 2 - this.vocabBox.width) {
-                    this.vocabBox.position.left = reader.right - reader.left - 2 - this.vocabBox.width;
+                } else if (this.vocabBox.position.left < margin) {
+                    this.vocabBox.position.left = margin;
+                } else if (this.vocabBox.position.left > vocabBoxArea.right - vocabBoxArea.left - this.vocabBox.width - margin) {
+                    this.vocabBox.position.left = vocabBoxArea.right - vocabBoxArea.left - this.vocabBox.width - margin;
                 }
 
                 if (this.$props.fullscreen) {
-                    this.vocabBox.position.top = positions.bottom - 8 + document.getElementById('fullscreen-box').scrollTop;
+                    this.vocabBox.position.top = selectedWordPositions.bottom + vocabBoxAreaElement.scrollTop;
                 } else {
-                    this.vocabBox.position.top = positions.bottom - 8 + document.getElementById('app').scrollTop - (document.getElementById('fullscreen-box').getBoundingClientRect().top + document.getElementById('app').scrollTop);
+                    this.vocabBox.position.top = selectedWordPositions.bottom + document.getElementById('app').scrollTop - (vocabBoxAreaElement.getBoundingClientRect().top + document.getElementById('app').scrollTop);
                 }
+
+                this.vocabBox.position.top = selectedWordPositions.bottom - vocabBoxArea.top + 15;
 
                 this.scrollToVocabBox();
             },
