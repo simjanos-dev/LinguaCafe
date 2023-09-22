@@ -71,7 +71,7 @@ class EncounteredWord extends Model
             $possibleDates = $reviewIntervals[$stage];
             $nextReviewIndex = 0;
             for ($i = 0; $i < count($possibleDates); $i++) {
-                $data = new \StdClass();
+                $data = new \stdClass();
                 $data->date = Carbon::now()->addDays($possibleDates[$i])->toDateString();
                 $data->count = EncounteredWord::where('user_id', Auth::user()->id)->where('next_review', $data->date)->count();
                 $possibleDates[$i] = $data;

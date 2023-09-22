@@ -17,8 +17,14 @@ Auth::routes();
 
 Route::group(['middleware' => 'web'], function () {
     
+    //jellyfin
+    Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);
+    Route::get('/jellyfin/subtitles', [App\Http\Controllers\MediaPlayerController::class, 'getJellyfinCurrentlyPlayedSubtitles']);
+    Route::post('/jellyfin/process-subtitles', [App\Http\Controllers\MediaPlayerController::class, 'processJellyfinSubtitle']);
+
     // vue routes
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books/create', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/{id}', [App\Http\Controllers\HomeController::class, 'index']);
@@ -40,8 +46,6 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/get-calendar-data', [App\Http\Controllers\HomeController::class, 'getCalendarData']);
     Route::get('/language/change/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
     Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
-    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
-    Route::get('/dev2', [App\Http\Controllers\HomeController::class, 'dev2']);
 
     // tools
     Route::get('/tools/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);

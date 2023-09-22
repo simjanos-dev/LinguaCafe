@@ -29,7 +29,7 @@ class ToolController extends Controller
                 echo str_pad('',4096);
             }
 
-            $entry = new \StdClass();
+            $entry = new \stdClass();
             $entry->all_words = '';
             $entry->all_readings = '';
             $node = simplexml_import_dom($doc->importNode($reader->expand(), true));
@@ -83,7 +83,7 @@ class ToolController extends Controller
 
                 // definitions
                 for ($j = 0; $j < count($node->sense[$i]->gloss); $j++) {
-                    $translation = new \StdClass();
+                    $translation = new \stdClass();
                     $translation->restrictions = $restrictions;
                     $translation->definition = $node->sense[$i]->gloss[$j]->__toString();
                     array_push($entry->translations, $translation);
@@ -187,7 +187,7 @@ class ToolController extends Controller
                     }
                 }
 
-                $radicalObject = new \StdClass();
+                $radicalObject = new \stdClass();
                 $radicalObject->radical = $processedRadical;
                 $radicalObject->strokes = $radicalStrokeCountsData[$radical];
 

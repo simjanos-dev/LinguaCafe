@@ -6,9 +6,11 @@ export default {
         navigation: '#F2F3F5',
         primary: '#aa8476',
         secondary: '#aa8476',
+        gray: '#E9EAEC',
+        border: '#dcdcdc',
 
         error: '#f24b4f',
-        info: '#59a5ee',
+        info: '#057CBC',
         success: '#3dcf59',
         warning: '#ffb448',
         
@@ -37,7 +39,7 @@ export default {
         secondary: '#ab8875',
 
         // error: '#f24b4f',
-        // info: '#59a5ee',
+        // info: '#057CBC',
         // success: '#56ca00',
         // warning: '#ffb448',
         
@@ -67,9 +69,11 @@ export default {
         navigation: '#f4f4f5',
         primary: '#aa8476',
         secondary: '#aa8476',
+        gray: '#E9EAEC',
+        border: '#dcdcdc',
 
         error: '#f24b4f',
-        info: '#59a5ee',
+        info: '#057CBC',
         success: '#3dcf59',
         warning: '#ffb448',
         
@@ -99,9 +103,11 @@ export default {
         navigation: '#ffffff',
         primary: '#000000',
         secondary: '#000000',
+        gray: '#E9EAEC',
+        border: '#dcdcdc',
 
         error: '#000000',
-        info: '#000000',
+        info: '#057CBC',
         success: '#000000',
         warning: '#000000',
         

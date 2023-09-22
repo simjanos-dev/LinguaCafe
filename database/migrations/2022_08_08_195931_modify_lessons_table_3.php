@@ -24,7 +24,7 @@ class ModifyLessonsTable3 extends Migration
             $words = [];
             for ($j = 0; $j < count($sentences); $j++) {
                 for ($i = 0; $i < count($sentences[$j]); $i++) {
-                    $word = new \StdClass();
+                    $word = new \stdClass();
                     $word->word = $sentences[$j][$i];
                     $word->sentenceIndex = $j;
                     $word->phraseIds = [];

@@ -26,7 +26,7 @@ class FlashcardController extends Controller
         $flashcardCollection = FlashcardCollection::where('id', $request->flashcardCollectionId)->where('user_id', Auth::user()->id)->first();
         $flashcards = Flashcard::where('flash_card_collection_id', $request->flashcardCollectionId)->get();
 
-        $data = new \StdClass();
+        $data = new \stdClass();
         $data->flashcardCollection = $flashcardCollection;
         $data->flashcards = $flashcards;
         $data->language = Auth::user()->selected_language;

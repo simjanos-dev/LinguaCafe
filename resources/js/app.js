@@ -46,18 +46,22 @@ Vue.component('text-reader-settings', TextReaderSettings);
 Vue.component('text-reader-glossary', TextReaderGlossary);
 Vue.component('text-reader-chapter-list', TextReaderChapterList);
 
-
-
+// media player
+const SubtitleReader = require('./components/MediaPlayer/SubtitleReader.vue').default;
+const SubtitleList = require('./components/MediaPlayer/SubtitleList.vue').default;
+Vue.component('subtitle-reader', SubtitleReader);
+Vue.component('subtitle-list', SubtitleList);
 
 // dialogs
-import StartReviewDialog from './components/dialogs/StartReviewDialog';
-import ThemeSelectionDialog from './components/dialogs/ThemeSelectionDialog';
-import LanguageSelectionDialog from './components/dialogs/LanguageSelectionDialog';
+import StartReviewDialog from './components/Dialogs/StartReviewDialog';
+import ThemeSelectionDialog from './components/Dialogs/ThemeSelectionDialog';
+import LanguageSelectionDialog from './components/Dialogs/LanguageSelectionDialog';
 Vue.component('start-review-dialog', StartReviewDialog);
 Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 
+const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home.vue').default;
 const BookList = require('./components/BookList.vue').default;
 const CreateBook = require('./components/CreateBook.vue').default;
@@ -75,6 +79,7 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         { path: '/', component: Home },
+        { path: '/media-player', component: MediaPlayer },
         { path: '/books', component: BookList },
         { path: '/books/create', component: CreateBook },
         { path: '/chapters/:bookId', component: ChapterList },

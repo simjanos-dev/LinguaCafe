@@ -1,0 +1,127 @@
+@import 'variables';
+
+#jellyfin-subtitle-info {
+    display: block;
+    margin: auto;
+    max-width: 800px;
+}
+
+#subtitle-list {
+    display: block;
+    margin: auto;   
+    width: 800px;
+    
+    #subtitles-card-title {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .v-skeleton-loader__image {
+        height: 48px;
+    }
+
+    .subtitle:not(.skeleton) {
+        display: flex;
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+        transition: .2s;
+        user-select: none;
+
+        &:nth-child(2) {
+            border-radius: 0px !important;
+            border-bottom: 1px solid var(--v-border-base);
+        }
+
+        &:hover:not(:nth-child(2)) {
+            background-color: var(--v-gray-base);
+            cursor: pointer;
+        }
+
+        .subtitle-language {
+            box-sizing: border-box;
+            width: 100px;
+            padding-top: 11px;
+        }
+
+        .subtitle-user {
+            box-sizing: border-box;
+            width: 120px;
+            line-height: 48px;
+        }
+        
+        .subtitle-client {
+            box-sizing: border-box;
+            width: 120px;
+            line-height: 48px;
+        }
+
+        .subtitle-media {
+            box-sizing: border-box;
+            width: calc(100% - 100px - 120px - 120px);
+            line-height: 48px;
+            overflow: hidden;
+        }
+    }
+}
+
+@media (max-width: 768px) { 
+    #subtitle-list {
+        .subtitle:not(.skeleton) {    
+            .subtitle-language {
+                width: 80px;
+            }
+    
+            .subtitle-user, 
+            .subtitle-client {
+                display: none;
+            }
+            
+            .subtitle-media {
+                width: calc(100% - 80px);
+            }
+        }
+    }
+}
+
+@media (max-width: 470px) { 
+    #subtitle-list {
+        .subtitle:not(.skeleton) {
+            font-size: 15px;
+
+            .subtitle-language {
+                width: 80px;
+            }
+    
+            .subtitle-user, 
+            .subtitle-client {
+                display: none;
+            }
+            
+            .subtitle-media {
+                width: calc(100% - 80px);
+            }
+        }
+    }
+}
+
+@media (max-width: 470px) { 
+    #subtitle-list {
+        .subtitle:not(.skeleton) {
+            font-size: 14px;
+
+            .subtitle-language {
+                width: 64px;
+
+                .v-image {
+                    width: 39px;
+                    height: 24px;
+                }
+            }
+
+            .subtitle-media {
+                width: calc(100% - 64px);
+            }
+        }
+    }
+}

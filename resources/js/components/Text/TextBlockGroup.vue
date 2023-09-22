@@ -504,11 +504,14 @@
                 var deletedPhraseId = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id;
                 for (var j  = 0; j < this.textBlocks.length; j++) {
                     var deletedPhraseIndex = this.textBlocks[j].phrases.map(e => e.id).indexOf(deletedPhraseId);
+                    if (deletedPhraseIndex == -1) {
+                        continue;
+                    }
+                    
                     for (var i  = 0; i < this.textBlocks[j].words.length; i++) {
                         // remove phrase index from words
                         for (var p = this.textBlocks[j].words[i].phraseIndexes.length - 1; p >= 0; p--) {
-                            if (this.textBlocks[j].phrases[this.textBlocks[j].words[i].phraseIndexes[p]].id == deletedPhraseId) {
-                                deletedPhraseId = this.textBlocks[j].phrases[this.textBlocks[j].words[i].phraseIndexes[p]].id;
+                            if (this.textBlocks[j].words[i].phraseIndexes[p] == deletedPhraseIndex) {
                                 this.textBlocks[j].words[i].phraseIndexes.splice(p, 1);
                                 break;
                             }
@@ -523,22 +526,12 @@
                     }
                     
                     // delete phrase
-                    for (var i = 0; i < this.textBlocks[j].phrases.length; i++) {
-                        if (this.textBlocks[j].phrases[i].id == deletedPhraseId) {
-                            this.textBlocks[j].phrases.splice(i, 1);
-                            break;
-                        }
-                    }
+                    this.textBlocks[j].phrases.splice(deletedPhraseIndex, 1);
                 }
 
                 axios.post('/vocabulary/phrase/delete', {
                     id: deletedPhraseId
                 }).then(function (response) {
-
-                }.bind(this)).catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
                 });
 
 

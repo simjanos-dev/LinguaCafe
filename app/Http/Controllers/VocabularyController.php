@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\TextBlock;
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
 use App\Models\Kanji;
@@ -188,17 +189,19 @@ class VocabularyController extends Controller
                     $word->phrase_ids = json_decode($word->phrase_ids);
                 }
 
-                $lesson->updatePhraseIds($phrase->id, $words);
+                $textBlock = new TextBlock();
+                $textBlock->setProcessedWords($words);
+                $textBlock->collectUniqueWords();
+                $textBlock->updatePhraseIds($phrase);
 
                 // save lesson words
                 DB::beginTransaction();
-                foreach ($words as $word) {
+                foreach ($textBlock->processedWords as $word) {
                     $word->phrase_ids = json_encode($word->phrase_ids);
                     $word->save();
                 }
 
                 DB::commit();
-                
             }
         }
 
@@ -216,10 +219,14 @@ class VocabularyController extends Controller
                     continue;
                 }
 
-                $words = json_decode($exampleSentence->words);
-                $exampleSentence->updatePhraseIds($phrase->id, $words);
+                $textBlock = new TextBlock();
+                $textBlock->setProcessedWords(json_decode($exampleSentence->words));
+                $textBlock->collectUniqueWords();
+                $textBlock->updatePhraseIds($phrase);
+                $textBlock->createNewEncounteredWords();
                 
-                $exampleSentence->words = $words;
+                $exampleSentence->words = json_encode($textBlock->processedWords);
+                $exampleSentence->unique_words = json_encode($textBlock->uniqueWords);
                 $exampleSentence->save();
             }
 
@@ -257,7 +264,6 @@ class VocabularyController extends Controller
             }
         }
 
-
         // delete phrase id from example sentences
         $exampleSentences = ExampleSentence
             ::where('user_id', Auth::user()->id)
@@ -292,8 +298,13 @@ class VocabularyController extends Controller
             ->first();
         
         if ($exampleSentence) {
-            $exampleSentence = $exampleSentence->getTextBlockData();
-            return $exampleSentence;
+            $textBlock = new TextBlock();
+            $textBlock->setProcessedWords(json_decode($exampleSentence->words));
+            $textBlock->uniqueWords = json_decode($exampleSentence->unique_words);
+            $textBlock->prepareTextForReader();
+            $textBlock->indexPhrases();
+
+            return $textBlock->getReaderData();
         } else {
             return 'no example sentence';
         }
@@ -335,20 +346,14 @@ class VocabularyController extends Controller
             }
         }
         
-        // Update phrase ids
-        $phrases = Phrase
-            ::where('user_id', Auth::user()->id)
-            ->where('language', 'japanese')
-            ->where('stage', '<', 0)
-            ->get();
-
-        foreach ($phrases as $phrase) {
-            $exampleSentence->updatePhraseIds($phrase->id, $exampleSentenceWords);
-        }
+        $textBlock = new TextBlock();
+        $textBlock->setProcessedWords($exampleSentenceWords);
+        $textBlock->collectUniqueWords();
+        $textBlock->updateAllPhraseIds();
 
         // Save example sentence.
-        $exampleSentence->words = json_encode($exampleSentenceWords);
-        $exampleSentence->unique_words = json_encode($uniqueWords);
+        $exampleSentence->words = json_encode($textBlock->processedWords);
+        $exampleSentence->unique_words = json_encode($textBlock->uniqueWords);
         $exampleSentence->save();
     }
 
@@ -490,7 +495,7 @@ class VocabularyController extends Controller
             $search = $search->orderBy('stage', 'desc');
         }
 
-        $data = new \StdClass();
+        $data = new \stdClass();
         $data->wordCount = $search->count();
         $data->words = $search->skip(($page - 1) * $limit)->take($limit)->get();
         $data->books = $books;
@@ -555,7 +560,7 @@ class VocabularyController extends Controller
             $knownCount = Kanji::select('jlpt', DB::raw('count(id) as total'))->whereIn('kanji', $knownKanji)->groupBy('jlpt')->get()->keyBy('jlpt');
         }
         
-        $data = new \StdClass();
+        $data = new \stdClass();
         $data->kanji = $kanji;
         $data->total = $totalCount;
         $data->known = $knownCount;
@@ -568,7 +573,7 @@ class VocabularyController extends Controller
         $words = EncounteredWord::where('word', 'like', '%' . $request->kanji . '%')->limit(12)->get();
         $radicals = Radical::select('radicals')->where('kanji', $request->kanji)->first();
         
-        $data = new \StdClass();
+        $data = new \stdClass();
         $data->kanji = $kanji;
         $data->radicals = $radicals->radicals;
         $data->words = $words;

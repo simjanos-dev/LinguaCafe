@@ -49,7 +49,7 @@ class DictionaryController extends Controller
         
         $translations = [];
         foreach ($search as $result) {
-            $translation = new \StdClass();
+            $translation = new \stdClass();
             $translation->words = [];
             $translation->definitions = [];
             $translation->conjugations = $result->conjugations == '' ? [] : json_decode($result->conjugations);

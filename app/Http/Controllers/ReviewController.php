@@ -111,7 +111,7 @@ class ReviewController extends Controller
             array_push($reviews, $phrase);
         }
 
-        $data = new \StdClass();
+        $data = new \stdClass();
         $data->reviews = $reviews;
         $data->language = $selectedLanguage;
 

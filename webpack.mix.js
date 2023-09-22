@@ -18,5 +18,6 @@ mix.js('resources/js/app.js', 'public/js')
         proxy: 'lingua.cafe',
         host: 'lingua.cafe',
         open: 'external'
-    });
+    })
+    .version();
     

@@ -68,7 +68,7 @@ class Phrase extends Model
             $possibleDates = $reviewIntervals[$stage];
             $nextReviewIndex = 0;
             for ($i = 0; $i < count($possibleDates); $i++) {
-                $data = new \StdClass();
+                $data = new \stdClass();
                 $data->date = Carbon::now()->addDays($possibleDates[$i])->toDateString();
                 $data->count = Phrase::where('user_id', Auth::user()->id)->where('next_review', $data->date)->count();
                 $possibleDates[$i] = $data;

@@ -5,7 +5,7 @@
                 <span class="text-h5">Language</span>
             </v-card-title>
             <v-card-text>
-                <v-list nav rounded>
+                <v-list rounded>
                     <v-list-item-group color="primary" v-model="selectedLanguage">
                         <v-list-item class="regular-list-height my-1" @click="selectLanguage('japanese')" value="japanese">
                             <v-list-item-avatar tile min-width="60">

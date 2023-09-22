@@ -15,7 +15,7 @@ class BookController extends Controller
     }
 
     public function getBooks() {
-        $books = new \StdClass();
+        $books = new \stdClass();
 
         $selectedLanguage = Auth::user()->selected_language;
         $books = Book::where('language', $selectedLanguage)->where('user_id', Auth::user()->id)->orderBy('updated_at', 'DESC')->get();

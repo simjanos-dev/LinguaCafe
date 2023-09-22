@@ -104,6 +104,12 @@
                         bottomNav: false,
                     },
                     {
+                        name: 'Media player',
+                        url: '/media-player',
+                        icon: 'mdi-movie-play',
+                        bottomNav: true,
+                    },
+                    {
                         name: 'Flashcards',
                         url: '/flashcards',
                         icon: 'mdi-cards',

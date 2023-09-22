@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ExampleSentence;
 use App\Models\EncounteredWord;
@@ -10,6 +11,7 @@ use App\Models\GoalAchievement;
 use App\Models\Phrase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -25,37 +27,6 @@ class HomeController extends Controller
     }
 
     public function dev() {
-        $exampleSentences = ExampleSentence::get();
-        
-        foreach ($exampleSentences as $exampleSentence) {
-            // update phrase ids
-            $phrases = Phrase::where('user_id', 1)->where('language', 'japanese')->get();
-            foreach($phrases as $phrase) {
-                $words = json_decode($exampleSentence->words);
-                $uniqueWords = json_decode($exampleSentence->unique_words);
-                $phraseWords = array_unique(json_decode($phrase->words));
-
-                // check if the lesson contains the phrase
-                // otherwise skip the algorithm. 
-                $containesPhrase = true;
-                foreach ($phraseWords as $phraseWord) {
-                    if (!in_array($phraseWord, $uniqueWords, true)) {
-                        $containesPhrase = false;
-                        break;
-                    }
-                }
-
-                if (!$containesPhrase) {
-                    continue;
-                }
-
-                //echo('<pre>');var_dump($words);echo('</pre>');exit;
-                // update phrase ids of the lesson
-                $exampleSentence->updatePhraseIds($phrase->id, $words);
-                $exampleSentence->words = json_encode($words);
-                $exampleSentence->save();
-            }
-        }
     }
 
 
@@ -107,7 +78,7 @@ class HomeController extends Controller
             }
 
             // update or append calendar data
-            $achievementData = new \StdClass();
+            $achievementData = new \stdClass();
             $achievementData->name = $achievement->name;
             $achievementData->type = $achievement->type;
             $achievementData->day = $achievement->day;
@@ -117,7 +88,7 @@ class HomeController extends Controller
             if ($dayIndex !== -1) {
                 array_push($calendarData[$dayIndex]->achievements, $achievementData);
             } else {
-                $dayData = new \StdClass();
+                $dayData = new \stdClass();
                 $dayData->day = $achievement->day;
                 $dayData->achievements = [$achievementData];
                 $dayData->reviewsDue = 0;
@@ -148,7 +119,7 @@ class HomeController extends Controller
             if ($dayIndex !== -1) {
                 $calendarData[$dayIndex]->reviewsDue = $review->quantity;
             } else {
-                $dayData = new \StdClass();
+                $dayData = new \stdClass();
                 $dayData->day = $review->day;
                 $dayData->achievements = [];
                 $dayData->reviewsDue = $review->quantity;

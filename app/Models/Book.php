@@ -32,7 +32,7 @@ class Book extends Model
             }
         }
 
-        $wordCounts = new \StdClass();
+        $wordCounts = new \stdClass();
         $wordCounts->total = $this->word_count;
         $wordCounts->unique = count($bookUniqueWordIds);
         $wordCounts->known = 0;
