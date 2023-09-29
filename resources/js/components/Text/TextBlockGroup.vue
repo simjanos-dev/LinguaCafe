@@ -1,22 +1,32 @@
 <template>
-    <div class="text-block-group w-100 overflow-x-hidden" @mouseup="unselectAllWords">
-        <!-- Text -->
-        <text-block
-            v-for="textBlock in textBlocks"
-            :key="textBlock.id"
-            ref="textBlock"
-            :textBlockId="textBlock.id"
-            :_words="textBlock.words"
-            :_phrases="textBlock.phrases"
-            :_uniqueWords="textBlock.uniqueWords"
+    <div class="text-block-group w-100" @mouseup="unselectAllWords">
+        <slot
+            :textBlocks="textBlocks"
             :language="language"
             :highlightWords="highlightWords"
             :plainTextMode="plainTextMode"
             :fontSize="fontSize"
             :lineSpacing="lineSpacing"
-            @textSelected="updateSelection"
-            @unselectAllWords="unselectAllWords"
-        ></text-block>
+            :updateSelection="updateSelection"
+            :unselectAllWords="unselectAllWords"
+        >
+            <text-block
+                v-for="textBlock in textBlocks"
+                :key="textBlock.id"
+                ref="textBlock"
+                :textBlockId="textBlock.id"
+                :_words="textBlock.words"
+                :_phrases="textBlock.phrases"
+                :_uniqueWords="textBlock.uniqueWords"
+                :language="language"
+                :highlightWords="highlightWords"
+                :plainTextMode="plainTextMode"
+                :fontSize="fontSize"
+                :lineSpacing="lineSpacing"
+                @textSelected="updateSelection"
+                @unselectAllWords="unselectAllWords"
+            ></text-block>
+        </slot>
 
         <!-- Vocab box -->
         <v-card 
@@ -293,6 +303,10 @@
             }
         },
         props: {
+            textType: {
+                type: String,
+                default: 'simple-text',
+            },
             theme: String,
             fullscreen: Boolean,
             _textBlocks: Array,
@@ -388,10 +402,21 @@
                 this.vocabBox.base_word_reading = '';
                 
                 for (let j = 0; j < this.textBlocks.length; j++) {
-                    this.$refs.textBlock[j].unselectWord();
+                    this.unselectWordInTextBlock(j);
                     for (let i  = 0; i < this.textBlocks[j].words.length; i++) {
                         this.textBlocks[j].words[i].selected = false;
                         this.textBlocks[j].words[i].hover = false;
+                    }
+                }
+            },
+            unselectWordInTextBlock: function(textBlockId) {
+                for (var i = 0; i < this.$children.length; i++) {
+                    if (this.$children[i].textBlockId === undefined) {
+                        continue;
+                    }
+
+                    if (this.$children[i].textBlockId === textBlockId) {
+                        this.$children[i].unselectWord();
                     }
                 }
             },
@@ -871,12 +896,11 @@
                     this.vocabBox.position.left = vocabBoxArea.right - vocabBoxArea.left - this.vocabBox.width - margin;
                 }
 
-                if (this.$props.fullscreen) {
-                    this.vocabBox.position.top = selectedWordPositions.bottom + vocabBoxAreaElement.scrollTop;
-                } else {
-                    this.vocabBox.position.top = selectedWordPositions.bottom + document.getElementById('app').scrollTop - (vocabBoxAreaElement.getBoundingClientRect().top + document.getElementById('app').scrollTop);
-                }
+                var appElement = document.getElementById('app');
+                var bodyElement = document.body;
+                var scrollTop = appElement.scrollTop ? appElement.scrollTop : bodyElement.scrollTop;
 
+                console.log('vocab box top', vocabBoxArea.top, selectedWordPositions.bottom);
                 this.vocabBox.position.top = selectedWordPositions.bottom - vocabBoxArea.top + 15;
 
                 this.scrollToVocabBox();

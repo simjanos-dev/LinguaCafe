@@ -1,5 +1,9 @@
 <template>
-    <div class="w-100 overflow-x-hidden" :textblock="$props.textBlockId" @mousemove="removePhraseHover">
+    <div 
+        class="text-block w-100 overflow-x-hidden" 
+        :textblock="$props.textBlockId" 
+        @mousemove="removePhraseHover"
+    >
         <template v-for="(word, wordIndex) in words"><!--
             --><div 
                 :key="wordIndex"

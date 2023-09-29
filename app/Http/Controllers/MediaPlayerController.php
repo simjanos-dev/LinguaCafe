@@ -23,6 +23,9 @@ class MediaPlayerController extends Controller
         'eng' => 'english'
     ];
 
+    /*
+        Makes a request to the jellyfin api and returns the response.
+    */
     private function makeJellyfinRequest ($method, $url) {
         $response = '';
 
@@ -41,10 +44,17 @@ class MediaPlayerController extends Controller
         return $response->json();
     }
 
+    /*
+        Makes a jellyfin api call.
+    */
     public function jellyfinRequest (Request $request) {
         return $this->makeJellyfinRequest($request->method, $request->url);
     }
     
+    /*
+        Returns a list of subtitles of the media currently being played
+        on the jellyfin server.
+    */
     public function getJellyfinCurrentlyPlayedSubtitles () {
         $calculatedSessions = [];
         $sessions = $this->makeJellyfinRequest('GET', '/Sessions');
@@ -59,9 +69,12 @@ class MediaPlayerController extends Controller
             $session->userId = $sessions[$sessionCounter]['NowPlayingItem']['Id'];
             $session->title = $sessions[$sessionCounter]['NowPlayingItem']['Name'];
             $session->seriesName = $sessions[$sessionCounter]['NowPlayingItem']['SeriesName'];
-            $session->episode = $sessions[$sessionCounter]['NowPlayingItem']['IndexNumber'];
+            $session->seriesEpisode = $sessions[$sessionCounter]['NowPlayingItem']['IndexNumber'];
+            $session->seriesSeason = str_replace('Season ', '', $sessions[$sessionCounter]['NowPlayingItem']['SeasonName']);
+            $session->runTimeTicks = $sessions[$sessionCounter]['NowPlayingItem']['RunTimeTicks'];
             $session->nowPlayingItemId = $sessions[$sessionCounter]['NowPlayingItem']['Id'];
             $session->mediaSourceId = $sessions[$sessionCounter]['PlayState']['MediaSourceId'];
+            $session->sessionId = $sessions[$sessionCounter]['Id'];
             $session->subtitles = [];
 
             $calculatedSessions[] = $session;
@@ -95,7 +108,7 @@ class MediaPlayerController extends Controller
     /*
         This function takes an object of data retrieved from jellyfin API,
         creates "encoutered_words" records in the database for words that
-        are new for the user, and returns an object that is usable for 
+        are new for the user, then returns an object that is usable for 
         TextBlockGroup vue component. 
     */
     public function processJellyfinSubtitle(Request $request) {
@@ -113,12 +126,16 @@ class MediaPlayerController extends Controller
             $textBlock->createNewEncounteredWords();
             $textBlock->prepareTextForReader();
             $textBlock->indexPhrases();
-            // $textBlockObject->start = $subtitle['StartPositionTicks'] / 1000/ 1000 / 10;
-            // $textBlockObject->end = $subtitle['EndPositionTicks'] / 1000 / 1000 / 10;
+            
 
-            
-            
+            $startTime = $subtitle['StartPositionTicks'] / 1000/ 1000 / 10;
+            $endTime = $subtitle['EndPositionTicks'] / 1000 / 1000 / 10;
+
             $processedSubtitles[] = $textBlock->getReaderData();
+            $processedSubtitles[count($processedSubtitles) - 1]->start = $subtitle['StartPositionTicks'];
+            $processedSubtitles[count($processedSubtitles) - 1]->end = $subtitle['EndPositionTicks'];
+            $processedSubtitles[count($processedSubtitles) - 1]->startText = str_pad(intval($startTime / 60), 2, "0", STR_PAD_LEFT) . ':' . str_pad(intval($startTime % 60), 2, "0", STR_PAD_LEFT);
+            $processedSubtitles[count($processedSubtitles) - 1]->endText = str_pad(intval($endTime / 60), 2, "0", STR_PAD_LEFT) . ':' . str_pad(intval($endTime % 60), 2, "0", STR_PAD_LEFT);
             $processedSubtitles[count($processedSubtitles) - 1]->id = $subtitleIndex;
         }
 

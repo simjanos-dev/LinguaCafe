@@ -1,4 +1,13 @@
 .text-block-group {
+    overflow-y: hidden !important;
+    overflow-x: visible !important;
+    
+    .text-block {
+        background-color: var(--v-foreground-base);
+        overflow: hidden !important;
+        padding: 0px !important;
+    }
+
     .word {
         font-family: notosans !important;
         display: inline-block;

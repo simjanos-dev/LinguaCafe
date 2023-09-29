@@ -1,0 +1,120 @@
+@import 'variables';
+
+.media-player-subtitle-info {
+    display: block;
+    margin: auto;
+    max-width: 800px;
+}
+
+#subtitle-list {
+    display: block;
+    margin: auto;
+    width: 800px;
+
+    #refresh-button {
+        position: absolute; right: 0px;
+    }
+    
+    #subtitles-card-title {
+        font-size: 24px;
+        text-align: center;
+        position: relative;
+    }
+
+    .v-skeleton-loader__image {
+        height: 48px;
+    }
+    
+    .subtitle:not(.skeleton) {
+        display: flex;
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+        transition: .2s;
+        user-select: none;
+
+        &.header {
+            border-radius: 0px !important;
+            border-bottom: 1px solid var(--v-customBorder-base);
+            user-select: text;
+        }
+
+        &:hover:not(.header) {
+            background-color: var(--v-gray-base);
+            cursor: pointer;
+        }
+
+        .subtitle-language {
+            box-sizing: border-box;
+            width: 100px;
+            padding-top: 11px;
+        }
+
+        .subtitle-user {
+            box-sizing: border-box;
+            width: 120px;
+            line-height: 48px;
+            overflow: hidden;
+        }
+
+        .subtitle-client {
+            box-sizing: border-box;
+            width: 120px;
+            line-height: 48px;
+            overflow: hidden;
+        }
+
+        .subtitle-media {
+            box-sizing: border-box;
+            width: calc(100% - 100px - 120px - 120px);
+            line-height: 48px;
+            overflow: hidden;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    #subtitle-list {
+        .subtitle:not(.skeleton) {
+            .subtitle-language {
+                width: 80px;
+            }
+
+            .subtitle-user,
+            .subtitle-client {
+                display: none;
+            }
+
+            .subtitle-media {
+                width: calc(100% - 80px);
+            }
+        }
+    }
+}
+
+@media (max-width: 500px) {
+    #subtitle-list #subtitles-card-title:not(.processing) {
+        text-align: left;
+    }
+}
+
+@media (max-width: 470px) {
+    #subtitle-list {
+        .subtitle:not(.skeleton) {
+            font-size: 14px;
+
+            .subtitle-language {
+                width: 64px;
+
+                .v-image {
+                    width: 39px;
+                    height: 24px;
+                }
+            }
+
+            .subtitle-media {
+                width: calc(100% - 64px);
+            }
+        }
+    }
+}

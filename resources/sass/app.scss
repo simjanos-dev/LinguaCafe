@@ -7,6 +7,8 @@
 // Pages
 @import 'home';
 @import 'media_player';
+@import 'media_subtitle_list';
+@import 'subtitle_reader';
 @import 'review';
 @import 'flash_card_collections';
 @import 'edit_flash_card_collection';
@@ -27,6 +29,7 @@
     font-family: sans-serif !important;
 }
 
+  
 .v-slider__track-container {
     height: 4px !important;
     border-radius: 4px !important;
@@ -222,14 +225,21 @@ a.v-btn.menu-button {
 }
 
 html, body, div#app {
+    background: var(--v-background-base);
     scroll-behavior: smooth;
     scroll-padding-bottom: 32px;
+    height: 100%;
+    overflow: visible;
 }
 
 main {
     display: block;
-    overflow: hidden;
     width: 100%;
+    height: 100%;
+}
+
+body {
+    overflow: auto;
 }
 
 ::-webkit-scrollbar {
@@ -239,8 +249,9 @@ main {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgb(180, 180, 180);
-    border-radius: 2px;
+    background: color-mix(in srgb, var(--v-primary-base), transparent 10%);
+
+    border-radius: 4px;
     z-index: 100;
 }
 
@@ -302,24 +313,19 @@ div.v-data-table {
     }
 }
 
-@media (max-width: 1263px) { 
+
+@media (max-width: 959px) {
     html, body, div#app {
         scroll-behavior: smooth;
         scroll-padding-bottom: 90px;
     }
 
     main.v-main {
-        padding-left: 60px !important;
+        padding-left: 0px !important;
     }
 
     .v-main__wrap > .container {
         padding-bottom: 100px !important;
-    }
-}
-
-@media (max-width: 959px) {
-    main.v-main {
-        padding-left: 0px !important;
     }
 }
 

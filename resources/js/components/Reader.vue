@@ -16,6 +16,7 @@
 
             <!-- Settings -->
             <text-reader-settings
+                v-if="dialogs.settings"
                 v-model="dialogs.settings"
                 :_highlight-words="settings.highlightWords"
                 :_plain-text-mode="settings.plainTextMode"

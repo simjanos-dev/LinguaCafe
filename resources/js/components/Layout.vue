@@ -107,7 +107,7 @@
                         name: 'Media player',
                         url: '/media-player',
                         icon: 'mdi-movie-play',
-                        bottomNav: true,
+                        bottomNav: false,
                     },
                     {
                         name: 'Flashcards',

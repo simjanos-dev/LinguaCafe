@@ -49,7 +49,9 @@ Vue.component('text-reader-chapter-list', TextReaderChapterList);
 // media player
 const SubtitleReader = require('./components/MediaPlayer/SubtitleReader.vue').default;
 const SubtitleList = require('./components/MediaPlayer/SubtitleList.vue').default;
+const SubtitleReaderSettings = require('./components/MediaPlayer/SubtitleReaderSettings.vue').default;
 Vue.component('subtitle-reader', SubtitleReader);
+Vue.component('subtitle-reader-settings', SubtitleReaderSettings);
 Vue.component('subtitle-list', SubtitleList);
 
 // dialogs

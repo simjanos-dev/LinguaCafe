@@ -1,0 +1,104 @@
+@import 'variables';
+
+#subtitle-reader-box {
+    width: 100%;
+    margin: auto;
+    user-select: none;
+
+    #subtitle-reader-toolbar-box {
+        position: sticky;
+        margin: auto;
+        z-index: 4;
+        top: 209px;
+        height: 58px;
+        padding-top: 5px;
+        background-color: var(--v-background-base);
+        
+        &:not(.media-controls-visible) {
+            top: 0px;
+        }
+
+        #subtitle-reader-toolbar {
+            height: 48px;
+            padding-top: 6px;
+            
+        }
+    }
+}
+
+#subtitle-reader-box #subtitle-reader {
+    position: relative;
+
+    .subtitle {
+        transition: .2s;
+
+        .subtitle-timestamp {
+            font-weight: bold;
+            width: 90px; 
+            height: 32px;
+            line-height: 34px;
+            margin-right: 16px; 
+            background-color: var(--v-primary-base);
+            background-color: var(--v-gray2-base);
+            padding: 0px 12px;
+            padding-right: 8px !important;
+            border-radius: 16px;
+            text-align: center;
+            user-select: none;
+            cursor: pointer;
+            transition: .1s;
+            justify-content: center;
+
+            i {
+                display: none;
+                margin-top: 2px;
+                transition: .1s;
+            }
+
+            &:hover {
+                justify-content: space-between;
+                background-color: var(--v-primary-base);
+                color: white;
+
+                i {
+                    color: white;
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 550px) {
+    #subtitle-reader-box #subtitle-reader .subtitle .subtitle-timestamp {
+        width: 72px; 
+        height: 26px;
+        line-height: 27px;
+        font-size: 14px;
+        margin-right: 16px;
+        padding: 0px 0px;
+        padding-left: 8px;
+        
+        i {
+            margin-top: 0px;
+        }
+
+        &:hover {
+            padding: 0px 10px;
+            padding-right: 2px !important;
+        }
+    }
+
+}
+
+#app main.eink #subtitle-reader-box #subtitle-reader .subtitle {
+    .subtitle-timestamp {
+        border: 1px solid black;
+    }
+    
+    &.selected .subtitle-timestamp {
+        background: black;
+        color: white;
+    }
+}
+
