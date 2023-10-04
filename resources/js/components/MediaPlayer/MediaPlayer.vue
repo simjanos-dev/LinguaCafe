@@ -146,10 +146,6 @@ export default {
             this.fullscreen = settings.fullscreen;
         },
         subtitleChange: function(selectedSubtitle) {
-            if (this.sessionId === '') {
-                setInterval(this.updatePlayState, 1000);
-            }
-
             this.subtitleLoading = true;
             this.textBlocks = [];
             this.sessionId = selectedSubtitle.sessionId;
@@ -162,7 +158,10 @@ export default {
 
             axios.post('/jellyfin/process-subtitles', selectedSubtitle).then((result) => {
                 this.subtitleLoading = false;
-                this.textBlocks = result.data;
+                this.textBlocks = result.data
+                
+                this.updatePlayState();
+                setInterval(this.updatePlayState, 1000);;
             });
         },
         closeSubtitleReader: function() {

@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\TextBlock;
+use App\Models\Phrase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class MediaPlayerController extends Controller
 {
     // production
-    // private $apiKey = '38c9c693ceb84535b15acdfe78c04c0e';
-    // private $jellyfinUrl = 'http://jellyfin:8096';
+    private $apiKey = '38c9c693ceb84535b15acdfe78c04c0e';
+    private $jellyfinUrl = 'http://jellyfin:8096';
 
     // dev
-    private $apiKey = 'b988de56db3f4e40a13d21442a36bc28';
-    private $jellyfinUrl = 'http://jellyfin-test:8096';
+    //private $apiKey = 'b988de56db3f4e40a13d21442a36bc28';
+    //private $jellyfinUrl = 'http://jellyfin-test:8096';
 
     private $languageShorthands = [
         'jpn' => 'japanese',
@@ -115,19 +116,27 @@ class MediaPlayerController extends Controller
         $subtitles = $request->subtitle;
         $processedSubtitles = [];
         
+        $tokenizedSubtitles = [];
+        foreach ($subtitles as $subtitle) {
+            $tokenizedSubtitles[] = $subtitle['Text'];
+        }
+
+        $tokenizedSubtitles = TextBlock::tokenizeRawTextArray($tokenizedSubtitles);
+        $phrases = Phrase
+                ::where('user_id', Auth::user()->id)
+                ->where('language', Auth::user()->selected_language)
+                ->get();
 
         foreach ($subtitles as $subtitleIndex => $subtitle) {
             $textBlock = new TextBlock();
-            $textBlock->rawText = $subtitle['Text'];
-            $textBlock->tokenizeRawText();
+            $textBlock->tokenizedWords = $tokenizedSubtitles[$subtitleIndex];
             $textBlock->processTokenizedWords();
             $textBlock->collectUniqueWords();
-            $textBlock->updateAllPhraseIds();
+            $textBlock->updateAllPhraseIds($phrases);
             $textBlock->createNewEncounteredWords();
             $textBlock->prepareTextForReader();
             $textBlock->indexPhrases();
             
-
             $startTime = $subtitle['StartPositionTicks'] / 1000/ 1000 / 10;
             $endTime = $subtitle['EndPositionTicks'] / 1000 / 1000 / 10;
 

@@ -88,7 +88,7 @@ class TextBlock
         be skipped (specialc characters mostly).
     */
     public function getWordCount() {
-        $wordsToSkip = config('langapp.wordsToSkip');        
+        $wordsToSkip = config('langapp.wordsToSkip');      
         $wordCount = 0;
         foreach ($this->processedWords as $word) {
             if (!in_array($word->word, $wordsToSkip, true)) {
@@ -109,7 +109,25 @@ class TextBlock
 
         $this->tokenizedWords = json_decode($this->tokenizedWords);
     }
-    
+
+    /* 
+        Sends an array of raw text to python tokenizer service, and returns the result.
+        This is used when multiple blocks of raw text needs to be tokenized. This way it
+        only needs one http request, and it speeds up the process.
+    */
+    public static function tokenizeRawTextArray($textArray) {
+        $replacedTexts = [];
+        foreach ($textArray as $text) {
+            $replacedTexts[] = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
+        }
+
+        $tokenizedTextArray = Http::post('langapp-python-service-dev:8678/tokenizer/', [
+            'raw_text' => $replacedTexts,
+        ]);
+
+        return json_decode($tokenizedTextArray);
+    }
+
     /* 
         Loops through the list of words returned by python tokenizer
         and creates a list of processed words in a format that can 
@@ -229,11 +247,13 @@ class TextBlock
         }
     }
 
-    function updateAllPhraseIds() {
-        $phrases = Phrase
-            ::where('user_id', Auth::user()->id)
-            ->where('language', $this->language)
-            ->get();
+    function updateAllPhraseIds($phrases = null) {
+        if ($phrases === null) {
+            $phrases = Phrase
+                ::where('user_id', Auth::user()->id)
+                ->where('language', $this->language)
+                ->get();
+        }
         
         foreach($phrases as $phrase) {
             $this->updatePhraseIds($phrase);
