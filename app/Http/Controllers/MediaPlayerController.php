@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\TextBlock;
 use App\Models\Phrase;
+use App\Models\MediaPlayerCache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -64,6 +65,10 @@ class MediaPlayerController extends Controller
                 continue;
             }
 
+            if ($sessions[$sessionCounter]['NowPlayingItem']['MediaType'] !== 'Video') {
+                continue;
+            }
+
             $session = new \stdClass();
             $session->client = $sessions[$sessionCounter]['Client'];
             $session->userName = $sessions[$sessionCounter]['UserName'];
@@ -116,27 +121,57 @@ class MediaPlayerController extends Controller
         $subtitles = $request->subtitle;
         $processedSubtitles = [];
         
+        // create hash and check if subtitle exists in cache
+        $hash = md5(json_encode($subtitles));
+        $cachedSubtitle = MediaPlayerCache
+            ::where('hash', $hash)
+            ->first();
+        
+        
+        // tokenize subtitles if it's not cached yet
+        // otherwise decode cached json subtitle
         $tokenizedSubtitles = [];
-        foreach ($subtitles as $subtitle) {
-            $tokenizedSubtitles[] = $subtitle['Text'];
-        }
+        if (!$cachedSubtitle) {
+            foreach ($subtitles as $subtitle) {
+                $tokenizedSubtitles[] = $subtitle['Text'];
+            }
 
-        $tokenizedSubtitles = TextBlock::tokenizeRawTextArray($tokenizedSubtitles);
+            $tokenizedSubtitles = TextBlock::tokenizeRawTextArray($tokenizedSubtitles);
+        } else {
+            $cachedSubtitle->subtitles = json_decode($cachedSubtitle->subtitles);
+            // echo('<pre>');var_dump($cachedSubtitle->subtitles);echo('</pre>');exit;
+        }
+        
+        // $start = microtime(true);
+        // echo('time to tokenize:' . (microtime(true) - $start));exit;
+        
         $phrases = Phrase
                 ::where('user_id', Auth::user()->id)
                 ->where('language', Auth::user()->selected_language)
                 ->get();
 
+        $processedSubtitlesForCache = [];
         foreach ($subtitles as $subtitleIndex => $subtitle) {
             $textBlock = new TextBlock();
-            $textBlock->tokenizedWords = $tokenizedSubtitles[$subtitleIndex];
-            $textBlock->processTokenizedWords();
+            
+            if ($cachedSubtitle) {
+                $textBlock->setProcessedWords($cachedSubtitle->subtitles[$subtitleIndex]);
+            } else {
+                $textBlock->tokenizedWords = $tokenizedSubtitles[$subtitleIndex];
+                $textBlock->processTokenizedWords();
+            }
+            
+            // if there is no cache yet, collect processed words for cache
+            if (!$cachedSubtitle) {
+                $processedSubtitlesForCache[] = $textBlock->processedWords;
+            }
+
             $textBlock->collectUniqueWords();
             $textBlock->updateAllPhraseIds($phrases);
             $textBlock->createNewEncounteredWords();
             $textBlock->prepareTextForReader();
             $textBlock->indexPhrases();
-            
+
             $startTime = $subtitle['StartPositionTicks'] / 1000/ 1000 / 10;
             $endTime = $subtitle['EndPositionTicks'] / 1000 / 1000 / 10;
 
@@ -146,6 +181,14 @@ class MediaPlayerController extends Controller
             $processedSubtitles[count($processedSubtitles) - 1]->startText = str_pad(intval($startTime / 60), 2, "0", STR_PAD_LEFT) . ':' . str_pad(intval($startTime % 60), 2, "0", STR_PAD_LEFT);
             $processedSubtitles[count($processedSubtitles) - 1]->endText = str_pad(intval($endTime / 60), 2, "0", STR_PAD_LEFT) . ':' . str_pad(intval($endTime % 60), 2, "0", STR_PAD_LEFT);
             $processedSubtitles[count($processedSubtitles) - 1]->id = $subtitleIndex;
+        }
+
+        // save cache
+        if (!$cachedSubtitle) {
+            $cachedSubtitle = new MediaPlayerCache();
+            $cachedSubtitle->hash = $hash;
+            $cachedSubtitle->subtitles = json_encode($processedSubtitlesForCache);
+            $cachedSubtitle->save();
         }
 
         return json_encode($processedSubtitles);

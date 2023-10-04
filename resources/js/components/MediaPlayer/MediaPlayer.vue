@@ -56,6 +56,7 @@
 export default {
     data: function () {
         return {
+            requestTimer: null,
             maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
             maximumTextWidth: 3,
             userId: '',
@@ -86,7 +87,9 @@ export default {
             method: 'GET',
             url: '/Sessions/'
         }).then(() => {});
-
+    },
+    beforeDestroy () {
+        clearInterval(this.requestTimer);
     },
     methods: {
         seekTo: function(position) {
@@ -146,6 +149,7 @@ export default {
             this.fullscreen = settings.fullscreen;
         },
         subtitleChange: function(selectedSubtitle) {
+            clearInterval(this.requestTimer);
             this.subtitleLoading = true;
             this.textBlocks = [];
             this.sessionId = selectedSubtitle.sessionId;
@@ -161,7 +165,7 @@ export default {
                 this.textBlocks = result.data
                 
                 this.updatePlayState();
-                setInterval(this.updatePlayState, 1000);;
+                this.requestTimer = setInterval(this.updatePlayState, 1000);
             });
         },
         closeSubtitleReader: function() {
