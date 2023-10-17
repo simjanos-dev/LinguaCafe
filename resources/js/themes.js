@@ -8,6 +8,7 @@ export default {
         secondary: '#aa8476',
         gray: '#E9EAEC',
         gray2: '#e4e4e4',
+        gray3: '#F5F5F5',
         customBorder: '#dcdcdc',
 
         error: '#f24b4f',
@@ -35,7 +36,7 @@ export default {
         
         // teszt
         background: '#F2F3F5',
-        navigation: '#F2F3F5',
+        navigation: '#ffffff',
         primary: '#ab8875',
         secondary: '#ab8875',
 

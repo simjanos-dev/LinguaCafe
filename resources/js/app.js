@@ -54,6 +54,10 @@ Vue.component('subtitle-reader', SubtitleReader);
 Vue.component('subtitle-reader-settings', SubtitleReaderSettings);
 Vue.component('subtitle-list', SubtitleList);
 
+// vocabulary
+import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
+Vue.component('vocabulary-edit-dialog', VocabularyEditDialog);
+
 // dialogs
 import StartReviewDialog from './components/Dialogs/StartReviewDialog';
 import ThemeSelectionDialog from './components/Dialogs/ThemeSelectionDialog';
@@ -73,7 +77,7 @@ const Reader = require('./components/Reader.vue').default;
 const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
 const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
 const Review = require('./components/Review.vue').default;
-const Vocabulary = require('./components/Vocabulary.vue').default;
+const Vocabulary = require('./components/Vocabulary/Vocabulary.vue').default;
 const KanjiList = require('./components/KanjiList.vue').default;
 const KanjiDetails = require('./components/KanjiDetails.vue').default;
 

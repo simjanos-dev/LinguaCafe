@@ -17,6 +17,7 @@
 @import 'TextReader/TextReaderChapterList';
 @import 'TextReader/TextReaderGlossary';
 @import 'vocabulary';
+@import 'vocabulary_editor';
 @import 'kanji_list';
 @import 'kanji_details';
 @import 'books';
@@ -100,15 +101,16 @@
 
 .v-pagination li button {
     box-shadow: none;
-    border: 1px solid rgba(0, 0, 0, .12);
+    border: 1px solid var(--v-customBorder-base);
     border-radius: 6px;
+    font-size: 15px;
 
     &:not(.v-pagination__item--active):hover {
         background-color: #0000000a !important;
     }
 
     &:not(.v-pagination__item--active):active {
-        background-color: rgba(0, 0, 0, .12) !important;
+        background-color: var(--v-gray3-base) !important;
     }
 }
 
@@ -117,7 +119,20 @@
 }
 
 .v-menu__content {
-    border-radius: 8px !important;
+    border-radius: 4px !important;
+    
+    .v-list-item {
+        // background-color: var(--v-warning-base) !important;
+        // color: white !important;
+        // border-radius: 24px !important;
+        // margin-top: 4px;
+        // margin-bottom: 4px;
+
+        &.v-list-item--active {
+            background-color: var(--v-gray3-base) !important;
+            color: var(--v-text-base) !important;
+        }
+    }
 
     &.rounded {
         border-radius: 8px !important;

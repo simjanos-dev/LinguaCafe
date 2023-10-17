@@ -391,7 +391,7 @@
             },
             updateSelectedWordLookupCount: function(word, uniqueWordIndex) {
                 this.uniqueWords[uniqueWordIndex].lookup_count ++;
-                axios.post('/vocabulary/update', {
+                axios.post('/vocabulary/word/save', {
                     id: this.uniqueWords[uniqueWordIndex].id,
                     lookup_count: this.uniqueWords[uniqueWordIndex].lookup_count
                 });

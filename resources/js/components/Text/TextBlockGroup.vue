@@ -597,7 +597,7 @@
                     saveData.stage = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage;
                 }
 
-                axios.post('/vocabulary/phrase/update', saveData).then((response) => {
+                axios.post('/vocabulary/phrase/save', saveData).then((response) => {
                     for (let j = 0; j < this.textBlocks.length; j++) {
                         for (let i = 0; i < this.textBlocks[j].phrases.length; i++) {
                             if (this.textBlocks[j].phrases[i].id == -1) {
@@ -672,7 +672,7 @@
                     saveData.stage = selectedWord.stage;
                 }
 
-                axios.post('/vocabulary/update', saveData).then((response) => {
+                axios.post('/vocabulary/word/save', saveData).then((response) => {
                 }).catch(function (error) {
                     console.log(error);
                 }).then(() => {

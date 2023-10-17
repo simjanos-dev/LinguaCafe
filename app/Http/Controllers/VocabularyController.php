@@ -20,6 +20,15 @@ use App\Models\GoalAchievement;
 
 class VocabularyController extends Controller
 {
+    public function getWord($wordId) {
+        $word = EncounteredWord
+            ::where('user_id', Auth::user()->id)
+            ->where('id', $wordId)
+            ->first();
+        
+        return json_encode($word);
+    }
+
     public function saveWord(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
         $word = EncounteredWord::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
@@ -91,6 +100,15 @@ class VocabularyController extends Controller
         $word->save();
 
         return $request->id . ' vocabulary updated<br>';
+    }
+
+    public function getPhrase($phraseId) {
+        $phrase = Phrase
+            ::where('user_id', Auth::user()->id)
+            ->where('id', $phraseId)
+            ->first();
+        
+        return json_encode($phrase);
     }
 
     public function savePhrase(Request $request) {

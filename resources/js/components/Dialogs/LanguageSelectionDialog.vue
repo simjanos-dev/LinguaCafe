@@ -3,6 +3,10 @@
         <v-card class="rounded-lg">
             <v-card-title>
                 <span class="text-h5">Language</span>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="close">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
             </v-card-title>
             <v-card-text>
                 <v-list rounded>

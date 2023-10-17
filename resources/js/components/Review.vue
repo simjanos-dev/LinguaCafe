@@ -277,9 +277,9 @@
                 this.countReadWords();
 
                 // update word or phrase in database
-                var url = '/vocabulary/update';
+                var url = '/vocabulary/word/save';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    url = '/vocabulary/phrase/update';
+                    url = '/vocabulary/phrase/save';
                 }
 
                 var saveData = {
@@ -321,9 +321,9 @@
                 this.countReadWords();
 
                 // update word or phrase in database
-                var url = '/vocabulary/update';
+                var url = '/vocabulary/word/save';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    url = '/vocabulary/phrase/update';
+                    url = '/vocabulary/phrase/save';
                 }
 
                 var saveData = {

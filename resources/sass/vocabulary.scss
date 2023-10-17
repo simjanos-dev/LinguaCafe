@@ -10,21 +10,15 @@ div.v-list.filter-popup {
 }
 
 #vocabulary {
-    
     #filters .filter-menu {
         &.show-filters {
             display: none;
         }
     }
 
-    #search-result-info, #small-screen-search-result-info {
-        color: rgb(113, 113, 113);
-        line-height: 36px;
-    }
-
-    #small-screen-search-result-info {
-        display: none;
-        text-align: right;
+    #search-result-info {
+        margin-top: 7px;
+        background-color: var(--v-gray3-base);
     }
 
     #search-line {
@@ -42,10 +36,20 @@ div.v-list.filter-popup {
         
         .v-input__slot fieldset,
         .v-input__slot {
-            background: white;
+            transition: .2s;
+            height: 40px;
+            background: #F0F0F0;
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
             border-right: 0px solid rgba(0, 0, 0, 0) !important;
+
+            label.v-label.v-label--active {
+                display: none !important;
+            }
+
+            &:focus, &:active, &:hover {
+                background: #E0E0E0;
+            }
         }
 
         button {
@@ -62,6 +66,7 @@ div.v-list.filter-popup {
         td, th {
             text-align: center;
             overflow: hidden;
+            height: 46px;
         }
 
         .word, .reading, .word-with-reading {
@@ -78,7 +83,7 @@ div.v-list.filter-popup {
 
             div {
                 width: 50px;
-                border-radius: 4px;
+                border-radius: 13px;
                 height: 26px;
                 line-height: 26px;
 
@@ -93,7 +98,7 @@ div.v-list.filter-popup {
         }
 
         .actions {
-            width: 60px;
+            width: 120px;
         }
 
         .word-with-reading {
@@ -102,7 +107,7 @@ div.v-list.filter-popup {
     }
 }
 
-@media (max-width: 950px) {
+@media (max-width: 991px) {
     #vocabulary {
         #vocabulary-list {
             .word, .reading {
@@ -114,16 +119,14 @@ div.v-list.filter-popup {
             }
         }
 
-        #small-screen-search-result-info {
-            display: block;
-        }
-
         #filters {
             display: block;
             padding-bottom: 40px;
 
             .filter-menu {
                 display: block;
+                width: 140px;
+                margin: 4px 0px !important;
             }
 
             &.hidden .filter-menu {
@@ -136,13 +139,10 @@ div.v-list.filter-popup {
                     float: left;
                 }
 
-                &#search-result-info {
-                    display: none;
-                }
-
                 &.export{
                     display: block;
                     float: right;
+                    width: 120px;
                 }
             }
         }

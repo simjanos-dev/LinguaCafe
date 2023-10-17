@@ -62,11 +62,13 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/dictionary/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
 
     // vocabulary
-    Route::post('/vocabulary/update', [App\Http\Controllers\VocabularyController::class, 'saveWord']);
-    Route::post('/vocabulary/phrase/update', [App\Http\Controllers\VocabularyController::class, 'savePhrase']);
+    Route::get('/vocabulary/word/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getWord']);
+    Route::post('/vocabulary/word/save', [App\Http\Controllers\VocabularyController::class, 'saveWord']);
+    Route::get('/vocabulary/phrase/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getPhrase']);
+    Route::post('/vocabulary/phrase/save', [App\Http\Controllers\VocabularyController::class, 'savePhrase']);
     Route::post('/vocabulary/phrase/delete', [App\Http\Controllers\VocabularyController::class, 'deletePhrase']);
-    Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);
     Route::post('/vocabulary/save-example-sentence', [App\Http\Controllers\VocabularyController::class, 'saveExampleSentence']);
+    Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);
     Route::get('/vocabulary/example-sentence/{targetId}/{targetType}', [App\Http\Controllers\VocabularyController::class, 'getExampleSentence']);
     Route::post('/kanji/search', [App\Http\Controllers\VocabularyController::class, 'searchKanji']);
     Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);
