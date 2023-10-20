@@ -30,12 +30,13 @@
 
         <!-- Vocab box -->
         <v-card 
+            elevation="12"
             v-if="selection.length"
             id="vocab-box" 
             :class="{
                 'new-phrase': selection.length > 1 && selectedPhrase == 1, 
                 'rounded-lg': true,
-                'closed': vocabBox.closed
+                'closed': vocabBox.closed,
             }" 
             :style="{
                 'top': vocabBox.position.top + 'px', 
@@ -44,54 +45,63 @@
             }"
             @mouseup.stop=";"
         >
-            <v-tabs id="vocab-box-tabs" grow background-color="primary" height="36" v-model="vocabBox.tab" @change="scrollToVocabBox">
-                <v-tab class="px-2" v-if="selection.length == 1">Word</v-tab>
-                <v-tab class="px-2" v-if="selection.length > 1">Phrase</v-tab>
-                <v-tab class="px-2">Edit</v-tab>
-                <v-tab class="px-2">Inflections</v-tab>
-            </v-tabs>
-            <v-overlay class="text-center rounded-lg" absolute :value="phraseCurrentlySaving" opacity="0.6" v-if="selection.length > 1 && phraseCurrentlySaving">
+            <v-overlay 
+                v-if="selection.length > 1 && phraseCurrentlySaving"
+                class="text-center rounded-lg" 
+                absolute 
+                :value="phraseCurrentlySaving" 
+                opacity="0.6" 
+            >
                 <span class="h5">Saving phrase, please wait a second.</span><br><br>
                 <v-progress-circular indeterminate size="64" color="white"></v-progress-circular>
             </v-overlay>
-            <v-card-text class="pa-2">
-                <v-tabs-items v-model="vocabBox.tab">
-                    <!-- Word/phrase tab -->
-                    <v-tab-item :value="0">
+            <v-tabs-items v-model="vocabBox.tab">
+                <!-- Basic info page -->
+                <v-tab-item :value="0">
+                    <v-card-title id="vocab-box-title" class="py-1 pl-4 pr-3 text-white">
+                        <span v-if="selection.length == 1">Word</span>
+                        <span v-else>Phrase</span>
+                        <v-spacer/>
+                        <v-btn dark icon><v-icon>mdi-dots-horizontal</v-icon></v-btn>
+                        <v-btn dark icon @click="openVocabBoxEditPage"><v-icon>mdi-pencil</v-icon></v-btn>
+                        <v-btn dark icon @click="unselectAllWords"><v-icon>mdi-close</v-icon></v-btn>
+                    </v-card-title>
+
+                    <v-card-text class="pt-2">
                         <!-- Single word -->
                         <template v-if="selection.length == 1">
                             <div class="vocab-box-subheader">Word</div>
                             <!-- With base word -->
-                            <div id="word" class="pl-2" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
+                            <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
                                 <ruby>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
-                                <v-icon>mdi-arrow-right-thick</v-icon>
+                                <v-icon color="black">mdi-arrow-right-thick</v-icon>
                                 <ruby>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
                             </div>
                             
                             <!-- No base word -->
-                            <div id="word" class="pl-2" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
+                            <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
                                 <ruby>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
                             </div>
                         </template>
-                        
+
                         <!-- Phrase -->
                         <template v-if="selection.length > 1">
                             <div class="vocab-box-subheader">Phrase</div>
                             <!-- Phrase text -->
-                            <div id="phrase" class="pl-2">
+                            <div class="expression">
                                 <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
                             </div>
 
                             <!-- Phrase reading -->
                             <template>
-                                <div class="vocab-box-subheader mt-2">Reading</div>
-                                <div id="reading" class="pl-2">{{ vocabBox.reading }}</div>
+                                <div class="vocab-box-subheader mt-4">Reading</div>
+                                <div class="expression">{{ vocabBox.reading }}</div>
                             </template>
                         </template>
-
-                        <!-- Translation -->
+                        
+                        <!-- Definitions -->
                         <template v-if="vocabBox.translationText.length">
-                            <div class="vocab-box-subheader mt-2">Definitions</div>
+                            <div class="vocab-box-subheader mt-4">Definitions</div>
                             <ul id="definitions" class="ma-0">
                                 <template>
                                     <li v-for="translation, index in vocabBox.translationList" :key="index">{{ translation }}</li>
@@ -101,129 +111,142 @@
 
                         <!-- Stage buttons-->
                         <template v-if="selection.length == 1 || selectedPhrase !== -1">
-                            <div class="vocab-box-subheader mt-2">Stage</div>
-                            <div :class="{'d-block': true, 'text-center': true, 'mt-1': false, 'mb-6': selection.length == 1}">
-                                <div id="stage-buttons" class="v-item-group theme--light v-btn-toggle v-btn-toggle--rounded primary--text">
-                                    <v-btn :value="-7" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
-                                    <v-btn :value="-6" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
-                                    <v-btn :value="-5" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
-                                    <v-btn :value="-4" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
-                                    <v-btn :value="-3" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
-                                    <v-btn :value="-2" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
-                                    <v-btn :value="-1" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
-                                    <v-btn :value="0" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == 0}" @click="setStage(0)"><v-icon>mdi-check</v-icon></v-btn>
-                                    <v-btn :value="1" :class="{'stage-button': true, 'v-btn--active': vocabBox.selectedStageButton == 1}" @click="setStage(1)" v-if="selection.length == 1"><v-icon>mdi-close</v-icon></v-btn>
-                                </div>
+                            <div class="vocab-box-subheader mt-4">Stage</div>
+                            <div id="vocab-box-stage-buttons">
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
+                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
+                                <v-btn 
+                                    :class="{'v-btn--active': vocabBox.selectedStageButton == 0}"
+                                    @click="setStage(0)" 
+                                >
+                                    <v-icon>mdi-check</v-icon>
+                                </v-btn>
+                                <v-btn 
+                                    :class="{'v-btn--active': vocabBox.selectedStageButton == 1}" 
+                                    @click="setStage(1)" 
+                                    v-if="selection.length == 1"
+                                >
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
                             </div>
                         </template>
+                    </v-card-text>
 
-                        <!-- Save and delete phrase buttons -->
-                        <v-card-actions class="pa-0">
-                            <v-spacer></v-spacer>
-                            <v-btn 
-                                class="mt-2"
-                                small
-                                rounded
-                                color="success"
-                                @click="addNewPhrase"
-                                v-if="selection.length > 1 && selectedPhrase == -1"
-                            >Save phrase</v-btn>
-                            <v-btn 
-                                class="mt-2"
-                                small
-                                rounded
-                                color="error"
-                                @click="deletePhrase"
-                                v-if="selectedPhrase !== -1"
-                            >Delete phrase</v-btn>
-                        </v-card-actions>
-                    </v-tab-item>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn 
+                            small
+                            rounded
+                            color="success"
+                            @click="addNewPhrase"
+                            v-if="selection.length > 1 && selectedPhrase == -1"
+                        >Save phrase</v-btn>
+                        <v-btn 
+                            small
+                            rounded
+                            color="error"
+                            @click="deletePhrase"
+                            v-if="selectedPhrase !== -1"
+                        >Delete phrase</v-btn>
+                    </v-card-actions>
+                </v-tab-item>
 
-                    <!-- Edit tab -->
-                    <v-tab-item :value="1">
-                        <!-- Word editing -->
-                        <v-simple-table dense id="word-edit-table" class="no-hover mx-auto" v-if="selection.length == 1">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Base</th>
-                                    <th></th>
-                                    <th>Selected</th>
-                                </tr>
-                            </thead>
-                                <tbody>
-                                <tr>
-                                    <th>Word</th>
-                                    <td>
-                                        <v-text-field 
-                                            class="word-input"
-                                            filled
-                                            dense
-                                            hide-details
-                                            v-model="vocabBox.base_word"
-                                        ></v-text-field>
-                                    </td>
-                                    <td><v-icon>mdi-arrow-right-thick</v-icon></td>
-                                    <td id="selected-word-field" class="text-left pl-4">{{ textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Reading</th>
-                                    <td>
-                                        <v-text-field 
-                                            class="word-input my-1"
-                                            filled
-                                            dense
-                                            hide-details
-                                            v-model="vocabBox.base_word_reading"
-                                        ></v-text-field>
-                                    </td>
-                                    <td><v-icon>mdi-arrow-right-thick</v-icon></td>
-                                    <td>
-                                        <v-text-field 
-                                            class="word-input my-1"
-                                            filled
-                                            dense
-                                            hide-details
-                                            v-model="vocabBox.reading"
-                                        ></v-text-field>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </v-simple-table>
-                        
-                        <!-- Phrase editing -->
-                        <template v-if="selection.length > 1">
-                            <div class="vocab-box-subheader">Phrase reading</div>
-                            <v-textarea
+                <!-- Editing page -->
+                <v-tab-item :value="1">
+                    <v-card-title id="vocab-box-title" class="py-1 pl-3 text-white">
+                        <v-btn dark icon class="mr-2" @click="vocabBox.tab = 0;"><v-icon>mdi-arrow-left</v-icon></v-btn>
+                        <span>Edit</span>
+                        <v-spacer/>
+                        <v-btn dark icon @click="unselectAllWords"><v-icon>mdi-close</v-icon></v-btn>
+                    </v-card-title>
+                    <v-card-text id="vocab-box-edit-page">
+                        <!-- Word text fields -->
+                        <div class="d-flex" v-if="selection.length == 1">
+                            <v-text-field 
+                                class="mt-2"
+                                hide-details
+                                label="Lemma"
                                 filled
                                 dense
-                                no-resize
+                                rounded
+                                v-model="vocabBox.base_word"
+                            ></v-text-field>
+                            <v-text-field 
+                                class="mt-2"
                                 hide-details
-                                height="80px"
-                                v-model="vocabBox.reading"
-                            ></v-textarea>
-                        </template>
+                                label="Word"
+                                disabled
+                                filled
+                                dense
+                                rounded
+                                :value="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word"
+                            ></v-text-field>
+                        </div>
 
-                        <!-- Translation editing -->
-                        <div class="vocab-box-subheader mt-2">Translation</div>
+                        <!-- Reading fields -->
+                        <div class="d-flex" v-if="selection.length == 1">
+                            <v-text-field 
+                                class="my-2"
+                                hide-details
+                                label="Lemma reading"
+                                filled
+                                dense
+                                rounded
+                                v-model="vocabBox.base_word_reading"
+                            ></v-text-field>
+                            <v-text-field 
+                                class="my-2"
+                                hide-details
+                                label="Reading"
+                                filled
+                                dense
+                                rounded
+                                v-model="vocabBox.reading"
+                            ></v-text-field>
+                        </div>
+
+                        <!-- Phrase fields -->
                         <v-textarea
+                            class="my-2"
+                            label="Reading"
+                            v-if="selection.length > 1"
                             filled
                             dense
                             no-resize
+                            rounded
                             hide-details
-                            height="80px"
+                            height="100"
+                            v-model="vocabBox.reading"
+                        ></v-textarea>
+
+                        <!-- Translation -->
+                        <v-textarea
+                            label="Translation"
+                            filled
+                            dense
+                            no-resize
+                            rounded
+                            hide-details
+                            height="100"
                             v-model="vocabBox.translationText"
                             @change="updateVocabBoxTranslationList"
                         ></v-textarea>
 
                         <!-- Search term -->
-                        <div class="vocab-box-subheader mt-2">Dictionary search</div>
+                        <!-- <div class="vocab-box-subheader mt-2">Dictionary search</div> -->
                         <v-text-field 
-                            class="mb-3"
+                            label="Dictionary search"
+                            class="mt-2 mb-3"
                             filled
                             dense
-                            hide-details
+                            rounded
                             width="100%"
+                            hide-details
                             v-model="vocabBox.searchField"
                             @change="makeSearchRequest"
                         ></v-text-field>
@@ -245,31 +268,9 @@
                                 </template>
                             </div>
                         </div>
-                        
-                    </v-tab-item>
-
-                    <!-- Inflections tab -->
-                    <!-- <v-tab-item :value="2" class="pb-4">
-                        <v-simple-table dense id="inflections-table" class="no-hover mx-auto" v-if="inflections.length">
-                            <thead>
-                                <tr>
-                                    <th>Form</th>
-                                    <th>Affirmative</th>
-                                    <th>Negative</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(inflection, index) in inflections" :key="index">
-                                    <td class="px-2">{{ inflection.name }}</td>
-                                    <td class="px-1">{{ inflection.affPlain }}</td>
-                                    <td class="px-1">{{ inflection.negPlain }}</td>
-                                </tr>
-                            </tbody>
-                        </v-simple-table>
-                    </v-tab-item> -->
-                </v-tabs-items>
-            </v-card-text>
-            <v-btn id="close-vocab-box-button" rounded elevation="2" color="error" @click="unselectAllWords"><v-icon>mdi-close</v-icon> Close</v-btn>
+                    </v-card-text>
+                </v-tab-item>
+            </v-tabs-items>
         </v-card>
     </div>
 </template>
@@ -374,10 +375,10 @@
                 this.updateVocabBoxPosition();
                 this.updateSelectedWordStage();
             },
-            unselectAllWords: function(fast = false) {
-                if (this.selection.length == 1) {
+            unselectAllWords: function(fast = false, save = true) {
+                if (save && this.selection.length == 1) {
                     this.saveWord();
-                } else if (this.selectedPhrase !== -1) {
+                } else if (save && this.selectedPhrase !== -1) {
                     this.savePhrase();
                 }
 
@@ -900,7 +901,6 @@
                 var bodyElement = document.body;
                 var scrollTop = appElement.scrollTop ? appElement.scrollTop : bodyElement.scrollTop;
 
-                console.log('vocab box top', vocabBoxArea.top, selectedWordPositions.bottom);
                 this.vocabBox.position.top = selectedWordPositions.bottom - vocabBoxArea.top + 15;
 
                 this.scrollToVocabBox();
@@ -913,6 +913,10 @@
                     }
                 }, 450);
             },
+            openVocabBoxEditPage: function() {
+                this.vocabBox.tab = 1;
+                setTimeout(this.scrollToVocabBox, 120);
+            }
         }
     }
 </script>

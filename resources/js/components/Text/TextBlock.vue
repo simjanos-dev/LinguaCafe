@@ -167,7 +167,7 @@
                 }, 500);
             },
             startSelection: function(event, wordIndex) {
-                this.$emit('unselectAllWords', true);
+                this.$emit('unselectAllWords', true, false);
                 this.touchTimer = null;
                 if (event == undefined) {
                     return;

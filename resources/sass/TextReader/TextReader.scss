@@ -157,7 +157,7 @@
         padding: 0px 6px;
 
         #reader {
-            .v-card__text {
+            &>.v-card__text {
                 padding: 0px;
             }
             

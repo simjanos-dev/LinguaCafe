@@ -141,85 +141,68 @@
         transition: transform .12s linear !important;
         transform-origin: top;
         border-top: none;
-        text-align: left;
+        
+        .vocab-box-subheader {
+            color: rgb(120, 120, 120);
+        }
 
-        .v-tab {
-            color: rgba(255, 255, 255, .8);
+        #vocab-box-stage-buttons {
+            width: 100% !important;
+            display: flex;
+            align-items: stretch;
 
-            &.v-tab--active {
-                background-color: rgba(255, 255, 255, .14);
-                color: white;
+            button.v-btn {
+                box-shadow: none;
+                margin: 0px;
+                border: none;
+                border-radius: 0px;
+                height: 52px;
+                width: unset !important;
+                min-width: unset !important;
+                padding: 0px !important;
+                flex: 1;
+                border-top: 1px solid var(--v-customBorder-base);
+                border-bottom: 1px solid var(--v-customBorder-base);
+
+                &:first-of-type {
+                    border-left: 1px solid var(--v-customBorder-base);
+                    border-top-left-radius: 32px;
+                    border-bottom-left-radius: 32px;
+                }
+
+                &:last-of-type {
+                    border-right: 1px solid var(--v-customBorder-base);
+                    border-top-right-radius: 32px;
+                    border-bottom-right-radius: 32px;
+                }
+
+                &.v-btn--active {
+                    background-color: var(--v-primary-base);
+                    border-color: var(--v-primary-base);
+                    color: white;
+                }
             }
         }
 
-        .v-input__slot {
-            min-height: 30px !important
+        .expression {
+            font-size: 25px;
+
+            rt {
+                font-size: 18px;
+            }
         }
 
-        .v-window.v-item-group {
-            transition: .12s;
+        #definitions {
+            font-size: 16px;
+        }
 
-            .v-window__container {
-                transition: .12s;
-            }
+        #vocab-box-title {
+            background-color: var(--v-primary-base);
         }
 
         &.closed {
             padding: 0px !important;
             transform: scale(1, 0);
-        }
-
-        #close-vocab-box-button {
-            position: absolute;
-            bottom: -18px;
-            width: 100px;
-            height: 36px;
-            right: calc(50% - 50px);
-            z-index: 3;
-        }
-
-        #word-edit-table table {
-
-            thead tr,
-            thead tr th,
-            thead tr td {
-                height: 26px;
-                min-height: 26px;
-            }
-
-            thead tr th, tbody tr th, tbody tr td {
-                border: none !important;
-                text-align: center;
-                padding: 0px 4px;
-            }
-
-            #selected-word-field {
-                font-size: 16px;
-            }
-        }
-
-        .vocab-box-subheader {
-            color: rgba(0, 0, 0, .45);
-        }
-
-        #word, #phrase, #reading {
-            color: var(--v-text-base);
-            font-size: 19px;
-            
-            rt {
-                font-size: 11.5px;
-            }
-        }
-
-        #definitions {
-            color: var(--v-text-base);
-            font-size: 16px;
-        }
-
-        #vocab-box-bottom-space {
-            display: block;
-            width: 100%;
-            height: 32px;
         }
 
         &:after, &:before {
@@ -247,15 +230,8 @@
             margin-left: -15px;
         }
 
-        #stage-buttons {
-            overflow: hidden;
-
-            button.v-btn {
-                min-width: 40px;
-                min-height: 40px;
-                width: 40px;
-                height: 40px;
-            }
+        #vocab-box-edit-page .v-input__slot {
+            font-size: 18px;
         }
 
         #search-results {
