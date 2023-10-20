@@ -11,14 +11,14 @@
  */
 
 /*!
- * jQuery JavaScript Library v3.7.0
+ * jQuery JavaScript Library v3.7.1
  * https://jquery.com/
  *
  * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2023-05-11T18:29Z
+ * Date: 2023-08-28T13:37Z
  */
 
 /*!
@@ -36,6 +36,8 @@
 /*! ../../../mixins/colorable */
 
 /*! ../../../mixins/localable */
+
+/*! ../../../mixins/mouse */
 
 /*! ../../../mixins/themeable */
 
@@ -116,6 +118,8 @@
 /*! ../../mixins/menuable */
 
 /*! ../../mixins/mobile */
+
+/*! ../../mixins/mouse */
 
 /*! ../../mixins/overlayable */
 
@@ -563,6 +567,8 @@
 
 /*! ./VItem */
 
+/*! ./VItem.sass */
+
 /*! ./VItemGroup */
 
 /*! ./VItemGroup.sass */
@@ -929,8 +935,6 @@
 
 /*! ./monthChange */
 
-/*! ./mouse */
-
 /*! ./mutate */
 
 /*! ./nl */
@@ -1295,6 +1299,8 @@
 
 /*! no static exports found */
 
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+
 /*! vue */
 
 /*!**********************!*\
@@ -1524,6 +1530,10 @@
 /*!*********************************!*\
   !*** ./src/directives/index.ts ***!
   \*********************************/
+
+/*!***********************************!*\
+  !*** ./src/mixins/mouse/index.ts ***!
+  \***********************************/
 
 /*!***********************************!*\
   !*** ./src/services/goto/util.ts ***!
@@ -2398,6 +2408,10 @@
   \**********************************************/
 
 /*!**********************************************!*\
+  !*** ./src/components/VItemGroup/VItem.sass ***!
+  \**********************************************/
+
+/*!**********************************************!*\
   !*** ./src/components/VList/VListGroup.sass ***!
   \**********************************************/
 
@@ -2671,10 +2685,6 @@
 
 /*!**************************************************!*\
   !*** ./src/components/VAppBar/VAppBarNavIcon.ts ***!
-  \**************************************************/
-
-/*!**************************************************!*\
-  !*** ./src/components/VCalendar/mixins/mouse.ts ***!
   \**************************************************/
 
 /*!**************************************************!*\
