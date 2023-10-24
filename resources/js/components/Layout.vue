@@ -108,6 +108,12 @@
                         url: '/flashcards',
                         icon: 'mdi-cards',
                         bottomNav: true,
+                    },
+                    {
+                        name: 'Admin',
+                        url: '/admin',
+                        icon: 'mdi-shield-lock',
+                        bottomNav: false,
                     }
                 ]
             }

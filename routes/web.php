@@ -24,6 +24,7 @@ Route::group(['middleware' => 'web'], function () {
 
     // vue routes
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books/create', [App\Http\Controllers\HomeController::class, 'index']);

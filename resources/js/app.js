@@ -66,7 +66,11 @@ Vue.component('start-review-dialog', StartReviewDialog);
 Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
+// adming
+import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
+Vue.component('admin-dictionary-settings', AdminDictionarySettings);
 
+const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home.vue').default;
 const BookList = require('./components/BookList.vue').default;
@@ -81,10 +85,12 @@ const Vocabulary = require('./components/Vocabulary/Vocabulary.vue').default;
 const KanjiList = require('./components/KanjiList.vue').default;
 const KanjiDetails = require('./components/KanjiDetails.vue').default;
 
+
 const router = new VueRouter({
     mode: 'history',
     routes: [
         { path: '/', component: Home },
+        { path: '/admin', component: AdminLayout },
         { path: '/media-player', component: MediaPlayer },
         { path: '/books', component: BookList },
         { path: '/books/create', component: CreateBook },

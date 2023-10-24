@@ -1,6 +1,6 @@
 <template>
     <v-container id="home" class="pb-12">
-        <div class="subheader subheader-home d-flex">
+        <div class="subheader subheader-margin-top d-flex">
             Calendar
 
             <v-spacer></v-spacer>
@@ -113,7 +113,7 @@
             </div>
         </v-card>
 
-        <div class="subheader subheader-home">Daily goals</div>
+        <div class="subheader subheader-margin-top">Daily goals</div>
         <div id="goals">
             <goal 
                 v-for="(goal, index) in goals" :key="index"
@@ -125,7 +125,7 @@
             </goal>
         </div>
 
-        <div class="subheader subheader-home d-flex">
+        <div class="subheader subheader-margin-top d-flex">
             Statistics
         </div>
 
