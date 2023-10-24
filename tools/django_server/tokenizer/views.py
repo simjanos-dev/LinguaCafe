@@ -7,9 +7,8 @@ import spacy
 import time
 
 @Language.component("custom_sentence_splitter")
-
 def custom_sentence_splitter(doc):
-    punctuations = ['NEWLINE', '？', '！', '。']
+    punctuations = ['NEWLINE', '？', '！', '。', '?', '!', '.']
     for token in doc[:-1]:
         if token.text in punctuations:
             doc[token.i+1].is_sent_start = True
@@ -18,14 +17,23 @@ def custom_sentence_splitter(doc):
     return doc
 
 
-nlp = spacy.load("ja_core_news_sm")
-nlp.add_pipe("custom_sentence_splitter", first=True)
-nlp.max_length = 1500000
+japanese_nlp = spacy.load("ja_core_news_sm")
+japanese_nlp.add_pipe("custom_sentence_splitter", first=True)
+# japanese_nlp.max_length = 1500000
 hiraganaConverter = pykakasi.kakasi()
 
-def tokenizeText(words):
+norwegian_nlp = spacy.load("nb_core_news_sm")
+norwegian_nlp.add_pipe("custom_sentence_splitter", first=True)
+# norwegian_nlp.max_length = 1500000
+
+def tokenizeText(words, language):
     tokenizedWords = list()
-    doc = nlp(words, disable = ['ner'])
+    if language == 'japanese':
+        doc = japanese_nlp(words, disable = ['ner'])
+    
+    if language == 'norwegian':
+        doc = norwegian_nlp(words, disable = ['ner'])
+
     for sentenceIndex, sentence in enumerate(doc.sents):
         for token in sentence:
             reading = list()
@@ -40,22 +48,23 @@ def tokenizeText(words):
             for x in result:
                 lemmaReading.append(x['hira'])
 
-            tokenizedWords.append({'w': str(token.text), 'r': ''.join(reading), 'l': token.lemma_, 'lr': ''.join(lemmaReading), 'pos': token.pos_,'si': sentenceIndex})
+            gender = ''
+            if language == 'norwegian':
+                gender = token.morph.get("Gender")
+
+            tokenizedWords.append({'w': str(token.text), 'r': ''.join(reading), 'l': token.lemma_, 'lr': ''.join(lemmaReading), 'pos': token.pos_,'si': sentenceIndex, 'g': gender})
     return tokenizedWords
 
 def tokenizer(request):
     start = time.time()
-    nlp.max_length = 1500000
-    if request.method == 'POST':
-        postData = json.loads(request.body)
-    #print(len(jsonWords))
-    #print(time.time() - start)
-    
+
+    postData = json.loads(request.body)
+    language = postData['language']
     if type(postData['raw_text']) == str:
-        jsonWords = tokenizeText(postData['raw_text'])
+        jsonWords = tokenizeText(postData['raw_text'], language)
         return HttpResponse(json.dumps(jsonWords), content_type="application/json")
     else:
         tokenizedText = list()
         for text in postData['raw_text']:
-            tokenizedText.append(tokenizeText(text))
+            tokenizedText.append(tokenizeText(text, language))
         return HttpResponse(json.dumps(tokenizedText), content_type="application/json")

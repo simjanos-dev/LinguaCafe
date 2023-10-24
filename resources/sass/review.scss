@@ -175,6 +175,10 @@
             .phrase-words {
                 width: 100%;
                 display: block;
+
+                span {
+                    display: inline-block;
+                }
             }
         }
 

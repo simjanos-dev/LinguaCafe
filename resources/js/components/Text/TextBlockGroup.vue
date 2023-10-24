@@ -73,14 +73,32 @@
                             <div class="vocab-box-subheader">Word</div>
                             <!-- With base word -->
                             <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
-                                <ruby>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}<rt>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}</rt></ruby>
+                                <ruby>
+                                    {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}
+                                    <rt v-if="$props.language == 'japanese'">
+                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}
+                                    </rt>
+                                </ruby>
                                 <v-icon color="black">mdi-arrow-right-thick</v-icon>
-                                <ruby>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
+                                <ruby>
+                                    {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
+                                    <rt v-if="$props.language == 'japanese'">
+                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
+                                    </rt>
+                                </ruby>
                             </div>
                             
                             <!-- No base word -->
-                            <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''">
-                                <ruby>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}<rt>{{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}</rt></ruby>
+                            <div 
+                                class="expression" 
+                                v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''"
+                            >
+                                <ruby>
+                                    {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
+                                    <rt v-if="$props.language == 'japanese'">
+                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
+                                    </rt>
+                                </ruby>
                             </div>
                         </template>
 
@@ -89,11 +107,13 @@
                             <div class="vocab-box-subheader">Phrase</div>
                             <!-- Phrase text -->
                             <div class="expression">
-                                <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">{{ word.word }}</template>
+                                <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">
+                                    <span :class="{'mr-2': word.spaceAfter}">{{ word.word }}</span>
+                                </template>
                             </div>
 
                             <!-- Phrase reading -->
-                            <template>
+                            <template v-if="$props.language == 'japanese'">
                                 <div class="vocab-box-subheader mt-4">Reading</div>
                                 <div class="expression">{{ vocabBox.reading }}</div>
                             </template>
@@ -168,7 +188,7 @@
                         <!-- Word text fields -->
                         <div class="d-flex" v-if="selection.length == 1">
                             <v-text-field 
-                                class="mt-2"
+                                :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
                                 hide-details
                                 label="Lemma"
                                 filled
@@ -177,7 +197,7 @@
                                 v-model="vocabBox.base_word"
                             ></v-text-field>
                             <v-text-field 
-                                class="mt-2"
+                                :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
                                 hide-details
                                 label="Word"
                                 disabled
@@ -189,7 +209,7 @@
                         </div>
 
                         <!-- Reading fields -->
-                        <div class="d-flex" v-if="selection.length == 1">
+                        <div class="d-flex" v-if="selection.length == 1 && $props.language == 'japanese'">
                             <v-text-field 
                                 class="my-2"
                                 hide-details
@@ -212,9 +232,9 @@
 
                         <!-- Phrase fields -->
                         <v-textarea
+                            v-if="selection.length > 1 && $props.language == 'japanese'"
                             class="my-2"
                             label="Reading"
-                            v-if="selection.length > 1"
                             filled
                             dense
                             no-resize
@@ -226,6 +246,7 @@
 
                         <!-- Translation -->
                         <v-textarea
+                            :class="{'mt-2': $props.language !== 'japanese'}"
                             label="Translation"
                             filled
                             dense
@@ -364,13 +385,16 @@
                         }
 
                         this.vocabBox.searchField += this.selection[i].word;
+                        if (this.selection[i].spaceAfter) {
+                            this.vocabBox.searchField += ' ';
+                        }
+
                         if (this.selectedPhrase == -1) {
                             this.vocabBox.reading += this.selection[i].reading;
                         }
                     }
                 }
 
-                this.makeSearchRequest();
                 this.updateVocabBoxTranslationList();
                 this.updateVocabBoxPosition();
                 this.updateSelectedWordStage();
@@ -378,8 +402,10 @@
             unselectAllWords: function(fast = false, save = true) {
                 if (save && this.selection.length == 1) {
                     this.saveWord();
+                    console.log('saving word', save);
                 } else if (save && this.selectedPhrase !== -1) {
                     this.savePhrase();
+                    console.log('saving phrase', save);
                 }
 
                 this.vocabBox.closed = true;
@@ -778,72 +804,27 @@
             makeSearchRequest: function() {
                 this.vocabBox.searchResults = [];
                 this.inflections = [];
-                if (!this.selection.length) {
+                if (!this.selection.length || this.vocabBox.searchField == '') {
                     return;
                 }
 
-                // search inflections
-                axios.post('/dictionary/search/inflections', {
-                    dictionary: 'jmdict',
-                    term: this.vocabBox.searchField
-                })
-                .then(function (response) {
-                    var data = response.data;
-                    var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
-                    
-                    for (var i = 0; i < data.length; i++) {
-                        if (!displayedInflections.includes(data[i].name)) {
-                            continue;
-                        }
-
-                        var index = this.inflections.findIndex(item => item.name === data[i].name);
-                        if (index == -1) {
-                            this.inflections.push({
-                                name: data[i].name,
-                            });
-
-                            index = this.inflections.length - 1;
-                        }
-
-                        // add different forms to the item
-                        if (data[i].form == 'aff-plain:') {
-                            this.inflections[index].affPlain = data[i].value;
-                        }
-
-                        if (data[i].form == 'aff-formal:') {
-                            this.inflections[index].affFormal = data[i].value;
-                        }
-
-                        if (data[i].form == 'neg-plain:') {
-                            this.inflections[index].negPlain = data[i].value;
-                        }
-
-                        if (data[i].form == 'neg-formal:') {
-                            this.inflections[index].negFormal = data[i].value;
-                        }
-                    }
-                }.bind(this))
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                });
-
-                // search word
                 axios.post('/dictionary/search', {
                     dictionary: 'jmdict',
                     term: this.vocabBox.searchField
-                })
-                .then(function (response) {
-                    this.processSearchRequest(response.data);
-                }.bind(this))
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
+                }).then((response) => {
+                    this.processVocabularySearchResults(response.data);
                 });
+
+                // search inflections
+                // axios.post('/dictionary/search/inflections', {
+                //     dictionary: 'jmdict',
+                //     term: this.vocabBox.searchField
+                // })
+                // .then((response) => {
+                //     this.processInflectionSearchResults(response.data);
+                // });
             },
-            processSearchRequest: function(data) {
+            processVocabularySearchResults: function(data) {
                 this.vocabBox.searchResults = [];
                 for (var i = 0; i < data.length; i++) {
                     this.vocabBox.searchResults.push({
@@ -862,6 +843,41 @@
                     this.allSearchResultsVisible = element.scrollHeight <= element.clientHeight;
                     this.showAllSearchResults = false;
                 });
+            },
+            processInflectionSearchResults: function(data) {
+                var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
+                    
+                for (var i = 0; i < data.length; i++) {
+                    if (!displayedInflections.includes(data[i].name)) {
+                        continue;
+                    }
+
+                    var index = this.inflections.findIndex(item => item.name === data[i].name);
+                    if (index == -1) {
+                        this.inflections.push({
+                            name: data[i].name,
+                        });
+
+                        index = this.inflections.length - 1;
+                    }
+
+                    // add different forms to the item
+                    if (data[i].form == 'aff-plain:') {
+                        this.inflections[index].affPlain = data[i].value;
+                    }
+
+                    if (data[i].form == 'aff-formal:') {
+                        this.inflections[index].affFormal = data[i].value;
+                    }
+
+                    if (data[i].form == 'neg-plain:') {
+                        this.inflections[index].negPlain = data[i].value;
+                    }
+
+                    if (data[i].form == 'neg-formal:') {
+                        this.inflections[index].negFormal = data[i].value;
+                    }
+                }
             },
             addDefinitionToInput: function(definition) {
                 if (this.vocabBox.translationText.length && this.vocabBox.translationText[this.vocabBox.translationText.length - 1] !== ';') {
@@ -914,6 +930,7 @@
                 }, 450);
             },
             openVocabBoxEditPage: function() {
+                this.makeSearchRequest();
                 this.vocabBox.tab = 1;
                 setTimeout(this.scrollToVocabBox, 120);
             }

@@ -132,6 +132,14 @@
             }
         }
 
+        &.space-after {
+            margin-right: 5px !important;
+
+            &.highlighted, &.phrase {
+                margin-right: 0px !important;
+                padding-right: 5px !important;
+            }
+        }
     }
 
     #vocab-box {

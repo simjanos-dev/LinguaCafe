@@ -197,7 +197,7 @@
             <thead>
                 <tr>
                     <th class="word">Word</th>
-                    <th class="reading">Reading</th>
+                    <th class="reading" v-if="$props.language == 'japanese'">Reading</th>
                     <th class="word-with-reading">Word</th>
                     <th class="stage px-1">Stage</th>
                     <th class="translation">Definitions</th>
@@ -207,8 +207,8 @@
             <tbody>
                 <tr v-for="(word, index) in words" :key="index">
                     <td class="word">{{ word.word }}</td>
-                    <td class="reading">{{ word.reading }}</td>                    
-                    <td class="word-with-reading"><ruby>{{ word.word }}<rt>{{ word.reading }}</rt></ruby></td>
+                    <td class="reading" v-if="$props.language == 'japanese'">{{ word.reading }}</td>                    
+                    <td class="word-with-reading"><ruby>{{ word.word }}<rt v-if="$props.language == 'japanese'">{{ word.reading }}</rt></ruby></td>
                     
                     <td class="stage px-1" :stage="word.stage" v-if="word.stage < 0">
                         <div class="highlighted-word">{{ word.stage * -1 }}</div>
@@ -293,6 +293,7 @@
             }
         },
         props: {
+            language: String
         },
         mounted() {
             this.loading = true;

@@ -105,6 +105,7 @@ class TextBlock
     public function tokenizeRawText() {
         $this->tokenizedWords = Http::post('langapp-python-service-dev:8678/tokenizer/', [
             'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $this->rawText)),
+            'language' => $this->language,
         ]);
 
         $this->tokenizedWords = json_decode($this->tokenizedWords);
@@ -140,46 +141,88 @@ class TextBlock
         $this->processedWords = [];
         $processedWordCount = 0;
         $wordCount = count($this->tokenizedWords);
+
         for ($wordIndex = 0; $wordIndex < $wordCount; $wordIndex++) {
             $word = new \stdClass();
             $word->user_id = $userId;
             $word->word_index = $wordIndex;
             $word->sentence_index = $this->tokenizedWords[$wordIndex]->si;
             $word->word = $this->tokenizedWords[$wordIndex]->w;
-            $word->reading = $this->tokenizedWords[$wordIndex]->r;
             $word->lemma = $this->tokenizedWords[$wordIndex]->l;
-            $word->lemma_reading = $this->tokenizedWords[$wordIndex]->lr;
+            if ($this->language == 'japanese') {
+                $word->reading = $this->tokenizedWords[$wordIndex]->r;
+                $word->lemma_reading = $this->tokenizedWords[$wordIndex]->lr;
+            } else {
+                $word->reading = '';
+                $word->lemma_reading = '';
+            }
             $word->pos = $this->tokenizedWords[$wordIndex]->pos;
             $word->phrase_ids = [];
 
-            if ($wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex + 1]->pos == 'VERB') {
-                $wordIndex ++;
-                $word->word .= $this->tokenizedWords[$wordIndex]->w;
-                $word->reading .= $this->tokenizedWords[$wordIndex]->r;
-                $word->lemma_reading = $this->tokenizedWords[$wordIndex - 1]->r . $this->tokenizedWords[$wordIndex]->lr;
-                $word->lemma = $this->tokenizedWords[$wordIndex - 1]->w . $this->tokenizedWords[$wordIndex]->l;
+            // japanese post processing
+            if ($this->language == 'japanese') {
+                // combine 2 verbs after eachother into one word
+                if ($wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex + 1]->pos == 'VERB') {
+                    $wordIndex ++;
+                    $word->word .= $this->tokenizedWords[$wordIndex]->w;
+                    $word->reading .= $this->tokenizedWords[$wordIndex]->r;
+                    $word->lemma_reading = $this->tokenizedWords[$wordIndex - 1]->r . $this->tokenizedWords[$wordIndex]->lr;
+                    $word->lemma = $this->tokenizedWords[$wordIndex - 1]->w . $this->tokenizedWords[$wordIndex]->l;
+                }
+                
+                // Combine VERB + AUX and VERB + SCONJ. It's more logical for the user.
+                if ($this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex]->w !== $this->tokenizedWords[$wordIndex]->l && $wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex + 1]->pos == 'AUX') {
+                    do {
+                        $wordIndex ++;
+                        if ($this->tokenizedWords[$wordIndex]->pos == 'AUX') {
+                            $word->word .= $this->tokenizedWords[$wordIndex]->w;
+                            $word->reading .= $this->tokenizedWords[$wordIndex]->r;
+                        } else {
+                            $wordIndex --; break;
+                        }
+                    } while($this->tokenizedWords[$wordIndex]->pos == 'AUX' && $wordIndex < $wordCount - 1);
+                } else if ($this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex]->w !== $this->tokenizedWords[$wordIndex]->l && $wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex + 1]->pos == 'SCONJ') {
+                    do {
+                        $wordIndex ++;
+                        if ($this->tokenizedWords[$wordIndex]->pos == 'SCONJ') {
+                            $word->word .= $this->tokenizedWords[$wordIndex]->w;
+                            $word->reading .= $this->tokenizedWords[$wordIndex]->r;
+                        } else {
+                            $wordIndex --; break;
+                        }
+                    } while($this->tokenizedWords[$wordIndex]->pos == 'SCONJ' && $wordIndex < $wordCount - 1);
+                }
             }
-            
-            if ($this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex]->w !== $this->tokenizedWords[$wordIndex]->l && $wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex + 1]->pos == 'AUX') {
-                do {
-                    $wordIndex ++;
-                    if ($this->tokenizedWords[$wordIndex]->pos == 'AUX') {
-                        $word->word .= $this->tokenizedWords[$wordIndex]->w;
-                        $word->reading .= $this->tokenizedWords[$wordIndex]->r;
-                    } else {
-                        $wordIndex --; break;
+
+            // norwegian post processing
+            if ($this->language == 'norwegian') { 
+                // only verbs, nouns and adjenctives need lemma
+                if ($this->tokenizedWords[$wordIndex]->pos !== 'VERB' && 
+                    $this->tokenizedWords[$wordIndex]->pos !== 'NOUN' &&
+                    $this->tokenizedWords[$wordIndex]->pos !== 'ADJ') {
+                         $word->lemma = '';
+                }
+
+                // verbs' lemma needs an å character before them
+                if ($this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex]->l !== '') {
+                    $word->lemma = 'å ' . $word->lemma;
+                }
+
+                // nouns' lemma needs ei/en/et before them
+                if ($this->tokenizedWords[$wordIndex]->pos == 'NOUN' && $this->tokenizedWords[$wordIndex]->l !== '') {
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] =='Fem') {
+                        $word->lemma = 'ei ' . $word->lemma;
                     }
-                } while($this->tokenizedWords[$wordIndex]->pos == 'AUX' && $wordIndex < $wordCount - 1);
-            } else if ($this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex]->w !== $this->tokenizedWords[$wordIndex]->l && $wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex + 1]->pos == 'SCONJ') {
-                do {
-                    $wordIndex ++;
-                    if ($this->tokenizedWords[$wordIndex]->pos == 'SCONJ') {
-                        $word->word .= $this->tokenizedWords[$wordIndex]->w;
-                        $word->reading .= $this->tokenizedWords[$wordIndex]->r;
-                    } else {
-                        $wordIndex --; break;
+
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] == 'Masc') {
+                        $word->lemma = 'en ' . $word->lemma;
                     }
-                } while($this->tokenizedWords[$wordIndex]->pos == 'SCONJ' && $wordIndex < $wordCount - 1);
+
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] == 'Neut') {
+                        $word->lemma = 'et ' . $word->lemma;
+                    }
+                    
+                }
             }
 
             $this->processedWords[$processedWordCount] = $word;
@@ -196,6 +239,7 @@ class TextBlock
         // a regular expression for japanese kanji characters
         $kanjipattern = "/[a-zA-Z0-9０-９あ-んア-ンー。、:？！＜＞： 「」（）｛｝≪≫〈〉《》【】『』〔〕［］・\n\r\t\s\(\)　]/u";
 
+        $createdEncounteredWords = [];
         $encounteredWords = DB::table('encountered_words')
             ->select('word')
             ->where('user_id', Auth::user()->id)
@@ -209,7 +253,13 @@ class TextBlock
                 return $item->word == mb_strtolower($word->word);
             });
 
-            if ($wordId === false) {
+            if (
+                $wordId === false && 
+                $this->processedWords[$wordIndex]->word !== 'NEWLINE' && 
+                !in_array(mb_strtolower($this->processedWords[$wordIndex]->word), $createdEncounteredWords, true)
+            ){
+                $createdEncounteredWords[] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
+                
                 if ($this->language == 'japanese') {
                     $kanji = preg_replace($kanjipattern, "", $this->processedWords[$wordIndex]->word);
                     $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
@@ -242,7 +292,7 @@ class TextBlock
         $this->uniqueWords = [];
         for ($wordIndex = 0; $wordIndex < count($this->processedWords); $wordIndex ++) {
             if (!in_array(mb_strtolower($this->processedWords[$wordIndex]->word), $this->uniqueWords, true)) {
-                array_push($this->uniqueWords, mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8'));
+                $this->uniqueWords[] = mb_strtolower($this->processedWords[$wordIndex]->word);
             }
         }
     }
@@ -382,6 +432,9 @@ class TextBlock
         to work.
     */
     public function prepareTextForReader() {
+        $tokensWithNoSpaceBefore = config('langapp.tokensWithNoSpaceBefore');
+        $tokensWithNoSpaceAfter = config('langapp.tokensWithNoSpaceAfter');
+
         $this->words = [];
         $encounteredWords = DB::table('encountered_words')
             ->where('user_id', Auth::user()->id)
@@ -398,6 +451,19 @@ class TextBlock
             $word->phraseStart = false;
             $word->phraseEnd = false;
             $word->phraseIndexes = [];
+            
+            
+            // Add space for word if the language has spaces in it.
+            $word->spaceAfter = $this->language !== 'japanese';
+            
+            if ($wordIndex < count($this->processedWords) - 1 && in_array($this->processedWords[$wordIndex + 1]->word, $tokensWithNoSpaceBefore, true)) {
+                    $word->spaceAfter = false;
+            }
+
+            if (in_array($this->processedWords[$wordIndex]->word, $tokensWithNoSpaceAfter, true)) {
+                $word->spaceAfter = false;
+            }
+            
 
             $wordId = $encounteredWords->search(function ($item, $key) use($word) {
                 return $item->word == mb_strtolower($word->word);

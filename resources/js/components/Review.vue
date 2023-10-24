@@ -66,13 +66,16 @@
 
                         <!-- Phrase -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
-                            <div class="phrase" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                            <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <span 
+                                    v-for="(word, wordIndex) in textBlocks[0].words" :key="wordIndex"
+                                    :class="{'mr-2': word.spaceAfter}"
+                                >{{ word.word }}</span>
                             </div>
                         </template>
 
                         <!-- Reading -->
-                        <div class="reading" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
+                        <div class="reading" v-if="reviews[currentReviewIndex] !== undefined && language == 'japanese'" :style="{'font-size': (settings.fontSize) + 'px'}">
                             <hr>
                             <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                             {{ reviews[currentReviewIndex].reading }}
@@ -131,7 +134,6 @@
                         uniqueWords: [],
                     }
                 ],
-                language: '',
                 practiceMode: false,
                 revealed: false,
                 backToDeckAnimation: false,

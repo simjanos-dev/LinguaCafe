@@ -7,7 +7,7 @@
         <template v-for="(word, wordIndex) in words"><!--
             --><div 
                 :key="wordIndex"
-                v-if="word.word !== 'NEWLINE' && language == 'japanese'" 
+                v-if="word.word !== 'NEWLINE'" 
                 :wordindex="wordIndex" 
                 :stage="word.stage" 
                 :phrasestage="word.phraseStage" 
@@ -18,7 +18,8 @@
                     'highlighted': word.selected || word.hover,
                     'phrase': word.phraseIndexes.length > 0, 
                     'phrase-start': word.phraseStart, 
-                    'phrase-end': word.phraseEnd
+                    'phrase-end': word.phraseEnd,
+                    'space-after': word.spaceAfter
                 }"
                 :style="{
                     'font-size': fontSize + 'px', 
@@ -153,6 +154,7 @@
                             sentence_index: this.words[currentWordIndex].sentence_index,
                             wordIndex: currentWordIndex,
                             uniqueWordIndex: this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase()),
+                            spaceAfter: this.words[currentWordIndex].spaceAfter,
                         });
                     }
 
@@ -167,7 +169,7 @@
                 }, 500);
             },
             startSelection: function(event, wordIndex) {
-                this.$emit('unselectAllWords', true, false);
+                this.$emit('unselectAllWords', true);
                 this.touchTimer = null;
                 if (event == undefined) {
                     return;
@@ -194,6 +196,7 @@
                 // set selected word          
                 var selectedWord = {
                     word: event.srcElement.outerText,
+                    spaceAfter: this.words[wordIndex].spaceAfter,
                     wordIndex: wordIndex,
                     uniqueWordIndex: this.getUniqueWordIndex(event.srcElement.outerText.toLowerCase()),
                     reading: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].reading,
@@ -204,7 +207,6 @@
                 this.ongoingSelection = [selectedWord];
                 this.words[wordIndex].selected = true;
                 this.ongoingSelectionStartingWordIndex = wordIndex;
-                this.updateSelectedWordLookupCount(selectedWord.word, selectedWord.uniqueWordIndex);
             },
             updateSelectionMouse: function(event, wordIndex) {
                 if (!this.ongoingSelection.length || event == undefined || event.buttons !== 1 || this.touchTimer) {
@@ -276,7 +278,8 @@
                         wordIndex: i,
                         uniqueWordIndex: this.getUniqueWordIndex(this.words[i].word.toLowerCase()),
                         reading: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].reading,
-                        sentence_index: this.words[i].sentence_index
+                        sentence_index: this.words[i].sentence_index,
+                        spaceAfter: this.words[i].spaceAfter,
                     };
 
                     this.ongoingSelection.push(selectedWord);
@@ -324,6 +327,10 @@
 
                 this.selection = this.ongoingSelection;
                 this.ongoingSelection = [];
+
+                if (this.selection.length == 1) {
+                    this.updateLookupCount(this.selection[0].word, this.selection[0].uniqueWordIndex);
+                }
 
                 if (this.selection.length) {
                     this.selectedPhrase = this.getSelectedPhraseIndex();                    
@@ -389,12 +396,12 @@
                     }
                 }
             },
-            updateSelectedWordLookupCount: function(word, uniqueWordIndex) {
+            updateLookupCount: function(word, uniqueWordIndex) {
                 this.uniqueWords[uniqueWordIndex].lookup_count ++;
-                axios.post('/vocabulary/word/save', {
-                    id: this.uniqueWords[uniqueWordIndex].id,
-                    lookup_count: this.uniqueWords[uniqueWordIndex].lookup_count
-                });
+                // axios.post('/vocabulary/word/save', {
+                //     id: this.uniqueWords[uniqueWordIndex].id,
+                //     lookup_count: this.uniqueWords[uniqueWordIndex].lookup_count
+                // });
 
                 // update all instances in text
                 this.$emit('update-lookup-count', this.uniqueWords[uniqueWordIndex].id);

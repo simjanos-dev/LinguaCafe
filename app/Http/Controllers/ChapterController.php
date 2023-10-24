@@ -25,11 +25,26 @@ class ChapterController extends Controller
 
     public function getChapters(Request $request) {
         $bookId = intval($request->bookId);
-        $book = Book::where('id', $bookId)->where('user_id', Auth::user()->id)->first();
-        $chapters = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('book_id', $bookId)->where('user_id', Auth::user()->id)->get();
-        $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
-        $book->wordCount = $book->getWordCounts($words);
+        $book = Book
+            ::where('id', $bookId)
+            ->where('user_id', Auth::user()->id)
+            ->first();
+        
+        $chapters = Lesson
+            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])
+            ->where('book_id', $bookId)
+            ->where('user_id', Auth::user()->id)
+            ->get();
 
+        $words = EncounteredWord
+            ::select(['id', 'word', 'stage'])
+            ->where('user_id', Auth::user()->id)
+            ->where('language', Auth::user()->selected_language)
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
+        $book->wordCount = $book->getWordCounts($words);
         for ($i = 0; $i < count($chapters); $i++) {
             $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
         }

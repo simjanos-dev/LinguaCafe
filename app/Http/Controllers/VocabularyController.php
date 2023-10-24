@@ -118,6 +118,7 @@ class VocabularyController extends Controller
 
         if (is_null($request->id)) {
             $phrase = new Phrase();
+            $phrase->reading = '';
             $isNewPhrase = true;
 
             // it's required here because empty 

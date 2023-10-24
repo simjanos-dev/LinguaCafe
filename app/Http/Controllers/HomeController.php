@@ -196,5 +196,36 @@ class HomeController extends Controller
         $user = Auth::user();
         $user->selected_language = strtolower($language);
         $user->save();
+
+        $goal = Goal
+            ::where('user_id', $user->id)
+            ->where('language', $language)
+            ->first();
+
+        if (!$goal) {
+            $goal = new Goal();
+            $goal->user_id = $user->id;
+            $goal->language = $language;
+            $goal->name = 'Reviews';
+            $goal->type = 'review';
+            $goal->quantity = 0;
+            $goal->save();
+
+            $goal = new Goal();
+            $goal->user_id = $user->id;
+            $goal->language = $language;
+            $goal->name = 'Reading';
+            $goal->type = 'read_words';
+            $goal->quantity = 3000;
+            $goal->save();
+
+            $goal = new Goal();
+            $goal->user_id = $user->id;
+            $goal->language = $language;
+            $goal->name = 'New words';
+            $goal->type = 'learn_words';
+            $goal->quantity = 0;
+            $goal->save();
+        }
     }
 }

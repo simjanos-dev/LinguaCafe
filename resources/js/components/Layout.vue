@@ -38,7 +38,7 @@
         </v-navigation-drawer>
 
         <v-main :style="{background: $vuetify.theme.currentTheme.background}" :class="{ eink: theme == 'eink'}">
-            <router-view :key="$route.fullPath"></router-view>
+            <router-view :language="selectedLanguage" :key="$route.fullPath"></router-view>
         </v-main>
         
         <v-bottom-navigation dense grow shift class="d-flex d-sm-flex d-md-none" dark background-color="primary">
@@ -92,12 +92,6 @@
                         bottomNav: true,
                     },
                     {
-                        name: 'Kanji',
-                        url: '/kanji/search',
-                        icon: 'mdi-ideogram-cjk',
-                        bottomNav: false,
-                    },
-                    {
                         name: 'Review',
                         url: '/review/false/-1/-1',
                         icon: 'mdi-playlist-check',
@@ -122,6 +116,15 @@
             _selectedLanguage: String,
         },
         beforeMount() {
+            if (this.$props._selectedLanguage == 'japanese') {
+                this.navigation.splice(3, 0, {
+                    name: 'Kanji',
+                    url: '/kanji/search',
+                    icon: 'mdi-ideogram-cjk',
+                    bottomNav: false,
+                });
+            }
+
             // load theme
             var themeName = this.$cookie.get('theme') === null ? 'light' : this.$cookie.get('theme');
             this.$vuetify.theme.themes['light'] = this.$cookie.get('theme') === null ? themes.light : themes[this.$cookie.get('theme')];
@@ -130,7 +133,6 @@
         },
         methods: {
             updateTheme: function() {
-                console.log('updateeeee');
                 this.theme = (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme');
             },
         }

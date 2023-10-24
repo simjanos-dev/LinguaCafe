@@ -5,6 +5,9 @@ return [
         '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
         '«', '»', "'", '’', '–', 'NEWLINE', 'newline', ' ', "\r", "\n", "\r\n", '	', "\r\n　"],
 
+    'tokensWithNoSpaceBefore' => ['.', ',', '?', '!', '\'', '"', '‘', '’'],
+    'tokensWithNoSpaceAfter' => ['‘', '’'],
+
     // next_review = today + reviewIntervals[stage]
     // the date with the least amount of reviews
     // will be selected for the next review. 
