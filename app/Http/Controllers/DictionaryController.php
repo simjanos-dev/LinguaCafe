@@ -45,7 +45,7 @@ class DictionaryController extends Controller
             }
         }
 
-        $search = VocabularyJmdict::with('words:word,id,dictionary_ja_jmdict_id')->with('readings:reading,word_restrictions,id,dictionary_ja_jmdict_id')->whereIn('id', $ids)->get();
+        $search = VocabularyJmdict::with('words:word,id,dict_jp_jmdict_id')->with('readings:reading,word_restrictions,id,dict_jp_jmdict_id')->whereIn('id', $ids)->get();
         
         $translations = [];
         foreach ($search as $result) {

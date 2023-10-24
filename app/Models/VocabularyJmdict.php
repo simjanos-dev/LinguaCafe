@@ -11,18 +11,18 @@ class VocabularyJmdict extends Model
 {
     use HasFactory;
     
-    protected $table = 'dictionary_ja_jmdict';
+    protected $table = 'dict_jp_jmdict';
 
     protected $fillable = [
 
     ];
 
     public function words() {
-        return $this->hasMany(VocabularyJmdictWord::class, 'dictionary_ja_jmdict_id');
+        return $this->hasMany(VocabularyJmdictWord::class, 'dict_jp_jmdict_id');
     }
 
     public function readings() {
-        return $this->hasMany(VocabularyJmdictReading::class, 'dictionary_ja_jmdict_id');
+        return $this->hasMany(VocabularyJmdictReading::class, 'dict_jp_jmdict_id');
     }
     
 }

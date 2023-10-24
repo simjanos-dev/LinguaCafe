@@ -146,7 +146,7 @@ class ToolController extends Controller
 
 
         // delete old database entries
-        DB::statement('DELETE FROM dictionary_ja_kanji_radicals');
+        DB::statement('DELETE FROM dict_jp_kanji_radicals');
         
         // load radical stroke counts into an array
         $radicalStrokesFiles = fopen(base_path() . '/storage/app/dictionaries/radical-strokes.txt', 'r');
@@ -217,7 +217,7 @@ class ToolController extends Controller
             '4' => 5,
         ];
 
-        DB::statement('DELETE FROM dictionary_ja_kanji');
+        DB::statement('DELETE FROM dict_jp_kanji');
 
         ob_implicit_flush(true);
         $doc = new \DOMDocument();
@@ -320,9 +320,9 @@ class ToolController extends Controller
         
         ob_implicit_flush(true);
         $file = fopen(base_path() . '/storage/app/dictionaries/jmdict_processed.txt', 'r');
-        DB::statement('DELETE FROM dictionary_ja_jmdict');
-        DB::statement('DELETE FROM dictionary_ja_jmdict_words');
-        DB::statement('DELETE FROM dictionary_ja_jmdict_readings');                
+        DB::statement('DELETE FROM dict_jp_jmdict');
+        DB::statement('DELETE FROM dict_jp_jmdict_words');
+        DB::statement('DELETE FROM dict_jp_jmdict_readings');                
 
         $index = 0;
         DB::beginTransaction();
@@ -346,7 +346,7 @@ class ToolController extends Controller
             foreach ($words as $word) {
                 $jmdictWord = new VocabularyJmdictWord();
                 $jmdictWord->word = $word;
-                $jmdictWord->dictionary_ja_jmdict_id = $vocabulary->id;
+                $jmdictWord->dict_jp_jmdict_id = $vocabulary->id;
                 $jmdictWord->save();
             }
 
@@ -365,7 +365,7 @@ class ToolController extends Controller
                 $jmdictReading = new VocabularyJmdictReading();
                 $jmdictReading->reading = $reading;
                 $jmdictReading->word_restrictions = $restrictions;
-                $jmdictReading->dictionary_ja_jmdict_id = $vocabulary->id;
+                $jmdictReading->dict_jp_jmdict_id = $vocabulary->id;
                 $jmdictReading->save();
             }
 

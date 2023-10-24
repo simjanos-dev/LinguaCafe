@@ -9,5 +9,5 @@ class Radical extends Model
 {
     use HasFactory;
 
-    protected $table = 'dictionary_ja_kanji_radicals';
+    protected $table = 'dict_jp_kanji_radicals';
 }

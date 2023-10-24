@@ -9,5 +9,5 @@ class Kanji extends Model
 {
     use HasFactory;
     
-    protected $table = 'dictionary_ja_kanji';
+    protected $table = 'dict_jp_kanji';
 }

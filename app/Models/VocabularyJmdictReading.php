@@ -10,13 +10,13 @@ class VocabularyJmdictReading extends Model
 {
     use HasFactory;
     
-    protected $table = 'dictionary_ja_jmdict_readings';
+    protected $table = 'dict_jp_jmdict_readings';
 
     protected $fillable = [
 
     ];
 
     public function VocabularyJmdict() {
-        return $this->belongsTo(VocabularyJmdict::class, 'dictionary_ja_jmdict_id', 'id');
+        return $this->belongsTo(VocabularyJmdict::class, 'dict_jp_jmdict_id', 'id');
     }
 }
