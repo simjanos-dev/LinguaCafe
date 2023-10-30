@@ -185,7 +185,7 @@
                 <v-btn rounded text @click="close">Cancel</v-btn>
                 <v-btn 
                     rounded 
-                    depressed 
+                    depressed
                     color="primary" 
                     :disabled="saved || saving" 
                     @click="save"

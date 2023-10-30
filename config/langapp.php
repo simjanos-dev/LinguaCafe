@@ -1,12 +1,21 @@
 <?php
 
 return [
-    'wordsToSkip' => ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
-        '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
-        '«', '»', "'", '’', '–', 'NEWLINE', 'newline', ' ', "\r", "\n", "\r\n", '	', "\r\n　"],
+    'languages' => [
+        'japanese',
+        'norwegian',
+        'german'
+    ],
 
-    'tokensWithNoSpaceBefore' => ['.', ',', '?', '!', '\'', '"', '‘', '’'],
-    'tokensWithNoSpaceAfter' => ['‘', '’'],
+    'language_short_forms' => [
+        'japanese' => 'jp',
+        'norwegian' => 'no',
+        'german' => 'de',
+
+        'Japanese' => 'jp',
+        'Norwegian' => 'no',
+        'German' => 'de'
+    ],
 
     // next_review = today + reviewIntervals[stage]
     // the date with the least amount of reviews
@@ -20,4 +29,11 @@ return [
         -2 => [25, 26, 27, 28, 29],
         -1 => [48, 49, 50, 51, 52, 53],
     ],
+
+    'wordsToSkip' => ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
+        '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
+        '«', '»', "'", '’', '–', 'NEWLINE', 'newline', ' ', "\r", "\n", "\r\n", '	', "\r\n　"],
+
+    'tokensWithNoSpaceBefore' => ['.', ',', '?', '!', '\'', '"', '‘', '’'],
+    'tokensWithNoSpaceAfter' => ['‘', '’'],
 ];

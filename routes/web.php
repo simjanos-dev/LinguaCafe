@@ -59,8 +59,13 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
     // dictionary
-    Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'search']);
+    Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
+    Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
+    Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);
     Route::post('/dictionary/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
+    Route::post('/dictionary/test-csv-file', [App\Http\Controllers\DictionaryController::class, 'testDictionaryCsvFile']);
+    Route::post('/dictionary/import-csv-file', [App\Http\Controllers\DictionaryController::class, 'importDictionaryCsvFile']);
+    Route::get('/dictionary/delete/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
 
     // vocabulary
     Route::get('/vocabulary/word/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getWord']);

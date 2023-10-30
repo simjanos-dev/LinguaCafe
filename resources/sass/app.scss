@@ -26,11 +26,81 @@
 @import 'chapters';
 @import 'slider';
 
+
+// admin pages
+@import 'Admin/AdminDictionarySettings';
+
 * {
     font-family: sans-serif !important;
 }
 
-  
+// container size
+.container {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+@media (min-width: 576px) {
+    .container-sm, .container {
+        padding-left: 15px;
+        padding-right: 15px;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 992px) {
+    .container-sm, .container {
+        max-width: 960px;
+    }
+}
+
+
+// custom expansion card
+.expansion-card {
+    .v-card__title {
+        font-size: 18px !important;
+    }
+
+    &:not(:last-child) .expansion-card-title,
+    &.open .expansion-card-title {
+        border-bottom: 1px solid var(--v-customBorder-base);
+    }
+
+    .expansion-card-title {
+        user-select: none;
+
+        &:hover {
+            cursor: pointer;
+            transition: .2s;
+            background-color: var(--v-gray2-base);
+        }
+    }
+
+    .expansion-card-content {
+        box-sizing: border-box;
+        overflow: hidden;
+        height: 0px;
+        transition: height .8s;
+        padding-bottom: 0px;
+        transform: scaleY(0);
+    }
+    
+    &:not(:last-child) .expansion-card-content {
+        border-bottom: 1px solid var(--v-customBorder-base);
+    }
+    
+    &.open .expansion-card-content{
+        height: auto;
+        padding-bottom: 16px;
+        padding: 16px;
+        transform: scaleY(1);
+    }
+}
+
+.v-progress-linear.delete-dialog-delay .v-progress-linear__determinate {
+    transition: 0s !important;
+}
+
 .v-slider__track-container {
     height: 4px !important;
     border-radius: 4px !important;
@@ -327,6 +397,13 @@ div.v-data-table {
         tbody tr:hover,
         tbody tr:hover td {
             background-color: transparent !important;
+        }
+    }
+
+    &.no-lines .v-data-table__wrapper table {
+        tbody tr,
+        tbody tr td {
+            border-bottom: none !important;
         }
     }
 }

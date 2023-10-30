@@ -1,0 +1,99 @@
+#admin-dictionary-settings {
+    #import-button-text-short {
+        display: none;
+    }
+
+    #dictionaries-mobile {
+        display: none;
+        font-size: 13px;
+        overflow: hidden;
+        
+        .expansion-card-content {
+            width: 100%;
+            padding: 0px 16px;
+        }
+
+        .expansion-card-title {
+            overflow: hidden;
+        }
+
+        table {
+            table-layout: fixed;
+
+            td, th {
+                padding: 0px 8px !important;
+                word-wrap: break-word;
+            }
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 130px;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: calc(100% - 130px);
+        }
+    }
+}
+
+#import-stepper .v-stepper__wrapper {
+    overflow: visible;
+}
+
+@media (max-width: 991px) {
+    #admin-dictionary-settings {
+        #dictionaries {
+            th:nth-child(3),
+            td:nth-child(3),
+            th:nth-child(4),
+            td:nth-child(4) {
+                display: none;
+            }       
+        }
+    }
+}
+
+@media (max-width: 650px) {
+    #dictionary-import-dialog .v-stepper__content{
+        padding: 0px;
+        padding-top: 16px;  
+    }
+
+    #admin-tab-items {
+        padding: 12px !important;
+    }
+
+    #dictionary-color-picker > * {
+        display: none;
+    }
+
+    #admin-dictionary-settings {
+        #dictionaries {
+            display: none;
+        }
+
+        #dictionaries-mobile {
+            display: block;
+        }
+    }
+}
+
+@media (max-width: 450px) {
+    #delete-dictionary-dialog {
+        .v-card__title span.text-h5 {
+            font-size: 20px !important;
+        }
+    }
+    
+    #admin-dictionary-settings {
+        #import-button-text {
+            display: none;
+        }
+
+        #import-button-text-short {
+            display: block;
+        }
+    }
+}

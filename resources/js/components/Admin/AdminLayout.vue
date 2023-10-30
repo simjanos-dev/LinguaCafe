@@ -5,12 +5,12 @@
             <v-tab>Dictionaries</v-tab>
             <v-tab>Jellyfin API</v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab" class="rounded-lg border mt-4 pa-6">
+        <v-tabs-items v-model="tab" id="admin-tab-items" class="rounded-lg border mt-4 pa-6">
             <v-tab-item :value="0">
                 <div class="subheader">Users</div>
             </v-tab-item>
             <v-tab-item :value="1">
-                <div class="subheader">Dictionaries</div>
+                <admin-dictionary-settings :language="$props.language"></admin-dictionary-settings>
             </v-tab-item>
             <v-tab-item :value="2">
                 <div class="subheader">Jellyfin</div>
@@ -27,7 +27,7 @@
             }
         },
         props: {
-            
+            language: String
         },
         mounted() {
         },

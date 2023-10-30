@@ -59,16 +59,22 @@ import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
 Vue.component('vocabulary-edit-dialog', VocabularyEditDialog);
 
 // dialogs
+import ErrorDialog from './components/Dialogs/ErrorDialog';
 import StartReviewDialog from './components/Dialogs/StartReviewDialog';
 import ThemeSelectionDialog from './components/Dialogs/ThemeSelectionDialog';
 import LanguageSelectionDialog from './components/Dialogs/LanguageSelectionDialog';
+Vue.component('error-dialog', ErrorDialog);
 Vue.component('start-review-dialog', StartReviewDialog);
 Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
-// adming
+// admin
 import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
+import AdminDeleteDictionaryDialog from './components/Admin/AdminDeleteDictionaryDialog';
+import AdminDictionaryImportDialog from './components/Admin/AdminDictionaryImportDialog';
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);
+Vue.component('admin-delete-dictionary-dialog', AdminDeleteDictionaryDialog);
+Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
 
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
