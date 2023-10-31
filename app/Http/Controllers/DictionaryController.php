@@ -40,10 +40,66 @@ class DictionaryController extends Controller
     }
 
     public function searchDefinitions(Request $request) {
-        $dictionary = $request->dictionary;
-        $term = $request->term;
+        $language = $request->post('language');
+        $term = $request->post('term');
+        $searchResultDictionaries = [];
+        $dictionaries = Dictionary
+            ::where('enabled', true)
+            ->where('language', $language)
+            ->get();
 
+        // go through each dictionary and search in them
+        foreach ($dictionaries as $dictionary) {
+            $searchResultDictionary = new \stdClass();
+            $searchResultDictionary->name = $dictionary->name;
+            $searchResultDictionary->color = $dictionary->color;
+            
+            if ($dictionary->name == 'JMDict') {
+                $searchResultDictionary->jmdictRecords = $this->searchJmDict($term);
+            } else {
+                $searchResultDictionary->records = $this->searchImportedDictionary($dictionary->database_table_name, $term);;
+            }
 
+            $searchResultDictionaries[] = $searchResultDictionary;
+        }
+
+        return json_encode($searchResultDictionaries);
+    }
+
+    private function searchImportedDictionary($dictionaryTable, $term) {
+        $records = [];
+        
+        $dictionaryWords = ImportedDictionary
+            ::fromTable($dictionaryTable)
+            ->where('word', 'LIKE', $term . '%')
+            ->orderByRaw('LENGTH(word)')
+            ->limit(40)
+            ->get();
+
+        foreach ($dictionaryWords as $word) {
+            $definitions = explode(';', $word->definitions);
+            
+            // check if there are duplicate records
+            $duplicate = false;
+            foreach ($records as $record) {
+                if ($record->word == $word->word) {
+                    $record->definitions[] = $word->definitions;
+                    $duplicate = true;
+                }
+            }
+
+            if (!$duplicate) {
+                $record = new \stdClass();
+                $record->word = $word->word;
+                $record->definitions = $definitions;
+                $records[] = $record;
+            }
+        }
+
+        return $records;
+    }
+
+    private function searchJmDict($term) {
         $ids = [];
         // exact word matches
         $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', 'like', $term)->get()->toArray();
@@ -106,11 +162,10 @@ class DictionaryController extends Controller
             array_push($translations, $translation);
         }
 
-        return json_encode($translations);
+        return $translations;
     }
 
     public function searchInflections(Request $request) {
-        
         $dictionary = $request->dictionary;
         $term = $request->term;
 
@@ -179,7 +234,7 @@ class DictionaryController extends Controller
                 }
 
                 $sampleData = new \stdClass();
-                $sampleData->word = $record[0];
+                $sampleData->word = mb_strtolower($record[0], 'UTF-8');
                 $sampleData->translation = $record[1];
 
                 // this loop runs through the whole file to test for errors
@@ -227,7 +282,7 @@ class DictionaryController extends Controller
         Schema::create($databaseTableName, function (Blueprint $table) {
             $table->id();
             $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('translations', 2048)->collation('utf8mb4_bin');
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
             $table->timestamps();
         });
 
@@ -250,6 +305,7 @@ class DictionaryController extends Controller
             $csv = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
             $csv->setDelimiter($delimiter);
             $records = $csv->getRecords();
+            $uniqueWords = [];
             foreach ($records as $index => $record) {
                 // ignore header
                 if ($skipHeader && !$index) {
@@ -262,8 +318,8 @@ class DictionaryController extends Controller
                 }
 
                 DB::table($databaseTableName)->insert([
-                    'word' => $record[0],
-                    'translations' => $record[1]
+                    'word' => mb_strtolower($record[0], 'UTF-8'),
+                    'definitions' => $record[1]
                 ]);
             }
 

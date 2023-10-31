@@ -275,16 +275,37 @@
                         <!-- Search results -->
                         <div id="search-results" class="mb-4 pa-2">
                             <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in vocabBox.searchResults" :key="searchresultIndex">
-                                <div class="search-result-title rounded px-2">{{ searchResult.word }} <div class="dictionary">jmdict</div></div>
-                                <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in searchResult.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
-                                    {{ definition }} <v-icon>mdi-plus</v-icon>
-                                </div>
-                                <template v-if="searchResult.otherForms.length">
-                                    <div class="vocab-box-subheader">Other forms:</div>
-                                    <div class="d-flex flex-wrap">
-                                        <div v-for="(form, formIndex) in searchResult.otherForms" :key="formIndex">
-                                            {{ form }}<span class="mr-2" v-if="formIndex < searchResult.otherForms.length - 1">, </span>
+                                <!-- Regular record -->
+                                <template v-if="searchResult.dictionary !== 'JMDict'">
+                                    <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
+                                        <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
+                                        <div 
+                                            v-for="(definition, definitionIndex) in record.definitions" 
+                                            :key="definitionIndex" 
+                                            class="search-result-definition rounded"
+                                            @click="addDefinitionToInput(definition)"
+                                        >
+                                            {{ definition }} <v-icon>mdi-plus</v-icon>
                                         </div>
+                                    </div>
+                                </template>
+
+                                <!-- JMDict record -->
+                                <template v-if="searchResult.dictionary == 'JMDict'">
+                                    <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
+                                        <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
+                                        <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in record.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
+                                            {{ definition }} <v-icon>mdi-plus</v-icon>
+                                        </div>
+                                    
+                                        <template v-if="record.otherForms.length">
+                                            <div class="vocab-box-subheader">Other forms:</div>
+                                            <div class="d-flex flex-wrap">
+                                                <div v-for="(form, formIndex) in record.otherForms" :key="formIndex">
+                                                    {{ form }}<span class="mr-2" v-if="formIndex < record.otherForms.length - 1">, </span>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </template>
                             </div>
@@ -370,6 +391,23 @@
                     this.vocabBox.base_word_reading = uniqueWord.base_word_reading;
                     if (uniqueWord.base_word !== '') {
                         this.vocabBox.searchField = uniqueWord.base_word;
+
+                        // temporary search fix for norwegian
+                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 2) == 'å ') {
+                            this.vocabBox.searchField = this.vocabBox.searchField.slice(2);
+                        }
+
+                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'et ') {
+                            this.vocabBox.searchField = this.vocabBox.searchField.slice(3);
+                        }
+
+                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'en ') {
+                            this.vocabBox.searchField = this.vocabBox.searchField.slice(3);
+                        }
+
+                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'ei ') {
+                            this.vocabBox.searchField = this.vocabBox.searchField.slice(3);
+                        }
                     } else {
                         this.vocabBox.searchField = uniqueWord.word;
                     }
@@ -402,10 +440,8 @@
             unselectAllWords: function(fast = false, save = true) {
                 if (save && this.selection.length == 1) {
                     this.saveWord();
-                    console.log('saving word', save);
                 } else if (save && this.selectedPhrase !== -1) {
                     this.savePhrase();
-                    console.log('saving phrase', save);
                 }
 
                 this.vocabBox.closed = true;
@@ -809,7 +845,7 @@
                 }
 
                 axios.post('/dictionary/search', {
-                    dictionary: 'jmdict',
+                    language: this.$props.language,
                     term: this.vocabBox.searchField
                 }).then((response) => {
                     this.processVocabularySearchResults(response.data);
@@ -826,23 +862,43 @@
             },
             processVocabularySearchResults: function(data) {
                 this.vocabBox.searchResults = [];
-                for (var i = 0; i < data.length; i++) {
-                    this.vocabBox.searchResults.push({
-                        word: data[i].words.shift(),
-                        otherForms: data[i].words,
-                        definitions: data[i].definitions
-                    });
-                }
 
-                this.$nextTick(() => {
-                    var element = document.getElementById('translations');
-                    if (element == null) {
-                        return;
+                for (var dictionaryIndex = 0; dictionaryIndex < data.length; dictionaryIndex++) {
+                    if (data[dictionaryIndex].name == 'JMDict') {
+                        let searchResult = {
+                            dictionary: data[dictionaryIndex].name,
+                            color: data[dictionaryIndex].color,
+                            records: []
+                        };
+
+                        for (var jmdictIndex = 0; jmdictIndex < data[dictionaryIndex].jmdictRecords.length; jmdictIndex++) {
+                            var jmdictRecord = data[dictionaryIndex].jmdictRecords[jmdictIndex];
+                            
+                            searchResult.records.push({
+                                word: jmdictRecord.words.length ? jmdictRecord.words[0] : '',
+                                otherForms: data[dictionaryIndex].jmdictRecords[jmdictIndex].words,
+                                definitions: data[dictionaryIndex].jmdictRecords[jmdictIndex].definitions,
+                            });                            
+                        }
+
+                        this.vocabBox.searchResults.push(searchResult);
+                    } else {
+                        let searchResult = {
+                            dictionary: data[dictionaryIndex].name,
+                            color: data[dictionaryIndex].color,
+                            records: []
+                        };
+
+                        for (var recordIndex = 0; recordIndex < data[dictionaryIndex].records.length; recordIndex++) {
+                            searchResult.records.push({
+                                word: data[dictionaryIndex].records[recordIndex].word,
+                                definitions: data[dictionaryIndex].records[recordIndex].definitions,
+                            });                            
+                        }
+
+                        this.vocabBox.searchResults.push(searchResult);
                     }
-
-                    this.allSearchResultsVisible = element.scrollHeight <= element.clientHeight;
-                    this.showAllSearchResults = false;
-                });
+                }
             },
             processInflectionSearchResults: function(data) {
                 var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
