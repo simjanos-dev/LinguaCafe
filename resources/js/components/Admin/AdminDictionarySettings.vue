@@ -94,7 +94,7 @@
                     </td>
 
                     <!-- Records -->
-                    <td class="text-center">{{ formatNumber(dictionary.records) }}</td>
+                    <td class="text-center">{{ dictionary.records == '-' ? '-' : formatNumber(dictionary.records) }}</td>
                     
                     <!-- Database table name -->
                     <td class="text-center">{{ dictionary.database_table_name }}</td>
@@ -205,7 +205,7 @@
                             <!-- Records -->
                             <tr>
                                 <td>Records</td>
-                                <td class="text-center">{{ formatNumber(dictionary.records) }}</td>
+                                <td class="text-center">{{ dictionary.records == '-' ? '-' : formatNumber(dictionary.records) }}</td>
                             </tr>
                             
                             <!-- Database table name -->

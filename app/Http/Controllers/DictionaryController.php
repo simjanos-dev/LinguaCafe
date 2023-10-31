@@ -10,21 +10,32 @@ use Illuminate\Database\Schema\Blueprint;
 use App\Models\Dictionary;
 use App\Models\ImportedDictionary;
 use App\Models\VocabularyJmdict;
+use App\Models\DeeplCache;
 use League\Csv\Reader;
 
 class DictionaryController extends Controller
 {
+    /*
+        Returns a list of dictionaries.
+    */
     public function getDictionaries() {
         $dictionaries = Dictionary::get();
 
         foreach ($dictionaries as $dictionary) {
-            $dictionary->records = DB::table($dictionary->database_table_name)->selectRaw('count(*) as record_count')->get();
-            $dictionary->records = $dictionary->records[0]->record_count;
+            if ($dictionary->database_table_name == 'API') {
+                $dictionary->records = '-';
+            } else {
+                $dictionary->records = DB::table($dictionary->database_table_name)->selectRaw('count(*) as record_count')->get();
+                $dictionary->records = $dictionary->records[0]->record_count;
+            }
         }
 
         return json_encode($dictionaries);
     }
 
+    /*
+        This function updates a dictionary's color and enabled status.
+    */
     public function updateDictionary(Request $request) {
         $dictionary = Dictionary::where('id', $request->post('id'))->first();
 
@@ -39,6 +50,10 @@ class DictionaryController extends Controller
         return 'success';
     }
 
+    /*
+        This function is called by the client, it searches through all
+        dictionaries available and enabled (imported, JMDict, DeepL etc.). 
+    */
     public function searchDefinitions(Request $request) {
         $language = $request->post('language');
         $term = $request->post('term');
@@ -56,8 +71,10 @@ class DictionaryController extends Controller
             
             if ($dictionary->name == 'JMDict') {
                 $searchResultDictionary->jmdictRecords = $this->searchJmDict($term);
+            } else if (explode(' ', $dictionary->name)[0] == 'DeepL' && $dictionary->database_table_name == 'API') {
+                $searchResultDictionary->records = $this->searchDeepl($language, $term);
             } else {
-                $searchResultDictionary->records = $this->searchImportedDictionary($dictionary->database_table_name, $term);;
+                $searchResultDictionary->records = $this->searchImportedDictionary($dictionary->database_table_name, $term);
             }
 
             $searchResultDictionaries[] = $searchResultDictionary;
@@ -66,6 +83,9 @@ class DictionaryController extends Controller
         return json_encode($searchResultDictionaries);
     }
 
+    /*
+        This function searches a dictionary imported by an admin/user.
+    */
     private function searchImportedDictionary($dictionaryTable, $term) {
         $records = [];
         
@@ -99,6 +119,52 @@ class DictionaryController extends Controller
         return $records;
     }
 
+    /*
+        This function sends an API request to DeepL, and returns
+        it in a format that can be returned for the client.
+    */
+    private function searchDeepl($language, $term) {
+        $hash = md5(mb_strtolower($term, 'UTF-8'));
+        $languageCodes = config('langapp.deepl_language_codes');
+        $records = [];
+
+        // check if search term is already cached
+        $cache = DeeplCache
+            ::where('language', $language)
+            ->where('hash', $hash)
+            ->first();
+        
+        // make api call or retrieve definition from cache
+        if ($cache) {
+            $definitions = [$cache->definition];
+        } else {
+            // make api call
+            $apiKey = "c86f8349-bda9-a84a-db56-e04b8027cd59:fx";
+            $deepl = new \DeepL\Translator($apiKey);
+            $result = $deepl->translateText($term, $languageCodes['norwegian'], $languageCodes['english']);
+            $definitions = [$result->text];
+
+            // create cache
+            $cache = new DeeplCache();
+            $cache->language = $language;
+            $cache->hash = $hash;
+            $cache->definition = $result->text;
+            $cache->save();
+        }
+
+        // return translation
+        $record = new \stdClass();
+        $record->word = $term;
+        $record->definitions = $definitions;
+        $records[] = $record;
+
+        return $records;
+    }
+
+    /*
+        This function searches JMDict, which requires
+        custom search function.
+    */
     private function searchJmDict($term) {
         $ids = [];
         // exact word matches
@@ -165,6 +231,9 @@ class DictionaryController extends Controller
         return $translations;
     }
 
+    /* 
+        This function searches inflections from JMDict. 
+    */
     public function searchInflections(Request $request) {
         $dictionary = $request->dictionary;
         $term = $request->term;
@@ -203,6 +272,11 @@ class DictionaryController extends Controller
         }
     }
 
+    /*
+        This function tests a .csv file, and returns a sample of the data.
+        This makes it faster to test a file and notice any problems before
+        the user actually imports a large file.
+    */
     public function testDictionaryCsvFile(Request $request) {
         $skipHeader = boolval($request->post('skipHeader') === 'true');
         $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
@@ -253,6 +327,9 @@ class DictionaryController extends Controller
         return json_encode($returnData);
     }
 
+    /*
+        Imports a csv file into a custom dictionary database table.
+    */
     public function importDictionaryCsvFile(Request $request) {
         $skipHeader = boolval($request->post('skipHeader') === 'true');
         $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');

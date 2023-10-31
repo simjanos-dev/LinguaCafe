@@ -32,6 +32,33 @@ class CreateDictionariesTable extends Migration
             'imported' => false,
             'enabled' => true
         ]);
+
+        DB::table('dictionaries')->insert([
+            'name' => 'DeepL JP',
+            'database_table_name' => 'API',
+            'language' => 'japanese',
+            'color' => '#92B9E2',
+            'imported' => false,
+            'enabled' => true
+        ]);
+
+        DB::table('dictionaries')->insert([
+            'name' => 'DeepL NO',
+            'database_table_name' => 'API',
+            'language' => 'norwegian',
+            'color' => '#92B9E2',
+            'imported' => false,
+            'enabled' => true
+        ]);
+
+        DB::table('dictionaries')->insert([
+            'name' => 'DeepL DE',
+            'database_table_name' => 'API',
+            'language' => 'german',
+            'color' => '#92B9E2',
+            'imported' => false,
+            'enabled' => true
+        ]);
     }
 
     /**

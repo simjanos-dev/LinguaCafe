@@ -17,6 +17,20 @@ return [
         'German' => 'de'
     ],
 
+
+    // ISO_639-1 codes, with a few exceptions (en-GB)
+    'deepl_language_codes' => [
+        'japanese' => 'ja',
+        'norwegian' => 'nb',
+        'german' => 'de',
+        'english' => 'en-GB',
+
+        'Japanese' => 'ja',
+        'Norwegian' => 'nb',
+        'German' => 'de',
+        'english' => 'en-GB'
+    ],
+
     // next_review = today + reviewIntervals[stage]
     // the date with the least amount of reviews
     // will be selected for the next review. 
