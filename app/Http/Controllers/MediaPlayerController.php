@@ -7,23 +7,28 @@ use App\Models\User;
 use App\Models\TextBlock;
 use App\Models\Phrase;
 use App\Models\MediaPlayerCache;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class MediaPlayerController extends Controller
 {
     // production
-    private $apiKey = '38c9c693ceb84535b15acdfe78c04c0e';
-    private $jellyfinUrl = 'http://jellyfin:8096';
-
-    // dev
-    //private $apiKey = 'b988de56db3f4e40a13d21442a36bc28';
-    //private $jellyfinUrl = 'http://jellyfin-test:8096';
+    private $apiKey = '0000';
+    private $apiHost = 'http://jellyfin:8096';
 
     private $languageShorthands = [
         'jpn' => 'japanese',
         'eng' => 'english'
     ];
+
+    function __construct() {
+        // retrieve api key and host from database
+        $setting = Setting::where('name', 'jellyfinApiKey')->first();
+        $this->apiKey = json_decode($setting->value);
+        $setting = Setting::where('name', 'jellyfinHost')->first();
+        $this->apiHost = json_decode($setting->value);
+    }
 
     /*
         Makes a request to the jellyfin api and returns the response.
@@ -34,13 +39,13 @@ class MediaPlayerController extends Controller
         if ($method == 'GET') {
             $response = Http::withHeaders([
                 'Authorization' => 'MediaBrowser Token="' . $this->apiKey . '", Client="LinguaCafe", Device="Test", DeviceId="asdsafwafaw", Version="0.1"'
-            ])->get($this->jellyfinUrl . $url);
+            ])->get($this->apiHost . $url);
         }
 
         if ($method == 'POST') {
             $response = Http::withHeaders([
                 'Authorization' => 'MediaBrowser Token="' . $this->apiKey . '", Client="LinguaCafe", Device="Test", DeviceId="asdsafwafaw", Version="0.1"'
-            ])->post($this->jellyfinUrl . $url);
+            ])->post($this->apiHost . $url);
         }
 
         return $response->json();

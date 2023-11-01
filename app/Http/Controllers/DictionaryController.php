@@ -7,11 +7,14 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use League\Csv\Reader;
+use \Exception;
+use \DeepL\Translator;
 use App\Models\Dictionary;
 use App\Models\ImportedDictionary;
 use App\Models\VocabularyJmdict;
 use App\Models\DeeplCache;
-use League\Csv\Reader;
+use App\Models\Setting;
 
 class DictionaryController extends Controller
 {
@@ -48,6 +51,30 @@ class DictionaryController extends Controller
         $dictionary->save();
 
         return 'success';
+    }
+
+    /*
+        Returns an object with DeepL's character limit.
+    */
+    public function getDeeplCharacterLimit() {
+        $usage = 'error';
+
+        // retrieve api key from database
+        $apiKeySetting = Setting::where('name', 'deeplApiKey')->first();
+        $apiKey = json_decode($apiKeySetting->value);
+
+        // retrieve deepl usage
+        try {
+            $deepl = new Translator($apiKey);
+            $usage = new \stdClass();
+            $usage->limits = $deepl->getUsage();
+            $usage->cachedDeeplTranslations = DeeplCache::select('id')->count('id');
+        } catch (\Exception $e) {
+            return 'error';
+        }
+
+        
+        return json_encode($usage);
     }
 
     /*

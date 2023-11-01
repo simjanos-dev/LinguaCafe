@@ -28,7 +28,9 @@
 
 
 // admin pages
+@import 'Admin/AdminSettings';
 @import 'Admin/AdminDictionarySettings';
+@import 'Admin/AdminApiSettings';
 
 * {
     font-family: sans-serif !important;

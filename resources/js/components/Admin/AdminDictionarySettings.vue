@@ -23,7 +23,7 @@
         />
         
         <!-- Dictionaries -->
-        <div class="d-flex subheader mb-4">
+        <div class="d-flex subheader mt-4 mb-4 px-2 ">
             Dictionaries
             <v-spacer/>
             <v-btn rounded dark color="primary" @click="importDialog = true;">

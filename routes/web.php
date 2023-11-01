@@ -54,11 +54,16 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/tools/kanji/import', [App\Http\Controllers\ToolController::class, 'kanjiImport']);
     Route::get('/tools/radicals/import', [App\Http\Controllers\ToolController::class, 'kanjiRadicalImport']);
     
+    // settings
+    Route::post('/settings/get-by-name', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
+    Route::post('/settings/save', [App\Http\Controllers\SettingsController::class, 'saveSettings']);
+    
     // images 
     Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
     Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
     // dictionary
+    Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
     Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
     Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);

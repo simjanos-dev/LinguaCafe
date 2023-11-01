@@ -70,9 +70,11 @@ Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 // admin
 import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
+import AdminApiSettings from './components/Admin/AdminApiSettings';
 import AdminDeleteDictionaryDialog from './components/Admin/AdminDeleteDictionaryDialog';
 import AdminDictionaryImportDialog from './components/Admin/AdminDictionaryImportDialog';
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);
+Vue.component('admin-api-settings', AdminApiSettings);
 Vue.component('admin-delete-dictionary-dialog', AdminDeleteDictionaryDialog);
 Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
 

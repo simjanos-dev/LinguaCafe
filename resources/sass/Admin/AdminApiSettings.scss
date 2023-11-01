@@ -1,0 +1,42 @@
+
+#admin-api-settings {
+    #skeleton-used-characters,
+    #skeleton-used-characters .v-skeleton-loader__image {
+        width: 140px !important;
+        height: 42px !important;
+    }
+
+    #skeleton-max-characters,
+    #skeleton-max-characters .v-skeleton-loader__image {
+        width: 200px !important;
+        height: 24px !important;
+    }
+
+    #skeleton-progress-bar,
+    #skeleton-progress-bar .v-skeleton-loader__image {
+        width: 100% !important;
+        height: 36px !important;
+    }
+
+    #skeleton-characters-left,
+    #skeleton-characters-left .v-skeleton-loader__image {
+        width: 150px !important;
+        height: 16px !important;
+    }
+
+    #skeleton-cached-translations,
+    #skeleton-cached-translations .v-skeleton-loader__image {
+        width: 150px !important;
+        height: 16px !important;
+    }
+}
+
+@media (max-width: 650px) {
+    #admin-api-settings {
+        #deepl-card-text,
+        #jellyfin-card-text {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+    }
+}
