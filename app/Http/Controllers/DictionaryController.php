@@ -369,11 +369,11 @@ class DictionaryController extends Controller
             return 'Database name can only contain lowercase letters, numbers and underscore!';
         }
 
-        if(strlen($dictionaryName) > 16) {
+        if(mb_strlen($dictionaryName) > 16) {
             return 'Dictionary name can only contain up to 16 characters!';
         }
 
-        if(strlen($databaseTableName) > 40) {
+        if(mb_strlen($databaseTableName) > 40) {
             return 'Database name can only contain up to 40 characters!';
         }
 

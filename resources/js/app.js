@@ -69,14 +69,18 @@ Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 // admin
+import AdminUserSettings from './components/Admin/AdminUserSettings';
 import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
 import AdminApiSettings from './components/Admin/AdminApiSettings';
 import AdminDeleteDictionaryDialog from './components/Admin/AdminDeleteDictionaryDialog';
 import AdminDictionaryImportDialog from './components/Admin/AdminDictionaryImportDialog';
+import AdminAddOrEditUserDialog from './components/Admin/AdminAddOrEditUserDialog';
+Vue.component('admin-user-settings', AdminUserSettings);
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);
 Vue.component('admin-api-settings', AdminApiSettings);
 Vue.component('admin-delete-dictionary-dialog', AdminDeleteDictionaryDialog);
 Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
+Vue.component('admin-add-or-edit-user-dialog', AdminAddOrEditUserDialog);
 
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;

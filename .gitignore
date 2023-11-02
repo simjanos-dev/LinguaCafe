@@ -21,3 +21,4 @@ yarn-error.log
 /tools/django_server/django_server/__pycache__
 /tools/django_server/tokenizer/__pycache__
 /package-lock.json
+/public/mix-manifest.json

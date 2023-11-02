@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::group(['middleware' => 'web'], function () {
-    
-    //jellyfin
+    // users
+    Route::get('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+    Route::post('/user/save', [App\Http\Controllers\UserController::class, 'updateOrCreateUser']);
+
+    // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);
     Route::get('/jellyfin/subtitles', [App\Http\Controllers\MediaPlayerController::class, 'getJellyfinCurrentlyPlayedSubtitles']);
     Route::post('/jellyfin/process-subtitles', [App\Http\Controllers\MediaPlayerController::class, 'processJellyfinSubtitle']);
@@ -39,7 +42,6 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/vocabulary/search/{text}/{stage}/{book}/{chapter}/{translation}/{phrases}/{orderBy}/{page}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/kanji/search', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/kanji/{character}', [App\Http\Controllers\HomeController::class, 'index']);
-
     
     // home
     Route::post('/statistics/get', [App\Http\Controllers\HomeController::class, 'getStatistics']);
