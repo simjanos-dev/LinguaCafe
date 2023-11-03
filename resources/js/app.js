@@ -26,10 +26,20 @@ window.Vue.use(VueRouter);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 
+// layout
 import Layout from './components/Layout.vue';
-import Goal from './components/Goal.vue';
 Vue.component('layout', Layout);
+
+// home page
+import Calendar from './components/Home/Calendar.vue';
+import Goals from './components/Home/Goals.vue';
+import Goal from './components/Home/Goal.vue';
+import Statistics from './components/Home/Statistics.vue';
+Vue.component('calendar', Calendar);
+Vue.component('goals', Goals);
 Vue.component('goal', Goal);
+Vue.component('statistics', Statistics);
+
 
 
 // text 
@@ -84,7 +94,7 @@ Vue.component('admin-add-or-edit-user-dialog', AdminAddOrEditUserDialog);
 
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
-const Home = require('./components/Home.vue').default;
+const Home = require('./components/Home/Home.vue').default;
 const BookList = require('./components/BookList.vue').default;
 const CreateBook = require('./components/CreateBook.vue').default;
 const ChapterList = require('./components/ChapterList.vue').default;

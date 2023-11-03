@@ -1,5 +1,5 @@
 <template>
-    <v-container id="home" class="pb-12">
+    <div>
         <div class="subheader subheader-margin-top d-flex">
             Calendar
 
@@ -54,26 +54,26 @@
         <v-card outlined id="calendar" class="rounded-lg pa-4">
             <v-menu
                 content-class="calendar-popup-menu rounded-lg pa-4"
-                v-model="showCalendarMenu"
+                v-model="popupMenu.active"
                 absolute
                 :close-on-click="false"
                 :close-on-content-click="false"
-                :position-x="calendarPopupX"
-                :position-y="calendarPopupY"
+                :position-x="popupMenu.x"
+                :position-y="popupMenu.y"
                 offset-y
             >
-                <div id="calendar-popup-date" class="mb-4" v-if="calendarPopupDay">
-                    <span>{{ calendarPopupDay.fullDate }}</span>
+                <div id="calendar-popup-date" class="mb-4" v-if="popupMenu.day">
+                    <span>{{ popupMenu.day.fullDate }}</span>
                     <v-spacer></v-spacer>
                     <span id="calendar-popup-reviews-due">
                         <v-icon>mdi-clock-outline</v-icon>
-                        {{ calendarPopupDay.reviewsDue }}
+                        {{ popupMenu.day.reviewsDue }}
                     </span>
                 </div>
-                <div id="calendar-popup-achievements" v-if="calendarPopupDay">
+                <div id="calendar-popup-achievements" v-if="popupMenu.day">
                     <v-simple-table dense class="no-row-border no-hover">
                         <tbody>
-                            <tr v-for="(achievement, index) in calendarPopupAchievements" :key="index">
+                            <tr v-for="(achievement, index) in popupMenu.achievements" :key="index">
                                 <td>{{ goalTexts[achievement.type] }}</td>
                                 <td v-if="achievement.goalQuantity">{{ achievement.achievedQuantity }}/{{ achievement.goalQuantity }}</td>
                                 <td v-if="!achievement.goalQuantity"> none </td>
@@ -112,111 +112,48 @@
                 </div>
             </div>
         </v-card>
-
-        <div class="subheader subheader-margin-top">Daily goals</div>
-        <div id="goals">
-            <goal 
-                v-for="(goal, index) in goals" :key="index"
-                :type="goal.type"
-                :goal-quantity="goal.quantity"
-                :todays-achieved-quantity="goal.todaysQuantity"
-                :color="goalColors[goal.type]"
-                >
-            </goal>
-        </div>
-
-        <div class="subheader subheader-margin-top d-flex">
-            Statistics
-        </div>
-
-        <div id="statistics">
-            <v-card 
-                outlined 
-                class="statistic rounded-lg mr-4 mb-4 pa-4"
-                v-for="(statistic, index) in statistics"
-                :key="index"
-            >
-                <div class="statistic-icon">
-                    <v-icon :color="$vuetify.theme.currentTheme[statistic.color]">{{ statistic.icon }}</v-icon>
-                </div>
-
-                <div class="statistic-data">
-                    <div 
-                        class="statistic-value" 
-                        :style="{color: $vuetify.theme.currentTheme[statistic.color]}"
-                    >
-                        {{ formatNumber(statistic.value) }}
-                    </div>
-                    <div class="statistic-name">{{ statistic.name }}</div>
-                </div>
-            </v-card>
-        </div>
-
-    </v-container>
+    </div>
 </template>
 
-
 <script>
-    import {formatNumber} from './../helper.js';
+    import {formatNumber} from './../../helper.js';
     const moment = require('moment');
     export default {
         data: function() {
             return {
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
-                datePickerDialog: window.innerWidth <= 545 ? true : false,
-                statistics : [],
-                
-                // goal data
-                goals: [],
-                goalColors: {
-                    'review': this.$vuetify.theme.currentTheme.dailyGoalReview,
-                    'read_words': this.$vuetify.theme.currentTheme.dailyGoalReading,
-                    'learn_words': this.$vuetify.theme.currentTheme.dailyGoalNew,
-                    'reviews_due': '#ffc68c',
-                },
+                calendarData: [],
+                reviewsDue: [],
                 goalTexts: {
                     'review': 'reviews',
                     'read_words': 'words',
                     'learn_words': 'new words',
                 },
 
-                // calendar data
-                showReviewsDue: false,
-                calendarData: [],
-                reviewsDue: [],
                 pickerDate: new moment().format('YYYY-MM'),
                 pickerDateFormated: '',
                 currentMonth: new moment().startOf('month'),
                 selectedMonths: [],
                 selectedGoal: 'read_words',
                 showDatePicker: false,
-                showCalendarMenu: false,
-                calendarPopupX: 0,
-                calendarPopupY: 0,
-                calendarPopupDay: null,
-                calendarPopupAchievements: [],
+
+                popupMenu: {
+                    achievements: [],
+                    active: false,
+                    x: 0,
+                    y: 0,
+                    day: null
+                }
             }
         },
         props: {
-            
         },
         mounted() {
             document.body.addEventListener("click", this.closeCalendarDayPopup);
-            //load statistics data
-            axios.post('/statistics/get').then(function (response) {
-                this.statistics = response.data;
-            }.bind(this)).catch(function (error) {}).then(function () {});
-
-            // load goals data
-            axios.post('/goals/get').then(function (response) {
-                this.goals = response.data;
-            }.bind(this)).catch(function (error) {}).then(function () {});
-
+            
             // load achievements data
             axios.post('/get-calendar-data').then(function (response) {
                 this.calendarData = response.data;
-                console.log(this.calendarData);
-                // create calendar
                 this.updateCalendar();
             }.bind(this)).catch(function (error) {}).then(function () {});
             
@@ -227,25 +164,25 @@
                 var position = event.target.getBoundingClientRect();
                 
                 // close calendar if the user clicked on the already selected word
-                if (this.showCalendarMenu && 
-                    this.calendarPopupX == position.left - 100 &&
-                    this.calendarPopupY == position.bottom + 5) {
-                    this.showCalendarMenu = false;
+                if (this.popupMenu.active && 
+                    this.popupMenu.x == position.left - 100 &&
+                    this.popupMenu.y == position.bottom + 5) {
+                    this.popupMenu.active = false;
                     return;
                 }
                 
                 // display calendar popup
-                this.calendarPopupDay = JSON.parse(JSON.stringify(day));
-                this.showCalendarMenu = false;
-                this.calendarPopupX = position.left - 100;
-                this.calendarPopupY = position.bottom + 5;
+                this.popupMenu.day = JSON.parse(JSON.stringify(day));
+                this.popupMenu.active = false;
+                this.popupMenu.x = position.left - 100;
+                this.popupMenu.y = position.bottom + 5;
 
                 // get achievements for popup
-                this.calendarPopupAchievements = [];
+                this.popupMenu.achievements = [];
                 for (var i = 0; i < this.calendarData.length; i++) {
-                    //console.log(this.calendarData[i].day, this.calendarPopupDay.fullDate);
-                    if (this.calendarData[i].day == this.calendarPopupDay.fullDate) {
-                        this.calendarPopupAchievements = JSON.parse(JSON.stringify(this.calendarData[i].achievements));
+                    //console.log(this.calendarData[i].day, this.popupMenu.day.fullDate);
+                    if (this.calendarData[i].day == this.popupMenu.day.fullDate) {
+                        this.popupMenu.achievements = JSON.parse(JSON.stringify(this.calendarData[i].achievements));
                         break;
                     }
                 }
@@ -253,8 +190,8 @@
                 // add default goals to calendar (reading, reviews, new words)
                 var defaultGoalTypes = ['read_words', 'review', 'learn_words'];
                 for (var i = 0; i < defaultGoalTypes.length; i++) {
-                    if (this.calendarPopupAchievements.find(o => o.type == defaultGoalTypes[i]) === undefined) {
-                        this.calendarPopupAchievements.push({
+                    if (this.popupMenu.achievements.find(o => o.type == defaultGoalTypes[i]) === undefined) {
+                        this.popupMenu.achievements.push({
                             type: defaultGoalTypes[i],
                             goalQuantity: 0,
                             achievedQuantity: 0
@@ -262,16 +199,16 @@
                     }
                 }
 
-                this.calendarPopupAchievements.sort((a, b) => defaultGoalTypes.indexOf(a.type) - defaultGoalTypes.indexOf(b.type));
+                this.popupMenu.achievements.sort((a, b) => defaultGoalTypes.indexOf(a.type) - defaultGoalTypes.indexOf(b.type));
 
 
                 this.$nextTick(() => {
-                    this.showCalendarMenu = true;
+                    this.popupMenu.active = true;
                 });
                 
             },
             closeCalendarDayPopup: function() {
-                this.showCalendarMenu = false;
+                this.popupMenu.active = false;
             },
             datePickerChanged: function() {
                 this.pickerDateFormated = new moment(this.pickerDate).format('YYYY, MMMM');
@@ -340,7 +277,7 @@
 
                 this.selectedMonths.reverse();
             },
-            formatNumber: formatNumber,
+            formatNumber: formatNumber
         }
     }
 </script>
