@@ -152,7 +152,7 @@
             document.body.addEventListener("click", this.closeCalendarDayPopup);
             
             // load achievements data
-            axios.post('/get-calendar-data').then(function (response) {
+            axios.post('/goals/get-calendar-data').then(function (response) {
                 this.calendarData = response.data;
                 this.updateCalendar();
             }.bind(this)).catch(function (error) {}).then(function () {});
