@@ -39,11 +39,14 @@
         props: {
         },
         mounted() {
-            axios.post('/statistics/get').then((response) => {
-                this.statistics = response.data;
-            });
+            this.loadStatistics();
         },
         methods: {
+            loadStatistics() {
+                axios.post('/statistics/get').then((response) => {
+                    this.statistics = response.data;
+                });
+            },
             formatNumber: formatNumber
         }
     }

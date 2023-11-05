@@ -86,7 +86,7 @@
                                 rounded
                                 persistent-hint
                                 hint="Can only contain lowercase letters, number and underscore."
-                                placeholder="databaseName"
+                                placeholder="database_name"
                                 :prefix="dictionary.databasePrefix"
                                 :rules="rules.databaseName"
                                 maxlength="28"

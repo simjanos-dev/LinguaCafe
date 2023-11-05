@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 use App\Models\EncounteredWord;
 
 class GoalController extends Controller
 {
+    /*
+        Returns a list of goals for the selected language. 
+        It is used on the home page to display daily goals.
+    */
     public function getGoals() {
         $selectedLanguage = Auth::user()->selected_language;
         $goals = Goal::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
@@ -22,6 +27,42 @@ class GoalController extends Controller
         return json_encode($goals);
     }
 
+    /*
+        Updates a goal's quantity.
+    */
+    public function updateGoal(Request $request) {
+        $goalId = $request->post('goalId');
+        $newGoalQuantity = $request->post('newGoalQuantity');
+
+        $goal = Goal
+            ::where('user_id', Auth::user()->id)
+            ->where('id', $goalId)
+            ->first();
+
+        if (!$goal) {
+            return;
+        }
+
+        $goal->quantity = $newGoalQuantity;
+        $goal->save();
+
+        // also update today's goal achievement
+        $achievement = GoalAchievement
+            ::where('user_id', Auth::user()->id)
+            ->where('goal_id', $goal->id)
+            ->where('day', Carbon::today()->format('Y-m-d'))
+            ->first();
+
+        if ($achievement) {
+            $achievement->goal_quantity = $newGoalQuantity;
+            $achievement->save();
+        }
+    }
+
+    /*
+        Returns GoalAchievements in a format that is used by calendar
+        on the home page.
+    */
     public function getCalendarData() {
         $selectedLanguage = Auth::user()->selected_language;
         $calendarData = [];
@@ -99,6 +140,10 @@ class GoalController extends Controller
         return json_encode($calendarData);
     }
 
+    /* 
+        Updates a GoalAchievement based on Id, or creates one if it 
+        doesn't exists yet for the given day and type.
+    */
     public function updateCalendarData(Request $request) {
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;

@@ -56,7 +56,7 @@ class HomeController extends Controller
 
         $languageStatistics->days = new \stdClass();
         $languageStatistics->days->name = 'Days of activity';
-        $languageStatistics->days->value = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->distinct('day')->count('day');
+        $languageStatistics->days->value = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('achieved_quantity', '<>', 0)->distinct('day')->count('day');
         $languageStatistics->days->color = 'statisticsDays';
         $languageStatistics->days->icon = 'mdi-calendar-check';
 

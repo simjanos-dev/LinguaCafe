@@ -34,10 +34,12 @@ Vue.component('layout', Layout);
 import Calendar from './components/Home/Calendar.vue';
 import Goals from './components/Home/Goals.vue';
 import Goal from './components/Home/Goal.vue';
+import EditGoalDialog from './components/Home/EditGoalDialog.vue';
 import Statistics from './components/Home/Statistics.vue';
 Vue.component('calendar', Calendar);
 Vue.component('goals', Goals);
 Vue.component('goal', Goal);
+Vue.component('edit-goal-dialog', EditGoalDialog);
 Vue.component('statistics', Statistics);
 
 

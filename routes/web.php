@@ -50,6 +50,7 @@ Route::group(['middleware' => 'web'], function () {
 
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);
+    Route::post('/goal/update', [App\Http\Controllers\GoalController::class, 'updateGoal']);
     Route::post('/goals/get-calendar-data', [App\Http\Controllers\GoalController::class, 'getCalendarData']);
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
 

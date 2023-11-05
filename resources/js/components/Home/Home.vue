@@ -1,8 +1,16 @@
 <template>
     <v-container id="home" class="pb-12">
-        <calendar></calendar>
-        <goals></goals>
-        <statistics></statistics>
+        <calendar 
+            ref="calendar"
+            @achievement-quantity-change="updateGoals"
+        ></calendar>
+        <goals
+            ref="goals"
+            @goal-quantity-change="updateCalendar"
+        ></goals>
+        <statistics
+            ref="statistics"
+        ></statistics>
     </v-container>
 </template>
 
@@ -22,6 +30,13 @@
         mounted() {
         },
         methods: {
+            updateCalendar() {
+                this.$refs.calendar.loadCalendarData();
+                this.$refs.statistics.loadStatistics();
+            },
+            updateGoals() {
+                this.$refs.goals.loadGoals();
+            },
             formatNumber: formatNumber,
         }
     }

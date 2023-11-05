@@ -224,6 +224,7 @@
                     newValue: newValue,
                 }).then(() => {
                     this.loadCalendarData();
+                    this.$emit('achievement-quantity-change');
                 });
             },
             openCalendarDayPopup(event, day) {

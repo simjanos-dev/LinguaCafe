@@ -1,13 +1,26 @@
 <template>
     <div>
+        <edit-goal-dialog
+            v-if="goalEditing.active"
+            v-model="goalEditing.active"
+            :_id="goalEditing.id"
+            :_name="goalEditing.name"
+            :_goalQuantity="goalEditing.goalQuantity"
+            :_achievedQuantity="goalEditing.achievedQuantity"
+            @save="loadGoals"
+        />
+
         <div class="subheader subheader-margin-top">Daily goals</div>
         <div id="goals">
             <goal 
                 v-for="(goal, index) in goals" :key="index"
-                :type="goal.type"
+                :id="goal.id"
+                :name="goal.name"
                 :goal-quantity="goal.quantity"
                 :todays-achieved-quantity="goal.todaysQuantity"
-                :color="goalColors[goal.type]"
+                :percentage="Math.round((goal.todaysQuantity / goal.quantity) * 100)"
+                color="primary"
+                @edit="editGoal"
                 >
             </goal>
         </div>
@@ -19,23 +32,34 @@
         data: function() {
             return {
                 goals: [],
-
-                goalColors: {
-                    'review': this.$vuetify.theme.currentTheme.dailyGoalReview,
-                    'read_words': this.$vuetify.theme.currentTheme.dailyGoalReading,
-                    'learn_words': this.$vuetify.theme.currentTheme.dailyGoalNew,
-                    'reviews_due': '#ffc68c',
-                },
+                goalEditing: {
+                    active: false,
+                    id: -1,
+                    type: '',
+                    goalQuantity: -1,
+                    achievedQuantity: -1,
+                }
             }
         },
         props: {
         },
         mounted() {
-            axios.post('/goals/get').then((response) => {
-                this.goals = response.data;
-            });
+            this.loadGoals();
         },
         methods: {
+            loadGoals() {
+                axios.post('/goals/get').then((response) => {
+                    this.goals = response.data;
+                    this.$emit('goal-quantity-change');
+                });
+            },
+            editGoal(goal) {
+                this.goalEditing.active = true;
+                this.goalEditing.id = goal.id;
+                this.goalEditing.name = goal.name;
+                this.goalEditing.goalQuantity = goal.goalQuantity;
+                this.goalEditing.achievedQuantity = goal.achievedQuantity;
+            }
         }
     }
 </script>
