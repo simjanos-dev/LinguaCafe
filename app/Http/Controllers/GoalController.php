@@ -30,7 +30,7 @@ class GoalController extends Controller
         $goalAchievements = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
         $goalAchievements = DB::table('goal_achievements')
             ->leftJoin('goals', 'goal_achievements.goal_id', '=', 'goals.id')
-            ->select('goals.name', 'goals.type', 'goal_achievements.day', 'goal_achievements.achieved_quantity', 'goal_achievements.goal_quantity')
+            ->select('goals.name', 'goals.type', 'goal_achievements.id', 'goal_achievements.day', 'goal_achievements.achieved_quantity', 'goal_achievements.goal_quantity')
             ->where('goals.user_id', Auth::user()->id)
             ->where('goals.language', $selectedLanguage)->get();
 
@@ -47,6 +47,7 @@ class GoalController extends Controller
 
             // update or append calendar data
             $achievementData = new \stdClass();
+            $achievementData->id = $achievement->id;
             $achievementData->name = $achievement->name;
             $achievementData->type = $achievement->type;
             $achievementData->day = $achievement->day;
@@ -96,5 +97,41 @@ class GoalController extends Controller
         }
 
         return json_encode($calendarData);
+    }
+
+    public function updateCalendarData(Request $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $achievementGoalId = $request->post('achievementGoalId');
+        $achievementType = $request->post('achievementType');
+        $day = $request->post('day');
+        $newValue = $request->post('newValue');
+        
+        if ($achievementGoalId === -1) {
+            $goal = Goal::
+            where('user_id', $userId)
+            ->where('language', $language)
+            ->where('type', $achievementType)
+            ->first();
+            
+            if (!$goal) {
+                return 'error';
+            }
+            
+            $achievement = new GoalAchievement();
+            $achievement->user_id = $userId;
+            $achievement->language = $language;
+            $achievement->goal_id = $goal->id;
+            $achievement->achieved_quantity = $newValue;
+            $achievement->goal_quantity = $goal->type == 'review' ? 1 : $goal->quantity;
+            $achievement->day = $day;
+            $achievement->save();
+        } else {
+            GoalAchievement::
+                where('user_id', $userId)
+                ->where('id', $achievementGoalId)
+                ->update(['achieved_quantity' => $newValue]);
+        }
+        return 'success';
     }
 }

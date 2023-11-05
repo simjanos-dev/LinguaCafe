@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class GoalAchievement extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'achieved_quantity'
+    ];
 }

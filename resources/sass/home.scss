@@ -19,29 +19,30 @@
 
 .calendar-popup-menu {
     background-color: var(--v-foreground-base);
-    width: 220px;
+    width: 240px;
     border: 1px solid rgba(0, 0, 0, .2);
 
     #calendar-popup-date {
+        background-color: var(--v-primary-base);
+        color: white;
         display: flex;
         justify-content: flex-start;
-        font-size: 16px;
-        height: 28px;
-        line-height: 28px;
+        font-size: 18px;
 
-        #calendar-popup-reviews-due {
-            i {
-                font-size: 20px;
-                margin-bottom: 2px;
-                margin-left: 2px;
-            }
+        #calendar-popup-date-text {
+            margin-top: 6px;
         }
+    }
+
+    .calendar-popup-input {
+        width: 120px;
+        min-width: 120px;
     }
 
     #calendar-popup-achievements {
         td {
             padding: 0px;
-            font-size: 13px;
+            font-size: 14px;
             height: 22px;
             text-align: center;
             

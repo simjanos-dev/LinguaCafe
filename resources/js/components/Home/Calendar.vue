@@ -2,8 +2,9 @@
     <div>
         <div class="subheader subheader-margin-top d-flex">
             Calendar
-
             <v-spacer></v-spacer>
+
+            <!-- Displayed goal select -->
             <v-menu offset-y class="rounded-lg">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn :color="theme == 'eink' ? 'white' : ''" rounded depressed v-bind="attrs" v-on="on">
@@ -18,6 +19,8 @@
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'review'; updateCalendar();">Review</v-btn>
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'learn_words'; updateCalendar();">New words</v-btn>
             </v-menu>
+            
+            <!-- Date picker -->
             <v-menu
                 v-model="showDatePicker"
                 width="290px"
@@ -51,9 +54,11 @@
             </v-menu>
         </div>
         
-        <v-card outlined id="calendar" class="rounded-lg pa-4">
+        <!-- calendar -->
+        <v-card outlined id="calendar" class="rounded-lg pa-4 pt-0" :loading="popupMenu.saving">
+            <!-- Calendar popup -->
             <v-menu
-                content-class="calendar-popup-menu rounded-lg pa-4"
+                content-class="calendar-popup-menu rounded-lg"
                 v-model="popupMenu.active"
                 absolute
                 :close-on-click="false"
@@ -62,28 +67,73 @@
                 :position-y="popupMenu.y"
                 offset-y
             >
-                <div id="calendar-popup-date" class="mb-4" v-if="popupMenu.day">
-                    <span>{{ popupMenu.day.fullDate }}</span>
+                <!-- Calendar popup date and reviews due-->
+                <div id="calendar-popup-date" class="px-3 py-1" v-if="popupMenu.day" @click.stop=";">
+                    <span id="calendar-popup-date-text">{{ popupMenu.day.fullDate }}</span>
                     <v-spacer></v-spacer>
                     <span id="calendar-popup-reviews-due">
-                        <v-icon>mdi-clock-outline</v-icon>
-                        {{ popupMenu.day.reviewsDue }}
+                        <v-btn icon dark @click.stop="popupMenu.tab = 1;" v-if="popupMenu.tab == 0">
+                            <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                        <v-btn icon dark @click.stop="popupMenu.tab = 0;" v-if="popupMenu.tab == 1">
+                            <v-icon>mdi-arrow-left</v-icon>
+                        </v-btn>
+                        <v-btn icon dark @click="popupMenu.active = false;">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
                     </span>
                 </div>
-                <div id="calendar-popup-achievements" v-if="popupMenu.day">
-                    <v-simple-table dense class="no-row-border no-hover">
-                        <tbody>
-                            <tr v-for="(achievement, index) in popupMenu.achievements" :key="index">
-                                <td>{{ goalTexts[achievement.type] }}</td>
-                                <td v-if="achievement.goalQuantity">{{ achievement.achievedQuantity }}/{{ achievement.goalQuantity }}</td>
-                                <td v-if="!achievement.goalQuantity"> none </td>
-                            </tr>
-                        </tbody>
-                    </v-simple-table>
+
+                <!-- Calendar popup achievements-->
+                <div id="calendar-popup-achievements" class="pa-3" v-if="popupMenu.day" @click.stop=";">
+                    <v-tabs-items v-model="popupMenu.tab">
+                        <!-- Popup menu info -->
+                        <v-tab-item :value="0">
+                            <v-simple-table dense class="no-row-border no-hover">
+                                <tbody>
+                                    <tr>
+                                        <td>Reviewes due:</td>
+                                        <td>{{ popupMenu.day.reviewsDue }}</td>
+                                    </tr>
+                                    <tr v-for="(achievement, index) in popupMenu.achievements" :key="index">
+                                        <td>{{ goalTexts[achievement.type] }}:</td>
+                                        <td v-if="achievement.goalQuantity">{{ achievement.achievedQuantity }}/{{ achievement.goalQuantity }}</td>
+                                        <td v-if="!achievement.goalQuantity"> none </td>
+                                    </tr>
+                                </tbody>
+                            </v-simple-table>
+                        </v-tab-item>
+
+                        <!-- Popup menu editing -->
+                        <v-tab-item :value="1">
+                            <v-simple-table dense class="no-row-border no-hover">
+                                <tbody>
+                                    <tr v-for="(achievement, index) in popupMenu.achievements" :key="index">
+                                        <td>{{ goalTexts[achievement.type] }}:</td>
+                                        <td class="calendar-popup-input">
+                                            <v-text-field
+                                                v-model="popupMenu.achievements[index].achievedQuantity"
+                                                class="mb-1"
+                                                type="number"
+                                                hide-details
+                                                filled
+                                                dense
+                                                rounded
+                                                :disabled="popupMenu.saving"
+                                                @change="updateAchievement(popupMenu.achievements[index], index, popupMenu.achievements[index].id, popupMenu.achievements[index].achievedQuantity)"
+                                            >
+                                            </v-text-field>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </v-simple-table>
+                        </v-tab-item>
+                    </v-tabs-items>
                 </div>
             </v-menu>
 
-            <div id="calendar-months">
+            <!-- Calendar -->
+            <div id="calendar-months" class="mt-4">
                 <div class="calendar-month" v-for="(month, index) in selectedMonths" :key="index">
                     <div class="calendar-month-title">{{ month.formattedString }}</div>
                     <div class="calendar-month-days">
@@ -142,8 +192,10 @@
                     active: false,
                     x: 0,
                     y: 0,
-                    day: null
-                }
+                    day: null,
+                    tab: 0,
+                    saving: true,
+                },
             }
         },
         props: {
@@ -152,19 +204,35 @@
             document.body.addEventListener("click", this.closeCalendarDayPopup);
             
             // load achievements data
-            axios.post('/goals/get-calendar-data').then(function (response) {
-                this.calendarData = response.data;
-                this.updateCalendar();
-            }.bind(this)).catch(function (error) {}).then(function () {});
+            this.loadCalendarData();
             
             this.datePickerChanged();
         },
         methods: {
-            openCalendarDayPopup: function(event, day) {
-                var position = event.target.getBoundingClientRect();
+            updateAchievement(achievement, achievementIndex, achievementGoalId, newValue) {
+                if (newValue === '' || newValue < 0) {
+                    this.popupMenu.achievements[achievementIndex].achievedQuantity = 0;
+                    newValue = 0;
+                }
+
+                this.popupMenu.saving = true;
+
+                axios.post('/goals/achievement/update', {
+                    achievementGoalId: achievementGoalId,
+                    achievementType: achievement.type,
+                    day: achievement.day,
+                    newValue: newValue,
+                }).then(() => {
+                    this.loadCalendarData();
+                });
+            },
+            openCalendarDayPopup(event, day) {
+                if (event !== null) {
+                    var position = event.target.getBoundingClientRect();
+                }
                 
                 // close calendar if the user clicked on the already selected word
-                if (this.popupMenu.active && 
+                if (event !== null && this.popupMenu.active && 
                     this.popupMenu.x == position.left - 100 &&
                     this.popupMenu.y == position.bottom + 5) {
                     this.popupMenu.active = false;
@@ -172,15 +240,20 @@
                 }
                 
                 // display calendar popup
+                if (event !== null) {
+                    this.popupMenu.tab = 0;
+                }
+
                 this.popupMenu.day = JSON.parse(JSON.stringify(day));
                 this.popupMenu.active = false;
-                this.popupMenu.x = position.left - 100;
-                this.popupMenu.y = position.bottom + 5;
+                if (event !== null) {
+                    this.popupMenu.x = position.left - 100;
+                    this.popupMenu.y = position.bottom + 5;
+                }
 
                 // get achievements for popup
                 this.popupMenu.achievements = [];
                 for (var i = 0; i < this.calendarData.length; i++) {
-                    //console.log(this.calendarData[i].day, this.popupMenu.day.fullDate);
                     if (this.calendarData[i].day == this.popupMenu.day.fullDate) {
                         this.popupMenu.achievements = JSON.parse(JSON.stringify(this.calendarData[i].achievements));
                         break;
@@ -192,6 +265,8 @@
                 for (var i = 0; i < defaultGoalTypes.length; i++) {
                     if (this.popupMenu.achievements.find(o => o.type == defaultGoalTypes[i]) === undefined) {
                         this.popupMenu.achievements.push({
+                            id: -1,
+                            day: this.popupMenu.day.fullDate,
                             type: defaultGoalTypes[i],
                             goalQuantity: 0,
                             achievedQuantity: 0
@@ -207,28 +282,34 @@
                 });
                 
             },
-            closeCalendarDayPopup: function() {
+            closeCalendarDayPopup() {
                 this.popupMenu.active = false;
             },
-            datePickerChanged: function() {
+            datePickerChanged() {
                 this.pickerDateFormated = new moment(this.pickerDate).format('YYYY, MMMM');
                 this.currentMonth = moment(this.pickerDate).startOf('month');
                 this.updateCalendar();
                 this.showDatePicker = false;
             },
-            nextMonth: function() {
+            nextMonth() {
                 this.currentMonth.add(1, 'month').startOf('month');
                 this.pickerDate = new moment(this.currentMonth).format('YYYY-MM');
                 this.pickerDateFormated = moment(this.pickerDate).format('YYYY, MMMM');
                 this.updateCalendar();
             },
-            previousMonth: function() {
+            previousMonth() {
                 this.currentMonth.subtract(1, 'month').startOf('month');
                 this.pickerDate = new moment(this.currentMonth).format('YYYY-MM');
                 this.pickerDateFormated = moment(this.pickerDate).format('YYYY, MMMM');
                 this.updateCalendar();
             },
-            updateCalendar: function () {
+            loadCalendarData() {
+                axios.post('/goals/get-calendar-data').then((response) => {
+                    this.calendarData = response.data;
+                    this.updateCalendar();
+                });
+            },
+            updateCalendar () {
                 this.selectedMonths = null;
                 this.selectedMonths = [];
                 
@@ -276,6 +357,11 @@
                 }
 
                 this.selectedMonths.reverse();
+                this.popupMenu.saving = false;
+
+                if (this.popupMenu.active) {
+                    this.openCalendarDayPopup(null, this.popupMenu.day);
+                }
             },
             formatNumber: formatNumber
         }
