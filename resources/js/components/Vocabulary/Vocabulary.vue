@@ -1,12 +1,20 @@
 <template>
     <v-container id="vocabulary">
-        <!-- Vocabulary edit dialog box -->
+        <!-- Vocabulary edit dialog -->
         <vocabulary-edit-dialog 
-            v-if="vocabularyEditDialog.visible"
-            v-model="vocabularyEditDialog.visible" 
+            v-if="vocabularyEditDialog.active"
+            v-model="vocabularyEditDialog.active" 
             :item-id="vocabularyEditDialog.itemId" 
             :item-type="vocabularyEditDialog.itemType" 
         ></vocabulary-edit-dialog>
+
+        <!-- Vocabulary export dialog -->
+        <vocabulary-export-dialog 
+            v-if="vocabularyExportDialog.active"
+            v-model="vocabularyExportDialog.active" 
+            :sample-words="words"
+            @export-to-csv="exportToCsv"
+        ></vocabulary-export-dialog>
 
         <!-- Search header -->
         <v-card outlined class="rounded-lg px-4 pb-4 my-4" :loading="loading">
@@ -181,11 +189,9 @@
                             </v-btn>
                         </template>
                         <v-list class="filter-popup pa-0" dense>
-                            <v-list-item-group color="primary">
-                                <v-list-item><v-icon class="mr-1">mdi-file-excel</v-icon> Export to excel</v-list-item>
-                                <v-list-item><v-icon class="mr-1">mdi-file-delimited</v-icon>Export to csv</v-list-item>
-                                <v-list-item><v-icon class="mr-1">mdi-file-excel</v-icon>Import from excel</v-list-item>
-                            </v-list-item-group>
+                            <v-list-item @click="openExportDialog" :disabled="loading">
+                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Export to csv
+                            </v-list-item>
                         </v-list>
                     </v-menu>
                 </v-row>
@@ -274,9 +280,11 @@
                 books: [],
                 pageCount: 1,
                 currentPage: 1,
-
+                vocabularyExportDialog: {
+                    active: false,
+                    },
                 vocabularyEditDialog: {
-                    visible: false,
+                    active: false,
                     wordId: -1,
                     phraseId: -1
                 },
@@ -332,7 +340,6 @@
 
                 if (this.pageCount - this.currentPage < 3) {
                     this.paginationLimitBefore += 3 - (this.pageCount - this.currentPage);
-                    console.log(this.pageCount, this.currentPage);
                 }
 
                 if (this.currentPage < 4) {
@@ -345,19 +352,46 @@
             }.bind(this)).catch(function (error) {}).then(function () {});
         },
         methods: {
-            editItem: function(itemId, itemType) {
-                this.vocabularyEditDialog.visible = true;
+            openExportDialog() {
+                this.vocabularyExportDialog.active = true;
+            },
+            exportToCsv(fields) {
+                var text = 'anytext';
+                if (this.filters.text !== '') {
+                    text = this.filters.text;
+                }
+
+                axios.post('/vocabulary/export-to-csv', {
+                    fields: fields,
+                    text: text,
+                    stage: this.filters.stage,
+                    book: this.filters.book,
+                    chapter: this.filters.chapter,
+                    translation: this.filters.translation,
+                    phrases: this.filters.phrases,
+                    orderBy: this.filters.orderBy
+                }).then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'vocabulary.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                });
+            },
+            editItem(itemId, itemType) {
+                this.vocabularyEditDialog.active = true;
                 this.vocabularyEditDialog.itemId = itemId;
                 this.vocabularyEditDialog.itemType = itemType;
             },
-            toggleFilter: function(newItem) {
+            toggleFilter(newItem) {
                 if (this.visiblePopup == newItem) {
                     this.visiblePopup = '';
                 } else {
                     this.visiblePopup = newItem;
                 }
             },
-            applyFilter: function(filter, newValue = -1, newBookIndex = -1) {
+            applyFilter(filter, newValue = -1, newBookIndex = -1) {
                 // text is a v-model, while other
                 // filters are buttons, so they need
                 // need params to transfer value

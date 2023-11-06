@@ -86,6 +86,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/vocabulary/phrase/delete', [App\Http\Controllers\VocabularyController::class, 'deletePhrase']);
     Route::post('/vocabulary/save-example-sentence', [App\Http\Controllers\VocabularyController::class, 'saveExampleSentence']);
     Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);
+    Route::post('/vocabulary/export-to-csv', [App\Http\Controllers\VocabularyController::class, 'exportToCsv']);
     Route::get('/vocabulary/example-sentence/{targetId}/{targetType}', [App\Http\Controllers\VocabularyController::class, 'getExampleSentence']);
     Route::post('/kanji/search', [App\Http\Controllers\VocabularyController::class, 'searchKanji']);
     Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);

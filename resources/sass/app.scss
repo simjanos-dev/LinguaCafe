@@ -16,8 +16,9 @@
 @import 'TextReader/TextReader';
 @import 'TextReader/TextReaderChapterList';
 @import 'TextReader/TextReaderGlossary';
-@import 'vocabulary';
-@import 'vocabulary_editor';
+@import 'Vocabulary/Vocabulary';
+@import 'Vocabulary/VocabularyEditor';
+@import 'Vocabulary/VocabularyExport';
 @import 'kanji_list';
 @import 'kanji_details';
 @import 'books';
@@ -334,6 +335,7 @@ body {
 
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
     background: #f8f8f8;
     z-index: 100;
 }

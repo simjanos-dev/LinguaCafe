@@ -42,8 +42,6 @@ Vue.component('goal', Goal);
 Vue.component('edit-goal-dialog', EditGoalDialog);
 Vue.component('statistics', Statistics);
 
-
-
 // text 
 import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
@@ -68,7 +66,9 @@ Vue.component('subtitle-list', SubtitleList);
 
 // vocabulary
 import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
+import VocabularyExportDialog from './components/Vocabulary/VocabularyExportDialog';
 Vue.component('vocabulary-edit-dialog', VocabularyEditDialog);
+Vue.component('vocabulary-export-dialog', VocabularyExportDialog);
 
 // dialogs
 import ErrorDialog from './components/Dialogs/ErrorDialog';

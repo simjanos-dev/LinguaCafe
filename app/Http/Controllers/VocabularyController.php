@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use League\Csv\Writer;
+use \Exception;
+use Carbon\Carbon;
 use App\Models\TextBlock;
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
@@ -12,14 +17,13 @@ use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\LessonWord;
 use App\Models\ExampleSentence;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 
 class VocabularyController extends Controller
 {
+    private $limit = 30;
+
     public function getWord($wordId) {
         $word = EncounteredWord
             ::where('user_id', Auth::user()->id)
@@ -376,10 +380,17 @@ class VocabularyController extends Controller
         $exampleSentence->save();
     }
 
-    public function search(Request $request) {
-        $wordsToSkip = config('langapp.wordsToSkip');
+
+    public function exportToCsv(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
-        $results = [];
+        $text = $request->post('text');
+        $bookId = $request->post('book');
+        $chapterId = $request->post('chapter');
+        $stage = $request->post('stage');
+        $phrases = $request->post('phrases');
+        $orderBy = $request->post('orderBy');
+        $translation = $request->post('translation');
+        $fields = $request->post('fields');
 
         // get books and chapters
         $books = Book::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
@@ -387,14 +398,47 @@ class VocabularyController extends Controller
         for ($i = 0; $i < count($books); $i++) {
             $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
             
-            if (isset($request->book) && $books[$i]->id == $request->book) {
+            if (isset($bookId) && $books[$i]->id == $bookId) {
                 $bookIndex = $i;
             }
         }
 
-        // filters
-        $limit = 30;
+        $words = $this->buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation)->get();
 
+        // create csv file
+        $csv = Writer::createFromFileObject(new \SplTempFileObject());
+        $csv->setDelimiter('|');
+
+
+        // insert headers to csv
+        $csvArray = [];
+        foreach ($fields as $field) {
+            if ($field['export']) {
+                $csvArray[] = $field['headerName'];
+            }
+        }
+        
+        $csv->insertOne($csvArray);
+
+        // insert data to csv
+        foreach($words as $word) {
+            $csvArray = [];
+            foreach ($fields as $field) {
+                if ($field['export']) {
+                    $searchObjectProperty = $field['searchObjectProperty'];
+                    $csvArray[] = $word->$searchObjectProperty;
+                }
+            }
+            
+            $csv->insertOne($csvArray);
+        }
+
+        $csv->output('vocabulary.csv');
+        return;
+    }
+
+    public function search(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
         $text = $request->text;
         $bookId = $request->book;
         $chapterId = $request->chapter;
@@ -403,6 +447,38 @@ class VocabularyController extends Controller
         $orderBy = $request->orderBy;
         $translation = $request->translation;
         $page = $request->page;
+
+        // get books and chapters
+        $books = Book::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
+        $bookIndex = -1;
+        for ($i = 0; $i < count($books); $i++) {
+            $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
+            
+            if (isset($bookId) && $books[$i]->id == $bookId) {
+                $bookIndex = $i;
+            }
+        }
+
+        $search = $this->buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation);
+
+        $data = new \stdClass();
+        $data->wordCount = $search->count();
+        $data->words = $search->skip(($page - 1) * $this->limit)->take($this->limit)->get();
+        $data->books = $books;
+        $data->bookIndex = $bookIndex;
+        $data->pageCount = ceil($data->wordCount / $this->limit);
+        $data->currentPage = $page;
+
+        return json_encode($data);
+    }
+
+    /*
+        Builds a search request. It's used for both searching and exporting vocabulary.
+    */
+    private function buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation) {
+        $wordsToSkip = config('langapp.wordsToSkip');
+        $selectedLanguage = Auth::user()->selected_language;
+        $results = [];
 
         // get words and phrases
         // from filtered chapters
@@ -447,7 +523,10 @@ class VocabularyController extends Controller
         }
 
         // search for words and apply filters
-        $wordSearch = EncounteredWord::select('id', 'word', 'reading', 'stage', 'translation', DB::raw("'word' AS type"))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->whereNotIn('word', $wordsToSkip);
+        $wordSearch = EncounteredWord
+            ::select('id', 'base_word', 'word', 'reading', 'base_word_reading', 'stage', 'translation', 'read_count', 'lookup_count', 'added_to_srs', DB::raw("'word' AS type"))->where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->whereNotIn('word', $wordsToSkip);
 
         if ($text !== 'anytext') {
             $wordSearch = $wordSearch->where(function($query) use ($text) {
@@ -469,7 +548,10 @@ class VocabularyController extends Controller
         }
         
         // search for phrases and apply filters
-        $phraseSearch = Phrase::select('id', 'words_searchable as word', 'reading', 'stage', 'translation', DB::raw("'phrase' AS type"))->where('user_id', Auth::user()->id)->where('language', $selectedLanguage);
+        $phraseSearch = Phrase
+            ::select('id', DB::raw("'' AS base_word"), 'words_searchable as word', 'reading', DB::raw("'' AS base_word_reading"), 'stage', 'translation', DB::raw("-1 AS read_count"), DB::raw("-1 AS lookup_count"), 'added_to_srs', DB::raw("'phrase' AS type"))
+            ->where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage);
 
         if ($text !== 'anytext') {
             $phraseSearch = $phraseSearch->where(function($query) use ($text) {
@@ -514,15 +596,7 @@ class VocabularyController extends Controller
             $search = $search->orderBy('stage', 'desc');
         }
 
-        $data = new \stdClass();
-        $data->wordCount = $search->count();
-        $data->words = $search->skip(($page - 1) * $limit)->take($limit)->get();
-        $data->books = $books;
-        $data->bookIndex = $bookIndex;
-        $data->pageCount = ceil($data->wordCount / $limit);
-        $data->currentPage = $page;
-
-        return json_encode($data);
+        return $search;
     }
 
     public function searchKanji(Request $request) {
