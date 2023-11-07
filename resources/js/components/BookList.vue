@@ -7,12 +7,10 @@
             :book-name="startReviewDialog.bookName">
         </start-review-dialog>
         
-        <v-card elevation="0" class="book button-box mx-auto mt-6 mb-2">
-            <v-card-actions class="px-0">
+        <div class="d-flex book button-box mx-auto mt-6 mb-2">
                 <v-spacer></v-spacer>
                 <v-btn rounded class="mx-0" color="primary" :to="'/books/create'"><v-icon>mdi-plus</v-icon> Create book</v-btn>
-            </v-card-actions>
-        </v-card>
+        </div>
         <v-card outlined class="book rounded-lg mx-auto my-6" v-for="(book, index) in books" :key="index">
             <div class="book-box">
                 <v-img class="cover-image" :src="'/images/book_images/' + book.cover_image"></v-img>
@@ -56,7 +54,7 @@
                     </v-simple-table>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn rounded color="secondary" :to="'/chapters/' + book.id">Chapters</v-btn>
+                        <v-btn rounded color="primary" :to="'/chapters/' + book.id">Chapters</v-btn>
                     </v-card-actions>
                 </v-card-text>
             </div>

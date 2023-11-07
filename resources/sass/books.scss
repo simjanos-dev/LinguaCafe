@@ -9,14 +9,8 @@
     }
 
     .book {
-        background-color: white;
         width: 800px;
         overflow: hidden;
-
-        &.button-box {
-            background-color: transparent;
-            border: none;
-        }
         
         div.v-image.cover-image {
             width: 266px;

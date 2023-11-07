@@ -45,12 +45,13 @@
             };
         },
         mounted: function() {
-            console.log(this.themes);
+            console.log(this.$vuetify.theme.themes);
         },
         methods: {
             selectTheme: function(newTheme) {
                 this.$cookie.set('theme', newTheme, 3650);
                 this.$vuetify.theme.themes['light'] = themes[newTheme];
+                this.$vuetify.theme.themes['dark'] = themes[newTheme];
                 this.$vuetify.theme.dark = (newTheme == 'dark');
 
                 this.close();

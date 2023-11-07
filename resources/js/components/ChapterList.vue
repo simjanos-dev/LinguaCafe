@@ -9,12 +9,10 @@
             :chapter-name="startReviewDialog.chapterName">
         </start-review-dialog>
         
-        <v-card outlined class="chapter button-box mx-auto mt-6 mb-2">
-            <v-card-actions class="px-0">
-                <v-spacer></v-spacer>
-                <v-btn class="mx-0 ml-2" rounded color="secondary" :to="'/chapters/create/' + book.id">Create chapter</v-btn>
-            </v-card-actions>
-        </v-card>
+        <div outlined class="d-flex chapter button-box mx-auto mt-6 mb-2">
+            <v-spacer></v-spacer>
+            <v-btn class="mx-0 ml-2" rounded color="primary" :to="'/chapters/create/' + book.id">Create chapter</v-btn>
+        </div>
 
         <v-card outlined :class="{'chapter': true, 'rounded-lg': true, 'mx-auto': true, 'my-6': index}" v-for="(chapter, index) in chapters" :key="index">
             <div class="d-flex flex-wrap flex-sm-nowrap justify-space-between">
@@ -57,7 +55,7 @@
                     </v-simple-table>
                     <v-card-actions class="pa-3">
                         <v-spacer></v-spacer>
-                        <v-btn rounded color="secondary" :to="'/chapters/read/' + chapter.id">Read</v-btn>
+                        <v-btn rounded color="primary" :to="'/chapters/read/' + chapter.id">Read</v-btn>
                     </v-card-actions>
                 </v-card-text>
             </div>

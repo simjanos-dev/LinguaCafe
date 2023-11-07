@@ -1,11 +1,11 @@
 <template>
-   <v-app :class="{'eink': theme == 'eink'}">
+   <v-app :class="{'eink': theme == 'eink', 'dark': theme == 'dark'}">
         <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
         <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
         <v-navigation-drawer id="navigation-drawer" :class="{'eink': theme == 'eink'}" :mini-variant="$vuetify.breakpoint.md" app :permanent="$vuetify.breakpoint.mdAndUp" v-model="drawer" color="navigation">
             <div id="logo" class="my-8"><v-icon>mdi-coffee</v-icon> <span v-if="$vuetify.breakpoint.lgAndUp">Lingua Cafe</span></div>
             <v-list nav shaped class="pl-0">
-                <v-list-item-group color="primary">
+                <v-list-item-group>
                     <v-list-item class="navigation-button" v-for="(item, index) in navigation" :key="index"  :to="item.url">
                         <v-icon> {{ item.icon }} </v-icon>
                         <span class="pl-6"> {{ item.name }} </span>
@@ -134,6 +134,7 @@
             // load theme
             var themeName = this.$cookie.get('theme') === null ? 'light' : this.$cookie.get('theme');
             this.$vuetify.theme.themes['light'] = this.$cookie.get('theme') === null ? themes.light : themes[this.$cookie.get('theme')];
+            this.$vuetify.theme.themes['dark'] = themes.dark;
             //this.$vuetify.theme.themes['dark'] = themes.dark;
             this.$vuetify.theme.dark = (themeName == 'dark');
         },

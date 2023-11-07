@@ -2,12 +2,6 @@
     .chapter {
         width: 100%;
         max-width: 1000px;
-        background-color: white;
-        
-        &.button-box {
-            background-color: rgb(0, 0, 0, 0);
-            border: none;
-        }
 
         .chapter-info-table {
             width: calc(100% - 24px);

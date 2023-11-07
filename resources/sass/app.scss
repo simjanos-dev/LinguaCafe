@@ -5,6 +5,7 @@
 @import '~bootstrap/scss/bootstrap';
 
 // Pages
+@import 'DarkMode';
 @import 'home';
 @import 'media_player';
 @import 'media_subtitle_list';
@@ -336,7 +337,7 @@ body {
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    background: #f8f8f8;
+    background: var(--v-background-base);;
     z-index: 100;
 }
 

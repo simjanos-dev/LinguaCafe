@@ -1,11 +1,12 @@
 export default {
     light: {
-        foreground: '#ffffff',
         background: '#F2F3F5',
+        navigation: '#ffffff',
+        primary: '#ab8875',
+        secondary: '#ab8875',
+
+        foreground: '#ffffff',
         backgroundHighlight: '#ebebeb',
-        navigation: '#F2F3F5',
-        primary: '#aa8476',
-        secondary: '#aa8476',
         gray: '#E9EAEC',
         gray2: '#e4e4e4',
         gray3: '#F0F0F0',
@@ -24,10 +25,6 @@ export default {
         
         readerWordSelection: '#d8d8d8',
 
-        dailyGoalReview: '#61df6b',
-        dailyGoalReading: '#64B5F6',
-        dailyGoalNew: '#ffdd4b',
-
         statisticsDays: '#9830f6',
         statisticsReadWords: '#00b452',
         statisticsKnownWords: '#f6304c',
@@ -35,18 +32,7 @@ export default {
         statisticsKanji: '#2C97DF',
         
         // teszt
-        background: '#F2F3F5',
-        navigation: '#ffffff',
-        primary: '#ab8875',
-        secondary: '#ab8875',
-
-        // error: '#f24b4f',
-        // info: '#057CBC',
-        // success: '#56ca00',
-        // warning: '#ffb448',
         
-        // text: '#333333',
-        // highlightedWordText: '#333333',
 
         newWord: '#ffd08b',
         highlightedWord: '#80e6b3',
@@ -65,37 +51,37 @@ export default {
         statisticsKanji: '#ab8875',
     },
     dark: {
-        foreground: '#1e1e1e',
-        background: '#fafafa',
+        background: '#1C1B20',
         backgroundHighlight: '#ebebeb',
-        navigation: '#f4f4f5',
-        primary: '#aa8476',
-        secondary: '#aa8476',
+        foreground: '#28272C',
+        navigation: '#28272C',
+        primary: '#bd8e78',
+        secondary: '#bd8e78',
+// test
+primary: '#c5947d',
+secondary: '#c5947d',
         gray: '#E9EAEC',
-        customBorder: '#dcdcdc',
+        customBorder: '#2f2f2f',
 
         error: '#f24b4f',
         info: '#057CBC',
         success: '#3dcf59',
         warning: '#ffb448',
         
-        text: '#333333',
+        text: '#d0d0d0',
+        textDark: '#141110',
         highlightedWordText: '#ffffff',
 
-        newWord: '#ffdd4b',
-        highlightedWord: '#61df6b',
+        newWord: '#C7AB3B',
+        highlightedWord: '#49A74F',
 
         readerWordSelection: '#d8d8d8',
-        
-        dailyGoalReview: '#61df6b',
-        dailyGoalReading: '#64B5F6',
-        dailyGoalNew: '#ffdd4b',
 
-        statisticsDays: '#9830f6',
-        statisticsReadWords: '#00b452',
-        statisticsKnownWords: '#f6304c',
-        statisticsLearningWords: '#FEBB13',
-        statisticsKanji: '#2C97DF',
+        statisticsDays: '#ab8875',
+        statisticsReadWords: '#ab8875',
+        statisticsKnownWords: '#ab8875',
+        statisticsLearningWords: '#ab8875',
+        statisticsKanji: '#ab8875',
     },
     eink: {
         name: '#000000',
@@ -120,11 +106,7 @@ export default {
         highlightedWord: '#000000',
 
         readerWordSelection: '#888888',
-        
-        dailyGoalReview: '#000000',
-        dailyGoalReading: '#000000',
-        dailyGoalLearning: '#000000',
-
+    
         statisticsDays: '#000000',
         statisticsReadWords: '#000000',
         statisticsKnownWords: '#000000',
