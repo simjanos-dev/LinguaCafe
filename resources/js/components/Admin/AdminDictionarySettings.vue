@@ -283,9 +283,6 @@
             this.loadDictionaries();
         },
         methods: {
-            openExpansion: function(dictionaryIndex) {
-
-            },
             toggleExpansion: function(dictionaryIndex) {
                 if (this.dictionaries[dictionaryIndex].expanded) {
                     this.dictionaries[dictionaryIndex].expanded = false;

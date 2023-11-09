@@ -1,7 +1,7 @@
 <template>
     <div id="admin-user-settings">
         <!-- Add or edit user dialog -->
-        <admin-add-or-edit-user-dialog 
+        <admin-edit-user-dialog 
             v-if="editDialog.active"
             v-model="editDialog.active"
             :_user-id="editDialog.userId"
@@ -9,7 +9,7 @@
             :_email="editDialog.email"
             :_is-admin="editDialog.isAdmin"
             @user-saved="closeUserDialog"
-        />
+        ></admin-edit-user-dialog>
         
         <!-- Title subheader -->
         <div class="d-flex subheader mt-4 mb-4 px-2 ">

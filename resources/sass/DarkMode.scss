@@ -15,6 +15,7 @@
 
 // alert
 #app.dark .v-alert.primary,
+#app.dark .v-alert.success,
 #app.dark .v-alert.error {
     color: var(--v-textDark-base);
     
@@ -181,7 +182,7 @@
 }
 
 // chapter list text color
-#app.dark #chapters .info-table-value.highlighted-words,
-#app.dark #chapters .info-table-value.new-words {
+#app.dark .book-chapters .info-table-value.highlighted-words,
+#app.dark .book-chapters .info-table-value.new-words {
     color: var(--v-textDark-base) !important;
 }

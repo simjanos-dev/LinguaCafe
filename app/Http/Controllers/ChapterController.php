@@ -56,6 +56,12 @@ class ChapterController extends Controller
         return json_encode($data);
     }
 
+    public function getChapterForEdit($chapterId) {
+        $chapter = Lesson::select(['name', 'raw_text'])->where('id', $chapterId)->where('user_id', Auth::user()->id)->first();
+        $chapter->raw_text = str_replace(" NEWLINE \r\n", "\r\n", $chapter->raw_text);
+        return $chapter;
+    }
+
     public function getChapterForReader(Request $request) 
     {        
         $lessonId = $request->chapterId;
@@ -167,12 +173,6 @@ class ChapterController extends Controller
         return 'success';
     }
 
-    public function getChapterForEdit(Request $request) {
-        $chapter = Lesson::select(['name', 'raw_text'])->where('id', $request->chapterId)->where('user_id', Auth::user()->id)->first();
-        $chapter->raw_text = str_replace(" NEWLINE \r\n", "\r\n", $chapter->raw_text);
-        return $chapter;
-    }
-
     public function saveChapter(Request $request) {
         \DB::disableQueryLog();
         $selectedLanguage = Auth::user()->selected_language;
@@ -237,6 +237,26 @@ class ChapterController extends Controller
         // update book word count
         $bookWordCount = intval(Lesson::where('user_id', Auth::user()->id)->where('book_id', $lesson->book_id)->sum('word_count'));
         Book::where('user_id', Auth::user()->id)->where('id', $lesson->book_id)->update(['word_count' => $bookWordCount]);
+
+        return 'success';
+    }
+
+    public function deleteChapter(Request $request) {
+        $chapterId = $request->post('chapterId');
+        $userId = Auth::user()->id;
+
+        DB::beginTransaction();
+        LessonWord
+            ::where('user_id', $userId)
+            ->where('lesson_id', $chapterId)
+            ->delete();
+
+        Lesson
+            ::where('user_id', $userId)
+            ->where('id', $chapterId)
+            ->delete();
+        
+        DB::commit();
 
         return 'success';
     }

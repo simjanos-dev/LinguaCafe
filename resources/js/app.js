@@ -1,9 +1,3 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-import axios from 'axios'
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import vuetify from './vuetify';
@@ -14,21 +8,21 @@ var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
 window.Vue.use(VueRouter);
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/Example.vue -> <example-component></example-component>
- */
-
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
-
 // layout
 import Layout from './components/Layout.vue';
 Vue.component('layout', Layout);
+
+// library
+import EditBookDialog from './components/Library/EditBookDialog.vue';
+import BookChapters from './components/Library/BookChapters.vue';
+import EditBookChapterDialog from './components/Library/EditBookChapterDialog.vue';
+import DeleteBookChapterDialog from './components/Library/DeleteBookChapterDialog.vue';
+import DeleteBookDialog from './components/Library/DeleteBookDialog.vue';
+Vue.component('edit-book-dialog', EditBookDialog);
+Vue.component('book-chapters', BookChapters);
+Vue.component('edit-book-chapter-dialog', EditBookChapterDialog);
+Vue.component('delete-book-chapter-dialog', DeleteBookChapterDialog);
+Vue.component('delete-book-dialog', DeleteBookDialog);
 
 // home page
 import Calendar from './components/Home/Calendar.vue';
@@ -86,21 +80,18 @@ import AdminDictionarySettings from './components/Admin/AdminDictionarySettings'
 import AdminApiSettings from './components/Admin/AdminApiSettings';
 import AdminDeleteDictionaryDialog from './components/Admin/AdminDeleteDictionaryDialog';
 import AdminDictionaryImportDialog from './components/Admin/AdminDictionaryImportDialog';
-import AdminAddOrEditUserDialog from './components/Admin/AdminAddOrEditUserDialog';
+import AdminEditUserDialog from './components/Admin/AdminEditUserDialog';
 Vue.component('admin-user-settings', AdminUserSettings);
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);
 Vue.component('admin-api-settings', AdminApiSettings);
 Vue.component('admin-delete-dictionary-dialog', AdminDeleteDictionaryDialog);
 Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
-Vue.component('admin-add-or-edit-user-dialog', AdminAddOrEditUserDialog);
+Vue.component('admin-edit-user-dialog', AdminEditUserDialog);
 
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home/Home.vue').default;
-const BookList = require('./components/BookList.vue').default;
-const CreateBook = require('./components/CreateBook.vue').default;
-const ChapterList = require('./components/ChapterList.vue').default;
-const EditChapter = require('./components/EditChapter.vue').default;
+const Books = require('./components/Library/Books.vue').default;
 const Reader = require('./components/Reader.vue').default;
 const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
 const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
@@ -116,12 +107,8 @@ const router = new VueRouter({
         { path: '/', component: Home },
         { path: '/admin', component: AdminLayout },
         { path: '/media-player', component: MediaPlayer },
-        { path: '/books', component: BookList },
-        { path: '/books/create', component: CreateBook },
-        { path: '/chapters/:bookId', component: ChapterList },
+        { path: '/books', component: Books },
         { path: '/chapters/read/:chapterId', component: Reader },
-        { path: '/chapters/create/:bookId', component: EditChapter },
-        { path: '/chapters/edit/:bookId/:chapterId', component: EditChapter },
         { path: '/flashcards', component: FlashcardCollectionList },
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollection },
         { path: '/review/:practiceMode?/:bookId?/:chapterId?', component: Review },

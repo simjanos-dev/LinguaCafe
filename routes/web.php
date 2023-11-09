@@ -30,7 +30,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/books/create', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/book/create', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/{id}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/read/{id}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/create/{bookId}', [App\Http\Controllers\HomeController::class, 'index']);
@@ -101,14 +101,14 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/flashcards/get', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollection']);
     Route::post('/flashcards/save', [App\Http\Controllers\FlashcardController::class, 'saveFlashcardCollection']);
     
-    // books
+    // library
     Route::post('/books', [App\Http\Controllers\BookController::class, 'getBooks']);
-    Route::post('/books/create', [App\Http\Controllers\BookController::class, 'createBook']);
-
-    // chapters
+    Route::post('/book/save', [App\Http\Controllers\BookController::class, 'saveBook']);
+    Route::post('/book/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
     Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChapters']);
     Route::post('/chapter/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
-    Route::post('/chapter/get/edit', [App\Http\Controllers\ChapterController::class, 'getChapterForEdit']);
+    Route::post('/chapter/delete', [App\Http\Controllers\ChapterController::class, 'deleteChapter']);
+    Route::get('/chapter/get/edit/{chapterId}', [App\Http\Controllers\ChapterController::class, 'getChapterForEdit']);
     Route::post('/chapter/finish', [App\Http\Controllers\ChapterController::class, 'finishChapter']);
     Route::post('/chapter/save', [App\Http\Controllers\ChapterController::class, 'saveChapter']);
 });

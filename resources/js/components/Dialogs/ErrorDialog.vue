@@ -43,7 +43,6 @@
             };
         },
         mounted: function() {
-            this.progressDelay();
         },
         methods: {
 

@@ -22,10 +22,9 @@
 @import 'Vocabulary/VocabularyExport';
 @import 'kanji_list';
 @import 'kanji_details';
-@import 'books';
-@import 'create_book';
-@import 'edit_chapter';
-@import 'chapters';
+@import 'Library/Books';
+@import 'Library/BookChapters';
+@import 'Library/EditBookDialog';
 @import 'slider';
 
 
