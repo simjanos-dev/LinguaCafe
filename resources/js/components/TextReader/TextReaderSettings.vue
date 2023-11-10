@@ -32,7 +32,7 @@
                     <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
                         <v-slider
                             v-model="maximumTextWidth"
-                            :tick-labels="['Small', '', '', '', '', 'Full']"
+                            :tick-labels="['Small', '', '', '', '', '', 'Full']"
                             :tick-size="0"
                             :max="5"
                             thumb-label="always"
@@ -115,7 +115,7 @@
         emits: ['input'],   
         data: function() {
             return {
-                maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
+                maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 highlightWords: this.$props._highlightWords,
                 plainTextMode: this.$props._plainTextMode,
                 japaneseText: this.$props._japaneseText,

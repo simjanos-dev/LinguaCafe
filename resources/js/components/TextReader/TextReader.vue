@@ -139,7 +139,7 @@
                     glossary: false,
                     chapters: false
                 },
-                maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
+                maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 toolbarTop: 68,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 settings: {
@@ -247,7 +247,7 @@
                 }
 
                 if (this.$cookie.get('maximum-text-width') === null) {
-                    this.settings.maximumTextWidth =  3;
+                    this.settings.maximumTextWidth =  1;
                 }
 
                 if (this.$cookie.get('display-suggested-translations') === null) {

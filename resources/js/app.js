@@ -92,7 +92,7 @@ const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home/Home.vue').default;
 const Books = require('./components/Library/Books.vue').default;
-const Reader = require('./components/Reader.vue').default;
+const TextReader = require('./components/TextReader/TextReader.vue').default;
 const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
 const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
 const Review = require('./components/Review.vue').default;
@@ -108,7 +108,7 @@ const router = new VueRouter({
         { path: '/admin', component: AdminLayout },
         { path: '/media-player', component: MediaPlayer },
         { path: '/books', component: Books },
-        { path: '/chapters/read/:chapterId', component: Reader },
+        { path: '/chapters/read/:chapterId', component: TextReader },
         { path: '/flashcards', component: FlashcardCollectionList },
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollection },
         { path: '/review/:practiceMode?/:bookId?/:chapterId?', component: Review },
