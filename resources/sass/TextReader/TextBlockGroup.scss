@@ -144,12 +144,16 @@
 
     #vocab-box {
         position: absolute;
-        background-color: white;
+        background-color: var(--v-foreground-base);
         z-index: 5;
         transition: transform .12s linear !important;
         transform-origin: top;
         border-top: none;
         
+        .v-window-item {
+            background-color: var(--v-foreground-base);
+        }
+
         .vocab-box-subheader {
             color: rgb(120, 120, 120);
         }

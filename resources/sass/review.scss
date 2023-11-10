@@ -49,7 +49,7 @@
             line-height: 28px;
             text-align: center;
             font-size: 15px;
-            color: white;
+            background-color: var(--v-foreground-base);
             margin-right: 20px;
             border-radius: 6px;   
         }
@@ -62,7 +62,7 @@
             line-height: 28px;
             text-align: center;
             font-size: 15px;
-            background-color: $white;
+            background-color: var(--v-foreground-base);
             color: var(--v-text-base);
             margin-left: 20px;  
             border-radius: 6px;
@@ -76,7 +76,7 @@
             height: 30px;
             border-radius: 30px;
             overflow-x: hidden;
-            background-color: var(--v-backgroundHighlight-base);
+            background-color: var(--v-foreground-base);
             
 
             #review-progress-bar-text {
@@ -166,7 +166,7 @@
             position: absolute;
             height: 100%;
             width: 100%;
-            background: white;
+            background: var(--v-foreground-base);
             color: var(--v-text-base);
             backface-visibility: hidden;
             padding: 10px;

@@ -138,7 +138,7 @@
                 revealed: false,
                 backToDeckAnimation: false,
                 intoTheCorrectDeckAnimation: false,
-                backgroundColor: 'white',
+                backgroundColor: this.$vuetify.theme.currentTheme.foreground,
                 newCardAnimation: false,
                 settings: {
                     fontSize: 20,
@@ -357,7 +357,7 @@
                 this.backToDeckAnimation = false;
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = true;
-                this.backgroundColor = 'white';
+                this.backgroundColor = this.$vuetify.theme.currentTheme.foreground;
 
                 setTimeout(() => {
                     this.$refs.textBlock.unselectAllWords(true);

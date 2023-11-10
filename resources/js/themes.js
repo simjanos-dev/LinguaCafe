@@ -6,7 +6,6 @@ export default {
         secondary: '#ab8875',
 
         foreground: '#ffffff',
-        backgroundHighlight: '#ebebeb',
         gray: '#E9EAEC',
         gray2: '#e4e4e4',
         gray3: '#F0F0F0',
@@ -52,7 +51,6 @@ export default {
     },
     dark: {
         background: '#1C1B20',
-        backgroundHighlight: '#ebebeb',
         foreground: '#28272C',
         navigation: '#28272C',
         primary: '#c5947d',
@@ -67,16 +65,16 @@ export default {
         
         text: '#d0d0d0',
         textDark: '#141110',
-        highlightedWordText: '#ffffff',
-
+        
         gray: '#39383D',
         gray2: '#414046',
         gray3: '#45444a',
-
-        newWord: '#C7AB3B',
+        
+        newWord: '#d0ba49',
         highlightedWord: '#49A74F',
-
-        readerWordSelection: '#d8d8d8',
+        
+        readerWordSelection: '#c5947d',
+        highlightedWordText: '#121212',
 
         statisticsDays: '#ab8875',
         statisticsReadWords: '#ab8875',
@@ -88,7 +86,6 @@ export default {
         name: '#000000',
         foreground: '#ffffff',
         background: '#ffffff',
-        backgroundHighlight: '#aaaaaa',
         navigation: '#ffffff',
         primary: '#000000',
         secondary: '#000000',

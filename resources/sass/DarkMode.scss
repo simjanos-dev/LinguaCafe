@@ -101,12 +101,13 @@
 }
 
 // success v-icon button
-#app.dark .v-btn.success--text .theme--dark.v-icon {
+#app.dark .v-btn.success--text .theme--dark.v-icon, {
     color: var(--v-success-base);
 }
 
 // button
-#app.dark .v-btn.primary .v-btn__content i.v-icon {
+#app.dark .v-btn.primary .v-btn__content i.v-icon,
+#app.dark .v-btn.success .v-btn__content i.v-icon {
     color: var(--v-background-base);
 }
 
@@ -185,4 +186,92 @@
 #app.dark .book-chapters .info-table-value.highlighted-words,
 #app.dark .book-chapters .info-table-value.new-words {
     color: var(--v-textDark-base) !important;
+}
+
+
+// text reader chapter list
+#app.dark #text-reader-chapter-list {
+    span.highlighted{
+        color: var(--v-textDark-base);
+    }
+
+    span.new {
+        color: var(--v-textDark-base);
+    }
+}
+
+// text reader glossary
+#app.dark #text-reader-chapter-list {
+    span.highlighted{
+        color: var(--v-textDark-base);
+    }
+
+    span.new {
+        color: var(--v-textDark-base);
+    }
+}
+
+#app.dark #text-reader-glossary .glossary-entry {
+    &:nth-child(even) {
+        background-color: var(--v-gray-base);
+    }
+
+    .stage {
+        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"],
+        &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+            background-color: var(--v-highlightedWord-base);
+            color: var(--v-textDark-base);
+        }
+
+        &[stage="2"] {
+            background-color: var(--v-newWord-base);
+            color: var(--v-textDark-base);
+        }
+    }
+}
+
+// text block
+#app.dark .text-block-group {
+    #vocab-box #search-results .search-result .search-result-title {
+        color: var(--v-textDark-base);
+    }
+    
+
+    
+    #vocab-box #vocab-box-stage-buttons .v-btn{
+        border-color: var(--v-gray3-base);
+    }
+
+    #vocab-box .v-card__title i,
+    #vocab-box .v-card__title,
+    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i{
+        color: var(--v-textDark-base) !important;
+    }
+
+    .word {
+        &[stage="-7"], &[stage="-6"], &[stage="-5"], 
+        &[stage="-4"], &[stage="-3"], &[stage="-2"], 
+        &[stage="-1"], &[stage="2"] {
+            color: var(--v-textDark-base);
+        }
+
+        &.highlighted, &:hover {
+            background-color: var(--v-readerWordSelection-base);
+            color: var(--v-highlightedWordText-base);
+            border-color: var(--v-readerWordSelection-base) !important;
+        }
+    }
+}
+
+// review
+#review-box {
+    #review-progress-line {
+        #review-progress-bar {
+            background-color: var(--v-foreground-base);
+        }
+
+        #progress-bar-correct-counter {
+            color: var(--v-textDark-base);
+        }
+    }
 }
