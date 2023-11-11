@@ -12,9 +12,10 @@
                 <v-list nav rounded>
                     <v-list-item-group color="primary" v-model="selectedTheme">
                         <v-list-item class="my-1" v-for="(theme, index) in displayNames" :key="index" :value="index" @click="selectTheme(index)">
-                            <v-list-item-content>
-                                <v-list-item-title class="text-center">{{ theme }}</v-list-item-title>
-                            </v-list-item-content>
+                            <v-list-item-avatar tile min-width="60">
+                                <v-icon>{{ theme.icon }}</v-icon>
+                            </v-list-item-avatar>
+                            <v-list-item-content>{{ theme.name }}</v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
                 </v-list>
@@ -38,9 +39,18 @@
             return {
                 selectedTheme: this.$cookie.get('theme') === null ? 'light' : this.$cookie.get('theme'),
                 displayNames: {
-                    light: 'Light theme',
-                    dark: 'Dark theme',
-                    eink: 'Eink theme',
+                    light: {
+                        name: 'Light theme',
+                        icon: 'mdi-weather-sunny'
+                    },
+                    dark: {
+                        name: 'Dark theme',
+                        icon: 'mdi-weather-night'
+                    },
+                    eink: {
+                        name: 'Eink theme',
+                        icon: 'mdi-tablet'
+                    }
                 },
             };
         },

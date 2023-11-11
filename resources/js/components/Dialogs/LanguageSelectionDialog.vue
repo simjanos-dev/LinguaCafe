@@ -11,23 +11,22 @@
             <v-card-text>
                 <v-list rounded>
                     <v-list-item-group color="primary" v-model="selectedLanguage">
-                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('japanese')" value="japanese">
+                        <v-list-item 
+                            v-for="(language, index) in languages"
+                            :key="index"
+                            :value="language.toLowerCase()"
+                            class="regular-list-height my-1" 
+                            @click="selectLanguage(language)" 
+                        >
                             <v-list-item-avatar tile min-width="60">
-                                <v-img class="border" :src="'/images/flags/japanese'" max-width="43" height="28"></v-img> 
+                                <v-img 
+                                    class="border" 
+                                    :src="'/images/flags/' + language.toLowerCase()" 
+                                    max-width="43" 
+                                    height="28"
+                                ></v-img> 
                             </v-list-item-avatar>
-                            <v-list-item-content>Japanese</v-list-item-content>
-                        </v-list-item>
-                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('norwegian')" value="norwegian">
-                            <v-list-item-avatar tile min-width="60">
-                                <v-img class="border" :src="'/images/flags/norwegian'" max-width="43" height="28"></v-img> 
-                            </v-list-item-avatar>
-                            <v-list-item-content>Norwegian</v-list-item-content>
-                        </v-list-item>
-                        <v-list-item class="regular-list-height my-1" @click="selectLanguage('german')" value="german">
-                            <v-list-item-avatar tile min-width="60">
-                                <v-img class="border" :src="'/images/flags/german'" max-width="43" height="28"></v-img> 
-                            </v-list-item-avatar>
-                            <v-list-item-content>German</v-list-item-content>
+                            <v-list-item-content>{{ language }}</v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
                 </v-list>
@@ -49,6 +48,15 @@
         data: function() {
             return {
                 selectedLanguage: 'japanese',
+
+                languages: [
+                    'Chinese',
+                    'German',
+                    'Japanese',
+                    'Korean',
+                    'Norwegian',
+                    'Spanish',
+                ],
             };
         },
         mounted: function() {
@@ -58,7 +66,7 @@
         },
         methods: {
             selectLanguage: function(newLanguage) {
-                this.selectedLanguage = newLanguage;
+                this.selectedLanguage = newLanguage.toLowerCase();
                 axios.get('/language/change/' + this.selectedLanguage).then(function (response) {
                     document.location.href = '/';
                 }.bind(this)).catch(function (error) {}).then(() => {

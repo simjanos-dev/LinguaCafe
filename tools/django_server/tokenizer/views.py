@@ -17,36 +17,56 @@ def custom_sentence_splitter(doc):
     return doc
 
 
+
+# create tokenizers
 japanese_nlp = spacy.load("ja_core_news_sm")
 japanese_nlp.add_pipe("custom_sentence_splitter", first=True)
-# japanese_nlp.max_length = 1500000
 hiraganaConverter = pykakasi.kakasi()
 
-norwegian_nlp = spacy.load("nb_core_news_sm")
+norwegian_nlp = spacy.load("nb_core_news_md")
 norwegian_nlp.add_pipe("custom_sentence_splitter", first=True)
-# norwegian_nlp.max_length = 1500000
+
+german_nlp = spacy.load("de_core_news_md")
+german_nlp.add_pipe("custom_sentence_splitter", first=True)
+
+korean_nlp = spacy.load("ko_core_news_md")
+korean_nlp.add_pipe("custom_sentence_splitter", first=True)
+
+spanish_nlp = spacy.load("es_core_news_md")
+spanish_nlp.add_pipe("custom_sentence_splitter", first=True)
 
 def tokenizeText(words, language):
     tokenizedWords = list()
+    if language == 'german':
+        doc = german_nlp(words, disable = ['ner'])
+        
     if language == 'japanese':
         doc = japanese_nlp(words, disable = ['ner'])
     
+
+    if language == 'korean':
+        doc = korean_nlp(words, disable = ['ner'])
+
     if language == 'norwegian':
         doc = norwegian_nlp(words, disable = ['ner'])
 
+    if language == 'spanish':
+        doc = spanish_nlp(words, disable = ['ner'])
+
+
     for sentenceIndex, sentence in enumerate(doc.sents):
         for token in sentence:
+            #get reading
             reading = list()
             lemmaReading = list()
-            #get reading
-            result = hiraganaConverter.convert(token.text)
-            for x in result:
-                reading.append(x['hira'])
-            
-            #get lemma reading
-            result = hiraganaConverter.convert(token.lemma_)
-            for x in result:
-                lemmaReading.append(x['hira'])
+            if language == 'japanese':
+                result = hiraganaConverter.convert(token.text)
+                for x in result:
+                    reading.append(x['hira'])
+                
+                result = hiraganaConverter.convert(token.lemma_)
+                for x in result:
+                    lemmaReading.append(x['hira'])
 
             gender = ''
             if language == 'norwegian':
