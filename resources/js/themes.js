@@ -63,7 +63,7 @@ export default {
         success: '#3dcf59',
         warning: '#ffb448',
         
-        text: '#d0d0d0',
+        text: '#c3c3c3',
         textDark: '#141110',
         
         gray: '#39383D',
@@ -73,7 +73,7 @@ export default {
         newWord: '#d0ba49',
         highlightedWord: '#49A74F',
         
-        readerWordSelection: '#c5947d',
+        readerWordSelection: '#b6b6b6',
         highlightedWordText: '#121212',
 
         statisticsDays: '#ab8875',

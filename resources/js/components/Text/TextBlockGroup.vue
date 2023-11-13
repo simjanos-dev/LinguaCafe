@@ -79,7 +79,7 @@
                                         {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}
                                     </rt>
                                 </ruby>
-                                <v-icon color="black">mdi-arrow-right-thick</v-icon>
+                                <v-icon color="text">mdi-arrow-right-thick</v-icon>
                                 <ruby>
                                     {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
                                     <rt v-if="$props.language == 'japanese'">

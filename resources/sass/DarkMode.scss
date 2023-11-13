@@ -1,5 +1,18 @@
 @import 'variables';
 
+#app.dark .theme--dark.v-chip,
+#app.dark .v-chip {
+    color: var(--v-textDark-base);
+
+    i {
+        color: var(--v-textDark-base);
+    }
+}
+// pagination
+#app.dark .theme--dark.v-pagination .v-pagination__item--active {
+    color: var(--v-textDark-base);
+}
+
 // v-card
 #app.dark .theme--dark.v-card,
 #app.dark .theme--dark.v-card > .v-card__subtitle, 
@@ -25,6 +38,7 @@
 }
 
 // table
+#app.dark .theme--dark.v-data-table.v-data-table--fixed-header thead th,
 #app.dark .theme--dark.v-data-table {
     background: var(--v-foreground-base);
     color: var(--v-text-base);
@@ -42,6 +56,59 @@
     span {
         color: var(--v-text-base) !important;
     }
+}
+// vocabulary page search bar
+#app.dark #vocabulary #vocabulary-search-field {
+    .v-input__slot fieldset,
+    .v-input__slot {
+        background: var(--v-gray-base);
+        border-right: 0px solid rgba(0, 0, 0, 0) !important;
+
+        &:focus, &:active, &:hover {
+            background: var(--v-gray3-base);
+        }
+    }
+}
+
+// vocabulary page 
+#app.dark #vocabulary {
+    #search-result-info i,
+    #search-result-info {
+        color: var(--v-text-base) !important;
+    }
+
+    div.new-word,
+    div.highlighted-word {
+        color: var(--v-textDark-base);
+    }
+}
+
+// vocabulary edit stage buttons
+#app.dark #vocabulary-edit-stage-buttons {
+    button.v-btn {
+        &.v-btn--active{
+            background-color: var(--v-primary-base);
+        }
+
+        &.v-btn--active .v-btn__content {
+            color: var(--v-textDark-base);
+        }
+    }
+}
+
+// v-menu in vocabulary
+#app.dark .v-menu__content .theme--dark.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+    background-color: var(--v-foreground-base);
+    color: var(--v-text-base);
+}
+
+#app.dark .v-menu__content .v-list-item.v-list-item--active {
+    background-color: var(--v-primary-base) !important;
+    color: var(--v-textDark-base) !important;
+}
+
+#app.dark .v-menu__content .v-list-item.v-list-item--active i {
+    color: var(--v-textDark-base) !important;
 }
 
 // date picker
@@ -232,22 +299,47 @@
 
 // text block
 #app.dark .text-block-group {
+    // vocab box lemma arrow
+    #vocab-box .expression i {
+        color: var(--v-text-base);
+    }
+
+    // search result title color
     #vocab-box #search-results .search-result .search-result-title {
+        color: var(--v-textDark-base);
+    }
+
+    // search result color
+    #search-results .search-result .search-result-definition:hover {
+        color: var(--v-textDark-base);
+        background-color: var(--v-primary-base);
+    }
+
+    // search bar result icon color transition
+    #search-results .search-result .search-result-definition i {
+        transition: 0s;
+    }
+
+    // search bar result icon color
+    #search-results .search-result .search-result-definition:hover i {
         color: var(--v-textDark-base);
     }
     
 
-    
-    #vocab-box #vocab-box-stage-buttons .v-btn{
+    // vocab box stage buttons border
+    #vocab-box #vocab-box-stage-buttons .v-btn {
         border-color: var(--v-gray3-base);
     }
 
+    // vocab box title and stage button text
     #vocab-box .v-card__title i,
     #vocab-box .v-card__title,
-    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i{
+    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active .v-btn__content,
+    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i {
         color: var(--v-textDark-base) !important;
     }
 
+    // text highlighting
     .word {
         &[stage="-7"], &[stage="-6"], &[stage="-5"], 
         &[stage="-4"], &[stage="-3"], &[stage="-2"], 
@@ -272,6 +364,23 @@
 
         #progress-bar-correct-counter {
             color: var(--v-textDark-base);
+        }
+    }
+
+    #review-card {
+        &.back-to-deck-animation #review-card-content,
+        &.into-the-correct-deck-animation #review-card-content {
+            #review-card-front,
+            #review-card-back {
+                color: var(--v-textDark-base) !important;
+            }
+        }
+
+        &.draw-new-card-animation #review-card-content {
+            #review-card-front,
+            #review-card-back {
+                color: var(--v-text-base) !important;
+            }
         }
     }
 }
