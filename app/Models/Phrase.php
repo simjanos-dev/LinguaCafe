@@ -61,11 +61,13 @@ class Phrase extends Model
         }
         
         $this->stage = $stage;
-        $reviewIntervals = config('langapp.reviewIntervals');
+        $reviewIntervals = Setting::where('name', 'reviewIntervals')->first();
+        $reviewIntervals = json_decode($reviewIntervals->value);
 
         // find the most optimal day for the next review
         if ($stage < 0) {
-            $possibleDates = $reviewIntervals[$stage];
+            $stageString = strval($stage);
+            $possibleDates = $reviewIntervals->$stageString;
             $nextReviewIndex = 0;
             for ($i = 0; $i < count($possibleDates); $i++) {
                 $data = new \stdClass();

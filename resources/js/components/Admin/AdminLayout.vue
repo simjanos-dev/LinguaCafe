@@ -4,7 +4,7 @@
             <v-tab>Users</v-tab>
             <v-tab>Dictionaries</v-tab>
             <v-tab>API</v-tab>
-            <v-tab>Review SRS</v-tab>
+            <v-tab>Reviews</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" id="admin-tab-items" elevation="0" class="rounded-lg mt-4 pa-6">
             <v-tab-item :value="0">
@@ -17,7 +17,7 @@
                 <admin-api-settings></admin-api-settings>
             </v-tab-item>
             <v-tab-item :value="3">
-                <div class="subheader">Review SRS</div>
+                <admin-review-settings></admin-review-settings>
             </v-tab-item>
         </v-tabs-items>
     </v-container>

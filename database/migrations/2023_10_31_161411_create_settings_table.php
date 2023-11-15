@@ -20,22 +20,6 @@ class CreateSettingsTable extends Migration
             $table->text('value');
             $table->timestamps();
         });
-
-        DB::table('settings')->insert([
-            'name' => 'deeplApiKey',
-            'value' => json_encode('00000000-aaaa-aaaa-aaaa-000aaaa000aa:00')
-        ]);
-
-
-        DB::table('settings')->insert([
-            'name' => 'jellyfinHost',
-            'value' => json_encode('http://jellyfin:8096')
-        ]);
-
-        DB::table('settings')->insert([
-            'name' => 'jellyfinApiKey',
-            'value' => json_encode('00a0a000aaa00000a00aaaaa00a00a0a')
-        ]);
     }
 
     /**
