@@ -37,9 +37,11 @@ class HomeController extends Controller
      */
     public function index() {
         $selectedLanguage = Auth::user()->selected_language;
-        
+        $userCount = User::count();
+
         return view('home', [
-            'language' => $selectedLanguage
+            'language' => $selectedLanguage,
+            'userCount' => $userCount
         ]);
     }
 

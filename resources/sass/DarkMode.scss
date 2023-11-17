@@ -8,6 +8,26 @@
         color: var(--v-textDark-base);
     }
 }
+
+// google autofill input background
+#app.dark .v-input__control {
+    input {
+        -webkit-text-fill-color: var(--v-text-base) !important;
+        &:-webkit-autofill{
+            -webkit-text-fill-color: var(--v-text-base) !important;
+            -webkit-box-shadow: 0 0 0 50px var(--v-gray-base) inset;
+        }
+    }
+
+    .v-input__slot:hover input:not(:active):not(:focus) {
+        -webkit-text-fill-color: var(--v-text-base) !important;
+        &:-webkit-autofill {
+            -webkit-text-fill-color: var(--v-text-base) !important;
+            -webkit-box-shadow: 0 0 0 50px #4B4A4E inset;
+        }
+    }
+}
+
 // pagination
 #app.dark .theme--dark.v-pagination .v-pagination__item--active {
     color: var(--v-textDark-base);
@@ -190,6 +210,14 @@
 
     span {
         color: var(--v-background-base);
+    }
+}
+// password change alert
+#app.dark #password-change-alert {
+    color: var(--v-text-base);
+
+    .v-btn i {
+        color: var(--v-textDark-base);
     }
 }
 

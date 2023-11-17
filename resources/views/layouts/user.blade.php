@@ -26,6 +26,6 @@
 </head>
 <body><!--
 --><div id="app"><!--
-    --><layout _selected-language="{{ $language }}"></layout><!--
+    -->@yield('content')<!--
 --></div><!--
 --></body></html>

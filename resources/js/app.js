@@ -74,6 +74,10 @@ Vue.component('start-review-dialog', StartReviewDialog);
 Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
+// user settings
+import ChangePasswordDialog from './components/UserSettings/ChangePasswordDialog';
+Vue.component('change-password-dialog', ChangePasswordDialog);
+
 // admin
 import AdminUserSettings from './components/Admin/AdminUserSettings';
 import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
@@ -90,6 +94,7 @@ Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
 Vue.component('admin-edit-user-dialog', AdminEditUserDialog);
 Vue.component('admin-review-settings', AdminReviewSettings);
 
+const LoginForm = require('./components/Login/LoginForm.vue').default;
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home/Home.vue').default;
@@ -107,6 +112,7 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         { path: '/', component: Home },
+        { path: '/login', component: LoginForm },
         { path: '/admin', component: AdminLayout },
         { path: '/media-player', component: MediaPlayer },
         { path: '/books', component: Books },

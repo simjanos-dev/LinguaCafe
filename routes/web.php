@@ -13,12 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Auth::routes();
+Auth::routes([
+    'register' => false,
+    'reset' => false,
+    'verify' => false
+]);
 
 Route::group(['middleware' => 'web'], function () {
-    // users
-    Route::get('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
     Route::post('/user/save', [App\Http\Controllers\UserController::class, 'updateOrCreateUser']);
+});
+
+Route::group(['middleware' => ['auth', 'web']], function () {
+    // users
+    Route::get('/user/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
+    Route::post('/user/change-password', [App\Http\Controllers\UserController::class, 'changePassword']);
+    Route::get('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
 
     // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);

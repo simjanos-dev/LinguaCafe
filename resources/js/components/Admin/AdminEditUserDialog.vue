@@ -22,7 +22,7 @@
             
             <!-- User form -->
             <v-card-text class="pt-4 pb-6">
-                <v-form v-model="isFormValid" ref="userForm">                
+                <v-form v-model="isFormValid" ref="userForm">
                     <!-- Name -->
                     <label class="font-weight-bold">Name</label>
                     <v-text-field 
@@ -88,7 +88,7 @@
                         class="mt-0"
                         color="primary"
                         label="Admin"
-                        :disabled="saving"
+                        :disabled="saving || $props.adminLock"
                     ></v-switch>
 
                     <v-alert
@@ -145,6 +145,10 @@
                 type: Number,
                 default: false
             },
+            adminLock: {
+                type: Boolean,
+                default: false
+            },
         },
         emits: ['input'],
         data: function() {
@@ -169,7 +173,7 @@
                     },
                     password: value => {
                         if (value.length < 8 || value.length > 32) {
-                            return 'Name must be between 8 and 32 characters.';
+                            return 'Password must be between 8 and 32 characters.';
                         }
                         
                         return true;

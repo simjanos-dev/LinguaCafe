@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -9,6 +10,10 @@ use App\Models\User;
 
 class UserController extends Controller
 {
+    public function isUserPasswordChanged() {
+        return Auth::user()->password_changed;
+    }
+
     public function getUsers() {
         $users = User
             ::select(['id', 'name', 'email', 'is_admin', 'password_changed', 'created_at'])
@@ -21,8 +26,41 @@ class UserController extends Controller
         return json_encode($users);
     }
 
+    public function changePassword(Request $request) {
+        // check for missing post data
+        if (!$request->has('password') || !$request->has('passwordConfirmation')) {
+            return 'Missing parameter.';
+        }
+
+        $user = Auth::user();
+        $password = $request->post('password');
+        $passwordConfirmation = $request->post('passwordConfirmation');
+
+        // validate password
+        if (mb_strlen($password) < 8 || mb_strlen($password) > 32) {
+            return 'Password must be between 8 and 32 characters.';
+        }
+
+        if ($password !== $passwordConfirmation) {
+            return 'Password confirmation does not match the password.';
+        }
+        
+
+        // set new password
+        $user->password = Hash::make($password);
+        $user->password_changed = true;
+        $user->save();
+        
+        return 'success';
+    }
+
     // updates user info, or creates a new user
     public function updateOrCreateUser(Request $request) {
+        $userCount = User::count();
+        if (!Auth::check() && $userCount !== 0) {
+            return 'Unauthenticated.';
+        }
+
         // check for missing post data
         if (!$request->has('userId') || !$request->has('name') ||
             !$request->has('email') || !$request->has('isAdmin')) {
@@ -80,7 +118,8 @@ class UserController extends Controller
         $user->name = $name;
         $user->email = $email;
         $user->is_admin = $isAdmin;
-        
+        $user->password_changed = $userCount === 0;
+
         if ($userId == -1) {
             $user->password = Hash::make($password);
         }
