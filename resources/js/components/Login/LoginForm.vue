@@ -102,7 +102,6 @@
                 <v-spacer></v-spacer>
                 <v-btn
                     color="primary" 
-                    dark 
                     rounded 
                     :disabled="loading || !isFormValid" 
                     :loading="loading"
