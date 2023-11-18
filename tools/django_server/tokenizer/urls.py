@@ -5,4 +5,5 @@ from . import views
 
 urlpatterns = [
     path('', views.tokenizer, name='tokenizer'),
+    path('import', views.importBook, name='import-book'),
 ]

@@ -112,6 +112,18 @@ class TextBlock
     }
 
     /* 
+        Sends the raw text to python tokenizer service, and stores the result.
+    */
+    public function fastTokenizeRawText() {
+        $this->tokenizedWords = Http::post('langapp-python-service-dev:8678/tokenizer/import-book', [
+            'raw_text' => $this->rawText,
+            'language' => $this->language
+        ]);
+
+        $this->tokenizedWords = json_decode($this->tokenizedWords);
+    }
+
+    /* 
         Sends an array of raw text to python tokenizer service, and returns the result.
         This is used when multiple blocks of raw text needs to be tokenized. This way it
         only needs one http request, and it speeds up the process.

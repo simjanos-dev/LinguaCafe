@@ -120,4 +120,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/chapter/get/edit/{chapterId}', [App\Http\Controllers\ChapterController::class, 'getChapterForEdit']);
     Route::post('/chapter/finish', [App\Http\Controllers\ChapterController::class, 'finishChapter']);
     Route::post('/chapter/save', [App\Http\Controllers\ChapterController::class, 'saveChapter']);
+
+    // library import
+    Route::get('/import', [App\Http\Controllers\ImportController::class, 'importBook']);
 });
