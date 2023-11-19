@@ -6,7 +6,6 @@ use App\Models\ExampleSentence;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Lesson;
-use App\Models\LessonWord;
 use App\Models\Phrase;
 use App\Models\EncounteredWord;
 use Illuminate\Support\Facades\Auth;
@@ -75,20 +74,23 @@ class ReviewController extends Controller
                     ->toArray();
             }
 
-            $words = LessonWord
-                ::where('user_id', Auth::user()->id)
-                ->whereIn('lesson_id', $lessonIds)
-                ->get();
+            foreach ($lessonIds as $lessonId) {
+                $lesson = Lesson
+                    ::where('user_id', Auth::user()->id)
+                    ->where('id', $lessonId)
+                    ->first();
 
-            foreach ($words as $word) {
-                if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {
-                    array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
-                }
+                $words = $lesson->getProcessedText();
+                
+                foreach ($words as $word) {
+                    if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {
+                        array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
+                    }
 
-                $word->phrase_ids = json_decode($word->phrase_ids);
-                foreach ($word->phrase_ids as $phraseId) {
-                    if (!in_array($phraseId, $uniquePhraseIds, true)) {
-                        array_push($uniquePhraseIds, $phraseId);
+                    foreach ($word->phrase_ids as $phraseId) {
+                        if (!in_array($phraseId, $uniquePhraseIds, true)) {
+                            array_push($uniquePhraseIds, $phraseId);
+                        }
                     }
                 }
             }

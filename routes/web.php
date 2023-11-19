@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/jellyfin/process-subtitles', [App\Http\Controllers\MediaPlayerController::class, 'processJellyfinSubtitle']);
 
     // vue routes
+    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);

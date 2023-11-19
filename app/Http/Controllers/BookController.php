@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use App\Models\EncounteredWord;
 use App\Models\Book;
 use App\Models\Lesson;
-use App\Models\LessonWord;
 
 class BookController extends Controller
 {
@@ -91,18 +90,8 @@ class BookController extends Controller
         $chapters = Lesson
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
-            ->get();
+            ->delete();
             
-        DB::beginTransaction();
-        foreach ($chapters as $chapter) {
-            LessonWord
-                ::where('user_id', $userId)
-                ->where('lesson_id', $chapter->id)
-                ->delete();
-
-            $chapter->delete();
-        }
-        
         $book = Book
             ::where('user_id', $userId)
             ->where('id', $bookId)
@@ -116,8 +105,6 @@ class BookController extends Controller
             ::where('user_id', $userId)
             ->where('id', $bookId)
             ->delete();
-
-        DB::commit();
         return 'success';
     }
 }

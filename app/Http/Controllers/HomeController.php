@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ExampleSentence;
@@ -9,9 +12,8 @@ use App\Models\EncounteredWord;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 use App\Models\Phrase;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use App\Models\Lesson;
+use App\Models\TextBlock;
 
 class HomeController extends Controller
 {
@@ -27,6 +29,37 @@ class HomeController extends Controller
     }
 
     public function dev() {
+        $lessons = Lesson::get();
+        $lessonCount = count($lessons);
+        foreach ($lessons as $lessonIndex => $lesson) {
+            $textBlock = new TextBlock();
+            $textBlock->rawText = $lesson->raw_text;
+            $textBlock->tokenizeRawText();
+            $textBlock->processTokenizedWords();
+            $textBlock->collectUniqueWords();
+            $textBlock->updateAllPhraseIds();
+            $textBlock->createNewEncounteredWords();
+    
+            $uniqueWordIds = DB
+                ::table('encountered_words')
+                ->select('id')
+                ->where('user_id', $lesson->user_id)
+                ->where('language', $lesson->language)
+                ->whereIn('word', $textBlock->uniqueWords)
+                ->pluck('id')
+                ->toArray();
+                
+            // update lesson word data
+            $lesson->word_count = $textBlock->getWordCount();
+            $lesson->unique_words = json_encode($textBlock->uniqueWords);
+            $lesson->unique_word_ids = json_encode($uniqueWordIds);
+            $lesson->setProcessedText($textBlock->processedWords);
+            $lesson->save();
+
+            echo(($lessonIndex + 1) . '/' . $lessonCount . ' finished <br>');
+            echo str_repeat(' ',1024*64);
+            flush();
+        }
     }
 
 

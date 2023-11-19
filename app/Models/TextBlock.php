@@ -250,54 +250,53 @@ class TextBlock
     public function createNewEncounteredWords() {
         // a regular expression for japanese kanji characters
         $kanjipattern = "/[a-zA-Z0-9０-９あ-んア-ンー。、:？！＜＞： 「」（）｛｝≪≫〈〉《》【】『』〔〕［］・\n\r\t\s\(\)　]/u";
-
-        $createdEncounteredWords = [];
+        DB::disableQueryLog();
         $encounteredWords = DB::table('encountered_words')
             ->select('word')
             ->where('user_id', Auth::user()->id)
             ->where('language', $this->language)
             ->whereIn('word', $this->uniqueWords)
-            ->get();
+            ->pluck('word')
+            ->toArray();
 
+        DB::beginTransaction();
+        $encounteredWordsToInsert = [];
         for ($wordIndex = 0; $wordIndex < count($this->processedWords); $wordIndex ++) {
-            $word = $this->processedWords[$wordIndex];
-            $wordId = $encounteredWords->search(function ($item, $key) use($word) {
-                return $item->word == mb_strtolower($word->word);
-            });
-
             if (
-                $wordId === false && 
-                $this->processedWords[$wordIndex]->word !== 'NEWLINE' && 
-                !in_array(mb_strtolower($this->processedWords[$wordIndex]->word), $createdEncounteredWords, true)
+                !in_array(mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8'), $encounteredWords, true) &&
+                $this->processedWords[$wordIndex]->word !== 'NEWLINE'
             ){
-                $createdEncounteredWords[] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
+                $encounteredWords[] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
                 
                 if ($this->language == 'japanese') {
                     $kanji = preg_replace($kanjipattern, "", $this->processedWords[$wordIndex]->word);
                     $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
                 }
 
-                $encounteredWord = new EncounteredWord();
-                $encounteredWord->user_id = Auth::user()->id;
-                $encounteredWord->language = $this->language;
-                $encounteredWord->word = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
-                $encounteredWord->lemma = $this->processedWords[$wordIndex]->lemma;
-                $encounteredWord->base_word = $this->processedWords[$wordIndex]->lemma;
-                $encounteredWord->kanji = $this->language == 'japanese' ? implode('', $kanji) : '';
-                $encounteredWord->reading = $this->processedWords[$wordIndex]->reading;
-                $encounteredWord->base_word_reading = $this->processedWords[$wordIndex]->lemma_reading;
-                $encounteredWord->example_sentence = '';
-                $encounteredWord->stage = 2;
-                $encounteredWord->translation = '';
+                $encounteredWord = [];
+                $encounteredWord['user_id'] = Auth::user()->id;
+                $encounteredWord['language'] = $this->language;
+                $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
+                $encounteredWord['lemma'] = $this->processedWords[$wordIndex]->lemma;
+                $encounteredWord['base_word'] = $this->processedWords[$wordIndex]->lemma;
+                $encounteredWord['kanji'] = $this->language == 'japanese' ? implode('', $kanji) : '';
+                $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
+                $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
+                $encounteredWord['example_sentence'] = '';
+                $encounteredWord['stage'] = 2;
+                $encounteredWord['translation'] = '';
 
-                if ($encounteredWord->base_word == $encounteredWord->word) {
-                    $encounteredWord->base_word = '';
-                    $encounteredWord->base_word_reading = '';
+                if ($encounteredWord['base_word'] == $encounteredWord['word']) {
+                    $encounteredWord['base_word'] = '';
+                    $encounteredWord['base_word_reading'] = '';
                 }
 
-                $encounteredWord->save();
+                $encounteredWordsToInsert[] = $encounteredWord;
             }
         }
+
+        DB::table('encountered_words')->insert($encounteredWordsToInsert);
+        DB::commit();
     }
 
     public function collectUniqueWords() {
@@ -397,6 +396,8 @@ class TextBlock
                 $this->processedWords[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids = $tempArray;
             }
         }
+
+        return true;
     }
     
     /*

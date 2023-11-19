@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Models\TextBlock;
 use App\Models\Book;
 use App\Models\Lesson;
-use App\Models\LessonWord;
 
 
 class ImportController extends Controller
@@ -21,7 +20,7 @@ class ImportController extends Controller
 
         $tokenizedWords = Http::post('langapp-python-service-dev:8678/tokenizer/import');
         $words = json_decode($tokenizedWords->body());
-        
+
         $rawTextChunk = '';
 
         $book = new Book();
@@ -57,20 +56,6 @@ class ImportController extends Controller
                 $textBlock->createNewEncounteredWords();
 
 // should use $textBlock->fastTokenizeRawText();
-
-                DB::beginTransaction();
-                foreach ($textBlock->processedWords as $processedWord) {
-                    $processedWord->phrase_ids = json_encode($processedWord->phrase_ids);
-                    // DB::insert('
-                    //     INSERT INTO lesson_words 
-                    //         (user_id, lesson_id, word_index, sentence_index, word, reading, lemma, lemma_reading, pos, phrase_ids) 
-                    //     VALUES 
-                    //         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[
-                    //     $processedWord->user_id, $lesson->id, $processedWord->word_index, $processedWord->sentence_index, $processedWord->word,
-                    //     $processedWord->reading, $processedWord->lemma, $processedWord->lemma_reading, $processedWord->pos, $processedWord->phrase_ids]);
-                }
-
-                DB::commit();
                 
                 $uniqueWordIds = DB
                     ::table('encountered_words')
@@ -82,6 +67,7 @@ class ImportController extends Controller
                     ->toArray();
 
                 // update lesson word data
+                // $lesson->setProcessedText(json_encode($textBlock->processedWords));
                 $lesson->word_count = $textBlock->getWordCount();
                 $lesson->unique_words = json_encode($textBlock->uniqueWords);
                 $lesson->unique_word_ids = json_encode($uniqueWordIds);

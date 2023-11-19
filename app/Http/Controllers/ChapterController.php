@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\EncounteredWord;
 use App\Models\Book;
 use App\Models\Lesson;
-use App\Models\LessonWord;
 use App\Models\Phrase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -73,7 +72,7 @@ class ChapterController extends Controller
         $uniqueWords = json_decode($lesson->unique_words);
         $book = Book::where('id', $lesson->book_id)->where('user_id', Auth::user()->id)->first();
         $lessons = Lesson::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])->where('book_id', $book->id)->where('user_id', Auth::user()->id)->get();
-        $words = LessonWord::where('user_id', Auth::user()->id)->where('lesson_id', $lessonId)->get();
+        $words = $lesson->getProcessedText();
 
         // get lesson word counts
         $uniqueWordsForWordCounts = EncounteredWord
@@ -216,23 +215,8 @@ class ChapterController extends Controller
         $lesson->word_count = $textBlock->getWordCount();
         $lesson->unique_words = json_encode($textBlock->uniqueWords);
         $lesson->unique_word_ids = json_encode($uniqueWordIds);
+        $lesson->setProcessedText($textBlock->processedWords);
         $lesson->save();
-
-        // save lesson words
-        DB::beginTransaction();
-        DB::delete('DELETE FROM lesson_words WHERE user_id = ? AND lesson_id = ?', [Auth::user()->id, $lesson->id]);
-        foreach ($textBlock->processedWords as $word) {
-            $word->phrase_ids = json_encode($word->phrase_ids);
-            DB::insert('
-                INSERT INTO lesson_words 
-                    (user_id, lesson_id, word_index, sentence_index, word, reading, lemma, lemma_reading, pos, phrase_ids) 
-                VALUES 
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[
-                $word->user_id, $lesson->id, $word->word_index, $word->sentence_index, $word->word,
-                $word->reading, $word->lemma, $word->lemma_reading, $word->pos, $word->phrase_ids]);
-        }
-
-        DB::commit();
 
         // update book word count
         $bookWordCount = intval(Lesson::where('user_id', Auth::user()->id)->where('book_id', $lesson->book_id)->sum('word_count'));
@@ -245,18 +229,10 @@ class ChapterController extends Controller
         $chapterId = $request->post('chapterId');
         $userId = Auth::user()->id;
 
-        DB::beginTransaction();
-        LessonWord
-            ::where('user_id', $userId)
-            ->where('lesson_id', $chapterId)
-            ->delete();
-
         Lesson
             ::where('user_id', $userId)
             ->where('id', $chapterId)
             ->delete();
-        
-        DB::commit();
 
         return 'success';
     }

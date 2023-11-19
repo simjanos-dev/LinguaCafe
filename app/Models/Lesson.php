@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Phrase;
-use App\Models\LessonWord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -23,8 +22,15 @@ class Lesson extends Model
         'raw_text',
     ];
 
+    function getProcessedText() {
+        return json_decode(gzuncompress($this->processed_text));
+    }
+
+    function setProcessedText($processedText) {
+        $this->processed_text = gzcompress(json_encode($processedText), 1);
+    }
+
     function getWordCounts($words) {
-        $lessons = Lesson::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
         $uniqueWordIds = json_decode($this->unique_word_ids);
         $wordCounts = new \stdClass();
         $wordCounts->total = $this->word_count;
