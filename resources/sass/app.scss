@@ -35,9 +35,22 @@
 @import 'Admin/AdminApiSettings';
 @import 'Admin/AdminReviewSettings';
 
+@font-face {
+    font-family: Varela;
+    src: url('/fonts/VarelaRound-Regular.ttf');
+}
+
 * {
     font-family: sans-serif !important;
 }
+
+#logo span  {
+    font-family: Varela !important;
+    font-size: 32px;
+    user-select: none;
+    cursor: normal;
+}
+
 
 // container size
 .container {

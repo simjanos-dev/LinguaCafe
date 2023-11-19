@@ -4,7 +4,7 @@
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
             <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
             <v-navigation-drawer id="navigation-drawer" :class="{'eink': theme == 'eink'}" :mini-variant="$vuetify.breakpoint.md" app :permanent="$vuetify.breakpoint.mdAndUp" v-model="drawer" color="navigation">
-                <div id="logo" class="my-8"><v-icon>mdi-coffee</v-icon> <span v-if="$vuetify.breakpoint.lgAndUp">Lingua Cafe</span></div>
+                <div id="logo" class="my-8"><span v-if="$vuetify.breakpoint.lgAndUp">Lingua Cafe</span></div>
                 <v-list nav shaped class="pl-0">
                     <v-list-item-group>
                         <!-- Navigation buttons -->
