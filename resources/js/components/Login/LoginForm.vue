@@ -1,5 +1,7 @@
 <template>
     <v-container class="d-flex justify-center">
+        <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
+
         <!-- Create user dialog -->
         <admin-edit-user-dialog 
             v-if="addUserDialog"
@@ -15,7 +17,13 @@
         <!-- Login and create first user form -->
         <v-card outlined class="rounded-lg mt-16" width="600px">
             <!-- Form title -->
-            <v-card-title><v-icon class="mr-2">mdi-account</v-icon>Login</v-card-title>
+            <v-card-title>
+                <v-icon class="mr-2">mdi-account</v-icon>Login
+                <v-spacer />
+                <v-btn rounded depressed @click="themeSelectionDialog = true;">
+                    <v-icon class="mr-2">mdi-weather-sunny</v-icon> / <v-icon class="ml-2">mdi-weather-night</v-icon>
+                </v-btn>
+            </v-card-title>
 
             <v-card-text class="pt-4 pb-6">
                 <v-form v-model="isFormValid" ref="loginForm">
@@ -115,13 +123,13 @@
 </template>
 
 <script>
-    import themes from './../../themes';
     export default {
         props: {
             userCount: Number
         },
         data: function() {
             return {
+                themeSelectionDialog: false,
                 isFormValid: false,
                 addUserDialog: false,
                 firstUserAdded: false,
@@ -147,7 +155,6 @@
             };
         },
         mounted: function() {
-            
         },
         methods: {
             createFirstUser() {
@@ -193,7 +200,10 @@
                     this.loading = false;
                     this.error = 'Invalid email or password';
                 });
-            }
+            },
+            updateTheme() {
+                window.location.href = "/";
+            },
         }
     }
 </script>
