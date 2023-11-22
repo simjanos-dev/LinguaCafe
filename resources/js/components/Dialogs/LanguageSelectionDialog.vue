@@ -50,10 +50,10 @@
                 selectedLanguage: 'japanese',
 
                 languages: [
-                    'Chinese',
+                    // 'Chinese',
                     'German',
                     'Japanese',
-                    'Korean',
+                    // 'Korean',
                     'Norwegian',
                     'Spanish',
                 ],

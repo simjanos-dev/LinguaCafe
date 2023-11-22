@@ -819,7 +819,7 @@
                     }
 
                     exampleSentence.push({
-                        word: this.textBlocks[this.selectedTextBlock].words[i].word.toLowerCase(),
+                        word: this.textBlocks[this.selectedTextBlock].words[i].word,
                         phrase_ids: []
                     });
                 }

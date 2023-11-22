@@ -9,6 +9,11 @@
     }
 }
 
+// select text color
+#app.dark .theme--dark.v-select .v-select__selections {
+    color: var(--v-text-base);
+}
+
 // google autofill input background
 #app.dark .v-input__control {
     input {
@@ -77,6 +82,7 @@
         color: var(--v-text-base) !important;
     }
 }
+
 // vocabulary page search bar
 #app.dark #vocabulary #vocabulary-search-field {
     .v-input__slot fieldset,

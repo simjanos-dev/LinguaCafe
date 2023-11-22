@@ -24,6 +24,18 @@ Vue.component('edit-book-chapter-dialog', EditBookChapterDialog);
 Vue.component('delete-book-chapter-dialog', DeleteBookChapterDialog);
 Vue.component('delete-book-dialog', DeleteBookDialog);
 
+// library import
+import ImportDialog from './components/Library/Import/ImportDialog.vue';
+import ImportTypeSelection from './components/Library/Import/ImportTypeSelection.vue';
+import ImportEbookFileSelection from './components/Library/Import/ImportEbookFileSelection.vue';
+import ImportLibraryOptions from './components/Library/Import/ImportLibraryOptions.vue';
+import ImportTextProcessingMethodSelection from './components/Library/Import/ImportTextProcessingMethodSelection.vue';
+Vue.component('import-dialog', ImportDialog);
+Vue.component('import-type-selection', ImportTypeSelection);
+Vue.component('import-ebook-file-selection', ImportEbookFileSelection);
+Vue.component('import-library-options', ImportLibraryOptions);
+Vue.component('import-text-processing-method-selection', ImportTextProcessingMethodSelection);
+
 // home page
 import Calendar from './components/Home/Calendar.vue';
 import Goals from './components/Home/Goals.vue';

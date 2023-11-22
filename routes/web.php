@@ -123,5 +123,5 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/chapter/save', [App\Http\Controllers\ChapterController::class, 'saveChapter']);
 
     // library import
-    Route::get('/import', [App\Http\Controllers\ImportController::class, 'importBook']);
+    Route::post('/import', [App\Http\Controllers\ImportController::class, 'import']);
 });

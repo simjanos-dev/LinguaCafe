@@ -14,6 +14,14 @@
             :book-name="startReviewDialog.bookName"
         ></start-review-dialog>
 
+        <!-- Import dialog -->
+        <import-dialog
+            v-if="importDialog.active"
+            v-model="importDialog.active"
+            :language="$props.language"
+            @import-finished="importFinished"
+        ></import-dialog>
+
         <!-- Edit or add book dialog -->
         <edit-book-dialog
             v-if="editBookDialog.active"
@@ -74,7 +82,22 @@
                 </v-menu>
 
                 <v-spacer></v-spacer>
-                <v-btn rounded class="mx-0" color="primary" @click="showEditBookDialog(null)"><v-icon>mdi-plus</v-icon>Create book</v-btn>
+                <v-btn 
+                    rounded 
+                    class="mx-0" 
+                    color="primary" 
+                    @click="showEditBookDialog(null)"
+                >
+                    <v-icon class="mr-1">mdi-book-plus</v-icon>Create book
+                </v-btn>
+                <v-btn 
+                    rounded 
+                    class="ml-2" 
+                    color="primary" 
+                    @click="importDialog.active = true;"
+                >
+                    <v-icon class="mr-1">mdi-import</v-icon>Import
+                </v-btn>
         </div>
 
         <!-- Book list -->
@@ -170,6 +193,9 @@
                 errorDialog: {
                     active: false,
                 },
+                importDialog: {
+                    active: false,
+                },
                 editBookDialog: {
                     active: false,
                     bookId: -1
@@ -191,7 +217,7 @@
             }
         },
         props: {
-            
+            language: String
         },
         mounted() {
             this.loadBooks();
@@ -251,13 +277,14 @@
                     }
                 }
             },
-            hideChapters(bookId) {
-
-            },
             showStartReviewDialog(bookId, bookName) {
                 this.startReviewDialog.bookName = bookName;
                 this.startReviewDialog.bookId = bookId;
                 this.startReviewDialog.visible = true;
+            },
+            importFinished() {
+                this.importDialog.active = false;
+                this.loadBooks();
             },
             loadBooks() {
                 axios.post('/books').then((response) => {

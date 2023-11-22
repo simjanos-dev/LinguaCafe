@@ -28,7 +28,7 @@
                         dense
                         rounded
                         v-model="name"
-                        :rules="[rules.required]"
+                        :rules="[rules.chapterName]"
                     ></v-text-field>
                     
                     <label class="font-weight-bold mt-2">Text</label>
@@ -93,7 +93,7 @@
                 saving: false,
                 saveResult: '',
                 rules: {
-                    required: (value) => {
+                    chapterName: (value) => {
                         if (!value.length) {
                             this.isFormValid = false;
                             return 'You must type in a name for the chapter.';
@@ -106,7 +106,7 @@
 
                         this.isFormValid = true;
                         return true;
-                    },
+                    }
                 },
                 name: '',
                 text: '',

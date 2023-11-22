@@ -24,6 +24,7 @@
 @import 'kanji_details';
 @import 'Library/Books';
 @import 'Library/BookChapters';
+@import 'Library/ImportDialog';
 @import 'Library/EditBookDialog';
 @import 'slider';
 @import 'DarkMode';
@@ -115,10 +116,17 @@
     }
 }
 
+// progress bar
 .v-progress-linear.delete-dialog-delay .v-progress-linear__determinate {
     transition: 0s !important;
 }
 
+// radio button
+.v-radio label {
+    margin: 0px !important;
+}
+
+// slider
 .v-slider__track-container {
     height: 4px !important;
     border-radius: 4px !important;

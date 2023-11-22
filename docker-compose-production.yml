@@ -44,5 +44,6 @@ services:
             dockerfile: ./docker/PythonDockerfile
         volumes:
             - ./tools/django_server:/app
+            - ./:/var/www/html
         networks:
             - langapp
