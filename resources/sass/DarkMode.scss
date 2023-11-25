@@ -418,3 +418,11 @@
         }
     }
 }
+
+// admin api settings
+#app.dark #admin-api-settings {
+    #deepl-api-card,
+    #deepl-api-card > .v-card__text {
+        background-color: var(--v-gray-base) !important;
+    }
+}

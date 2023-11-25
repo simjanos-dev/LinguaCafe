@@ -1,5 +1,9 @@
-
 #admin-api-settings {
+    #deepl-api-card,
+    #deepl-api-card > .v-card__text {
+        background-color: var(--v-gray3-base) !important;
+    }
+
     #skeleton-used-characters,
     #skeleton-used-characters .v-skeleton-loader__image {
         width: 140px !important;

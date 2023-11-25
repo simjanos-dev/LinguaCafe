@@ -1,3 +1,27 @@
+.anki-snackbar {
+    width: 320px;
+    
+    .v-snack__wrapper {
+        align-items: flex-start;
+        min-width: 320px;
+        margin: 0px;
+        
+        .v-snack__content {
+            min-width: 320px;
+            padding: 0px;
+            color: var(--v-text-base);
+            
+            .v-btn span {
+                color: var(--v-text-base);
+            }
+        }
+
+        .snackbar-title {
+            line-height: 36px;
+        }
+    }
+}
+
 .text-block-group {
     overflow-y: hidden !important;
     overflow-x: visible !important;

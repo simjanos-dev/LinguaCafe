@@ -111,6 +111,9 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/flashcards/get', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollection']);
     Route::post('/flashcards/save', [App\Http\Controllers\FlashcardController::class, 'saveFlashcardCollection']);
     
+    // anki
+    Route::post('/anki/add-card', [App\Http\Controllers\AnkiController::class, 'addCardToAnki']);
+
     // library
     Route::post('/books', [App\Http\Controllers\BookController::class, 'getBooks']);
     Route::post('/book/save', [App\Http\Controllers\BookController::class, 'saveBook']);

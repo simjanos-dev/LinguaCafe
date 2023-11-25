@@ -15,6 +15,7 @@ class SettingsSeeder extends Seeder
      */
     public function run()
     {
+        // deepl api settings
         $setting = Setting::where('name', 'deeplApiKey')->first();
         if (!$setting) {
             DB::table('settings')->insert([
@@ -23,6 +24,7 @@ class SettingsSeeder extends Seeder
             ]);
         }
 
+        // jellyfin api settings
         $setting = Setting::where('name', 'jellyfinApiKey')->first();
         if (!$setting) {
             DB::table('settings')->insert([
@@ -39,6 +41,40 @@ class SettingsSeeder extends Seeder
             ]);
         }
 
+        // anki api settings
+        $setting = Setting::where('name', 'ankiConnectHost')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'ankiConnectHost',
+                'value' => json_encode('http://host.docker.internal:8765')
+            ]);
+        }
+
+        $setting = Setting::where('name', 'ankiAutoAddCards')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'ankiAutoAddCards',
+                'value' => json_encode(false)
+            ]);
+        }
+
+        $setting = Setting::where('name', 'ankiUpdateCards')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'ankiUpdateCards',
+                'value' => json_encode(true)
+            ]);
+        }
+
+        $setting = Setting::where('name', 'ankiShowNotifications')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'ankiShowNotifications',
+                'value' => json_encode(true)
+            ]);
+        }
+
+        // review srs settings
         $setting = Setting::where('name', 'reviewIntervals')->first();
         if (!$setting) {
             DB::table('settings')->insert([

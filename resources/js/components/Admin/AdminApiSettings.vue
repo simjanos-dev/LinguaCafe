@@ -25,13 +25,13 @@
                 <label class="font-weight-bold mt-4">DeepL API key</label>
                 <v-text-field 
                     v-model="settings.deeplApiKey"
+                    class="mb-4"
+                    hide-details
                     filled
                     dense
                     rounded
                     placeholder="DeepL API key"
                     :disabled="saving || characterLimitLoading"
-                    hint="Example: 00000000-aaaa-aaaa-aaaa-000aaaa000aa:00"
-                    persistent-hint
                 ></v-text-field>
 
                 <!-- DeepL API usage -->
@@ -42,7 +42,7 @@
                     DeepL character usage
                 </label>
 
-                <v-card class="rounded-lg pa-6" elevation="0" color="gray3" v-if="characterLimitStatus !== 'error'">
+                <v-card id="deepl-api-card" class="rounded-lg pa-6" elevation="0" v-if="characterLimitStatus !== 'error'">
                     <!-- DeepL API usage skeleton -->
                     <v-card-text class="pa-0" v-if="characterLimitLoading">
                         <v-skeleton-loader
@@ -104,6 +104,53 @@
             </v-card-text>
         </v-card>
 
+        <!-- Anki connect settings -->
+        <div class="subheader subheader-margin-top">Anki</div>
+        <v-card outlined class="rounded-lg pa-4 pt-0">
+            <v-card-text id="jellyfin-card-text">
+                <label class="font-weight-bold">Anki-connect host</label>
+                <v-text-field 
+                    v-model="settings.ankiConnectHost"
+                    hide-details
+                    filled
+                    dense
+                    rounded
+                    placeholder="Anki-connect host"
+                    :disabled="saving || characterLimitLoading"
+                ></v-text-field>
+
+                <label class="font-weight-bold mt-4 mb-0">Auto add cards while reading</label>
+                <v-switch
+                    v-model="settings.ankiAutoAddCards"
+                    class="mt-0"
+                    color="primary"
+                    hide-hints
+                    dense
+                    label="Auto add cards"
+                ></v-switch>
+
+                <label class="font-weight-bold mt-1 mb-0">Update existing cards</label>
+                <v-switch
+                    v-model="settings.ankiUpdateCards"
+                    class="mt-0"
+                    color="primary"
+                    hide-hints
+                    dense
+                    label="Update existing cards"
+                ></v-switch>
+
+                <label class="font-weight-bold mt-1 mb-0">Show notifications</label>
+                <v-switch
+                    v-model="settings.ankiShowNotifications"
+                    class="mt-0"
+                    color="primary"
+                    hide-hints
+                    dense
+                    label="Show notifications"
+                ></v-switch>
+            </v-card-text>
+        </v-card>
+
         <!-- Jellyfin settings -->
         <div class="subheader subheader-margin-top">Jellyfin</div>
         <v-card outlined class="rounded-lg pa-4 pt-0">
@@ -111,24 +158,22 @@
                 <label class="font-weight-bold">Jellyfin host address</label>
                 <v-text-field 
                     v-model="settings.jellyfinHost"
+                    hide-details
                     filled
                     dense
                     rounded
                     placeholder="Jellyfin host address"
-                    hint="Example: https://jellyfin:8096"
-                    persistent-hint
                     :disabled="saving || characterLimitLoading"
                 ></v-text-field>
 
                 <label class="font-weight-bold mt-4">Jellyfin API key</label>
                 <v-text-field 
                     v-model="settings.jellyfinApiKey"
+                    hide-details
                     filled
                     dense
                     rounded
                     placeholder="Jellyfin API key"
-                    hint="Example: 00a0a000aaa00000a00aaaaa00a00a0a"
-                    persistent-hint
                     :disabled="saving || characterLimitLoading"
                 ></v-text-field>
             </v-card-text>
@@ -203,7 +248,11 @@
                     'settingNames': [
                         'deeplApiKey',
                         'jellyfinHost',
-                        'jellyfinApiKey'
+                        'jellyfinApiKey',
+                        'ankiConnectHost',
+                        'ankiAutoAddCards',
+                        'ankiUpdateCards',
+                        'ankiShowNotifications'
                     ]
                 }).then((result) => {
                     this.settings = result.data;
@@ -222,7 +271,11 @@
                     'settings': {
                         'deeplApiKey': this.settings.deeplApiKey,
                         'jellyfinHost': this.settings.jellyfinHost,
-                        'jellyfinApiKey': this.settings.jellyfinApiKey
+                        'jellyfinApiKey': this.settings.jellyfinApiKey,
+                        'ankiConnectHost': this.settings.ankiConnectHost,
+                        'ankiAutoAddCards': this.settings.ankiAutoAddCards,
+                        'ankiUpdateCards': this.settings.ankiUpdateCards,
+                        'ankiShowNotifications': this.settings.ankiShowNotifications
                     }
                 }).then((result) => {
                     this.saving = false;

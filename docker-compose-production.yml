@@ -18,6 +18,8 @@ services:
             - "81:80"
         networks:
             - langapp
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
     mysql:
         image: mysql:5.7.22
         container_name: langapp-database

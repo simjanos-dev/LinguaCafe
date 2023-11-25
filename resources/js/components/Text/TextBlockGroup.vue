@@ -1,5 +1,38 @@
 <template>
     <div class="text-block-group w-100" @mouseup="unselectAllWords">
+        <!-- Anki api notifications -->
+        <v-snackbar 
+            :value="true" 
+            right 
+            top 
+            :light="$props.theme == 'light'"
+            :dark="$props.theme == 'dark'"
+            color="foreground" 
+            class="anki-snackbar rounded-lg mr-2"
+            height="108"
+            :style="{'margin-top': ((snackBarIndex) * 124 + 16) + 'px'}"
+            :timeout="-1"
+            v-for="(snackBar, snackBarIndex) in snackBars"
+            :key="'snackbar-' + snackBarIndex"
+        >
+            <div class="pl-3 pr-2 pt-1 d-flex font-weight-bold snackbar-title">
+                <v-icon v-if="snackBar.type !== 'insert success' && snackBar.type !== 'update success'" color="error" class="mr-2">mdi-alert</v-icon>
+                <v-icon v-else color="success" class="mr-2">mdi-cards</v-icon>
+
+                <template v-if="snackBar.type =='error'">Anki error</template>
+                <template v-if="snackBar.type =='insert success'">Added to anki</template>
+                <template v-if="snackBar.type =='update success'">Updated in anki</template>
+
+                <v-spacer />
+                <v-btn icon>
+                    <v-icon @click="removeSnackbar(snackBar.id)">mdi-close</v-icon>
+                </v-btn>
+            </div>
+            <div class="py-2 px-4">
+                {{ snackBar.content }}
+            </div>
+        </v-snackbar>
+
         <slot
             :textBlocks="textBlocks"
             :language="language"
@@ -62,7 +95,22 @@
                         <span v-if="selection.length == 1">Word</span>
                         <span v-else>Phrase</span>
                         <v-spacer/>
-                        <v-btn dark icon><v-icon>mdi-dots-horizontal</v-icon></v-btn>
+                        
+                        <v-menu offset-y class="rounded-lg">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn dark icon v-bind="attrs" v-on="on">
+                                    <v-icon>mdi-dots-horizontal</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-btn 
+                                v-if="selection.length === 1 || selectedPhrase !== -1"
+                                class="menu-button justify-start" 
+                                @click="addSelectedWordToAnki"
+                            >
+                                <v-icon class="mr-1">mdi-cards</v-icon>Send to anki
+                            </v-btn>
+                        </v-menu>
+                    
                         <v-btn dark icon @click="openVocabBoxEditPage"><v-icon>mdi-pencil</v-icon></v-btn>
                         <v-btn dark icon @click="unselectAllWords"><v-icon>mdi-close</v-icon></v-btn>
                     </v-card-title>
@@ -321,6 +369,11 @@
     export default {
         data: function() {
             return {
+                snackBars: [
+                ],
+                snackbarId: 1,
+                ankiAutoAddCards: false,
+                ankiShowNotifications: false,
                 textBlocks: this.$props._textBlocks,
                 vocabBox: {
                     tab: 0,
@@ -366,9 +419,19 @@
         },
         mounted() {
             window.addEventListener('resize', this.updateVocabBoxPosition);
+
+            axios.post('/settings/get-by-name', {
+                'settingNames': [
+                    'ankiAutoAddCards',
+                    'ankiShowNotifications'
+                ]
+            }).then((response) => {
+                this.ankiAutoAddCards = response.data.ankiAutoAddCards;
+                this.ankiShowNotifications = response.data.ankiShowNotifications;
+            });
         },  
         methods: {
-            updateSelection: function(newSelection, newSelectedPhrase, textBlockId) {
+            updateSelection(newSelection, newSelectedPhrase, textBlockId) {
                 this.vocabBox.tab = 0;
                 this.selection = newSelection;
                 this.selectedPhrase = newSelectedPhrase;
@@ -437,7 +500,7 @@
                 this.updateVocabBoxPosition();
                 this.updateSelectedWordStage();
             },
-            unselectAllWords: function(fast = false, save = true) {
+            unselectAllWords(fast = false, save = true) {
                 if (save && this.selection.length == 1) {
                     this.saveWord();
                 } else if (save && this.selectedPhrase !== -1) {
@@ -455,7 +518,7 @@
                     this.unselectAllWordsProcess();
                 }
             },
-            unselectAllWordsProcess: function() {
+            unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
                 this.selection = [];
                 this.vocabBox.searchField = '';
@@ -472,7 +535,7 @@
                     }
                 }
             },
-            unselectWordInTextBlock: function(textBlockId) {
+            unselectWordInTextBlock(textBlockId) {
                 for (var i = 0; i < this.$children.length; i++) {
                     if (this.$children[i].textBlockId === undefined) {
                         continue;
@@ -483,13 +546,73 @@
                     }
                 }
             },
-            updateVocabBoxTranslationList: function() {
+            updateVocabBoxTranslationList() {
                 this.vocabBox.translationList = this.vocabBox.translationText.split(';');
             },
-            updateSelectedWordLookupCount: function(id) {
+            updateSelectedWordLookupCount(id) {
 
             },
-            addNewPhrase: function() {
+            addSelectedWordToAnki() {
+                // get example sentence and add space. 
+                var exampleSentence = this.getExampleSentence(true);
+                var exampleSentenceText = '';
+                for (let wordIndex = 0; wordIndex < exampleSentence.length; wordIndex++) {
+                    exampleSentenceText += exampleSentence[wordIndex].word;
+                }
+
+                if (this.selection.length == 1) {
+                    var data = {
+                        word: this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].word,
+                        reading: this.vocabBox.reading,
+                        translation: this.vocabBox.translationText,
+                        exampleSentence: exampleSentenceText,
+                    };
+                } else {
+                    let wordsText = '';
+                    for (let wordIndex = 0; wordIndex < this.selection.length; wordIndex ++) {
+                        wordsText += this.selection[wordIndex].word;
+                        if (this.selection[wordIndex].spaceAfter) {
+                            wordsText += ' ';
+                        }
+                    }
+                    
+                    var data = {
+                        word: wordsText,
+                        reading: this.vocabBox.reading,
+                        translation: this.vocabBox.translationText,
+                        exampleSentence: exampleSentenceText
+                    };
+                }
+
+                axios.post('/anki/add-card', data).catch(() => {
+                }).then((response) => {
+                    if (!this.ankiShowNotifications) {
+                        return;
+                    }
+
+                    if (response.data == 'success') {
+                        this.snackBars.push({id: this.snackbarId, content: data.word, type: 'insert success'});
+                    } else if (response.data == 'update success') {
+                        this.snackBars.push({id: this.snackbarId, content: data.word, type: 'update success'});
+                    } else {
+                        this.snackBars.push({id: this.snackbarId, content: data.word + ': ' + response.data, type: 'error'});
+                    }
+                    
+                    var snackbarToRemove = this.snackbarId;
+                    this.snackbarId ++;
+                    setTimeout(() => {
+                        this.removeSnackbar(snackbarToRemove);
+                    }, 5000);
+                });
+            },
+            removeSnackbar(snackbarId) {
+                for (let snackBarIndex = 0; snackBarIndex < this.snackBars.length; snackBarIndex++) {
+                    if (this.snackBars[snackBarIndex].id == snackbarId) {
+                        this.snackBars.splice(snackBarIndex, 1);
+                    }
+                }
+            },
+            addNewPhrase() {
                 // create phrase object
                 var phrase = {
                     id: -1,
@@ -566,7 +689,7 @@
                 this.updateVocabBoxPosition();
                 this.savePhrase();
             },
-            getSelectedPhraseIndex: function() {
+            getSelectedPhraseIndex() {
                 var phraseIndex = -1;
                 var selectedText = this.selection.map(a => a.word.toLowerCase()).join('');
                 
@@ -584,7 +707,7 @@
 
                 return phraseIndex;
             },
-            deletePhrase: function() {
+            deletePhrase() {
                 if (this.selectedPhrase == -1) {
                     return;
                 }
@@ -628,7 +751,7 @@
                 this.unselectAllWords();
                 this.updatePhraseBorders();
             },
-            savePhrase: function(withStage = false, exampleSentenceChanged = false) {
+            savePhrase(withStage = false, exampleSentenceChanged = false) {
                 if (this.phraseCurrentlySaving) {
                     return;
                 }
@@ -673,12 +796,14 @@
                 }).catch((error) => {
                     console.log(error);
                 }).then(() => {
-                    if (exampleSentenceChanged) {
-                        this.updateExampleSentence();
-                    }
+                    
                 });
+
+                if (exampleSentenceChanged) {
+                    this.updateExampleSentence();
+                }
             },
-            updatePhraseBorders: function() {
+            updatePhraseBorders() {
                 for (var j  = 0; j < this.textBlocks.length; j++) {
                     for (var i = 0; i < this.textBlocks[j].words.length; i++) {
                         if (this.textBlocks[j].words[i].phraseIndexes.length) {
@@ -706,7 +831,7 @@
                     }
                 }
             },
-            saveWord: function(withStage = false, exampleSentenceChanged = false) {
+            saveWord(withStage = false, exampleSentenceChanged = false) {
                 var selectedWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
                 
 
@@ -739,12 +864,14 @@
                 }).catch(function (error) {
                     console.log(error);
                 }).then(() => {
-                    if (exampleSentenceChanged) {
-                        this.updateExampleSentence();
-                    }
+
                 });
+
+                if (exampleSentenceChanged) {
+                    this.updateExampleSentence();
+                }
             },
-            setStage: function(stage) {
+            setStage(stage) {
                 // determine if saving is needed
                 var save = 'none';
                 if (this.selection.length == 1 && this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage !== stage) {
@@ -752,7 +879,6 @@
                 } else if (this.selection.length > 1 && this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage !== stage) {
                     save = 'phrase';
                 }
-                
 
                 if (this.selectedPhrase == -1 && this.selection.length == 1) {
                     this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage = stage;
@@ -781,18 +907,21 @@
                     this.updatePhraseBorders();
                 }
 
-
-                this.updateSelectedWordStage();
+                // add word/phrase to anki
+                if (this.ankiAutoAddCards && stage < 0 && (this.vocabBox.selectedStageButton >= 0 || this.vocabBox.selectedStageButton === undefined)) {
+                    this.addSelectedWordToAnki();
+                }
                 
-
+                // save word/phrase
+                this.updateSelectedWordStage();
                 if (save == 'word') {
                     this.saveWord(true, stage < 0);
+
                 } else if (save == 'phrase') {
                     this.savePhrase(true, stage < 0);
                 }
-                
             },
-            updateSelectedWordStage: function() {
+            updateSelectedWordStage() {
                 if (this.selectedPhrase == -1 && this.selection.length) {
                     this.vocabBox.selectedStageButton = parseInt(this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage);
                 } else if (this.selectedPhrase !== -1){
@@ -803,7 +932,7 @@
                     this.vocabBox.selectedStageButton = undefined;
                 }
             },
-            updateExampleSentence: function() {
+            getExampleSentence(withSpaces = false) {
                 var sentenceIndexes = [];
                 for (var i = 0; i < this.selection.length; i++) {
                     if (sentenceIndexes.indexOf(this.selection[i].sentence_index) == -1) {
@@ -822,7 +951,16 @@
                         word: this.textBlocks[this.selectedTextBlock].words[i].word,
                         phrase_ids: []
                     });
+
+                    if (withSpaces && this.textBlocks[this.selectedTextBlock].words[i].spaceAfter) {
+                        exampleSentence[exampleSentence.length - 1].word += ' ';
+                    }
                 }
+
+                return exampleSentence;
+            },
+            updateExampleSentence() {
+                var exampleSentence = this.getExampleSentence();
 
                 var targetType = this.selection.length > 1 ? 'phrase' : 'word';
                 var targetId = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].id;
@@ -837,7 +975,7 @@
                     exampleSentenceWords: JSON.stringify(exampleSentence),
                 });
             },
-            makeSearchRequest: function() {
+            makeSearchRequest() {
                 this.vocabBox.searchResults = [];
                 this.inflections = [];
                 if (!this.selection.length || this.vocabBox.searchField == '') {
@@ -860,7 +998,7 @@
                 //     this.processInflectionSearchResults(response.data);
                 // });
             },
-            processVocabularySearchResults: function(data) {
+            processVocabularySearchResults(data) {
                 this.vocabBox.searchResults = [];
 
                 for (var dictionaryIndex = 0; dictionaryIndex < data.length; dictionaryIndex++) {
@@ -900,7 +1038,7 @@
                     }
                 }
             },
-            processInflectionSearchResults: function(data) {
+            processInflectionSearchResults(data) {
                 var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
                     
                 for (var i = 0; i < data.length; i++) {
@@ -935,7 +1073,7 @@
                     }
                 }
             },
-            addDefinitionToInput: function(definition) {
+            addDefinitionToInput(definition) {
                 if (this.vocabBox.translationText.length && this.vocabBox.translationText[this.vocabBox.translationText.length - 1] !== ';') {
                     this.vocabBox.translationText += ';';
                 }
@@ -943,7 +1081,7 @@
                 this.vocabBox.translationText += definition;
                 this.updateVocabBoxTranslationList();
             },
-            updateVocabBoxPosition: function() {
+            updateVocabBoxPosition() {
                 var margin = 8;
                 this.vocabBox.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
 
@@ -977,7 +1115,7 @@
 
                 this.scrollToVocabBox();
             },
-            scrollToVocabBox: function() {
+            scrollToVocabBox() {
                 setTimeout(() => {
                     var vocabBox = document.getElementById('vocab-box');
                     if (vocabBox) {
@@ -985,7 +1123,7 @@
                     }
                 }, 450);
             },
-            openVocabBoxEditPage: function() {
+            openVocabBoxEditPage() {
                 this.makeSearchRequest();
                 this.vocabBox.tab = 1;
                 setTimeout(this.scrollToVocabBox, 120);
