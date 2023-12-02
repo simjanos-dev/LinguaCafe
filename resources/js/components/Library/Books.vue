@@ -1,5 +1,5 @@
 <template>
-    <v-container id="books" :class="{'cover-layout': layout == 'cover'}">
+    <v-container id="books" :class="{'cover-layout': layout == 'cover', 'book-opened': anyChapterVisible}">
         <!-- Error dialog -->
         <error-dialog
             v-if="errorDialog.active"
@@ -51,7 +51,7 @@
         ></edit-book-chapter-dialog>
 
         
-        <!-- Create book button -->
+        <!-- Toolbar -->
         <div id="toolbar" class="d-flex mx-auto mt-6 mb-2">
               <v-menu offset-y class="rounded-lg">
                     <template v-slot:activator="{ on, attrs }">
@@ -119,48 +119,61 @@
                 :key="index"
             >
                 <div class="book-box">
+                    <!-- Cover image -->
                     <div class="cover-image-box">
                         <img 
                             class="cover-image" 
                             :src="'/images/book_images/' + book.cover_image"
-                            @click="showChapter(book.id)"
+                            @click="openBook(book.id)"
                         ></img>
                     </div>
+                    
+                    <!-- Title bar -->
                     <v-card-text class="book-information pa-0 pl-3">
                         <v-card-title class="book-title pa-3">
                             {{ book.name }}
                             <v-spacer></v-spacer>
                             <v-btn icon @click.stop="toggleChapters(book.id)" v-if="book.chaptersVisible"><v-icon>mdi-arrow-left</v-icon></v-btn>
-                            <v-menu rounded offset-y bottom left nudge-top="-5">
+                            <v-menu content-class="book-menu" rounded offset-y bottom left nudge-top="-5">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
                                 </template>
-                                <v-btn width="100" class="menu-button" tile color="white" @click="showEditBookDialog(book)">Edit</v-btn>
-                                <v-btn width="100" class="menu-button" tile color="white" @click="showStartReviewDialog(book.id, book.name)">Review</v-btn>
-                                <v-btn width="100" class="menu-button" tile color="white" @click="showDeleteBookDialog(book)">Delete</v-btn>
+                                <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts(book.id, index)">Load word counts</v-btn>
+                                <v-btn class="menu-button" tile color="white" @click="showEditBookDialog(book)">Edit</v-btn>
+                                <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(book.id, book.name)">Review</v-btn>
+                                <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog(book)">Delete</v-btn>
                             </v-menu>
                         </v-card-title>
-                        <v-simple-table dense class="book-info-table no-hover pb-4  mx-auto">
+
+                        <!-- Word counts loading animation -->
+                        <div class="book-info-not-loaded-box mb-1" v-if="book.wordCount === null">
+                            <template v-if="book.wordCountLoading">
+                                <v-progress-circular indeterminate color="primary" />
+                            </template>
+                        </div>
+
+                        <!-- Word counts -->
+                        <v-simple-table dense class="book-info-table no-hover pb-4  mx-auto" v-if="book.wordCount !== null">
                             <tbody>
                                 <tr>
-                                    <td width="200px">Words</td>
-                                    <td class="text-center"><div class="info-table-value">{{ book.wordCount.total }}</div></td>
+                                    <td width="200px">Total words</td>
+                                    <td class="text-center"><div class="info-table-value">{{ formatNumber(book.wordCount.total) }}</div></td>
                                 </tr>
                                 <tr>
                                     <td width="200px">Unique words</td>
-                                    <td class="text-center"><div class="info-table-value">{{ book.wordCount.unique }}</div></td>
+                                    <td class="text-center"><div class="info-table-value">{{ formatNumber(book.wordCount.unique) }}</div></td>
                                 </tr>
                                 <tr>
                                     <td width="200px">Known words</td>
-                                    <td class="text-center"><div class="info-table-value">{{ book.wordCount.known }}</div></td>
+                                    <td class="text-center"><div class="info-table-value">{{ formatNumber(book.wordCount.known) }}</div></td>
                                 </tr>
                                 <tr>
                                     <td width="200px">Highlighted words</td>
-                                    <td class="text-center"><div class="info-table-value highlighted-words px-2 rounded-xl">{{ book.wordCount.highlighted }}</div></td>
+                                    <td class="text-center"><div class="info-table-value highlighted-words px-2 rounded-xl">{{ formatNumber(book.wordCount.highlighted) }}</div></td>
                                 </tr>
                                 <tr>
                                     <td width="200px">New words</td>
-                                    <td class="text-center"><div class="info-table-value new-words px-2 rounded-xl">{{ book.wordCount.new }}</div></td>
+                                    <td class="text-center"><div class="info-table-value new-words px-2 rounded-xl">{{ formatNumber(book.wordCount.new) }}</div></td>
                                 </tr>
                             </tbody>
                         </v-simple-table>
@@ -183,10 +196,11 @@
 </template>
 
 <script>
+    import {formatNumber} from './../../helper.js';
     export default {
         data: function() {
             return {
-                layout: 'cover',
+                layout: 'detailed',
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 books: [],
                 anyChapterVisible: false,
@@ -223,6 +237,17 @@
             this.loadBooks();
         },
         methods: {
+            loadBookWordCounts(bookId, index) {
+                this.books[index].wordCountLoading = true;
+                this.books[index].wordCount = null;
+
+                axios.get('/book/get-word-counts/' + bookId).then((response) => {
+                    if (response.data !== 'error') {
+                        this.books[index].wordCountLoading = false;
+                        this.books[index].wordCount = response.data;
+                    }
+                });
+            },
             addChapter(bookId) {
                 this.editBookChapterDialog.active = true;
                 this.editBookChapterDialog.bookId = bookId;
@@ -258,8 +283,7 @@
                     }
                 });
             },
-            // this is used for cover only view
-            showChapter(bookId) {
+            openBook(bookId) {
                 if (!this.anyChapterVisible && this.layout == 'cover') {
                     this.toggleChapters(bookId);
                 }
@@ -272,7 +296,7 @@
                         this.anyChapterVisible = !this.books[bookIndex].chaptersVisible;
                         this.books[bookIndex].chaptersVisible = !this.books[bookIndex].chaptersVisible;
                         setTimeout(() => {
-                            document.getElementById('book-' + bookId).scrollIntoView();
+                            document.getElementById('book-' + bookId).scrollIntoViewIfNeeded();
                         }, 500);
                     }
                 }
@@ -291,11 +315,13 @@
                     this.anyChapterVisible = false;
                     for (let bookIndex = 0; bookIndex < response.data.length; bookIndex ++) {
                         response.data[bookIndex].chaptersVisible = false;
+                        response.data[bookIndex].wordCountLoading = false;
                     }
 
                     this.books = response.data;
                 });
-            }
+            },
+            formatNumber: formatNumber
         }
     }
 </script>

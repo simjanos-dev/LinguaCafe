@@ -86,7 +86,7 @@
                         <v-stepper-content step="5">
                             <!-- Importing info -->
                             <v-alert dark border="left" type="info" color="primary" v-if="importResult === ''">
-                                Importing your selected text. Please be patient, it can take several minutes minutes based on:
+                                Importing your selected text. Please be patient, it can take several minutes based on:
                                 <ul>
                                     <li>How long is the text you are importing.</li>
                                     <li>How many new word it contains.</li>

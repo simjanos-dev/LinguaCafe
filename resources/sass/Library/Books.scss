@@ -27,6 +27,9 @@
     }
 }
 
+.book-menu {
+    width: 170px;
+}
 
 #books {
     width: 100%;
@@ -39,7 +42,12 @@
             width: 100%;
             max-width: 1186px;
         }
+
+        &.book-opened #toolbar {
+            max-width: 800px;
+        }
     }
+
 
     #toolbar {
         max-width: 800px;
@@ -120,6 +128,14 @@
             font-size: 20px;
         }
 
+        .book-info-not-loaded-box {
+            width: calc(100% - 24px);
+            height: 142px;
+            line-height: 142px;
+            font-size: 24px;
+            text-align: center;
+        }
+
         .book-info-table {
             width: calc(100% - 24px);
             background-color: transparent;
@@ -128,7 +144,7 @@
             .info-table-value {
                 height: 24px;
                 line-height: 24px;
-                width: 60px;
+                width: 64px;
 
                 &.highlighted-words {
                     background-color: var(--v-highlightedWord-base);

@@ -116,6 +116,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // library
     Route::post('/books', [App\Http\Controllers\BookController::class, 'getBooks']);
+    Route::get('/book/get-word-counts/{bookId}', [App\Http\Controllers\BookController::class, 'getBookWordCounts']);
     Route::post('/book/save', [App\Http\Controllers\BookController::class, 'saveBook']);
     Route::post('/book/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
     Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChapters']);

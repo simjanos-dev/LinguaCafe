@@ -21,16 +21,47 @@ class BookController extends Controller
 
     public function getBooks() {
         $books = new \stdClass();
-
         $selectedLanguage = Auth::user()->selected_language;
-        $books = Book::where('language', $selectedLanguage)->where('user_id', Auth::user()->id)->orderBy('updated_at', 'DESC')->get();
-        $words = EncounteredWord::select(['id', 'word', 'stage'])->where('user_id', Auth::user()->id)->where('language', Auth::user()->selected_language)->get()->keyBy('id')->toArray();
+        $books = Book::
+            where('user_id', Auth::user()->id)
+            ->where('language', $selectedLanguage)
+            ->orderBy('updated_at', 'DESC')
+            ->get();
 
         for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->wordCount = $books[$i]->getWordCounts($words);
+            $books[$i]->wordCount = null;
         }
 
         return json_encode($books);
+    }
+
+    public function getBookWordCounts($bookId) {
+        $selectedLanguage = Auth::user()->selected_language;
+
+        // Get words for calculating word counts
+        $words = EncounteredWord
+            ::select(['id', 'word', 'stage'])
+            ->where('user_id', Auth::user()->id)
+            ->where('language', Auth::user()->selected_language)
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
+        // Get book
+        $book = Book
+            ::where('user_id', Auth::user()->id)
+            ->where('id', $bookId)
+            ->first();
+        
+        // Return error if no book found    
+        if (!$book) {
+            return 'error';
+        }
+            
+        // Calculate word counts
+        $wordCounts = $book->getWordCounts($words);
+
+        return json_encode($wordCounts);
     }
 
     public function saveBook(Request $request) {

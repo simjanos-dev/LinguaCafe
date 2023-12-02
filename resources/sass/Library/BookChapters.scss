@@ -1,4 +1,54 @@
 .book-chapters {
+    .expansion-card {
+        .v-skeleton-loader:nth-child(1) .v-skeleton-loader__image,
+        .v-skeleton-loader:nth-child(1) .v-skeleton-loader__card,
+        .v-skeleton-loader:nth-child(1) {
+            width: 320px;
+            height: 32px;
+        }
+
+        .v-skeleton-loader:nth-child(3) .v-skeleton-loader__image,
+        .v-skeleton-loader:nth-child(3) .v-skeleton-loader__card,
+        .v-skeleton-loader:nth-child(3) {
+            float: right;
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .skeleton-row {
+        td:nth-child(1) .v-skeleton-loader .v-skeleton-loader__image,
+        td:nth-child(1) .v-skeleton-loader .v-skeleton-loader__card,
+        td:nth-child(1) .v-skeleton-loader {
+            width: 160px;
+            height: 24px;
+        }
+
+        @for $i from 2 to 7 {
+            td:nth-child(#{$i}) .v-skeleton-loader .v-skeleton-loader__image,
+            td:nth-child(#{$i}) .v-skeleton-loader .v-skeleton-loader__card,
+            td:nth-child(#{$i}) .v-skeleton-loader {
+                width: 60px;
+                height: 24px;
+            }
+        }
+
+        td:nth-child(7) {
+            min-width: 84px !important;
+            width: 84px !important;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        td:nth-child(7) .v-skeleton-loader .v-skeleton-loader__image,
+        td:nth-child(7) .v-skeleton-loader .v-skeleton-loader__card,
+        td:nth-child(7) .v-skeleton-loader {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+        }
+    }
+
     .book-chapter-information-mobile-table {
         display: none;
         width: 100%;
@@ -55,6 +105,44 @@
     
         .book-chapter-information-table {
             display: none;
+        }
+    }
+}
+
+@media (max-width: 830px) {
+    .book-chapters {
+        .skeleton-row {
+            td:nth-child(1) .v-skeleton-loader .v-skeleton-loader__image,
+            td:nth-child(1) .v-skeleton-loader .v-skeleton-loader__card,
+            td:nth-child(1) .v-skeleton-loader {
+                width: 96%;
+            }
+
+            @for $i from 1 to 8 {
+                td:nth-child(#{$i}),
+                td:nth-child(#{$i}),
+                td:nth-child(#{$i}) {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+
+                td:nth-child(#{$i}) .v-skeleton-loader .v-skeleton-loader__image,
+                td:nth-child(#{$i}) .v-skeleton-loader .v-skeleton-loader__card,
+                td:nth-child(#{$i}) .v-skeleton-loader {
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 445px) {
+    .book-chapters {
+        .expansion-card {
+            .v-skeleton-loader:nth-child(1) .v-skeleton-loader__image,
+            .v-skeleton-loader:nth-child(1) .v-skeleton-loader__card,
+            .v-skeleton-loader:nth-child(1) {
+                width: 220px;
+            }
         }
     }
 }
