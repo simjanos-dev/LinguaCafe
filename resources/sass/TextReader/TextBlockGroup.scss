@@ -172,14 +172,56 @@
         z-index: 5;
         transition: transform .12s linear !important;
         transform-origin: top;
-        border-top: none;
-        
+        border-right: none;
+        box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.38);
+        user-select: text;
+
+        // subheader
+        .vocab-box-subheader span {
+            background-color: var(--v-gray-base);
+            color: var(--v-text-base);
+            border-radius: 8px;
+            user-select: none;
+        }
+
+        .vocab-box-content {
+            box-sizing: border-box;
+            width: calc(100% - 44px);
+        }
+
+        .vocab-box-toolbar {
+            box-sizing: border-box;
+            width: 44px;
+            min-height: 100%;
+            border-radius: 0px;
+            background-color: var(--v-primary-base);
+
+            i.v-icon {
+                color: var(--v-gray-base);
+            }
+        }
+
         .v-window-item {
             background-color: var(--v-foreground-base);
         }
 
         .vocab-box-subheader {
             color: rgb(120, 120, 120);
+        }
+
+        #vocab-box-kanji-box .kanji {
+            width: 38px;
+            height: 38px;
+            line-height: 38px;
+            border: 1px solid var(--v-customBorder-base);
+            text-align: center;
+            font-size: 20px;
+            user-select: none;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--v-gray3-base);
+            }
         }
 
         #vocab-box-stage-buttons {
@@ -197,6 +239,7 @@
                 min-width: unset !important;
                 padding: 0px !important;
                 flex: 1;
+
                 border-top: 1px solid var(--v-customBorder-base);
                 border-bottom: 1px solid var(--v-customBorder-base);
 
@@ -221,7 +264,7 @@
         }
 
         .expression {
-            font-size: 25px;
+            font-size: 22px;
 
             rt {
                 font-size: 18px;
@@ -230,10 +273,6 @@
 
         #definitions {
             font-size: 16px;
-        }
-
-        #vocab-box-title {
-            background-color: var(--v-primary-base);
         }
 
         &.closed {
@@ -254,16 +293,16 @@
         
         &:after {
             border-color: rgba(0, 0, 0, 0);
-            border-bottom-color: var(--v-primary-base);
+            border-bottom-color: var(--v-foreground-base);
             border-width: 14px;
             margin-left: -14px;
         }
         
         &:before {
             border-color: rgba(0, 0, 0, 0);
-            border-bottom-color: rgb(200, 200, 200);
-            border-width: 15px;
-            margin-left: -15px;
+            border-bottom-color: var(--v-customBorder-base);
+            border-width: 16px;
+            margin-left: -16px;
         }
 
         #vocab-box-edit-page .v-input__slot {

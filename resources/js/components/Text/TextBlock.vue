@@ -150,6 +150,7 @@
                     if (this.words[currentWordIndex].word !== 'NEWLINE') {
                         newSelection.push({
                             word: this.words[currentWordIndex].word,
+                            kanji: this.uniqueWords[this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase())].kanji,
                             reading: this.uniqueWords[this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase())].reading,
                             sentence_index: this.words[currentWordIndex].sentence_index,
                             wordIndex: currentWordIndex,
@@ -196,6 +197,7 @@
                 // set selected word          
                 var selectedWord = {
                     word: event.srcElement.outerText,
+                    kanji: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].kanji,
                     spaceAfter: this.words[wordIndex].spaceAfter,
                     wordIndex: wordIndex,
                     uniqueWordIndex: this.getUniqueWordIndex(event.srcElement.outerText.toLowerCase()),
@@ -275,6 +277,7 @@
                     this.words[i].selected = true;
                     var selectedWord = {
                         word: this.words[i].word,
+                        kanji: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].kanji,
                         wordIndex: i,
                         uniqueWordIndex: this.getUniqueWordIndex(this.words[i].word.toLowerCase()),
                         reading: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].reading,

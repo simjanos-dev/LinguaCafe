@@ -63,13 +63,13 @@
 
         <!-- Vocab box -->
         <v-card 
-            elevation="12"
             v-if="selection.length"
             id="vocab-box" 
             :class="{
                 'new-phrase': selection.length > 1 && selectedPhrase == 1, 
                 'rounded-lg': true,
                 'closed': vocabBox.closed,
+                'd-flex': true
             }" 
             :style="{
                 'top': vocabBox.position.top + 'px', 
@@ -88,279 +88,286 @@
                 <span class="h5">Saving phrase, please wait a second.</span><br><br>
                 <v-progress-circular indeterminate size="64" color="white"></v-progress-circular>
             </v-overlay>
-            <v-tabs-items v-model="vocabBox.tab">
-                <!-- Basic info page -->
-                <v-tab-item :value="0">
-                    <v-card-title id="vocab-box-title" class="py-1 pl-4 pr-3 text-white">
-                        <span v-if="selection.length == 1">Word</span>
-                        <span v-else>Phrase</span>
-                        <v-spacer/>
-                        
-                        <v-menu offset-y class="rounded-lg">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn dark icon v-bind="attrs" v-on="on">
-                                    <v-icon>mdi-dots-horizontal</v-icon>
-                                </v-btn>
+            
+            <!-- Vocab box content -->
+            <div class="vocab-box-content pa-4 pb-1">
+                <v-tabs-items v-model="vocabBox.tab">
+                    <!-- Word info page -->
+                    <v-tab-item :value="0">
+                        <v-card-text class="pa-0">
+                            <!-- Single word -->
+                            <template v-if="selection.length == 1">
+                                <div class="vocab-box-subheader mb-2 mt-0"><span class="rounded-pill py-1 px-3">Word</span></div>
+                                <!-- With base word -->
+                                <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
+                                    <ruby>
+                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}
+                                        <rt v-if="$props.language == 'japanese'">
+                                            {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}
+                                        </rt>
+                                    </ruby>
+                                    <v-icon color="text">mdi-arrow-right-thick</v-icon>
+                                    <ruby>
+                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
+                                        <rt v-if="$props.language == 'japanese'">
+                                            {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
+                                        </rt>
+                                    </ruby>
+                                </div>
+                                
+                                <!-- No base word -->
+                                <div 
+                                    class="expression" 
+                                    v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''"
+                                >
+                                    <ruby>
+                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
+                                        <rt v-if="$props.language == 'japanese'">
+                                            {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
+                                        </rt>
+                                    </ruby>
+                                </div>
                             </template>
-                            <v-btn 
-                                v-if="selection.length === 1 || selectedPhrase !== -1"
-                                class="menu-button justify-start" 
-                                @click="addSelectedWordToAnki"
-                            >
-                                <v-icon class="mr-1">mdi-cards</v-icon>Send to anki
-                            </v-btn>
-                        </v-menu>
-                    
-                        <v-btn dark icon @click="openVocabBoxEditPage"><v-icon>mdi-pencil</v-icon></v-btn>
-                        <v-btn dark icon @click="unselectAllWords"><v-icon>mdi-close</v-icon></v-btn>
-                    </v-card-title>
 
-                    <v-card-text class="pt-2">
-                        <!-- Single word -->
-                        <template v-if="selection.length == 1">
-                            <div class="vocab-box-subheader">Word</div>
-                            <!-- With base word -->
-                            <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
-                                <ruby>
-                                    {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}
-                                    <rt v-if="$props.language == 'japanese'">
-                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}
-                                    </rt>
-                                </ruby>
-                                <v-icon color="text">mdi-arrow-right-thick</v-icon>
-                                <ruby>
-                                    {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
-                                    <rt v-if="$props.language == 'japanese'">
-                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
-                                    </rt>
-                                </ruby>
-                            </div>
+                            <!-- Phrase -->
+                            <template v-if="selection.length > 1">
+                                <div class="vocab-box-subheader mb-2 mt-0"><span class="rounded-pill py-1 px-3">Phrase</span></div>
+                                <!-- Phrase text -->
+                                <div class="expression">
+                                    <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">
+                                        <span :class="{'mr-2': word.spaceAfter}">{{ word.word }}</span>
+                                    </template>
+                                </div>
+
+                                <!-- Phrase reading -->
+                                <template v-if="$props.language == 'japanese'">
+                                    <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Reading</span></div>
+                                    <div class="expression">{{ vocabBox.reading }}</div>
+                                </template>
+                            </template>
                             
-                            <!-- No base word -->
-                            <div 
-                                class="expression" 
-                                v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''"
-                            >
-                                <ruby>
-                                    {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
-                                    <rt v-if="$props.language == 'japanese'">
-                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
-                                    </rt>
-                                </ruby>
-                            </div>
-                        </template>
-
-                        <!-- Phrase -->
-                        <template v-if="selection.length > 1">
-                            <div class="vocab-box-subheader">Phrase</div>
-                            <!-- Phrase text -->
-                            <div class="expression">
-                                <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">
-                                    <span :class="{'mr-2': word.spaceAfter}">{{ word.word }}</span>
-                                </template>
-                            </div>
-
-                            <!-- Phrase reading -->
-                            <template v-if="$props.language == 'japanese'">
-                                <div class="vocab-box-subheader mt-4">Reading</div>
-                                <div class="expression">{{ vocabBox.reading }}</div>
+                            <!-- Kanji list -->
+                            <template v-if="vocabBox.kanji.length">
+                                <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Kanji</span></div>
+                                <div id="vocab-box-kanji-box" class="d-flex flex-wrap ma-0">
+                                    <div 
+                                        class="kanji rounded-lg mr-2" 
+                                        v-for="kanji, index in vocabBox.kanji" 
+                                        :key="index"
+                                        @click="openKanji(kanji)"
+                                    >
+                                        {{ kanji }}
+                                    </div>
+                                </div>
                             </template>
-                        </template>
-                        
-                        <!-- Definitions -->
-                        <template v-if="vocabBox.translationText.length">
-                            <div class="vocab-box-subheader mt-4">Definitions</div>
-                            <ul id="definitions" class="ma-0">
-                                <template>
+
+                            <!-- Definitions -->
+                            <template v-if="vocabBox.translationText.length">
+                                <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Definitions</span></div>
+                                <ul id="definitions" class="ma-0">
                                     <li v-for="translation, index in vocabBox.translationList" :key="index">{{ translation }}</li>
-                                </template>
-                            </ul>
-                        </template>
+                                </ul>
+                            </template>
 
-                        <!-- Stage buttons-->
-                        <template v-if="selection.length == 1 || selectedPhrase !== -1">
-                            <div class="vocab-box-subheader mt-4">Stage</div>
-                            <div id="vocab-box-stage-buttons">
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
-                                <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
-                                <v-btn 
-                                    :class="{'v-btn--active': vocabBox.selectedStageButton == 0}"
-                                    @click="setStage(0)" 
-                                >
-                                    <v-icon>mdi-check</v-icon>
-                                </v-btn>
-                                <v-btn 
-                                    :class="{'v-btn--active': vocabBox.selectedStageButton == 1}" 
-                                    @click="setStage(1)" 
-                                    v-if="selection.length == 1"
-                                >
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
+                            <!-- Stage buttons-->
+                            <template v-if="selection.length == 1 || selectedPhrase !== -1">
+                                <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Level</span></div>
+                                <div id="vocab-box-stage-buttons" class="mb-2">
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
+                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
+                                    <v-btn 
+                                        :class="{'v-btn--active': vocabBox.selectedStageButton == 0}"
+                                        @click="setStage(0)" 
+                                    >
+                                        <v-icon>mdi-check</v-icon>
+                                    </v-btn>
+                                    <v-btn 
+                                        :class="{'v-btn--active': vocabBox.selectedStageButton == 1}" 
+                                        @click="setStage(1)" 
+                                        v-if="selection.length == 1"
+                                    >
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                </div>
+                            </template>
+                        </v-card-text>
+
+                        <v-card-actions v-if="selection.length > 1" class="mt-2 pl-0">
+                            <v-btn 
+                                small
+                                rounded
+                                color="success"
+                                @click="addNewPhrase"
+                                v-if="selection.length > 1 && selectedPhrase == -1"
+                            >Save phrase</v-btn>
+                            <v-btn 
+                                small
+                                rounded
+                                color="error"
+                                @click="deletePhrase"
+                                v-if="selectedPhrase !== -1"
+                            >Delete phrase</v-btn>
+                        </v-card-actions>
+                    </v-tab-item>
+
+                    <!-- Editing page -->
+                    <v-tab-item :value="1">
+                        <v-card-text id="vocab-box-edit-page" class="pa-0">
+                            <!-- Word text fields -->
+                            <div class="d-flex" v-if="selection.length == 1">
+                                <v-text-field 
+                                    :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
+                                    hide-details
+                                    label="Lemma"
+                                    filled
+                                    dense
+                                    rounded
+                                    v-model="vocabBox.base_word"
+                                ></v-text-field>
+                                <v-text-field 
+                                    :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
+                                    hide-details
+                                    label="Word"
+                                    disabled
+                                    filled
+                                    dense
+                                    rounded
+                                    :value="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word"
+                                ></v-text-field>
                             </div>
-                        </template>
-                    </v-card-text>
 
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn 
-                            small
-                            rounded
-                            color="success"
-                            @click="addNewPhrase"
-                            v-if="selection.length > 1 && selectedPhrase == -1"
-                        >Save phrase</v-btn>
-                        <v-btn 
-                            small
-                            rounded
-                            color="error"
-                            @click="deletePhrase"
-                            v-if="selectedPhrase !== -1"
-                        >Delete phrase</v-btn>
-                    </v-card-actions>
-                </v-tab-item>
+                            <!-- Reading fields -->
+                            <div class="d-flex" v-if="selection.length == 1 && $props.language == 'japanese'">
+                                <v-text-field 
+                                    class="my-2"
+                                    hide-details
+                                    label="Lemma reading"
+                                    filled
+                                    dense
+                                    rounded
+                                    v-model="vocabBox.base_word_reading"
+                                ></v-text-field>
+                                <v-text-field 
+                                    class="my-2"
+                                    hide-details
+                                    label="Reading"
+                                    filled
+                                    dense
+                                    rounded
+                                    v-model="vocabBox.reading"
+                                ></v-text-field>
+                            </div>
 
-                <!-- Editing page -->
-                <v-tab-item :value="1">
-                    <v-card-title id="vocab-box-title" class="py-1 pl-3 text-white">
-                        <v-btn dark icon class="mr-2" @click="vocabBox.tab = 0;"><v-icon>mdi-arrow-left</v-icon></v-btn>
-                        <span>Edit</span>
-                        <v-spacer/>
-                        <v-btn dark icon @click="unselectAllWords"><v-icon>mdi-close</v-icon></v-btn>
-                    </v-card-title>
-                    <v-card-text id="vocab-box-edit-page">
-                        <!-- Word text fields -->
-                        <div class="d-flex" v-if="selection.length == 1">
-                            <v-text-field 
-                                :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
-                                hide-details
-                                label="Lemma"
-                                filled
-                                dense
-                                rounded
-                                v-model="vocabBox.base_word"
-                            ></v-text-field>
-                            <v-text-field 
-                                :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
-                                hide-details
-                                label="Word"
-                                disabled
-                                filled
-                                dense
-                                rounded
-                                :value="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word"
-                            ></v-text-field>
-                        </div>
-
-                        <!-- Reading fields -->
-                        <div class="d-flex" v-if="selection.length == 1 && $props.language == 'japanese'">
-                            <v-text-field 
+                            <!-- Phrase fields -->
+                            <v-textarea
+                                v-if="selection.length > 1 && $props.language == 'japanese'"
                                 class="my-2"
-                                hide-details
-                                label="Lemma reading"
-                                filled
-                                dense
-                                rounded
-                                v-model="vocabBox.base_word_reading"
-                            ></v-text-field>
-                            <v-text-field 
-                                class="my-2"
-                                hide-details
                                 label="Reading"
                                 filled
                                 dense
+                                no-resize
                                 rounded
+                                hide-details
+                                height="100"
                                 v-model="vocabBox.reading"
+                            ></v-textarea>
+
+                            <!-- Translation -->
+                            <v-textarea
+                                :class="{'mt-2': $props.language !== 'japanese'}"
+                                label="Translation"
+                                filled
+                                dense
+                                no-resize
+                                rounded
+                                hide-details
+                                height="100"
+                                v-model="vocabBox.translationText"
+                                @change="updateVocabBoxTranslationList"
+                            ></v-textarea>
+
+                            <!-- Search term -->
+                            <!-- <div class="vocab-box-subheader mt-2">Dictionary search</div> -->
+                            <v-text-field 
+                                label="Dictionary search"
+                                class="mt-2 mb-3"
+                                filled
+                                dense
+                                rounded
+                                width="100%"
+                                hide-details
+                                v-model="vocabBox.searchField"
+                                @change="makeSearchRequest"
                             ></v-text-field>
-                        </div>
 
-                        <!-- Phrase fields -->
-                        <v-textarea
-                            v-if="selection.length > 1 && $props.language == 'japanese'"
-                            class="my-2"
-                            label="Reading"
-                            filled
-                            dense
-                            no-resize
-                            rounded
-                            hide-details
-                            height="100"
-                            v-model="vocabBox.reading"
-                        ></v-textarea>
-
-                        <!-- Translation -->
-                        <v-textarea
-                            :class="{'mt-2': $props.language !== 'japanese'}"
-                            label="Translation"
-                            filled
-                            dense
-                            no-resize
-                            rounded
-                            hide-details
-                            height="100"
-                            v-model="vocabBox.translationText"
-                            @change="updateVocabBoxTranslationList"
-                        ></v-textarea>
-
-                        <!-- Search term -->
-                        <!-- <div class="vocab-box-subheader mt-2">Dictionary search</div> -->
-                        <v-text-field 
-                            label="Dictionary search"
-                            class="mt-2 mb-3"
-                            filled
-                            dense
-                            rounded
-                            width="100%"
-                            hide-details
-                            v-model="vocabBox.searchField"
-                            @change="makeSearchRequest"
-                        ></v-text-field>
-
-                        <!-- Search results -->
-                        <div id="search-results" class="mb-4 pa-2">
-                            <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in vocabBox.searchResults" :key="searchresultIndex">
-                                <!-- Regular record -->
-                                <template v-if="searchResult.dictionary !== 'JMDict'">
-                                    <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                                        <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
-                                        <div 
-                                            v-for="(definition, definitionIndex) in record.definitions" 
-                                            :key="definitionIndex" 
-                                            class="search-result-definition rounded"
-                                            @click="addDefinitionToInput(definition)"
-                                        >
-                                            {{ definition }} <v-icon>mdi-plus</v-icon>
-                                        </div>
-                                    </div>
-                                </template>
-
-                                <!-- JMDict record -->
-                                <template v-if="searchResult.dictionary == 'JMDict'">
-                                    <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                                        <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
-                                        <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in record.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
-                                            {{ definition }} <v-icon>mdi-plus</v-icon>
-                                        </div>
-                                    
-                                        <template v-if="record.otherForms.length">
-                                            <div class="vocab-box-subheader">Other forms:</div>
-                                            <div class="d-flex flex-wrap">
-                                                <div v-for="(form, formIndex) in record.otherForms" :key="formIndex">
-                                                    {{ form }}<span class="mr-2" v-if="formIndex < record.otherForms.length - 1">, </span>
-                                                </div>
+                            <!-- Search results -->
+                            <div id="search-results" class="mb-4 pa-2">
+                                <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in vocabBox.searchResults" :key="searchresultIndex">
+                                    <!-- Regular record -->
+                                    <template v-if="searchResult.dictionary !== 'JMDict'">
+                                        <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
+                                            <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
+                                            <div 
+                                                v-for="(definition, definitionIndex) in record.definitions" 
+                                                :key="definitionIndex" 
+                                                class="search-result-definition rounded"
+                                                @click="addDefinitionToInput(definition)"
+                                            >
+                                                {{ definition }} <v-icon>mdi-plus</v-icon>
                                             </div>
-                                        </template>
-                                    </div>
-                                </template>
+                                        </div>
+                                    </template>
+
+                                    <!-- JMDict record -->
+                                    <template v-if="searchResult.dictionary == 'JMDict'">
+                                        <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
+                                            <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
+                                            <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in record.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
+                                                {{ definition }} <v-icon>mdi-plus</v-icon>
+                                            </div>
+                                        
+                                            <template v-if="record.otherForms.length">
+                                                <div class="vocab-box-subheader">Other forms:</div>
+                                                <div class="d-flex flex-wrap">
+                                                    <div v-for="(form, formIndex) in record.otherForms" :key="formIndex">
+                                                        {{ form }}<span class="mr-2" v-if="formIndex < record.otherForms.length - 1">, </span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
-                        </div>
-                    </v-card-text>
-                </v-tab-item>
-            </v-tabs-items>
+                        </v-card-text>
+                    </v-tab-item>
+                </v-tabs-items>
+            </div>
+
+            <!-- Vocab box toolbar -->
+            <div class="vocab-box-toolbar d-flex flex-column align-center flex-wrap pt-1 rounded-r-lg">
+                <v-btn dark icon @click="unselectAllWords" title="Close"><v-icon>mdi-close</v-icon></v-btn>
+                <v-btn dark icon @click="openVocabBoxEditPage" title="Edit" v-if="vocabBox.tab == 0"><v-icon>mdi-pencil</v-icon></v-btn>
+                <v-btn dark icon @click="vocabBox.tab = 0;" v-if="vocabBox.tab == 1" title="Back"><v-icon>mdi-arrow-left</v-icon></v-btn>
+                <v-menu left offset-y class="rounded-lg">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn dark icon v-bind="attrs" v-on="on" title="More options">
+                            <v-icon>mdi-dots-horizontal</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-btn 
+                        v-if="selection.length === 1 || selectedPhrase !== -1"
+                        class="menu-button justify-start" 
+                        @click="addSelectedWordToAnki"
+                    >
+                        <v-icon class="mr-1">mdi-cards</v-icon>Send to anki
+                    </v-btn>
+                </v-menu>
+            </div>
         </v-card>
     </div>
 </template>
@@ -391,6 +398,7 @@
                     reading: '',
                     base_word: '',
                     base_word_reading: '',
+                    kanji: [],
                 },
                 selection: [],
                 selectedPhrase: -1,
@@ -442,6 +450,7 @@
                 this.vocabBox.searchField = '';
                 this.vocabBox.translationText = '';
                 this.vocabBox.reading = '';
+                this.vocabBox.kanji = [];
                 this.vocabBox.base_word = '';
                 this.vocabBox.base_word_reading = '';
 
@@ -496,6 +505,16 @@
                     }
                 }
 
+                // collect unique kanji
+                for (let wordIndex = 0; wordIndex < this.selection.length; wordIndex ++) {
+                    var kanji = this.selection[wordIndex].kanji;
+                    for (let kanjiIndex = 0; kanjiIndex < kanji.length; kanjiIndex ++) {
+                        if (this.vocabBox.kanji.indexOf(kanji[kanjiIndex]) === -1) {
+                            this.vocabBox.kanji.push(kanji[kanjiIndex]);
+                        }
+                    }
+                }
+
                 this.updateVocabBoxTranslationList();
                 this.updateVocabBoxPosition();
                 this.updateSelectedWordStage();
@@ -521,6 +540,7 @@
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
                 this.selection = [];
+                this.vocabBox.kanji = [];
                 this.vocabBox.searchField = '';
                 this.vocabBox.translationText = '';
                 this.vocabBox.reading = '';
@@ -1127,6 +1147,9 @@
                 this.makeSearchRequest();
                 this.vocabBox.tab = 1;
                 setTimeout(this.scrollToVocabBox, 120);
+            },
+            openKanji(kanji) {
+                window.location.href = '/kanji/' + kanji;
             }
         }
     }

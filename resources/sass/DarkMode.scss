@@ -333,6 +333,39 @@
 
 // text block
 #app.dark .text-block-group {
+    #vocab-box .vocab-box-toolbar {
+        background-color: var(--v-primary-base);
+        
+        i.v-icon {
+            color: var(--v-textDark-base);
+        }
+    }
+    
+    #vocab-box {
+        border: 2px solid var(--v-gray3-base);
+        border-color: var(--v-gray3-base);
+        box-shadow: none;
+    }
+
+    #vocab-box #vocab-box-kanji-box .kanji {
+        border: 1px solid var(--v-gray3-base);
+
+        &:hover {
+            background-color: var(--v-gray-base);
+        }
+    }
+
+    #vocab-box:before {
+        border-bottom-color: var(--v-gray3-base);
+    }
+
+    // subheader
+    #vocab-box .vocab-box-subheader span {
+        background-color: var(--v-gray3-base);
+        color: var(--v-text-base);
+        border-radius: 8px;
+    }
+
     // vocab box lemma arrow
     #vocab-box .expression i {
         color: var(--v-text-base);
@@ -363,14 +396,17 @@
     // vocab box stage buttons border
     #vocab-box #vocab-box-stage-buttons .v-btn {
         border-color: var(--v-gray3-base);
+        color: var(--v-text-base) !important;
     }
 
-    // vocab box title and stage button text
-    #vocab-box .v-card__title i,
-    #vocab-box .v-card__title,
-    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active .v-btn__content,
+    // vocab box stage button
+    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active {
+        background-color: var(--v-gray-base) !important;
+    }
+
+    
     #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i {
-        color: var(--v-textDark-base) !important;
+        color: var(--v-text-base) !important;
     }
 
     // text highlighting
