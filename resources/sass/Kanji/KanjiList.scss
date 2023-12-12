@@ -3,6 +3,11 @@
     padding-bottom: 50px;
     overflow: hidden;
 
+    .kanji-list-toolbar-button {
+        margin-top: 6px;
+        margin-right: 6px;
+    }
+
     .subheader {
         width: 100%;
         color: rgba(0, 0, 0, .8)
@@ -34,10 +39,11 @@
         border-radius: 8px;
         text-align: center;
         cursor: pointer; 
-        color: rgba(0, 0, 0, .8);
+        color: var(--v-text-base);
+        font-family: notosans !important;
 
         &:not(.learned) {
-            color: rgba(0, 0, 0, .2);
+            color: var(--v-gray-base);
         }
     }
 }

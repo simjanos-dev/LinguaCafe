@@ -116,8 +116,8 @@ const FlashcardCollectionList = require('./components/FlashcardCollectionList.vu
 const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
 const Review = require('./components/Review.vue').default;
 const Vocabulary = require('./components/Vocabulary/Vocabulary.vue').default;
-const KanjiList = require('./components/KanjiList.vue').default;
-const KanjiDetails = require('./components/KanjiDetails.vue').default;
+const KanjiList = require('./components/Kanji/KanjiList.vue').default;
+const KanjiDetails = require('./components/Kanji/KanjiDetails.vue').default;
 
 
 const router = new VueRouter({

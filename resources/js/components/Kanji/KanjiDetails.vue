@@ -50,15 +50,15 @@
         </v-card>
         
         <!-- Kanji radicals -->
-        <div class="subheader">Radicals</div>
+        <div class="subheader mt-8">Radicals</div>
         <div id="kanji-radicals" class="d-flex flex-wrap">
             <div class="kanji-radical mr-3" v-for="(radical, index) in radicals">{{ radical.radical }} <span>{{ radical.strokes }} strokes</span></div>
         </div>
         
         <!-- Kanji words -->
-        <div class="subheader">Known words with {{ kanji }}</div>
+        <div class="subheader mt-8">Known words with {{ kanji }}</div>
         <div id="kanji-words" class="h5">
-            <v-simple-table id="kanji-words-table" dense class="mt-3 mb-4 border rounded-lg">
+            <v-simple-table id="kanji-words-table" dense class="mt-3 mb-4 border rounded-lg no-hover">
                 <thead>
                     <tr>
                         <th>Word</th>
@@ -126,7 +126,8 @@
                 },
                 stroke: {
                     attr: {
-                        active: this.$vuetify.theme.currentTheme.secondary,
+                        active: this.$vuetify.theme.currentTheme.primary,
+                        stroke: this.$vuetify.theme.currentTheme.text,
                         'stroke-width': 5,
                         'font-size': 1
                     },
@@ -139,8 +140,7 @@
 
             axios.post('/kanji/details', {
                 kanji: this.kanji
-            }).then(function (response) {
-                console.log(response.data);
+            }).then((response) => {
                 this.words = response.data.words;
                 this.radicals = JSON.parse(response.data.radicals);
                 this.meanings = JSON.parse(response.data.kanji.meanings);
@@ -150,10 +150,7 @@
                 this.grade = response.data.kanji.grade;
                 this.jlpt = response.data.kanji.jlpt;
                 this.frequency = response.data.kanji.frequency;
-            }.bind(this)).catch(function (error) {
-
-            }).then(function () {
-            });            
+            });
         },
         methods: {
             drawingFinished: function(x) {

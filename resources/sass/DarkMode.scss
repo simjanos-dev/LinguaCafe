@@ -462,3 +462,21 @@
         background-color: var(--v-gray-base) !important;
     }
 }
+
+// kanji list
+#app.dark #kanji-list {
+    .kanji {
+        &:not(.learned) {
+            color: var(--v-gray2-base);
+        }
+    }
+}
+
+// kanji details
+#app.dark #kanji #kanji-radicals {
+    .kanji-radical {
+        &:hover {
+            background-color: var(--v-gray-base);
+        }
+    }
+}
