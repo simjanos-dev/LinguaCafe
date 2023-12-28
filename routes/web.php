@@ -64,11 +64,11 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/goals/get-calendar-data', [App\Http\Controllers\GoalController::class, 'getCalendarData']);
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
 
-    // tools
-    Route::get('/tools/jmdict/text-generator', [App\Http\Controllers\ToolController::class, 'jmdictTextGenerator']);
-    Route::get('/tools/jmdict/import', [App\Http\Controllers\ToolController::class, 'jmdictImport']);
-    Route::get('/tools/kanji/import', [App\Http\Controllers\ToolController::class, 'kanjiImport']);
-    Route::get('/tools/radicals/import', [App\Http\Controllers\ToolController::class, 'kanjiRadicalImport']);
+    // jmdict
+    Route::get('/jmdict/xml-to-text', [App\Http\Controllers\JmdictController::class, 'xmlToText']);
+    Route::get('/jmdict/import-jmdict', [App\Http\Controllers\JmdictController::class, 'importJmdict']);
+    Route::get('/jmdict/import-kanji', [App\Http\Controllers\JmdictController::class, 'importKanji']);
+    Route::get('/jmdict/import-radicals', [App\Http\Controllers\JmdictController::class, 'importRadicals']);
     
     // settings
     Route::post('/settings/get-by-name', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);

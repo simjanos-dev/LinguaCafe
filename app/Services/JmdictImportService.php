@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use App\Models\Setting;
 use App\Models\Kanji;
 use App\Models\Radical;
 use App\Models\Lesson;
@@ -11,9 +12,9 @@ use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 
-class ToolController extends Controller
+class JmdictImportService
 {
-    public function jmdictTextGenerator() {
+    public function xmlToText() {
         ob_implicit_flush(true);
         $file = fopen(base_path() . '/storage/app/dictionaries/jmdict.txt', 'w');
         $doc = new \DOMDocument();
@@ -141,7 +142,7 @@ class ToolController extends Controller
             '初' => '⻂',
             '買' => '⺲',
             '滴' => '啇',
-            //乞 has no character, image must be displayed
+            //乞 has no character, an image must be displayed
         ];
 
 

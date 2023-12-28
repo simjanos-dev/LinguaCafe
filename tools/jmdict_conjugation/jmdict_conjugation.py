@@ -3,8 +3,8 @@ import os
 import json
 
 index = 0
-with open('./../../storage/app/dictionaries/jmdict_processed.txt', 'w') as outputFile:
-    with open('./../../storage/app/dictionaries/jmdict.txt') as file:
+with open('/var/www/html/storage/app/dictionaries/jmdict_processed.txt', 'w') as outputFile:
+    with open('/var/www/html/storage/app/dictionaries/jmdict.txt') as file:
         for line in file:
             data = line.replace('\n', '').split('|')
             if len(data[3]) > 0:
