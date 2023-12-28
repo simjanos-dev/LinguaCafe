@@ -172,7 +172,7 @@ class TextBlock
             $word->phrase_ids = [];
 
             // japanese post processing
-            if ($this->language == 'japanese') {
+            if ($this->language == 'japanese' && $word->word !== 'NEWLINE') {
                 // combine 2 verbs after eachother into one word
                 if ($wordIndex < $wordCount - 1 && $this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex + 1]->pos == 'VERB') {
                     $wordIndex ++;
