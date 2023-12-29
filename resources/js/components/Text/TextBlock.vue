@@ -170,7 +170,8 @@
                 }, 500);
             },
             startSelection: function(event, wordIndex) {
-                this.$emit('unselectAllWords', true);
+                this.$emit('saveSelectedWord');
+
                 this.touchTimer = null;
                 if (event == undefined) {
                     return;
@@ -327,7 +328,7 @@
                 for (let i = 0; i < this.ongoingSelection.length; i++) {
                     this.words[this.ongoingSelection[i].wordIndex].selected = true;
                 }
-
+                
                 this.selection = this.ongoingSelection;
                 this.ongoingSelection = [];
 

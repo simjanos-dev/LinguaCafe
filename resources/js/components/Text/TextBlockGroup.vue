@@ -41,7 +41,7 @@
             :fontSize="fontSize"
             :lineSpacing="lineSpacing"
             :updateSelection="updateSelection"
-            :unselectAllWords="unselectAllWords"
+            :saveSelectedWord="saveSelectedWord"
         >
             <text-block
                 v-for="textBlock in textBlocks"
@@ -57,7 +57,7 @@
                 :fontSize="fontSize"
                 :lineSpacing="lineSpacing"
                 @textSelected="updateSelection"
-                @unselectAllWords="unselectAllWords"
+                @saveSelectedWord="saveSelectedWord"
             ></text-block>
         </slot>
 
@@ -518,6 +518,13 @@
                 this.updateVocabBoxTranslationList();
                 this.updateVocabBoxPosition();
                 this.updateSelectedWordStage();
+            },
+            saveSelectedWord() {
+                if (this.selection.length == 1) {
+                    this.saveWord();
+                } else if (this.selectedPhrase !== -1) {
+                    this.savePhrase();
+                }
             },
             unselectAllWords(fast = false, save = true) {
                 if (save && this.selection.length == 1) {
