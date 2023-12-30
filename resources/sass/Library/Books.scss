@@ -271,18 +271,29 @@
 
 @media (max-width: 550px) {
     #books #book-list .book {
+        max-width: 300px;
+
         .book-box {
             flex-wrap: wrap;
         }
 
         .cover-image-box, 
-        img.cover-image,
         .book-information {
             width: 100%;
+            height: auto !important;
+        }
+
+        .cover-image-box img.cover-image {
+            width: 100%;
+            height: auto !important;
         }
 
         .book-info-table {
             max-width: 360px;
+        }
+
+        td {
+            padding-left: 0px;
         }
     }
 }
