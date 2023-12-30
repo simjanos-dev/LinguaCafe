@@ -68,20 +68,20 @@ class VocabularyController extends Controller
             }
         }
 
-        if (isset($request->translation)) {
-            $word->translation = $request->translation;
+        if ($request->has('translation')) {
+            $word->translation = $request->translation === NULL ? '' : $request->translation;
         }
 
-        if (isset($request->reading)) {
-            $word->reading = $request->reading;
+        if ($request->has('reading')) {
+            $word->reading = $request->reading === NULL ? '' : $request->reading;
         }
 
-        if (isset($request->base_word)) {
-            $word->base_word = $request->base_word;
+        if ($request->has('base_word')) {
+            $word->base_word = $request->base_word === NULL ? '' : $request->base_word;
         }
 
-        if (isset($request->base_word_reading)) {
-            $word->base_word_reading = $request->base_word_reading;
+        if ($request->has('base_word_reading')) {
+            $word->base_word_reading = $request->base_word_reading === NULL ? '' : $request->base_word_reading;
         }
 
         if (isset($request->lookup_count)) {
@@ -170,12 +170,12 @@ class VocabularyController extends Controller
             $phrase->words_searchable = implode('', $request->words);
         }
 
-        if (isset($request->reading)) {
-            $phrase->reading = $request->reading;
+        if ($request->has('reading')) {
+            $phrase->reading = $request->reading === NULL ? '' : $request->reading;
         }
 
-        if (isset($request->translation)) {
-            $phrase->translation = $request->translation;
+        if ($request->has('translation')) {
+            $phrase->translation = $request->translation === NULL ? '' : $request->translation;
         }
 
         if (isset($request->stage)) {
