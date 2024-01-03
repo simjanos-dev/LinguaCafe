@@ -1,4 +1,4 @@
-@import 'variables';
+@import './../variables';
 
 #review-box {
     position: relative;
@@ -157,6 +157,10 @@
             #review-card-back {
                 color: white;
             }    
+
+            #review-card-back *{
+                display: none !important;
+            }
         }
         
         #review-card-front,
