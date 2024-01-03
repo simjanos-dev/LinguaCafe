@@ -185,6 +185,10 @@ class VocabularyController extends Controller
         if (isset($request->relearning)) {
             $phrase->relearning = boolval($request->relearning);
         }
+
+        if (isset($request->lookup_count)) {
+            $phrase->lookup_count = $request->lookup_count;
+        }
         
         $phrase->save();
 

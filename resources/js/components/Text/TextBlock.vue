@@ -110,7 +110,7 @@
         mounted() {
             this.updatePhraseBorders();
         },
-    methods: {
+        methods: {
             hoverPhraseSelection: function(wordIndex) {
                 this.removePhraseHover();
                 var phraseIndexes = this.words[wordIndex].phraseIndexes;
@@ -332,12 +332,12 @@
                 this.selection = this.ongoingSelection;
                 this.ongoingSelection = [];
 
-                if (this.selection.length == 1) {
-                    this.updateLookupCount(this.selection[0].word, this.selection[0].uniqueWordIndex);
-                }
-
                 if (this.selection.length) {
-                    this.selectedPhrase = this.getSelectedPhraseIndex();                    
+                    this.selectedPhrase = this.getSelectedPhraseIndex();
+
+                    if (this.selection.length == 1 || this.selectedPhrase !== -1) {
+                        this.updateLookupCount(this.selection[0].word);
+                    }
                     
                     this.updatePhraseBorders();
                     this.$emit('textSelected', this.selection, this.selectedPhrase, this.$props.textBlockId);
@@ -400,18 +400,41 @@
                     }
                 }
             },
-            updateLookupCount: function(word, uniqueWordIndex) {
-                this.uniqueWords[uniqueWordIndex].lookup_count ++;
-                // axios.post('/vocabulary/word/save', {
-                //     id: this.uniqueWords[uniqueWordIndex].id,
-                //     lookup_count: this.uniqueWords[uniqueWordIndex].lookup_count
-                // });
+            /*
+                Emits an event to TextBlockGroup, which will run updateWordLookupCount or 
+                updatePhraseLookupCount on all TextBlocks.
+            */
+            updateLookupCount(word) {
+                if (this.selection.length == 1) {
+                    this.$emit('updateLookupCount', 'word', word, null);
+                } else if (this.selectedPhrase !== -1) {
+                    this.$emit('updateLookupCount', 'phrase', null, this.phrases[this.selectedPhrase].id);
+                }
+            },
+            /*
+                Updates the lookup count of all instances of a word in the text.
+            */
+            updateWordLookupCount(word) {
+                let uniqueWordIndex = this.getUniqueWordIndex(word);
+                
+                if (uniqueWordIndex === -1) {
+                    return;
+                }
 
-                // update all instances in text
-                this.$emit('update-lookup-count', this.uniqueWords[uniqueWordIndex].id);
+                this.uniqueWords[uniqueWordIndex].lookup_count ++;
                 for (var i  = 0; i < this.words.length; i++) {
                     if (this.words[i].word.toLowerCase() == word) {
-                        this.words[i].lookup_count = this.uniqueWords[uniqueWordIndex].lookup_count;
+                        this.words[i].lookup_count ++;
+                    }
+                }
+            },
+            /*
+                Updates the lookup count of a phrase.
+            */
+            updatePhraseLookupCount(phraseId) {
+                for (var i  = 0; i < this.phrases.length; i++) {
+                    if (this.phrases[i].id == phraseId) {
+                        this.phrases[i].lookup_count ++;
                     }
                 }
             },

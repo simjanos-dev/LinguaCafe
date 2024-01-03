@@ -42,6 +42,7 @@
             :lineSpacing="lineSpacing"
             :updateSelection="updateSelection"
             :saveSelectedWord="saveSelectedWord"
+            :updateLookupCount="updateLookupCount"
         >
             <text-block
                 v-for="textBlock in textBlocks"
@@ -58,6 +59,7 @@
                 :lineSpacing="lineSpacing"
                 @textSelected="updateSelection"
                 @saveSelectedWord="saveSelectedWord"
+                @updateLookupCount="updateLookupCount"
             ></text-block>
         </slot>
 
@@ -573,6 +575,20 @@
                     }
                 }
             },
+            updateLookupCount(type, word, phraseId) {
+                for (var i = 0; i < this.$children.length; i++) {
+                    if (this.$children[i].textBlockId === undefined) {
+                        continue;
+                    }
+
+                    if (type === 'word') {
+                        this.$children[i].updateWordLookupCount(word);
+                    } else {
+                        this.$children[i].updatePhraseLookupCount(phraseId);
+                    }
+                }
+
+            },
             updateVocabBoxTranslationList() {
                 this.vocabBox.translationList = this.vocabBox.translationText.split(';');
             },
@@ -798,6 +814,7 @@
                     words: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].words,
                     reading: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].reading,
                     translation: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].translation,
+                    lookup_count: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].lookup_count,
                 };
 
                 if (this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id == -1) {

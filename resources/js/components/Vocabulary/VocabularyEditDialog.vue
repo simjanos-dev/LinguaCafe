@@ -57,7 +57,6 @@
                     </v-chip>
                     
                     <v-chip 
-                        v-if="$props.itemType == 'Word'"
                         dark
                         :small="$vuetify.breakpoint.smAndDown"
                         class="ma-1 pr-3" 
@@ -67,7 +66,7 @@
                         {{ item.lookup_count }} lookups<v-icon :small="$vuetify.breakpoint.smAndDown" right class="ml-1">mdi-magnify</v-icon>
                     </v-chip>
                     
-                    <v-chip 
+                    <!-- <v-chip 
                         v-if="$props.itemType == 'Word'"
                         dark
                         :small="$vuetify.breakpoint.smAndDown"
@@ -76,7 +75,7 @@
                         title="Number of times this word or phrase has been read."
                     >
                         {{ item.read_count }} reads<v-icon :small="$vuetify.breakpoint.smAndDown" right class="ml-1">mdi-book-open</v-icon>
-                    </v-chip>
+                    </v-chip> -->
                     
                 </div>
 

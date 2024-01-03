@@ -126,7 +126,8 @@
                                 :fontSize="slotProps.fontSize"
                                 :lineSpacing="slotProps.lineSpacing"
                                 @textSelected="slotProps.updateSelection"
-                                @unselectAllWords="slotProps.unselectAllWords"
+                                @saveSelectedWord="slotProps.saveSelectedWord"
+                                @updateLookupCount="slotProps.updateLookupCount"
                             ></text-block>
                         </div>
                     </div>

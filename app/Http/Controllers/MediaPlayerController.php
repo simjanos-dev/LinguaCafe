@@ -123,6 +123,7 @@ class MediaPlayerController extends Controller
         TextBlockGroup vue component. 
     */
     public function processJellyfinSubtitle(Request $request) {
+        $selectedLanguage = Auth::user()->selected_language;
         $subtitles = $request->subtitle;
         $processedSubtitles = [];
         
@@ -141,7 +142,7 @@ class MediaPlayerController extends Controller
                 $tokenizedSubtitles[] = $subtitle['Text'];
             }
 
-            $tokenizedSubtitles = TextBlock::tokenizeRawTextArray($tokenizedSubtitles);
+            $tokenizedSubtitles = TextBlock::tokenizeRawTextArray($tokenizedSubtitles, $selectedLanguage);
         } else {
             $cachedSubtitle->subtitles = json_decode($cachedSubtitle->subtitles);
             // echo('<pre>');var_dump($cachedSubtitle->subtitles);echo('</pre>');exit;
@@ -152,7 +153,7 @@ class MediaPlayerController extends Controller
         
         $phrases = Phrase
                 ::where('user_id', Auth::user()->id)
-                ->where('language', Auth::user()->selected_language)
+                ->where('language', $selectedLanguage)
                 ->get();
 
         $processedSubtitlesForCache = [];

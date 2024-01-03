@@ -128,7 +128,7 @@ class TextBlock
         This is used when multiple blocks of raw text needs to be tokenized. This way it
         only needs one http request, and it speeds up the process.
     */
-    public static function tokenizeRawTextArray($textArray) {
+    public static function tokenizeRawTextArray($textArray, $language) {
         $replacedTexts = [];
         foreach ($textArray as $text) {
             $replacedTexts[] = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
@@ -136,6 +136,7 @@ class TextBlock
 
         $tokenizedTextArray = Http::post('langapp-python-service-dev:8678/tokenizer/', [
             'raw_text' => $replacedTexts,
+            'language' => $language
         ]);
 
         return json_decode($tokenizedTextArray);
