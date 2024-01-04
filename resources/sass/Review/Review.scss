@@ -1,6 +1,7 @@
 @import './../variables';
 
 #review-box {
+    
     position: relative;
     display: block;
     width: 100%;
@@ -21,7 +22,7 @@
         display: block;
         height: 280px;
         width: 40px;
-        right: calc(50% - 316px);
+        right: calc(50% - 346px);
         top: 100px;
     }
     
@@ -33,74 +34,36 @@
     }
 
     #review-progress-line {
+        margin: auto;
         position: relative; 
-        display: block;
-        width: 100%;
-        height: 40px;
-        margin: 0px auto;
-        padding: 0px;
-        border-radius: 30px;
+        width: 900px;
+        height: 36px;
 
-        #progress-bar-correct-counter {
-            display: inline-block;
-            float: left;
-            width: 55px;
-            height: 30px;
-            line-height: 28px;
-            text-align: center;
+        .v-badge i {
+            color: var(--v-textDark-base) !important;
             font-size: 15px;
-            background-color: var(--v-foreground-base);
-            margin-right: 20px;
-            border-radius: 6px;   
         }
 
-        #progress-bar-remaining-counter {
-            display: inline-block;
-            float: left;
-            width: 55px;
-            height: 30px;
-            line-height: 28px;
+        #progress-bar-correct-counter {
+            width: 64px;
+            height: 36px;
+            line-height: 34px;
             text-align: center;
             font-size: 15px;
             background-color: var(--v-foreground-base);
             color: var(--v-text-base);
-            margin-left: 20px;  
-            border-radius: 6px;
+            border-radius: 6px;   
         }
 
-        #review-progress-bar {
-            position: relative;
-            display: inline-block;
-            float: left;
-            width: calc(100% - 150px);
-            height: 30px;
-            border-radius: 30px;
-            overflow-x: hidden;
+        #progress-bar-remaining-counter {
+            width: 64px;
+            height: 36px;
+            line-height: 34px;
+            text-align: center;
+            font-size: 15px;
             background-color: var(--v-foreground-base);
-            
-
-            #review-progress-bar-text {
-                display: none;
-                box-sizing: border-box;
-                position: absolute;
-                width: 100%;
-                left: 0px;
-                top: 0px;
-                height: 28px;
-                line-height: 28px;
-                margin: 0px;
-                padding: 0px;
-                text-align: center;
-                color: var(--v-text-base);
-            }
-
-            #review-progress-bar-correct {
-                display: inline-block;
-                float: left;
-                height: 100%;
-                background-color: var(--v-highlightedWord-base);
-                transition: ease-in .3s;
-            }
+            color: var(--v-text-base); 
+            border-radius: 6px;
         }
     }
 
@@ -109,8 +72,8 @@
         position: relative;
         display: block;
         margin: 10px auto;
-        width: 540px;
-        height: 280px;
+        width: 600px;
+        min-height: 320px;
         perspective: 800px;
         margin-top: 25px;
         animation: none;
@@ -173,8 +136,12 @@
             background: var(--v-foreground-base);
             color: var(--v-text-base);
             backface-visibility: hidden;
-            padding: 10px;
+            padding: 16px;
             overflow: visible;
+            
+            #vocab-box {
+                text-align: left;
+            }
 
             .phrase-words {
                 width: 100%;
@@ -188,7 +155,7 @@
 
         #review-card-front {
             display: flex;
-            align-items: center;
+            align-items: start;
             justify-content: center;
             
             .single-word {
@@ -223,7 +190,7 @@
     }
     
     100% {
-        transform: rotateY( -180deg ) translate(-450px, -175px) scale(0);
+        transform: rotateY( -180deg ) translate(-420px, -175px) scale(0);
     }
 }
 
@@ -233,13 +200,13 @@
     }
     
     100% {
-        transform: rotateY( -180deg ) translate(450px, -175px) scale(0);
+        transform: rotateY( -180deg ) translate(420px, -175px) scale(0);
     }
 }
 
 @keyframes review-card-new-animation {
     0%   {
-        transform: rotateY( -180deg ) translate(-450px, -175px) scale(0);
+        transform: rotateY( -180deg ) translate(-420px, -175px) scale(0);
     }
     
     100% {
@@ -247,13 +214,23 @@
     }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1130px) {
     #review-box #review-progress-line {
-        width: 760px;
+        width: 800px;
+    }
 
-        #review-progress-bar {
-            width: 600px;
-        }
+    #review-box #review-card {
+        width: 540px;
+        height: 300px;
+    }
+
+    #review-box #toolbar {
+        position: absolute;
+        display: block;
+        height: 280px;
+        width: 40px;
+        right: calc(50% - 316px);
+        top: 100px;
     }
     
     @keyframes back-to-the-deck-animation {
@@ -262,7 +239,7 @@
         }
         
         100% {
-            transform: rotateY( -180deg ) translate(-350px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(-360px, -175px) scale(0);
         }
     }
     
@@ -272,13 +249,13 @@
         }
         
         100% {
-            transform: rotateY( -180deg ) translate(350px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(360px, -175px) scale(0);
         }
     }
     
     @keyframes review-card-new-animation {
         0%   {
-            transform: rotateY( -180deg ) translate(-350px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(-360px, -175px) scale(0);
         }
         
         100% {
@@ -287,13 +264,23 @@
     }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 860px) {
     #review-box #review-progress-line {
-        width: 560px;
+        width: 90%;
+    }
 
-        #review-progress-bar {
-            width: 400px;
-        }
+    #review-box #review-card {
+        width: 460px;
+        height: 320px;
+    }
+
+    #review-box #toolbar {
+        position: absolute;
+        display: block;
+        height: 280px;
+        width: 40px;
+        right: calc(50% - 276px);
+        top: 86px;
     }
     
     @keyframes back-to-the-deck-animation {
@@ -302,7 +289,7 @@
         }
         
         100% {
-            transform: rotateY( -180deg ) translate(-250px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(-40vw, -175px) scale(0);
         }
     }
     
@@ -312,13 +299,13 @@
         }
         
         100% {
-            transform: rotateY( -180deg ) translate(250px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(40vw, -175px) scale(0);
         }
     }
     
     @keyframes review-card-new-animation {
         0%   {
-            transform: rotateY( -180deg ) translate(-250px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(-40vw, -175px) scale(0);
         }
         
         100% {
@@ -327,7 +314,7 @@
     }
 }
 
-@media (max-width: 575px) {
+@media (max-width: 600px) {
     #review-box {
         #toolbar {
             position: relative;
@@ -358,6 +345,7 @@
             width: 90%;
             min-width: 260px;
             max-width: 440px;
+            height: 360px;
             margin: 0px auto;
             margin-bottom: 10px;
             margin-top: 10px;
@@ -370,16 +358,17 @@
 
             #review-progress-bar {
                 width: 100%;
-                min-width: 260px;
+                margin-left: 12px !important;
+                margin-right: 12px !important;
                 
                 #review-progress-bar-text {
-                    display: block;
+                    display: none;
                 }
             }
 
             #progress-bar-correct-counter,
             #progress-bar-remaining-counter {
-                display: none;
+                width: 52px;
             }
         }
     }
@@ -390,7 +379,7 @@
         }
         
         100% {
-            transform: rotateY( -180deg ) translate(-0px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(-33vw, -230px) scale(0);
         }
     }
     
@@ -400,13 +389,13 @@
         }
         
         100% {
-            transform: rotateY( -180deg ) translate(0px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(33vw, -230px) scale(0);
         }
     }
     
     @keyframes review-card-new-animation {
         0%   {
-            transform: rotateY( -180deg ) translate(-0px, -175px) scale(0);
+            transform: rotateY( -180deg ) translate(-33vw, -230px) scale(0);
         }
         
         100% {

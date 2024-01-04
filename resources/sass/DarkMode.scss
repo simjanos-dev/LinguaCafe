@@ -429,14 +429,8 @@
 
 // review
 #review-box {
-    #review-progress-line {
-        #review-progress-bar {
-            background-color: var(--v-foreground-base);
-        }
-
-        #progress-bar-correct-counter {
-            color: var(--v-textDark-base);
-        }
+    hr {
+        background-color: var(--v-gray3-base);
     }
 
     #review-card {

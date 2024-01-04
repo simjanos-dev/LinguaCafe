@@ -1,23 +1,52 @@
 <template>
     <v-container v-if="currentReviewIndex !== -1" id="review-box" :class="{'pa-0': $vuetify.breakpoint.smAndDown}">
         <div id="review" v-if="!finished">
-            <div id="review-progress-line">
-                <div id="progress-bar-correct-counter" class="border" :style="{'background-color': $vuetify.theme.currentTheme.success}">{{ correctReviews }}</div>
-                <div id="review-progress-bar">
-                        <div id="review-progress-bar-correct" :style="{'width': (correctReviews / totalReviews * 100) + '%'}"></div>
-                        <div id="review-progress-bar-text">{{ correctReviews }} / {{ totalReviews }}</div>
-                </div>
-                <div id="progress-bar-remaining-counter" class="border">{{ totalReviews - correctReviews }}</div>
+            <!-- Progress bar -->
+            <div id="review-progress-line" class="d-flex align-center">
+                <v-badge
+                    left
+                    overlap
+                    color="success"
+                    icon="mdi-check"
+                >
+                    <div 
+                        id="progress-bar-correct-counter" 
+                        class="border" 
+                        :style="{'border-color': $vuetify.theme.currentTheme.success}"
+                    >
+                        {{ correctReviews }}
+                    </div>
+                </v-badge>
+
+                <v-progress-linear
+                    id="review-progress-bar"
+                    color="success"
+                    background-color="foreground"
+                    background-opacity="1"
+                    height="36"
+                    :value="correctReviews / totalReviews * 100"
+                    class="rounded-pill border mx-6"
+                >
+                </v-progress-linear>
+                <v-badge
+                    overlap
+                    color="error"
+                    icon="mdi-cards"
+                >
+                    <div id="progress-bar-remaining-counter" class="border">{{ totalReviews - correctReviews }}</div>
+                </v-badge>
             </div>
-    
+            
+            <!-- Toolbar -->
             <div id="toolbar">
                 <v-btn icon class="my-2" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
                 <v-btn icon class="my-2" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
-                <v-btn icon class="my-2" @click="settings.fontSize ++; unselectWord(); saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                <v-btn icon class="my-2" @click="settings.fontSize --; unselectWord(); saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                <v-btn icon class="my-2" @click="settings.fontSize --; saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                 <v-btn icon class="my-2" @click="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon :color="settings.sentenceMode ? 'primary' : ''">mdi-card-text</v-icon></v-btn>
             </div>
 
+            <!-- Card -->
             <div id="review-card" 
                 :class="{
                     'revealed': revealed, 
@@ -27,11 +56,13 @@
                 }">
                 <div id="review-card-content" class="vocab-box-area">
                     <!-- Review card front -->
-                    <div id="review-card-front" class="rounded-lg border"> 
+                    <div id="review-card-front" class="rounded-lg border">
                         <!-- Word review -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined">
+                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Example sentence mode -->
-                            <div class="phrase-words" v-show="settings.sentenceMode || reviews[currentReviewIndex].type == 'phrase'" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <div v-show="settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                {{ reviews[currentReviewIndex].word }}<hr>
+
                                 <text-block-group
                                     ref="textBlock"
                                     :theme="theme"
@@ -46,9 +77,38 @@
                             </div>
                             
                             <!-- Single word  mode -->
-                            <div class="single-word" v-if="!settings.sentenceMode && reviews[currentReviewIndex].type == 'word'" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <div class="single-word" v-if="!settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}
+                            </div>
+                        </template>
+
+                        <!-- Phrase review -->
+                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
+                            <!-- Phrase only mode -->
+                            <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <template v-if="language == 'japanese'">
+                                    {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                                </template>
+                                <template v-else>
+                                    {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
+                                </template>
+
+                                <!-- Example sentence mode -->
+                                <hr v-if="settings.sentenceMode">
+                                <div v-show="settings.sentenceMode">
+                                    <text-block-group
+                                        ref="textBlock"
+                                        :theme="theme"
+                                        :fullscreen="settings.fullscreen"
+                                        :_text-blocks="textBlocks"
+                                        :language="language"
+                                        :highlight-words="true"
+                                        :plain-text-mode="false"
+                                        :font-size="settings.fontSize"
+                                        :line-spacing="0"
+                                    ></text-block-group>
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -64,13 +124,14 @@
                             </div>
                         </template>
 
-                        <!-- Phrase -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
-                            <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <span 
-                                    v-for="(word, wordIndex) in textBlocks[0].words" :key="wordIndex"
-                                    :class="{'mr-2': word.spaceAfter}"
-                                >{{ word.word }}</span>
+                            <div :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <template v-if="language == 'japanese'">
+                                    {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                                </template>
+                                <template v-else>
+                                    {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
+                                </template>
                             </div>
                         </template>
 
@@ -81,7 +142,19 @@
                             {{ reviews[currentReviewIndex].reading }}
                         </div>
                         <hr>
+                        
+                        <!-- Phrase -->
+                        <template v-if="reviews[currentReviewIndex] !== undefined">
+                            <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <span 
+                                    v-for="(word, wordIndex) in textBlocks[0].words" :key="wordIndex"
+                                    :class="{'mr-2': word.spaceAfter}"
+                                >{{ word.word }}</span>
+                            </div>
+                        </template>
+
                         <!-- Translation -->
+                        <hr>
                         <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
                             {{ reviews[currentReviewIndex].translation }}
                         </div>
@@ -366,7 +439,7 @@
 
                 this.finishedReviews ++;
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
-                
+                console.log(this.reviews[this.currentReviewIndex]);
                 this.textBlocks[0] = {
                     id: -1,
                     words: [],
