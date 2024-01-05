@@ -1,4 +1,4 @@
-@import 'variables';
+@import './../variables';
 
 #current-month {
     color: var(--v-text-lighten2);
@@ -264,6 +264,15 @@
 }
 
 @media (max-width: 575px) {
+    #about {
+        justify-content: center;
+        
+        .v-card {
+            width: 360px !important;
+            margin-right: 0px !important;
+        }
+    }
+
     .subheader.subheader-home {
         max-width: 358px;
         margin-left: auto;

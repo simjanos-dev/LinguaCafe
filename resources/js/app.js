@@ -110,6 +110,8 @@ const LoginForm = require('./components/Login/LoginForm.vue').default;
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home/Home.vue').default;
+const PatchNotes = require('./components/Home/PatchNotes.vue').default;
+const Attributions = require('./components/Home/Attributions.vue').default;
 const Books = require('./components/Library/Books.vue').default;
 const TextReader = require('./components/TextReader/TextReader.vue').default;
 const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
@@ -118,12 +120,14 @@ const Review = require('./components/Review/Review.vue').default;
 const Vocabulary = require('./components/Vocabulary/Vocabulary.vue').default;
 const KanjiList = require('./components/Kanji/KanjiList.vue').default;
 const KanjiDetails = require('./components/Kanji/KanjiDetails.vue').default;
-
+Vue.component('attributions', Attributions);
 
 const router = new VueRouter({
     mode: 'history',
     routes: [
         { path: '/', component: Home },
+        { path: '/patch-notes', component: PatchNotes },
+        { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
         { path: '/admin', component: AdminLayout },
         { path: '/media-player', component: MediaPlayer },

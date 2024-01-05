@@ -29,37 +29,37 @@ class HomeController extends Controller
     }
 
     public function dev() {
-        $lessons = Lesson::get();
-        $lessonCount = count($lessons);
-        foreach ($lessons as $lessonIndex => $lesson) {
-            $textBlock = new TextBlock();
-            $textBlock->rawText = $lesson->raw_text;
-            $textBlock->tokenizeRawText();
-            $textBlock->processTokenizedWords();
-            $textBlock->collectUniqueWords();
-            $textBlock->updateAllPhraseIds();
-            $textBlock->createNewEncounteredWords();
+        // $lessons = Lesson::get();
+        // $lessonCount = count($lessons);
+        // foreach ($lessons as $lessonIndex => $lesson) {
+        //     $textBlock = new TextBlock();
+        //     $textBlock->rawText = $lesson->raw_text;
+        //     $textBlock->tokenizeRawText();
+        //     $textBlock->processTokenizedWords();
+        //     $textBlock->collectUniqueWords();
+        //     $textBlock->updateAllPhraseIds();
+        //     $textBlock->createNewEncounteredWords();
     
-            $uniqueWordIds = DB
-                ::table('encountered_words')
-                ->select('id')
-                ->where('user_id', $lesson->user_id)
-                ->where('language', $lesson->language)
-                ->whereIn('word', $textBlock->uniqueWords)
-                ->pluck('id')
-                ->toArray();
+        //     $uniqueWordIds = DB
+        //         ::table('encountered_words')
+        //         ->select('id')
+        //         ->where('user_id', $lesson->user_id)
+        //         ->where('language', $lesson->language)
+        //         ->whereIn('word', $textBlock->uniqueWords)
+        //         ->pluck('id')
+        //         ->toArray();
                 
-            // update lesson word data
-            $lesson->word_count = $textBlock->getWordCount();
-            $lesson->unique_words = json_encode($textBlock->uniqueWords);
-            $lesson->unique_word_ids = json_encode($uniqueWordIds);
-            $lesson->setProcessedText($textBlock->processedWords);
-            $lesson->save();
+        //     // update lesson word data
+        //     $lesson->word_count = $textBlock->getWordCount();
+        //     $lesson->unique_words = json_encode($textBlock->uniqueWords);
+        //     $lesson->unique_word_ids = json_encode($uniqueWordIds);
+        //     $lesson->setProcessedText($textBlock->processedWords);
+        //     $lesson->save();
 
-            echo(($lessonIndex + 1) . '/' . $lessonCount . ' finished <br>');
-            echo str_repeat(' ',1024*64);
-            flush();
-        }
+        //     echo(($lessonIndex + 1) . '/' . $lessonCount . ' finished <br>');
+        //     echo str_repeat(' ',1024*64);
+        //     flush();
+        // }
     }
 
 
