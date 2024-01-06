@@ -82,9 +82,37 @@
                 </v-menu>
 
                 <v-spacer></v-spacer>
+                <v-menu offset-y class="rounded-lg">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn class="library-small-screen" :color="theme == 'eink' ? 'white' : ''" rounded depressed v-bind="attrs" v-on="on">
+                            Library
+                            <v-icon v-if="attrs['aria-expanded'] === 'true'">mdi-chevron-up</v-icon>
+                            <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-btn 
+                        class="menu-button justify-start" 
+                        tile 
+                        color="white"
+                        @click="showEditBookDialog(null)"
+                    >
+                        <v-icon class="mr-1">mdi-book-plus</v-icon>
+                        Create book
+                    </v-btn>
+                    <v-btn 
+                        class="menu-button justify-start" 
+                        tile 
+                        color="white"
+                        @click="importDialog.active = true;"
+                    >
+                        <v-icon class="mr-1">mdi-import</v-icon>
+                        Import
+                    </v-btn>
+                </v-menu>
+
                 <v-btn 
                     rounded 
-                    class="mx-0" 
+                    class="library-large-screen mx-0" 
                     color="primary" 
                     @click="showEditBookDialog(null)"
                 >
@@ -92,7 +120,7 @@
                 </v-btn>
                 <v-btn 
                     rounded 
-                    class="ml-2" 
+                    class="library-large-screen ml-2" 
                     color="primary" 
                     @click="importDialog.active = true;"
                 >

@@ -177,6 +177,11 @@
     opacity: 0;
 }
 
+// bottom navbar color 
+#app.dark .theme--dark.v-bottom-navigation .spacer{
+    background-color: var(--v-foreground-base);
+}
+
 // v-icon
 #app.dark .theme--dark.v-icon,
 #app.dark .v-btn.icon > .v-btn__content .v-icon {

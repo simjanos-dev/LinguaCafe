@@ -35,6 +35,14 @@
     width: 100%;
     overflow-y: visible;
 
+    .library-large-screen {
+        display: block;
+    }
+
+    .library-small-screen {
+        display: none;
+    }
+
     &.cover-layout {
         max-width: 1200px;
 
@@ -295,5 +303,15 @@
         td {
             padding-left: 0px;
         }
+    }
+}
+
+@media (max-width: 450px) {
+    #books .library-large-screen {
+        display: none;
+    }
+
+    #books .library-small-screen {
+        display: block;
     }
 }
