@@ -6,7 +6,12 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="" />
+    
+    @if ($theme === 'dark')
+        <meta name="theme-color" content="#28272C" />
+    @else
+        <meta name="theme-color" content="#F2F3F5" />
+    @endif
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">

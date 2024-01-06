@@ -71,10 +71,12 @@ class HomeController extends Controller
     public function index() {
         $selectedLanguage = Auth::user()->selected_language;
         $userCount = User::count();
-
+        $theme = $_COOKIE['theme'] ?? 'light';
+        
         return view('home', [
             'language' => $selectedLanguage,
-            'userCount' => $userCount
+            'userCount' => $userCount,
+            'theme' => $theme
         ]);
     }
 

@@ -41,9 +41,11 @@ class LoginController extends Controller
 
     public function showLoginForm() {
         $userCount = User::count();
+        $theme = $_COOKIE['theme'] ?? 'light';
 
         return view('auth.login', [
-            'userCount' => $userCount
+            'userCount' => $userCount,
+            'theme' => $theme
         ]);
     }
 
