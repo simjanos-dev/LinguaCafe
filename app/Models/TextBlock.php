@@ -103,7 +103,7 @@ class TextBlock
         Sends the raw text to python tokenizer service, and stores the result.
     */
     public function tokenizeRawText() {
-        $this->tokenizedWords = Http::post('langapp-python-service-dev:8678/tokenizer/', [
+        $this->tokenizedWords = Http::post('linguacafe-python-service:8678/tokenizer/', [
             'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $this->rawText)),
             'language' => $this->language,
         ]);
@@ -115,7 +115,7 @@ class TextBlock
         Sends the raw text to python tokenizer service, and stores the result.
     */
     public function fastTokenizeRawText() {
-        $this->tokenizedWords = Http::post('langapp-python-service-dev:8678/tokenizer/import-book', [
+        $this->tokenizedWords = Http::post('linguacafe-python-service:8678/tokenizer/import-book', [
             'raw_text' => $this->rawText,
             'language' => $this->language
         ]);
@@ -134,7 +134,7 @@ class TextBlock
             $replacedTexts[] = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
         }
 
-        $tokenizedTextArray = Http::post('langapp-python-service-dev:8678/tokenizer/', [
+        $tokenizedTextArray = Http::post('linguacafe-python-service:8678/tokenizer/', [
             'raw_text' => $replacedTexts,
             'language' => $language
         ]);

@@ -23,42 +23,6 @@ class CreateDictionariesTable extends Migration
             $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
-
-        DB::table('dictionaries')->insert([
-            'name' => 'JMDict',
-            'database_table_name' => 'dict_jp_jmdict',
-            'language' => 'japanese',
-            'color' => '#74E39A',
-            'imported' => false,
-            'enabled' => true
-        ]);
-
-        DB::table('dictionaries')->insert([
-            'name' => 'DeepL JP',
-            'database_table_name' => 'API',
-            'language' => 'japanese',
-            'color' => '#92B9E2',
-            'imported' => false,
-            'enabled' => true
-        ]);
-
-        DB::table('dictionaries')->insert([
-            'name' => 'DeepL NO',
-            'database_table_name' => 'API',
-            'language' => 'norwegian',
-            'color' => '#92B9E2',
-            'imported' => false,
-            'enabled' => true
-        ]);
-
-        DB::table('dictionaries')->insert([
-            'name' => 'DeepL DE',
-            'database_table_name' => 'API',
-            'language' => 'german',
-            'color' => '#92B9E2',
-            'imported' => false,
-            'enabled' => true
-        ]);
     }
 
     /**

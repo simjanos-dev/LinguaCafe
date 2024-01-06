@@ -1,13 +1,13 @@
 version: '3'
-name: langapp
+name: langapp-dev
 
 networks:
-    langapp:
+    langapp-dev:
         driver: bridge
 
 services:
     webserver:
-        container_name: langapp-webserver
+        container_name: langapp-webserver-dev
         build:
             context: .
             dockerfile: ./docker/PhpDockerfile
@@ -15,14 +15,14 @@ services:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
         ports:
-            - "81:80"
+            - "3000:3000"
         networks:
-            - langapp
+            - langapp-dev
         extra_hosts:
             - "host.docker.internal:host-gateway"
     mysql:
         image: mysql:5.7.22
-        container_name: langapp-database
+        container_name: langapp-database-dev
         restart: unless-stopped
         tty: true
         ports:
@@ -30,15 +30,15 @@ services:
         volumes: 
           - ./docker/mysql:/var/lib/mysql
         environment:
-          MYSQL_DATABASE: langapp
-          MYSQL_USER: langapp
-          MYSQL_PASSWORD: langapp
-          MYSQL_ROOT_PASSWORD: langapp
-          SERVICE_NAME: langapp
+          MYSQL_DATABASE: langapp-dev
+          MYSQL_USER: langapp-dev
+          MYSQL_PASSWORD: langapp-dev
+          MYSQL_ROOT_PASSWORD: langapp-dev
+          SERVICE_NAME: langapp-dev
         networks:
-            - langapp
+            - langapp-dev
     python:
-        container_name: langapp-python-service
+        container_name: langapp-python-service-dev
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
@@ -48,4 +48,4 @@ services:
             - ./tools/django_server:/app
             - ./:/var/www/html
         networks:
-            - langapp
+            - langapp-dev

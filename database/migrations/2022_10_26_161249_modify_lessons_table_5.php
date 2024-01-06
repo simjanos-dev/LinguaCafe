@@ -13,7 +13,9 @@ class ModifyLessonsTable5 extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE lessons RENAME COLUMN course_id TO book_id");
+        Schema::table('lessons', function (Blueprint $table) {
+            $table->renameColumn('course_id', 'book_id');
+        });
     }
 
     /**

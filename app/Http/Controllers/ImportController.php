@@ -54,7 +54,7 @@ class ImportController extends Controller
         $selectedLanguage = Auth::user()->selected_language;
 
         // tokenize book
-        $text = Http::post('langapp-python-service-dev:8678/tokenizer/import', [
+        $text = Http::post('linguacafe-python-service:8678/tokenizer/import', [
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importFile' => $file,

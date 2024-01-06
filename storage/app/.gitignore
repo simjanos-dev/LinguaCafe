@@ -2,3 +2,8 @@
 !public/
 !temp/
 !.gitignore
+!images
+!images/book_images
+!images/flags
+!images/flags/*
+!dictionaries

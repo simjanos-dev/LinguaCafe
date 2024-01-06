@@ -27,7 +27,7 @@ http://[LinguaCafeHost]/jmdict/xml-to-text
 Run this command. This will create a "jmdict_processed.txt" file that contains conjugations. It might take a while for it to finish.
 
 ```
-docker exec -w /var/www/html/tools/jmdict_conjugation -ti langapp-python-service /var/www/html/tools/jmdict_conjugation/jmdict_conjugation.py
+docker exec -w /var/www/html/tools/jmdict_conjugation -ti linguacafe-python-service /var/www/html/tools/jmdict_conjugation/jmdict_conjugation.py
 ```
 
 **Step 6:**

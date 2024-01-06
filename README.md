@@ -1,6 +1,20 @@
 ## LinguaCafe
 
 ## Installation
+Step 1: Install docker desktop
+
+Step 2: Create and start docker container
+> docker compose up -d
+
+Step 3: Run these commands
+> docker exec -ti linguacafe-webserver composer install
+> docker exec -ti linguacafe-webserver npm install
+> docker exec -ti linguacafe-webserver npm run prod
+> docker exec -ti linguacafe-webserver php artisan migrate
+> docker exec -ti linguacafe-webserver php artisan db:seed
+
+Your server now should be running and accessible on localhost:1234.
+
 
 ## Importing JMDict
 

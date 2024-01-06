@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Services\GoalService;
 
 class UserController extends Controller
 {
@@ -126,6 +127,11 @@ class UserController extends Controller
         
         // save user
         $user->save();
+
+        if ($userId == -1) {
+            (new GoalService())->createGoalsForLanguage($user->id, 'japanese');
+        }
+        
         return 'success';
     }
 }
