@@ -164,8 +164,8 @@
                             <v-list-item-group color="primary">
                                 <v-list-item :class="{'v-list-item--active': filters.orderBy == 'words'}" @click="applyFilter('orderBy', 'words')"><v-icon class="mr-1">mdi-sort-alphabetical-ascending</v-icon>Word</v-list-item>
                                 <v-list-item :class="{'v-list-item--active': filters.orderBy == 'words desc'}" @click="applyFilter('orderBy', 'words desc')"><v-icon class="mr-1">mdi-sort-alphabetical-descending</v-icon>Word</v-list-item>
-                                <v-list-item :class="{'v-list-item--active': filters.orderBy == 'stage'}" @click="applyFilter('orderBy', 'stage')"><v-icon class="mr-1">mdi-sort-numeric-ascending</v-icon>Stage</v-list-item>
-                                <v-list-item :class="{'v-list-item--active': filters.orderBy == 'stage desc'}" @click="applyFilter('orderBy', 'stage desc')"><v-icon class="mr-1">mdi-sort-numeric-descending</v-icon>Stage</v-list-item>
+                                <v-list-item :class="{'v-list-item--active': filters.orderBy == 'stage'}" @click="applyFilter('orderBy', 'stage')"><v-icon class="mr-1">mdi-sort-numeric-ascending</v-icon>Level</v-list-item>
+                                <v-list-item :class="{'v-list-item--active': filters.orderBy == 'stage desc'}" @click="applyFilter('orderBy', 'stage desc')"><v-icon class="mr-1">mdi-sort-numeric-descending</v-icon>Level</v-list-item>
                             </v-list-item-group>
                         </v-list>
                     </v-menu>
@@ -205,7 +205,7 @@
                     <th class="word">Word</th>
                     <th class="reading" v-if="$props.language == 'japanese'">Reading</th>
                     <th class="word-with-reading">Word</th>
-                    <th class="stage px-1">Stage</th>
+                    <th class="stage px-1">Level</th>
                     <th class="translation">Definitions</th>
                     <th class="actions">Options</th>
                 </tr>
