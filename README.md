@@ -35,6 +35,25 @@ Step 3: Login to LinguaCafe, and run these import scripts from your browser:
 > http://localhost:9191/jmdict/import-kanji  
 > http://localhost:9191/jmdict/import-radicals
 
+## Dictionaries for German, Japanese and Norwegian
+I will provide sources to import dictionaries for these languages soon.
+
+## Jellyfin
+I will write a guide and dockerfile to install LinguaCafe and Jellyfin together soon.
+
+## Anki
+Anki is supported, if your server and Anki run on the same PC (this will not be a requirement in the future) and have [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed. 
+
+## DeepL Translate
+DeepL is a machine translation service that let's you translate up to 500.000 characters/month for free and is supported by LinguaCafe. You can set your DeepL Translate API key in the admin API settings. 
+
+## Active evelopement disclaimer
+LinguaCafe is still in active development. There are a few missing features, and you might encounter some bugs while using the software. Please test it before you start actively using it, and make sure it is up to your expectations.  
+
+At this time only one user/server is supported.  
+
+I will soon add support for multiple users on one server, write detailed instructions for Windows install and create an easier installation experience if possible.
+
 ## Attributions
 LinguaCafe uses many public resources. I am very thankful for these projects and for all the people who were working on them. They helped me greatly to create LinguaCafe.
 

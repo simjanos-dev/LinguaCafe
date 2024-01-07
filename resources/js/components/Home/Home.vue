@@ -59,7 +59,13 @@
                             <router-link to="/attributions"><v-icon class="mr-2">mdi-copyright</v-icon>Attributions</router-link>
                         </div>
                         <div class="footer-link-box mb-1">
-                            <a href="#"><v-icon class="mr-2">mdi-github</v-icon>Github</a>
+                            <a href="https://simjanos-dev.github.io/LinguaCafeHome/"><v-icon class="mr-2">mdi-file-document</v-icon>Overview</a>
+                        </div>
+                        <div class="footer-link-box mb-1">
+                            <a href="https://github.com/simjanos-dev/LinguaCafe"><v-icon class="mr-2">mdi-github</v-icon>Github</a>
+                        </div>
+                        <div class="footer-link-box mb-1">
+                            <a href="https://www.reddit.com/r/linguacafe/"><v-icon class="mr-2">mdi-reddit</v-icon>Reddit</a>
                         </div>
                     </v-card-text>
                 </v-card>
@@ -69,13 +75,17 @@
                     <v-card-text>
                         You can contact the developer of LinguaCafe on these platforms.
                         <div class="footer-link-box mb-1 mt-4">
-                            <a href="#"><v-icon class="mr-2">mdi-message-text</v-icon>Discord</a>
+                            <a href="https://discord.gg/SuJqqA5d"><v-icon class="mr-2">mdi-message-text</v-icon>Discord server invite</a>
                         </div>
-                        <div class="footer-link-box mb-1">
-                            <a href="#"><v-icon class="mr-2">mdi-reddit</v-icon>Reddit</a>
+                        <div class="footer-link-box mb-1 primary--text">
+                            <v-icon class="mr-2">mdi-message-text</v-icon>Discord: linguacafe_47757
                         </div>
+                        
                         <div class="footer-link-box mb-1">
-                            <a href="#"><v-icon class="mr-2">mdi-email</v-icon>E-mail</a>
+                            <a href="https://www.reddit.com/u/linguacafe/"><v-icon class="mr-2">mdi-reddit</v-icon>Reddit</a>
+                        </div>
+                        <div class="footer-link-box mb-1 primary--text">
+                            <v-icon class="mr-2">mdi-email</v-icon>E-mail: simjanos.dev@gmail.com
                         </div>
                     </v-card-text>
                 </v-card>
