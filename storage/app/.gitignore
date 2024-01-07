@@ -4,6 +4,7 @@
 !.gitignore
 !images
 !images/book_images
+!images/book_images/default.jpg
 !images/flags
 !images/flags/*
 !dictionaries
