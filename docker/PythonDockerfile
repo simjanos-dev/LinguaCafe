@@ -1,0 +1,32 @@
+FROM ubuntu:22.04
+
+WORKDIR /app
+RUN apt clean
+RUN apt update -y
+
+#youtube api
+RUN apt install python3 -y
+RUN apt install pip -y
+RUN pip install youtube_transcript_api
+
+#ebook library
+RUN pip install ebooklib
+
+#spacy
+RUN pip install -U pip setuptools wheel
+RUN pip install -U spacy
+RUN python3 -m spacy download ja_core_news_sm
+RUN python3 -m spacy download ko_core_news_md
+RUN python3 -m spacy download de_core_news_md
+RUN python3 -m spacy download nb_core_news_md
+RUN python3 -m spacy download es_core_news_md
+
+
+#pykakasi
+RUN pip install pykakasi
+
+#django
+RUN pip install django
+
+#start django server (/tools/django_server)
+#RUN /app/manage.py runserver 8678
