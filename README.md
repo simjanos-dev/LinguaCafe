@@ -9,7 +9,7 @@ I couldn't install docker on windows yet. I will try to figure it out in the fut
 ## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Download LinguaCafe and run these commands from the directory of LinguaCafe
+Step 2: Download LinguaCafe code and run these commands from the directory of LinguaCafe.
 > docker compose up -d
 > sudo chmod 777 ./* -R  
 > docker exec -ti linguacafe-webserver composer install  
