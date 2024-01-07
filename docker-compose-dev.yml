@@ -1,13 +1,13 @@
 version: '3'
-name: langapp-dev
+name: linguacafe-dev
 
 networks:
-    langapp-dev:
+    linguacafe-dev:
         driver: bridge
 
 services:
     webserver:
-        container_name: langapp-webserver-dev
+        container_name: linguacafe-webserver-dev
         build:
             context: .
             dockerfile: ./docker/PhpDockerfile
@@ -16,13 +16,14 @@ services:
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
         ports:
             - "3000:3000"
+            - "81:80"
         networks:
-            - langapp-dev
+            - linguacafe-dev
         extra_hosts:
             - "host.docker.internal:host-gateway"
     mysql:
         image: mysql:5.7.22
-        container_name: langapp-database-dev
+        container_name: linguacafe-database-dev
         restart: unless-stopped
         tty: true
         ports:
@@ -30,15 +31,15 @@ services:
         volumes: 
           - ./docker/mysql:/var/lib/mysql
         environment:
-          MYSQL_DATABASE: langapp-dev
-          MYSQL_USER: langapp-dev
-          MYSQL_PASSWORD: langapp-dev
-          MYSQL_ROOT_PASSWORD: langapp-dev
-          SERVICE_NAME: langapp-dev
+          MYSQL_DATABASE: linguacafe
+          MYSQL_USER: linguacafe
+          MYSQL_PASSWORD: linguacafe
+          MYSQL_ROOT_PASSWORD: linguacafe
+          SERVICE_NAME: linguacafe-dev
         networks:
-            - langapp-dev
+            - linguacafe-dev
     python:
-        container_name: langapp-python-service-dev
+        container_name: linguacafe-python-service-dev
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
@@ -48,4 +49,4 @@ services:
             - ./tools/django_server:/app
             - ./:/var/www/html
         networks:
-            - langapp-dev
+            - linguacafe-dev

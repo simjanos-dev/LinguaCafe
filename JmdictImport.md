@@ -1,6 +1,6 @@
 ## Updating JMDict files
 
-With each release, JMDict files will be updated. However if you would like to update it, here are the instructions how to do it yourself. This code was meant to be temporary, but i had no time to rework it yet. It will be made easier to do in the future.
+With each release, JMDict files will be updated. However if you would like to update it, here are the instructions how to do it yourself. This code was meant to be temporary, but I had no time to rework it yet. It will be made easier to do in the future.
 
 **Step 1:**
 

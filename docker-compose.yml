@@ -15,7 +15,7 @@ services:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
         ports:
-            - "81:80"
+            - "9191:80"
         networks:
             - linguacafe
         extra_hosts:

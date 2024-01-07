@@ -1,22 +1,36 @@
 ## LinguaCafe
 
-## Installation
+## Installation (Windows)
+I couldn't install docker on windows yet. I will try to figure it out in the future, however if you manage to install and run docker on Windows, the commands should be the same, except you won't need "sudo chmod 777 ./* -R".
+
+## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Create and start docker container
+Step 2: Download LinguaCafe and run these commands from the directory of LinguaCafe
 > docker compose up -d
-
-Step 3: Run these commands
+> sudo chmod 777 ./* -R  
 > docker exec -ti linguacafe-webserver composer install  
 > docker exec -ti linguacafe-webserver npm install  
 > docker exec -ti linguacafe-webserver npm run prod  
 > docker exec -ti linguacafe-webserver php artisan migrate  
 > docker exec -ti linguacafe-webserver php artisan db:seed
 
-Your server now should be running and accessible on localhost:1234.
+Your server now should be running and accessible on http://localhost:9191.  
 
+If you want to learn Japanese, it is highly recommended that you also import the JMDict files by following the steps below.
 
-## Importing JMDict
+## JMDict import (recommended for Japanese)
+Step 1: Download JMDict files.  
+
+Download all the processed JMDict files from the [lastest release](https://github.com/simjanos-dev/LangApp/releases) on github. Download the .txt files, ignore the "Source code" files.
+
+Step 2: Copy the files into the LinguaCafe/storage/app/dictionaries/ directory.  
+
+Step 3: Login to LinguaCafe, and run these import scripts from your browser:
+
+> http://localhost:9191/jmdict/import-jmdict
+> http://localhost:9191/jmdict/jmdict/import-kanji
+> http://localhost:9191/jmdict/import-radicals
 
 ## Attributions
 LinguaCafe uses many public resources. I am very thankful for these projects and for all the people who were working on them. They helped me greatly to create LinguaCafe.
