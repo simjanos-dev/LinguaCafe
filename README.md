@@ -25,7 +25,7 @@ If you want to learn Japanese, it is highly recommended that you also import the
 ## JMDict import (recommended for Japanese)
 Step 1: Download JMDict files.  
 
-Download all the processed JMDict files from the [lastest release](https://github.com/simjanos-dev/LangApp/releases) on github. Download the .txt files, ignore the "Source code" files.
+Download all the processed JMDict files from the [lastest release](https://github.com/simjanos-dev/LangApp/releases) on github. Download the .txt and .xml  files, ignore the "Source code" files.
 
 Step 2: Copy the files into the LinguaCafe/storage/app/dictionaries/ directory.  
 
