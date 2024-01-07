@@ -28,8 +28,8 @@ Step 2: Copy the files into the LinguaCafe/storage/app/dictionaries/ directory.
 
 Step 3: Login to LinguaCafe, and run these import scripts from your browser:
 
-> http://localhost:9191/jmdict/import-jmdict
-> http://localhost:9191/jmdict/jmdict/import-kanji
+> http://localhost:9191/jmdict/import-jmdict  
+> http://localhost:9191/jmdict/jmdict/import-kanji  
 > http://localhost:9191/jmdict/import-radicals
 
 ## Attributions
