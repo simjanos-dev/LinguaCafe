@@ -1,4 +1,7 @@
 ## LinguaCafe
+LinguaCafe is a software to help language learners read in foreign languages. 
+
+[LinguaCafe overview](https://simjanos-dev.github.io/LinguaCafeHome/)
 
 ## Installation (Windows)
 I couldn't install docker on windows yet. I will try to figure it out in the future, however if you manage to install and run docker on Windows, the commands should be the same, except you won't need "sudo chmod 777 ./* -R".
