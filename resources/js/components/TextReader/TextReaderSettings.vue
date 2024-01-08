@@ -85,6 +85,7 @@
                             color="primary"
                             v-model="japaneseText" 
                             @change="settingChanged"
+                            disabled
                         ></v-switch>
                     </v-col>
                 </v-row>
