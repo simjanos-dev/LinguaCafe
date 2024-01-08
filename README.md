@@ -1,13 +1,16 @@
 ## LinguaCafe
-LinguaCafe is a software to help language learners read in foreign languages. 
+LinguaCafe is a free self-hosted software that helps language learners learn vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later on as effortlessly as possible.
 
-[LinguaCafe overview](https://simjanos-dev.github.io/LinguaCafeHome/)
+You can read about all the features of LinguaCafe in this [overview](https://simjanos-dev.github.io/LinguaCafeHome/).  
 
-## Contact information
-[Discord invite](https://discord.gg/SuJqqA5d)  
-Discord user: linguacafe_47757  
-Reddit user: /u/linguacafe  
-Subreddit: /r/linguacafe
+
+![Library](/GithubImages/LibraryCover.jpg)  
+
+![Reader](/GithubImages/TextReader.jpg)  
+
+![Review](/GithubImages/ReviewBackCard.jpg)  
+
+![Vocabulary](/GithubImages/VocabularySearch.jpg)  
 
 ## Installation (Windows)
 I couldn't install docker on windows yet. I will try to figure it out in the future, however if you manage to install and run docker on Windows, the commands should be the same, except you won't need "sudo chmod 777 ./* -R".
@@ -60,6 +63,12 @@ LinguaCafe is still in active development. There are a few missing features, and
 At this time only one user/server is supported.  
 
 I will soon add support for multiple users on one server, write detailed instructions for Windows install and create an easier installation experience if possible.
+
+## Contact information
+[Discord invite](https://discord.gg/SuJqqA5d)  
+Discord user: linguacafe_47757  
+Reddit user: /u/linguacafe  
+Subreddit: /r/linguacafe
 
 ## Attributions
 LinguaCafe uses many public resources. I am very thankful for these projects and for all the people who were working on them. They helped me greatly to create LinguaCafe.
