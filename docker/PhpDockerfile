@@ -54,7 +54,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY ./ /var/www/html
 
 RUN composer install \
-    && npm install
+    && npm install \
+    && npm run prod
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
 CMD ["apache2-foreground"]
