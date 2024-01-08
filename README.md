@@ -1,3 +1,6 @@
+## Development note
+This got much more popular than I thought it would be. I expected maybe a dozen people who would be interested in it, and I was planning on developing it bit by bit. I will need some time to address every issue and add all the new requested features. I haven't used git with an open source project before, so it is a bit overwhelming. 
+
 ## LinguaCafe
 LinguaCafe is a free self-hosted software that helps language learners learn vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later on as effortlessly as possible.
 
