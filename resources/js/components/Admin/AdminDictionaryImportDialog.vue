@@ -390,6 +390,11 @@
                         name: 'German',
                         image: '/images/flags/german'
                     },
+                    {
+                        selected: false,
+                        name: 'Spanish',
+                        image: '/images/flags/spanish'
+                    },
                 ],
 
                 rules: {

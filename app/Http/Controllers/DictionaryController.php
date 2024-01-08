@@ -151,6 +151,10 @@ class DictionaryController extends Controller
         it in a format that can be returned for the client.
     */
     private function searchDeepl($language, $term) {
+        // retrieve api key from database
+        $apiKeySetting = Setting::where('name', 'deeplApiKey')->first();
+        $apiKey = json_decode($apiKeySetting->value);
+
         $hash = md5(mb_strtolower($term, 'UTF-8'));
         $languageCodes = config('langapp.deepl_language_codes');
         $records = [];
@@ -166,7 +170,6 @@ class DictionaryController extends Controller
             $definitions = [$cache->definition];
         } else {
             // make api call
-            $apiKey = "c86f8349-bda9-a84a-db56-e04b8027cd59:fx";
             $deepl = new \DeepL\Translator($apiKey);
             $result = $deepl->translateText($term, $languageCodes['norwegian'], $languageCodes['english']);
             $definitions = [$result->text];

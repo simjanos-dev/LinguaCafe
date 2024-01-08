@@ -64,6 +64,18 @@ class SettingsSeeder extends Seeder
             ]);
         }
 
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL ES')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL ES',
+                'database_table_name' => 'API',
+                'language' => 'spanish',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
         // deepl api settings
         $setting = Setting::where('name', 'deeplApiKey')->first();
         if (!$setting) {
