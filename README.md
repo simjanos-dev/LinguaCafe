@@ -15,14 +15,9 @@ I couldn't install docker on windows yet. I will try to figure it out in the fut
 ## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Download LinguaCafe code and run these commands from the directory of LinguaCafe.
+Step 2: Download LinguaCafe code and run these commands from the directory of LinguaCafe and wait about a minute for the setup to complete.
 > sudo chmod 777 ./* -R  
 > docker compose up -d  
-> docker exec -ti linguacafe-webserver composer install  
-> docker exec -ti linguacafe-webserver npm install  
-> docker exec -ti linguacafe-webserver npm run prod  
-> docker exec -ti linguacafe-webserver php artisan migrate  
-> docker exec -ti linguacafe-webserver php artisan db:seed
 
 Your server now should be running and accessible on http://localhost:9191.  
 
