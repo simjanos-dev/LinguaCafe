@@ -48,8 +48,64 @@ Step 3: Login to LinguaCafe, and run these import scripts from your browser:
 You can find dictionaries [here](https://github.com/simjanos-dev/Dictionaries) for these languages, and instructions on how to import them.
 I will add more sources in the future. If you know of any, I would appreciate it if you would send them to me.
 
-## Jellyfin
-I will write a guide and dockerfile to install LinguaCafe and Jellyfin together soon.
+## Jellyfin docker config for new server
+
+You do not need Jellyfin at all to use LinguaCafe, it is just an additional feature.
+
+There is a pre-written configuration file for Jellyfin + LinguaCafe in docker-compose-jellyfin.yml if you do not have a Jellyfin server yet. This will set up both LinguaCafe and Jellyfin for you.
+
+Replace these paths with your own in docker-compose-jellyfin.yml:
+> - /your/path/to/config:/config
+> - /your/path/to/cache:/cache
+> - /your/path/to/media:/media:ro
+
+
+Then run the installation commands, but replace
+> docker compose up -d  
+
+with 
+
+> docker compose -f ./docker-compose-jellyfin.yml up -d
+
+## Jellyfin docker config for already existing Jellyfin server
+If you already have a Jellyfin server, you can you this example to connect Jellyfin's network with LinguaCafe.
+There are probably multiple ways to do it, the only requirement is that linguacafe-webserver should be able to reach Jellyfin's server.
+
+```
+version: '3.5'
+networks:
+    linguacafe_linguacafe:
+        external: true
+
+services:
+    jellyfin:
+        image: jellyfin/jellyfin
+        container_name: jellyfin
+        user: 1000:1000
+        volumes:
+            - /path/to/config:/config
+            - /path/to/cache:/cache
+            - /path/to/media:/media:ro
+        restart: 'unless-stopped'
+        ports:
+            - 8096:8096
+        networks:
+            - linguacafe_linguacafe
+```
+
+## Jellyfin API usage
+Step 1: Create an API key in Jellyfin. You can do this on the Dashboard -> API Keys menu.  
+
+Step 2: Set the created API key in LinguaCafe on to the Admin->API menu.
+
+Step 3: Set the Jellyfin host in LinguaCafe on to the Admin->API menu. If you used one of the pre-written configs, it should be the default http://jellyfin:8096.
+
+Step 4: Save the settings. 
+
+Now you should be able to read any external subtitles from any TV Show you play in any of your Jellyfin clients on the Media player page. 
+Unfortunately there is the noticable lag when you click on a timestamp to jump to a subtitle. I could only make it work without delays with the native "Jellyfin media player" client on my PC.  
+
+At this time it only works with TV Shows due to a bug, it will be fixed soon. Later on there will be also an option to save the subtitles in the library like any text.
 
 ## Anki
 Anki is supported, if your server and Anki run on the same PC (this will not be a requirement in the future) and have [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed. 
