@@ -41,8 +41,9 @@ Step 3: Login to LinguaCafe, and run these import scripts from your browser:
 > http://localhost:9191/jmdict/import-kanji  
 > http://localhost:9191/jmdict/import-radicals
 
-## Dictionaries for German, Japanese and Norwegian
-I will provide sources to import dictionaries for these languages soon.
+## Dictionaries for German, Spanish and Norwegian
+You can find dictionaries [here](https://github.com/simjanos-dev/Dictionaries) for these languages, and instructions on how to import them.
+I will add more sources in the future. If you know of any, I would appreciate it if you would send them to me.
 
 ## Jellyfin
 I will write a guide and dockerfile to install LinguaCafe and Jellyfin together soon.
