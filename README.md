@@ -39,8 +39,8 @@ I couldn't install docker on windows yet. I will try to figure it out in the fut
 Step 1: Install docker desktop
 
 Step 2: Run these commands to clone and install LinguaCafe:
-> git clone https://github.com/simjanos-dev/LinguaCafe
-> cd ./LinguaCafe
+> git clone https://github.com/simjanos-dev/LinguaCafe  
+> cd ./LinguaCafe  
 > sudo chmod 777 ./* -R  
 > docker compose up -d  
 > docker exec -ti linguacafe-webserver composer install  
