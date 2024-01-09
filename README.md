@@ -1,11 +1,28 @@
 ## Development note
-This got much more popular than I thought it would be. I expected maybe a dozen people who would be interested in it, and I was planning on developing it bit by bit. I will need some time to address every issue and add all the new requested features. I haven't used git with an open source project before, so it is a bit overwhelming. 
+This got much more popular than I thought it would be. I expected maybe a dozen people who would be interested in it, and I was planning on developing it bit by bit. I will need some time to address every issue and add all the new requested features.
 
 ## LinguaCafe
 LinguaCafe is a free self-hosted software that helps language learners learn vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later on as effortlessly as possible.
 
 You can read about all the features of LinguaCafe in this [overview](https://simjanos-dev.github.io/LinguaCafeHome/).  
 
+Supported languages:
+- German
+- Japanese
+- Norwegian
+- Spanish
+
+Experimental languages:
+- Chinese
+- Dutch
+- Finnish
+- French
+- Italian
+- Korean  
+
+Experimental languages have been added recently and awaiting testing and community feedback to improve them. They may have problems, not work properly or have no dictionary sources provided.  
+
+The text reader's font type is set to "notosans" in every language, which is a Japanese font type. It is likely that Chinese will need its own font type, and it is not displayed properly.
 
 ![Library](/GithubImages/LibraryCover.jpg)  
 
@@ -21,7 +38,9 @@ I couldn't install docker on windows yet. I will try to figure it out in the fut
 ## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Download LinguaCafe code and run these commands from the directory of LinguaCafe.
+Step 2: Run these commands to clone and install LinguaCafe:
+> git clone https://github.com/simjanos-dev/LinguaCafe
+> cd ./LinguaCafe
 > sudo chmod 777 ./* -R  
 > docker compose up -d  
 > docker exec -ti linguacafe-webserver composer install  
@@ -34,7 +53,16 @@ Your server now should be running and accessible on http://localhost:9191.
 
 If you want to learn Japanese, it is highly recommended that you also import the JMDict files by following the steps below.
 
-## JMDict import (recommended for Japanese)
+## Updating to the latest version
+Run these commands from the directory of LinguaCafe:
+> git pull
+> docker exec -ti linguacafe-webserver composer install  
+> docker exec -ti linguacafe-webserver npm install  
+> docker exec -ti linguacafe-webserver npm run prod  
+> docker exec -ti linguacafe-webserver php artisan migrate  
+> docker exec -ti linguacafe-webserver php artisan db:seed
+
+## JMDict dictionary import (recommended for Japanese)
 Step 1: Download JMDict files.  
 
 Download all the processed JMDict files from the [lastest release](https://github.com/simjanos-dev/LangApp/releases) on github. Download the .txt and .xml  files, ignore the "Source code" files.
@@ -47,8 +75,8 @@ Step 3: Login to LinguaCafe, and run these import scripts from your browser:
 > http://localhost:9191/jmdict/import-kanji  
 > http://localhost:9191/jmdict/import-radicals
 
-## Dictionaries for German, Spanish and Norwegian
-You can find dictionaries [here](https://github.com/simjanos-dev/Dictionaries) for these languages, and instructions on how to import them.
+## Other dictionaries
+You can find dictionaries [here](https://github.com/simjanos-dev/Dictionaries) for other languages, and instructions on how to import them.
 I will add more sources in the future. If you know of any, I would appreciate it if you would send them to me.
 
 ## Jellyfin docker config for new server
