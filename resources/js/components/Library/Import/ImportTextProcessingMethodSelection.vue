@@ -12,9 +12,9 @@
             class="mt-0"
         >
             <v-radio
-                v-if="$props.language !== 'japanese'"
                 label="Simple"
                 value="simple"
+                :disabled="!simpleProcessingMethodEnabled"
             ></v-radio>
             <v-radio
                 value="detailed"
@@ -31,7 +31,8 @@
     export default {
         data: function() {
             return {
-                processingMethod: 'detailed'
+                processingMethod: 'detailed',
+                simpleProcessingMethodEnabled: this.$props.language == 'norwegian' || this.$props.language == 'german'
             }
         },
         props: {

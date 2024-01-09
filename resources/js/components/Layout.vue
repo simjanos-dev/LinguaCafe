@@ -29,7 +29,7 @@
                         </v-btn>
                         <v-btn id="language" rounded text class="ma-2" @click="languageSelectionDialog = true">
                             <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase()" max-width="43" height="28"></v-img> 
-                            <span class="pl-6">{{ selectedLanguage }}</span>
+                            <span class="pl-6 text-capitalize">{{ selectedLanguage }}</span>
                         </v-btn>
                     </template>
 

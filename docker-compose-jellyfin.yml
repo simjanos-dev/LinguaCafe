@@ -1,0 +1,65 @@
+version: '3'
+name: linguacafe
+
+networks:
+    linguacafe:
+        driver: bridge
+
+services:
+    webserver:
+        container_name: linguacafe-webserver
+        build:
+            context: .
+            dockerfile: ./docker/PhpDockerfile
+        volumes:
+            - ./:/var/www/html
+            - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+        ports:
+            - "9191:80"
+            - "3000:3000"
+        networks:
+            - linguacafe
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+    mysql:
+        image: mysql:5.7.22
+        container_name: linguacafe-database
+        restart: unless-stopped
+        tty: true
+        ports:
+          - "3308:3306"
+        volumes: 
+          - ./docker/mysql:/var/lib/mysql
+        environment:
+          MYSQL_DATABASE: linguacafe
+          MYSQL_USER: linguacafe
+          MYSQL_PASSWORD: linguacafe
+          MYSQL_ROOT_PASSWORD: linguacafe
+          SERVICE_NAME: linguacafe
+        networks:
+            - linguacafe
+    python:
+        container_name: linguacafe-python-service
+        command: /app/manage.py runserver 0.0.0.0:8678
+        restart: unless-stopped
+        tty: true
+        build:
+            dockerfile: ./docker/PythonDockerfile
+        volumes:
+            - ./tools/django_server:/app
+            - ./:/var/www/html
+        networks:
+            - linguacafe
+    jellyfin:
+        image: jellyfin/jellyfin
+        container_name: jellyfin
+        user: 1000:1000
+        volumes:
+            - /your/path/to/config:/config
+            - /your/path/to/cache:/cache
+            - /your/path/to/media:/media:ro
+        restart: 'unless-stopped'
+        ports:
+            - 8096:8096
+        networks:
+            - linguacafe

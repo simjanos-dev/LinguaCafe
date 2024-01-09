@@ -20,6 +20,11 @@ RUN python3 -m spacy download ko_core_news_md
 RUN python3 -m spacy download de_core_news_md
 RUN python3 -m spacy download nb_core_news_md
 RUN python3 -m spacy download es_core_news_md
+RUN python3 -m spacy download zh_core_web_md
+RUN python3 -m spacy download nl_core_news_md
+RUN python3 -m spacy download fi_core_news_md
+RUN python3 -m spacy download fr_core_news_md
+RUN python3 -m spacy download it_core_news_md
 
 
 #pykakasi
