@@ -9,12 +9,17 @@
             <v-card-text>
                 New features:
                 <ul>
-                    <li>Added partial support for new languages: Chinese, Dutch, Finnish, French, Italian, Korean.</li>
+                    <li>Added partial support for new languages: Chinese, Dutch, Finnish, French, Italian and Korean.</li>
                 </ul>
 
                 Bug fixes:
                 <ul>
                     <li>Fixed a bug that caused DeepL translator to handle all languages as Norwegian.</li>
+                </ul>
+
+                Other changes:
+                <ul>
+                    <li>The selected language is displayed as capitalized text.</li>
                 </ul>
             </v-card-text>
         </v-card>
