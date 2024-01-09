@@ -56,10 +56,12 @@
                                 @change="updateDatabaseName"
                             >
                                 <template v-slot:selection="{ item, index }">
-                                <img class="mr-2 border" :src="item.image" width="40" height="26">{{ item.name }}
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
+                                    <span class="text-capitalize">{{ item.name }}</span>
                                 </template>
                                 <template v-slot:item="{ item }">
-                                    <img class="mr-2 border" :src="item.image" width="40" height="26">{{ item.name }}
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
+                                    <span class="text-capitalize">{{ item.name }}</span>
                                 </template>
                             </v-select>
 
@@ -364,7 +366,7 @@
                     databaseName: '',
                     databasePrefix: 'dict_jp_',
                     color: '#B59686',
-                    language: this.$props.language[0].toUpperCase() + this.$props.language.substring(1),
+                    language: this.$props.language,
                     file: null,
                     csvDelimiter: '|',
                     csvSkipHeader: false,
@@ -377,23 +379,43 @@
                 languages: [
                     {
                         selected: false,
-                        name: 'Japanese',
-                        image: '/images/flags/japanese'
+                        name: 'chinese'
                     },
                     {
                         selected: false,
-                        name: 'Norwegian',
-                        image: '/images/flags/norwegian'
+                        name: 'dutch'
                     },
                     {
                         selected: false,
-                        name: 'German',
-                        image: '/images/flags/german'
+                        name: 'finnish'
                     },
                     {
                         selected: false,
-                        name: 'Spanish',
-                        image: '/images/flags/spanish'
+                        name: 'french'
+                    },
+                    {
+                        selected: false,
+                        name: 'german'
+                    },
+                    {
+                        selected: false,
+                        name: 'italian'
+                    },
+                    {
+                        selected: false,
+                        name: 'japanese'
+                    },
+                    {
+                        selected: false,
+                        name: 'korean'
+                    },
+                    {
+                        selected: false,
+                        name: 'norwegian'
+                    },
+                    {
+                        selected: false,
+                        name: 'spanish'
                     },
                 ],
 
