@@ -74,5 +74,77 @@ class DictionarySeeder extends Seeder
                 'enabled' => false
             ]);
         }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL ZH')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL ZH',
+                'database_table_name' => 'API',
+                'language' => 'chinese',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL NL')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL NL',
+                'database_table_name' => 'API',
+                'language' => 'dutch',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL FI')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL FI',
+                'database_table_name' => 'API',
+                'language' => 'finnish',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL FR')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL FR',
+                'database_table_name' => 'API',
+                'language' => 'french',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL IT')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL IT',
+                'database_table_name' => 'API',
+                'language' => 'italian',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL KO')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL KO',
+                'database_table_name' => 'API',
+                'language' => 'korean',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
     }
 }
