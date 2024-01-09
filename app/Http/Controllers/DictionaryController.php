@@ -171,7 +171,7 @@ class DictionaryController extends Controller
         } else {
             // make api call
             $deepl = new \DeepL\Translator($apiKey);
-            $result = $deepl->translateText($term, $language, $languageCodes['english']);
+            $result = $deepl->translateText($term, $languageCodes[$language], $languageCodes['english']);
             $definitions = [$result->text];
 
             // create cache
