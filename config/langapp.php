@@ -20,15 +20,27 @@ return [
 
     // ISO_639-1 codes, with a few exceptions (en-GB)
     'deepl_language_codes' => [
-        'japanese' => 'ja',
-        'norwegian' => 'nb',
-        'german' => 'de',
-        'english' => 'en-GB',
+        'japanese' => 'JA',
+        'norwegian' => 'NB',
+        'german' => 'DE',
+        'english' => 'EN-GB',
+        'chinese' => 'ZH',
+        'dutch' => 'NL',
+        'finnish' => 'FI',
+        'french' => 'FR',
+        'italian' => 'IT',
+        'korean' => 'KO',
 
-        'Japanese' => 'ja',
-        'Norwegian' => 'nb',
-        'German' => 'de',
-        'english' => 'en-GB'
+        'Japanese' => 'JA',
+        'Norwegian' => 'NB',
+        'German' => 'DE',
+        'English' => 'EN-GB',
+        'Chinese' => 'ZH',
+        'Dutch' => 'NL',
+        'Finnish' => 'FI',
+        'French' => 'FR',
+        'Italian' => 'IT',
+        'Korean' => 'KO',
     ],
 
     'wordsToSkip' => ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
