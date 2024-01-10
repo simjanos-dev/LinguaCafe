@@ -23,10 +23,15 @@ If you have a **feature** or **code change** request, please create an Issue. On
 
 I hope these are rasonable requests, I'll read, comment and tag every Issue. Since I work actively on the project, I will figure out a way to mark the Issues I'm currently working on..
 
+## Adding a new language
+If you want to add a new language to the "Experimental" languages that Spacy supports, please feel free create a pull request. There is a series of commits documenting the process of adding a new language on 2024 January 09 named "Adding language support 1-7" (4074987e266efb620b4c3a490f03ad0d1575697c). 
+
+If you want to add a new language that needs a new tokenizer, please create an Issue.
+
 ## Documentation and code
 I wasn't expecting other people to contribute, so I never written a documentation, I will try to do it soon. There are a lot of old code that needs to be updated(creating service classes, putting some code into models from the controllers, updating to Laravel 11), but I hope I made it clean and readable enough for other people to work on.
 
-# Branches
+## Branches
 Please make pull requests only to the "dev" branch. I will merge them and they will be added to the main branch later on the next version release.
 
 Thank you for anyone, who want to contribute!
