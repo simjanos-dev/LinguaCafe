@@ -51,11 +51,9 @@ If you want to learn Japanese, it is highly recommended that you also import the
 ## Updating to the latest version
 Run these commands from the directory of LinguaCafe:
 > git pull
-> docker exec -ti linguacafe-webserver composer install  
-> docker exec -ti linguacafe-webserver npm install  
-> docker exec -ti linguacafe-webserver npm run prod  
-> docker exec -ti linguacafe-webserver php artisan migrate  
-> docker exec -ti linguacafe-webserver php artisan db:seed
+> docker compose down
+> docker image rm linguacafe-webserver linguacafe-python-service
+> docker compose up -d
 
 ## JMDict dictionary import (recommended for Japanese)
 Step 1: Download JMDict files.  
