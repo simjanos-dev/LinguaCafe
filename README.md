@@ -52,7 +52,7 @@ If you want to learn Japanese, it is highly recommended that you also import the
 Run these commands from the directory of LinguaCafe:
 > git pull  
 > docker compose down  
-> docker image rm linguacafe-webserver linguacafe-python
+> docker image rm linguacafe-webserver linguacafe-python  
 > docker compose up -d
 
 ## JMDict dictionary import (recommended for Japanese)
