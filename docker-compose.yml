@@ -15,7 +15,7 @@ services:
             mysql:
                 condition: service_healthy
         volumes:
-            - ./storage/app:/var/www/html/storage/app
+            - ./storage:/var/www/html/storage
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
         ports:
             - "9191:80"
@@ -55,6 +55,6 @@ services:
             dockerfile: ./docker/PythonDockerfile
         volumes:
             - ./tools/django_server:/app
-            - ./storage/app:/var/www/html/storage/app
+            - ./storage:/var/www/html/storage
         networks:
             - linguacafe
