@@ -7,7 +7,7 @@ RUN rm ./nodesource_setup.sh
 RUN apt install nodejs npm -y
 
 # install php extensions for laravel
-RUN apt update 
+RUN apt update
 RUN apt install -y sqlite3
 RUN docker-php-ext-install pdo pdo_mysql fileinfo
 RUN apt install -y \
@@ -35,7 +35,7 @@ RUN printf 'memory_limit = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
 # copy apache config
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-# set project directory owner 
+# set project directory owner
 RUN chown -R www-data:www-data /var/www/html
 
 # enable htaccess
@@ -45,6 +45,15 @@ RUN a2enmod rewrite
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 
-# for some reason i have to install this manually, 
+# for some reason i have to install this manually,
 # despite being in the composer.json
 # RUN composer require guzzlehttp/guzzle
+
+COPY ./ /var/www/html
+
+RUN composer install \
+    && npm install \
+    && npm run prod
+
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
+CMD ["apache2-foreground"]
