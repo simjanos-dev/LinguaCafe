@@ -36,28 +36,22 @@ class BookController extends Controller
     }
 
     public function getBookWordCounts($bookId) {
-        $selectedLanguage = Auth::user()->selected_language;
+        $user = Auth::user();
+        $selectedLanguage = $user->selected_language;
 
         // Get words for calculating word counts
         $words = EncounteredWord
-            ::select(['id', 'word', 'stage'])
-            ->where('user_id', Auth::user()->id)
-            ->where('language', Auth::user()->selected_language)
-            ->get()
+            ::where('user_id', $user->id)
+            ->where('language', $selectedLanguage)
+            ->pluck(['id', 'word', 'stage'])
             ->keyBy('id')
             ->toArray();
 
-        // Get book
+        // Get book or return error if not found
         $book = Book
-            ::where('user_id', Auth::user()->id)
-            ->where('id', $bookId)
-            ->first();
-        
-        // Return error if no book found    
-        if (!$book) {
-            return 'error';
-        }
-            
+            ::where('user_id', $user->id)
+            ->find($bookId) ?? abort(404, 'Book not found');
+
         // Calculate word counts
         $wordCounts = $book->getWordCounts($words);
 
@@ -92,9 +86,7 @@ class BookController extends Controller
             
             if (!is_null($request->bookCover)) {
                 // delete old image
-                if ($book->cover_image !== '' && $book->cover_image !== 'default.jpg') {
-                    Storage::delete('/images/book_images/' . $book->cover_image);
-                }
+                $this->deleteBookCover($book);
 
                 // save image on server
                 $timestamp = implode('_', explode(' ', Carbon::now()->toDateTimeString()));
@@ -116,26 +108,29 @@ class BookController extends Controller
 
     public function deleteBook(Request $request) {
         $bookId = $request->post('bookId');
-        $userId = Auth::user()->id;
+        $userId = Auth::id();
 
-        $chapters = Lesson
+        Lesson
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->delete();
-            
+
         $book = Book
             ::where('user_id', $userId)
-            ->where('id', $bookId)
-            ->first();
-            
+            ->find($bookId);
+
+        if ($book) {
+            $this->deleteBookCover($book);
+            $book->delete();
+        }
+
+        return 'success';
+    }
+
+    private function deleteBookCover($book) {
         if ($book->cover_image !== '' && $book->cover_image !== 'default.jpg') {
             Storage::delete('/images/book_images/' . $book->cover_image);
         }
-
-        Book
-            ::where('user_id', $userId)
-            ->where('id', $bookId)
-            ->delete();
-        return 'success';
     }
+
 }
