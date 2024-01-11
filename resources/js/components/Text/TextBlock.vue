@@ -35,7 +35,7 @@
                 @touchend.stop="finishSelection($event)"
                 @mouseup.stop="finishSelection($event)"
                 @mouseleave=";"
-            >{{ word.word }}</div><!--
+            >{{ word.word }}<template v-if="plainTextMode && word.spaceAfter">&nbsp;</template></div><!--
             --><br v-if="word.word == 'NEWLINE'"><!--
         --></template>
     </div>
@@ -166,11 +166,19 @@
                 this.ongoingSelection = newSelection;
             },
             startSelectionTouch: function(event, wordIndex) {
+                if (this.$props.plainTextMode) {
+                    return;
+                }
+
                 this.touchTimer = setTimeout(() => {
                     this.startSelection(event, wordIndex);
                 }, 500);
             },
             startSelection: function(event, wordIndex) {
+                if (this.$props.plainTextMode) {
+                    return;
+                }
+
                 this.$emit('saveSelectedWord');
 
                 this.touchTimer = null;
@@ -185,10 +193,6 @@
                 this.selectionOngoing = true;
 
                 if (this.ongoingSelection.length == 1 && this.ongoingSelection[0].wordIndex == wordIndex) {
-                    return;
-                }
-
-                if (this.$props.plainTextMode) {
                     return;
                 }
 
