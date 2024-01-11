@@ -34,18 +34,14 @@ class MediaPlayerController extends Controller
         Makes a request to the jellyfin api and returns the response.
     */
     private function makeJellyfinRequest ($method, $url) {
-        $response = '';
+        $response = Http::withHeaders([
+            'Authorization' => 'MediaBrowser Token="' . $this->apiKey . '", Client="LinguaCafe", Device="Test", DeviceId="asdsafwafaw", Version="0.1"'
+        ]);
 
         if ($method == 'GET') {
-            $response = Http::withHeaders([
-                'Authorization' => 'MediaBrowser Token="' . $this->apiKey . '", Client="LinguaCafe", Device="Test", DeviceId="asdsafwafaw", Version="0.1"'
-            ])->get($this->apiHost . $url);
-        }
-
-        if ($method == 'POST') {
-            $response = Http::withHeaders([
-                'Authorization' => 'MediaBrowser Token="' . $this->apiKey . '", Client="LinguaCafe", Device="Test", DeviceId="asdsafwafaw", Version="0.1"'
-            ])->post($this->apiHost . $url);
+            $response = $response->get($this->apiHost . $url);
+        } elseif ($method == 'POST') {
+            $response = $response->post($this->apiHost . $url);
         }
 
         return $response->json();
