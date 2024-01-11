@@ -415,7 +415,19 @@
                     },
                     {
                         selected: false,
+                        name: 'russian'
+                    },
+                    {
+                        selected: false,
                         name: 'spanish'
+                    },
+                    {
+                        selected: false,
+                        name: 'swedish'
+                    },
+                    {
+                        selected: false,
+                        name: 'ukrainian'
                     },
                 ],
 

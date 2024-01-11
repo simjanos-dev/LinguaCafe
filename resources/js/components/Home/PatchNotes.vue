@@ -10,6 +10,9 @@
                 <b>New features:</b>
                 <ul>
                     <li>
+                        Added partial support for new languages: Russian, Swedish and Ukrainian.
+                    </li>
+                    <li>
                         Docker installation and update process has been reworked and made simpler.
                     </li>
                     <li>
