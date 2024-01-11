@@ -12,14 +12,35 @@ class ImageController extends Controller
         $this->middleware('auth');
     }
 
-    
+    private function getImage($basePath, $name, $defaultImagePath)
+    {
+        $extensions = ['svg', 'jpg', 'png'];
+
+        foreach ($extensions as $extension) {
+            $path = $basePath . $name . '.' . $extension;
+
+            if (Storage::exists($path)) {
+                return Storage::get($path);
+            }
+        }
+
+        // If none of the specified extensions exist, return the content of the default image
+        return Storage::get($defaultImagePath);
+    }
+
     public function getFlagImage($name)
     {
-        return Storage::get('/images/flags/' . $name . '.png');
+        $basePath = '/images/flags/';
+        $defaultImagePath = '/images/flags/default-flag.svg';
+
+        return $this->getImage($basePath, $name, $defaultImagePath);
     }
 
     public function getBookImage($name)
     {
-        return Storage::get('/images/book_images/' . $name);
+        $basePath = '/images/book_images/';
+        $defaultImagePath = '/images/book_images/default.jpg';
+
+        return $this->getImage($basePath, $name, $defaultImagePath);
     }
 }
