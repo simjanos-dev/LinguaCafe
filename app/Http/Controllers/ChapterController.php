@@ -44,8 +44,8 @@ class ChapterController extends Controller
             ->toArray();
 
         $book->wordCount = $book->getWordCounts($words);
-        for ($i = 0; $i < count($chapters); $i++) {
-            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
+        foreach ($chapters as $chapter) {
+            $chapter->wordCount = $chapter->getWordCounts($words);
         }
         
         $data = new \stdClass();
@@ -83,8 +83,8 @@ class ChapterController extends Controller
             ->keyBy('id')
             ->toArray();
 
-        for ($i = 0; $i < count($lessons); $i++) {
-            $lessons[$i]->wordCount = $lessons[$i]->getWordCounts($uniqueWordsForWordCounts);
+        foreach ($chapters as $chapter) {
+            $chapter->wordCount = $chapter->getWordCounts($uniqueWordsForWordCounts);
         }
 
         $textBlock = new TextBlock();
@@ -143,7 +143,7 @@ class ChapterController extends Controller
         $lesson->read_count ++;
         $lesson->save();
 
-        // updage today's reading achievement
+        // update today's reading achievement
         $goal = Goal::where('user_id', Auth::user()->id)
             ->where('language', $selectedLanguage)
             ->where('type', 'read_words')
