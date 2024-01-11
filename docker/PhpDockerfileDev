@@ -49,11 +49,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # despite being in the composer.json
 # RUN composer require guzzlehttp/guzzle
 
-COPY ./ /var/www/html
 
-RUN composer install \
-    && npm install \
-    && npm run prod
-
-ENTRYPOINT ["/var/www/html/entrypoint.sh"]
+ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
 CMD ["apache2-foreground"]

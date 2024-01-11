@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" scrollable persistent max-width="800">
+    <v-dialog v-model="value" scrollable persistent max-width="820">
         <v-card 
             id="text-reader-glossary"
             outlined

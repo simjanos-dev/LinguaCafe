@@ -11,8 +11,11 @@ services:
         build:
             context: .
             dockerfile: ./docker/PhpDockerfile
+        depends_on:
+            mysql:
+                condition: service_healthy
         volumes:
-            - ./:/var/www/html
+            - ./storage/app:/var/www/html/storage/app
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
         ports:
             - "9191:80"
@@ -28,7 +31,7 @@ services:
         tty: true
         ports:
           - "3308:3306"
-        volumes: 
+        volumes:
           - ./docker/mysql:/var/lib/mysql
         environment:
           MYSQL_DATABASE: linguacafe
@@ -36,6 +39,11 @@ services:
           MYSQL_PASSWORD: linguacafe
           MYSQL_ROOT_PASSWORD: linguacafe
           SERVICE_NAME: linguacafe
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 5s
+            timeout: 5s
+            retries: 3
         networks:
             - linguacafe
     python:
@@ -47,7 +55,7 @@ services:
             dockerfile: ./docker/PythonDockerfile
         volumes:
             - ./tools/django_server:/app
-            - ./:/var/www/html
+            - ./storage/app:/var/www/html/storage/app
         networks:
             - linguacafe
     jellyfin:

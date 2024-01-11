@@ -46,11 +46,6 @@ Step 2: Run these commands to clone and install LinguaCafe:
 > cd ./LinguaCafe  
 > sudo chmod 777 ./* -R  
 > docker compose up -d  
-> docker exec -ti linguacafe-webserver composer install  
-> docker exec -ti linguacafe-webserver npm install  
-> docker exec -ti linguacafe-webserver npm run prod  
-> docker exec -ti linguacafe-webserver php artisan migrate  
-> docker exec -ti linguacafe-webserver php artisan db:seed
 
 Your server now should be running and accessible on http://localhost:9191.  
 
@@ -58,12 +53,10 @@ If you want to learn Japanese, it is highly recommended that you also import the
 
 ## Updating to the latest version
 Run these commands from the directory of LinguaCafe:
-> git pull
-> docker exec -ti linguacafe-webserver composer install  
-> docker exec -ti linguacafe-webserver npm install  
-> docker exec -ti linguacafe-webserver npm run prod  
-> docker exec -ti linguacafe-webserver php artisan migrate  
-> docker exec -ti linguacafe-webserver php artisan db:seed
+> git pull  
+> docker compose down  
+> docker image rm linguacafe-webserver linguacafe-python  
+> docker compose up -d
 
 ## JMDict dictionary import (recommended for Japanese)
 Step 1: Download JMDict files.  
