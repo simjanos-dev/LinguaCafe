@@ -27,30 +27,19 @@ class UserController extends Controller
     }
 
     public function changePassword(Request $request) {
-        // check for missing post data
-        if (!$request->has('password') || !$request->has('passwordConfirmation')) {
-            return 'Missing parameter.';
-        }
+        // Validate incoming request
+        $request->validate([
+            'password' => 'required|string|min:8|max:32',
+            'passwordConfirmation' => 'required|same:password',
+        ]);
 
+        // Update user password
         $user = Auth::user();
-        $password = $request->post('password');
-        $passwordConfirmation = $request->post('passwordConfirmation');
+        $user->update([
+            'password' => Hash::make($request->password),
+            'password_changed' => true,
+        ]);
 
-        // validate password
-        if (mb_strlen($password) < 8 || mb_strlen($password) > 32) {
-            return 'Password must be between 8 and 32 characters.';
-        }
-
-        if ($password !== $passwordConfirmation) {
-            return 'Password confirmation does not match the password.';
-        }
-        
-
-        // set new password
-        $user->password = Hash::make($password);
-        $user->password_changed = true;
-        $user->save();
-        
         return 'success';
     }
 
