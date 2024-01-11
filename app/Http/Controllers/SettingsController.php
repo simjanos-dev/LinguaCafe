@@ -12,12 +12,10 @@ class SettingsController extends Controller
         $settingNames = $request->post('settingNames');
 
         $settings = Setting
-            ::select('value', 'name')
-            ->whereIn('name', $settingNames)
-            ->get()
-            ->keyBy('name')
-            ->map(function ($item, $key) {
-                return json_decode($item->value);
+            ::whereIn('name', $settingNames)
+            ->pluck('value', 'name')
+            ->map(function ($value) {
+                return json_decode($value);
             });
 
         return json_encode($settings);
@@ -26,16 +24,11 @@ class SettingsController extends Controller
     public function saveSettings(Request $request) {
         $settings = $request->post('settings');
 
-        foreach ($settings as $settingName => $settingValue) {
-            $setting = Setting
-                ::where('name', $settingName)
-                ->first();
-
-            if ($setting) {
-                $setting->value = json_encode($settingValue);
-                $setting->save();
-            }
-        }
+        Setting::whereIn('name', array_keys($settings))
+            ->get()
+            ->each(function ($setting) use ($settings) {
+                $setting->update(['value' => json_encode($settings[$setting->name])]);
+            });
 
         return 'success';
     }
