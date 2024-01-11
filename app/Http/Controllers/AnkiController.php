@@ -17,14 +17,11 @@ class AnkiController extends Controller
 
     public function addCardToAnki(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
-        $word = $request->post('word') ? $request->post('word') : 'empty word error';
-        $word = mb_strtolower($word);
-        $reading = $request->post('reading') ? $request->post('reading') : '';
-        $translation = $request->post('translation') ? $request->post('translation') : '';
-        $exampleSentence = $request->post('exampleSentence') ? $request->post('exampleSentence') : '';
+        $word = mb_strtolower($request->post('word', 'empty word error'));
+        $reading = $request->post('reading', '');
+        $translation = $request->post('translation', '');
+        $exampleSentence = $request->post('exampleSentence', '');
 
-        $testResult = $this->ankiApiService->addWord($selectedLanguage, $word, $reading, $translation, $exampleSentence);
-        
-        return $testResult;
+        return $this->ankiApiService->addWord($selectedLanguage, $word, $reading, $translation, $exampleSentence);
     }
 }
