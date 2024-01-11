@@ -43,79 +43,54 @@ class UserController extends Controller
         return 'success';
     }
 
-    // updates user info, or creates a new user
     public function updateOrCreateUser(Request $request) {
-        $userCount = User::count();
-        if (!Auth::check() && $userCount !== 0) {
+        // Check authentication
+        if (!Auth::check() && User::count() !== 0) {
             return 'Unauthenticated.';
         }
 
-        // check for missing post data
-        if (!$request->has('userId') || !$request->has('name') ||
-            !$request->has('email') || !$request->has('isAdmin')) {
-            return 'Missing parameter.';
-        }
-
-        // check for missing post data for new user
-        if ($request->post('userId') === -1 && (!$request->has('password') || !$request->has('passwordConfirmation'))) {
-            return 'Missing parameter.';
-        }
+        // Validate incoming request
+        $request->validate([
+            'userId' => 'required|integer',
+            'name' => 'required|string|min:5|max:24',
+            'email' => 'required|email',
+            'isAdmin' => 'required|boolean',
+            'password' => 'nullable|string|min:8|max:32|required_if:userId,-1',
+            'passwordConfirmation' => 'nullable|required_with:password|same:password',
+        ]);
 
         $userId = $request->post('userId');
-        $name = $request->post('name');
         $email = $request->post('email');
-        $password = $request->post('password');
-        $passwordConfirmation = $request->post('passwordConfirmation');
-        $isAdmin = $request->post('isAdmin');
 
-        // validate name
-        if (mb_strlen($name) < 5 || mb_strlen($name) > 24) {
-            return 'Name must be between 5 and 24 characters.';
-        }
-        
-        // validate email
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return 'E-mail address is invalid.';
-        }
-        
-        // validate password
-        if ($userId === -1 && (mb_strlen($password) < 8 || mb_strlen($password) > 32)) {
-            return 'Password must be between 8 and 32 characters.';
-        }
-
-        if ($userId === -1 && $password !== $passwordConfirmation) {
-            return 'Password confirmation does not match the password.';
-        }
-
-        // validate duplicated email
-        $duplicatedEmail = User::where('email', $email)->where('id', '<>', $userId)->first();
-        if ($duplicatedEmail) {
+        // Check for duplicated email
+        if (User::where('email', $email)->where('id', '<>', $userId)->exists()) {
             return 'There is already a user with this e-mail address.';
         }
-        
-        // create or retrieve user
-        if ($userId == -1) {
-            $user = new User();
-        } else {
-            $user = User::where('id', $userId)->first();
-            if (!$user) {
-                return 'User ID does not exist.';
-            }
+
+        // Create or retrieve user
+        $user = ($userId == -1) ? new User() : User::find($userId);
+
+        if (!$user && $userId != -1) {
+            return 'User ID does not exist.';
         }
 
-        // set user data
-        $user->name = $name;
-        $user->email = $email;
-        $user->is_admin = $isAdmin;
-        $user->password_changed = $userCount === 0;
+        // Set user data
+        $user->fill([
+            'name' => $request->post('name'),
+            'email' => $email,
+            'is_admin' => $request->post('isAdmin'),
+            'password_changed' => User::count() === 0,
+        ]);
 
+        // Set password if it's a new user
         if ($userId == -1) {
-            $user->password = Hash::make($password);
+            $user->password = Hash::make($request->post('password'));
         }
         
         // save user
         $user->save();
 
+        // Create goals for a new user
         if ($userId == -1) {
             (new GoalService())->createGoalsForLanguage($user->id, 'japanese');
         }
