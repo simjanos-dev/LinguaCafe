@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use Illuminate\Support\Facades\Auth;
 
 class Book extends Model
@@ -19,11 +19,11 @@ class Book extends Model
     ];
 
     function getWordCounts($words) {
-        $lessons = Lesson::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
+        $chapters = Chapter::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
         $bookUniqueWordIds = [];
         
-        foreach ($lessons as $lesson) {
-            $uniqueWordIds = json_decode($lesson->unique_word_ids);
+        foreach ($chapters as $chapter) {
+            $uniqueWordIds = json_decode($chapter->unique_word_ids);
             
             foreach ($uniqueWordIds as $wordId) {
                 if (!in_array($wordId, $bookUniqueWordIds, true)) {

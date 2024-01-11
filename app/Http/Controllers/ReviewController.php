@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ExampleSentence;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\Phrase;
 use App\Models\EncounteredWord;
 use Illuminate\Support\Facades\Auth;
@@ -22,15 +22,15 @@ class ReviewController extends Controller
     
     public function review(Request $request) {
         $practiceMode = false;
-        $lessonId = -1;
+        $chapterId = -1;
         $bookId = -1;
         
         if (isset($request->practiceMode)) {
             $practiceMode = $request->practiceMode === 'true';
         }
         
-        if (isset($request->lessonId)) {
-            $lessonId = intval($request->lessonId);
+        if (isset($request->chapterId)) {
+            $chapterId = intval($request->ChapterId);
         }
 
         if (isset($request->bookId)) {
@@ -56,31 +56,31 @@ class ReviewController extends Controller
             });
         }
         
-        // Retrieve lesson words and phrases by lesson id.
+        // Retrieve chapter words and phrases by chapter id.
         $uniqueWords = [];
         $uniquePhraseIds = [];
-        if ($lessonId !== -1 || $bookId !== -1) {
-            if ($lessonId !== -1) {
-                $lessonIds = Lesson
-                    ::where('id', $lessonId)
+        if ($chapterId !== -1 || $bookId !== -1) {
+            if ($chapterId !== -1) {
+                $chapterIds = Chapter
+                    ::where('id', $chapterId)
                     ->where('user_id', Auth::user()->id)
                     ->pluck('id')
                     ->toArray();
             } else {
-                $lessonIds = Lesson
+                $chapterIds = Chapter
                     ::where('book_id', $bookId)
                     ->where('user_id', Auth::user()->id)
                     ->pluck('id')
                     ->toArray();
             }
 
-            foreach ($lessonIds as $lessonId) {
-                $lesson = Lesson
+            foreach ($chapterIds as $chapterId) {
+                $chapter = Chapter
                     ::where('user_id', Auth::user()->id)
-                    ->where('id', $lessonId)
+                    ->where('id', $chapterId)
                     ->first();
 
-                $words = $lesson->getProcessedText();
+                $words = $chapter->getProcessedText();
                 
                 foreach ($words as $word) {
                     if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {

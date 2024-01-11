@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use App\Models\Lesson;
+use App\Models\Chapter;
 
 class ModifyLessonsTable3 extends Migration
 {
@@ -18,9 +18,9 @@ class ModifyLessonsTable3 extends Migration
         DB::statement("ALTER TABLE lessons MODIFY raw_text MEDIUMBLOB");
         DB::statement("ALTER TABLE lessons MODIFY processed_text MEDIUMBLOB");
 
-        $lessons = Lesson::all();
-        foreach ($lessons as $lesson) {
-            $sentences = json_decode($lesson->processed_text);
+        $chapters = Chapter::all();
+        foreach ($chapters as $chapter) {
+            $sentences = json_decode($chapter->processed_text);
             $words = [];
             for ($j = 0; $j < count($sentences); $j++) {
                 for ($i = 0; $i < count($sentences[$j]); $i++) {
@@ -33,8 +33,8 @@ class ModifyLessonsTable3 extends Migration
                 }
             }
 
-            $lesson->processed_text = gzcompress(json_encode($words), 1);
-            $lesson->save();
+            $chapter->processed_text = gzcompress(json_encode($words), 1);
+            $chapter->save();
         }
     }
 

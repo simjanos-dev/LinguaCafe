@@ -14,7 +14,7 @@ use App\Models\Phrase;
 use App\Models\Kanji;
 use App\Models\Radical;
 use App\Models\Book;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\ExampleSentence;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
@@ -192,31 +192,31 @@ class VocabularyController extends Controller
         
         $phrase->save();
 
-        // update phrase ids in lesson texts
+        // update phrase ids in chapter texts
         if ($isNewPhrase) {
             $phraseWords = array_unique($request->words);
-            $lessons = Lesson
+            $chapters = Chapter
                 ::where('user_id', Auth::user()->id)
                 ->where('language', $selectedLanguage)
                 ->get();
 
-            foreach ($lessons as $lesson) {
-                $uniqueWords = json_decode($lesson->unique_words);
+            foreach ($chapters as $chapter) {
+                $uniqueWords = json_decode($chapter->unique_words);
                 if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
                     continue;
                 }
 
-                $words = $lesson->getProcessedText();
+                $words = $chapter->getProcessedText();
 
                 $textBlock = new TextBlock();
                 $textBlock->setProcessedWords($words);
                 $textBlock->collectUniqueWords();
                 $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
 
-                // save lesson words
+                // save chapter words
                 if ($phraseIdsChanged) {
-                    $lesson->setProcessedText($textBlock->processedWords);
-                    $lesson->save();
+                    $chapter->setProcessedText($textBlock->processedWords);
+                    $chapter->save();
                 }
             }
         }
@@ -256,30 +256,30 @@ class VocabularyController extends Controller
         $selectedLanguage = Auth::user()->selected_language;
         $phraseId = $request->id;
         
-        $lessons = Lesson
+        $chapters = Chapter
             ::where('user_id', Auth::user()->id)
             ->where('language', $selectedLanguage)
             ->get();
 
-        foreach($lessons as $lesson) {
-            $words = $lesson->getProcessedText();
-            $lessonChanged = false;
+        foreach($chapters as $chapter) {
+            $words = $chapter->getProcessedText();
+            $chapterChanged = false;
 
-            // delete phrase id from lesson words
+            // delete phrase id from chapter words
             foreach ($words as $word) {
                 $index = array_search($phraseId, $word->phrase_ids);
                 if ($index !== false) {
                     $modifiedPhraseIds = $word->phrase_ids;
                     array_splice($modifiedPhraseIds, $index, 1);
                     $word->phrase_ids = $modifiedPhraseIds;
-                    $lessonChanged = true;
+                    $chapterChanged = true;
                 }
             }
 
-            // save lesson if changed
-            if ($lessonChanged) {
-                $lesson->setProcessedText($words);
-                $lesson->save();
+            // save chapter if changed
+            if ($chapterChanged) {
+                $chapter->setProcessedText($words);
+                $chapter->save();
             }
         }
 
@@ -392,7 +392,7 @@ class VocabularyController extends Controller
         $books = Book::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
         $bookIndex = -1;
         for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
+            $books[$i]->chapters = Chapter::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
             
             if (isset($bookId) && $books[$i]->id == $bookId) {
                 $bookIndex = $i;
@@ -448,7 +448,7 @@ class VocabularyController extends Controller
         $books = Book::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
         $bookIndex = -1;
         for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
+            $books[$i]->chapters = Chapter::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
             
             if (isset($bookId) && $books[$i]->id == $bookId) {
                 $bookIndex = $i;
@@ -478,7 +478,7 @@ class VocabularyController extends Controller
 
         // get words and phrases
         // from filtered chapters
-        $filteredChapters = Lesson::where('user_id', Auth::user()->id)->where('language', $selectedLanguage);
+        $filteredChapters = Chapter::where('user_id', Auth::user()->id)->where('language', $selectedLanguage);
         $filteredWords = [];
         $filteredPhraseIds = [];
         if ($bookId !== 'any') {
@@ -493,13 +493,13 @@ class VocabularyController extends Controller
 
         if ($bookId !== 'any') {
             foreach ($filteredChapters as $filteredChapter) {
-                $lesson = Lesson
+                $chapter = Chapter
                     ::where('user_id', Auth::user()->id)
                     ->where('id', $filteredChapter->id)
                     ->first();
 
                 // add filtered phrase ids
-                $filteredChapterWords = $lesson->getProcessedText();
+                $filteredChapterWords = $chapter->getProcessedText();
 
                 foreach ($filteredChapterWords as $filteredChapterWord) {
                     $filteredChapterWord->phrase_ids = $filteredChapterWord->phrase_ids;

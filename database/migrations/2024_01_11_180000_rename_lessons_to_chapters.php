@@ -3,10 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Auth;
-use App\Models\TextBlock;
 
-class ModifyLessonsTable7 extends Migration
+class RenameLessonsTablesToChapters extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +13,7 @@ class ModifyLessonsTable7 extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE lessons ADD processed_text MEDIUMBLOB");
+        Schema::rename('lessons', 'chapters');
     }
 
     /**
@@ -25,6 +23,6 @@ class ModifyLessonsTable7 extends Migration
      */
     public function down()
     {
-        //
+        Schema::rename('chapters', 'lessons');
     }
 }
