@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" scrollable persistent max-width="800">
+    <v-dialog v-model="value" scrollable persistent max-width="820">
         <v-card 
             id="text-reader-settings"
             outlined
@@ -113,6 +113,24 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
+
+                <!-- Vocab box scroll into view -->
+                <v-row>
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Scroll to vocabulary method:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="vocabBoxScrollIntoView"
+                            :items="vocabBoxScrollIntoViewData"
+                            item-text="name"
+                            item-value="value"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="settingChanged"
+                        ></v-select>
+                    </v-col>
+                </v-row>
             </v-card-text>
 
             <v-card-actions>
@@ -128,6 +146,20 @@
         emits: ['input'],   
         data: function() {
             return {
+                vocabBoxScrollIntoViewData: [
+                    {
+                        name: 'Disabled',
+                        value: 'disabled'
+                    },
+                    {
+                        name: 'Scroll into view',
+                        value: 'scroll-into-view'
+                    },
+                    {
+                        name: 'Scroll into view if needed (does not work everywhere)',
+                        value: 'scroll-into-view-if-needed'
+                    }
+                ],
                 maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 hideAllHighlights: this.$props._hideAllHighlights,
                 hideNewWordHighlights: this.$props._hideNewWordHighlights,
@@ -137,7 +169,8 @@
                 lineSpacing: this.$props._lineSpacing,
                 maximumTextWidth: this.$props._maximumTextWidth,
                 displaySuggestedTranslations: this.$props._displaySuggestedTranslations,
-                autoMoveWordsToKnown: this.$props._autoMoveWordsToKnown
+                autoMoveWordsToKnown: this.$props._autoMoveWordsToKnown,
+                vocabBoxScrollIntoView: this.$props._vocabBoxScrollIntoView,
             }
         },
         props: {
@@ -150,7 +183,8 @@
             _lineSpacing: Number,
             _maximumTextWidth: Number,
             _displaySuggestedTranslations: Boolean,
-            _autoMoveWordsToKnown: Boolean
+            _autoMoveWordsToKnown: Boolean,
+            _vocabBoxScrollIntoView: String
         },
         mounted() {
         },
@@ -168,7 +202,8 @@
                     'fontSize': this.fontSize,
                     'lineSpacing': this.lineSpacing,
                     'maximumTextWidth': this.maximumTextWidth,
-                    'autoMoveWordsToKnown': this.autoMoveWordsToKnown
+                    'autoMoveWordsToKnown': this.autoMoveWordsToKnown,
+                    'vocabBoxScrollIntoView': this.vocabBoxScrollIntoView
                 });
             },  
             close(){

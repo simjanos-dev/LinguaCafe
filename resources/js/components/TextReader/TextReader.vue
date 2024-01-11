@@ -27,6 +27,7 @@
                 :_maximum-text-width="settings.maximumTextWidth"
                 :_display-suggested-translations="settings.displaySuggestedTranslations"
                 :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
+                :_vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                 @changed="saveSettings"   
             ></text-reader-settings>
             
@@ -76,6 +77,7 @@
                         :plain-text-mode="settings.plainTextMode"
                         :font-size="settings.fontSize"
                         :line-spacing="settings.lineSpacing"
+                        :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                     ></text-block-group>    
                 </v-card-text>
                 <v-alert
@@ -154,7 +156,8 @@
                     maximumTextWidth: 0,
                     displaySuggestedTranslations: false,
                     autoMoveWordsToKnown: false,
-                    fullscreen: false
+                    fullscreen: false,
+                    vocabBoxScrollIntoView: 'scroll-into-view'
                 },
                 finished: false,
                 finishError: false,
@@ -229,6 +232,8 @@
                 this.settings.maximumTextWidth =  parseInt(this.$cookie.get('maximum-text-width'));
                 this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
                 this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
+                this.settings.vocabBoxScrollIntoView = this.$cookie.get('vocab-box-scroll-into-view');
+                
 
                 if (this.$cookie.get('hide-all-highlights') === null) {
                     this.settings.hideAllHighlights = false;
@@ -264,6 +269,10 @@
 
                 if (this.$cookie.get('auto-move-words-to-known') === null) {
                     this.settings.autoMoveWordsToKnown =  true;
+                }
+
+                if (this.$cookie.get('vocab-box-scroll-into-view') === null) {
+                    this.settings.vocabBoxScrollIntoView =  'scroll-into-view';
                 }
 
                 this.saveSettings();
@@ -313,7 +322,7 @@
                 this.$cookie.set('maximum-text-width', this.settings.maximumTextWidth, 3650);
                 this.$cookie.set('display-suggested-translations', this.settings.displaySuggestedTranslations, 3650);
                 this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
-                
+                this.$cookie.set('vocab-box-scroll-into-view', this.settings.vocabBoxScrollIntoView, 3650);                
             },
             openDialog: function(dialog) {
                 if (document.fullscreenElement !== null) {

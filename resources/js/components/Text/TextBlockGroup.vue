@@ -423,7 +423,12 @@
             hideNewWordHighlights: Boolean,
             plainTextMode: Boolean,
             fontSize: Number,
-            lineSpacing: Number
+            lineSpacing: Number,
+            vocabBoxScrollIntoView: {
+                type: String,
+                default: 'Disabled'
+            }
+
         },
         watch: {
             _textBlocks: function(newVal, oldVal) {
@@ -1156,7 +1161,6 @@
 
                 var appElement = document.getElementById('app');
                 var bodyElement = document.body;
-                var scrollTop = appElement.scrollTop ? appElement.scrollTop : bodyElement.scrollTop;
 
                 this.vocabBox.position.top = selectedWordPositions.bottom - vocabBoxArea.top + 15;
 
@@ -1165,7 +1169,11 @@
             scrollToVocabBox() {
                 setTimeout(() => {
                     var vocabBox = document.getElementById('vocab-box');
-                    if (vocabBox) {
+                    if (vocabBox && this.$props.vocabBoxScrollIntoView == 'scroll-into-view') {
+                        vocabBox.scrollIntoView(false);
+                    }
+
+                    if (vocabBox && this.$props.vocabBoxScrollIntoView == 'scroll-into-view-if-needed') {
                         vocabBox.scrollIntoViewIfNeeded(false);
                     }
                 }, 450);

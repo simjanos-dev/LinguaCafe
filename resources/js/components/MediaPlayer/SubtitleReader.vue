@@ -13,6 +13,7 @@
             :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
             :_media-controls-visible="settings.mediaControlsVisible"
             :_subtitle-block-spacing="settings.subtitleBlockSpacing"
+            :_vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
             @changed="saveSettings"   
         ></subtitle-reader-settings>
 
@@ -90,6 +91,7 @@
                 :plain-text-mode="false"
                 :font-size="settings.fontSize"
                 :line-spacing="settings.lineSpacing"
+                :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                 v-slot="slotProps"
             >
                 <template v-for="(textBlock, textBlockIndex) in slotProps.textBlocks">
@@ -149,7 +151,8 @@ export default {
                 plainTextMode: false,
                 autoMoveWordsToKnown: false,
                 fullscreen: false,
-                mediaControlsVisible: this.$props.mediaControlsVisible
+                mediaControlsVisible: this.$props.mediaControlsVisible,
+                vocabBoxScrollIntoView: 'scroll-into-view'
             }
         } 
     },
@@ -172,6 +175,7 @@ export default {
         this.loadSetting('maximumTextWidth', 'subtitle-maximum-text-width', 'integer', 3);
         this.loadSetting('autoMoveWordsToKnown', 'subtitle-auto-move-words-to-known', 'boolean', false);
         this.loadSetting('subtitleBlockSpacing', 'subtitle-block-spacing', 'integer', 1);
+        this.loadSetting('vocabBoxScrollIntoView', 'subtitle-vocab-box-scroll-into-view', 'string', 'scroll-into-view');
 
         this.saveSettings();
         this.loaded = true;
@@ -190,6 +194,10 @@ export default {
 
                 if (type == 'integer') {
                     this.settings[name] = parseInt(this.$cookie.get(cookieName));
+                }
+
+                if (type == 'string') {
+                    this.settings[name] = this.$cookie.get(cookieName);
                 }
             }
 
@@ -215,6 +223,7 @@ export default {
             this.$cookie.set('subtitle-maximum-text-width', this.settings.maximumTextWidth, 3650);
             this.$cookie.set('subtitle-auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
             this.$cookie.set('subtitle-block-spacing', this.settings.subtitleBlockSpacing, 3650);
+            this.$cookie.set('subtitle-vocab-box-scroll-into-view', this.settings.vocabBoxScrollIntoView, 3650);
 
             this.$emit('settingsChange', this.settings);
         },

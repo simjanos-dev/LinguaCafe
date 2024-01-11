@@ -130,6 +130,25 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
+
+                <!-- Vocab box scroll into view -->
+                <v-row>
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 ">Scroll to vocabulary method:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="vocabBoxScrollIntoView"
+                            :items="vocabBoxScrollIntoViewData"
+                            item-text="name"
+                            item-value="value"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="settingChanged"
+                        ></v-select>
+                    </v-col>
+                </v-row>
+                <br><br><br>
             </v-card-text>
 
             <v-card-actions>
@@ -145,6 +164,20 @@
         emits: ['input'],   
         data: function() {
             return {
+                vocabBoxScrollIntoViewData: [
+                    {
+                        name: 'Disabled',
+                        value: 'disabled'
+                    },
+                    {
+                        name: 'Scroll into view',
+                        value: 'scroll-into-view'
+                    },
+                    {
+                        name: 'Scroll into view if needed (does not work everywhere)',
+                        value: 'scroll-into-view-if-needed'
+                    }
+                ],
                 maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 hideAllHighlights: this.$props._hideAllHighlights,
                 hideNewWordHighlights: this.$props._hideNewWordHighlights,
@@ -154,7 +187,8 @@
                 maximumTextWidth: this.$props._maximumTextWidth,
                 autoMoveWordsToKnown: this.$props._autoMoveWordsToKnown,
                 mediaControlsVisible: this.$props._mediaControlsVisible,
-                subtitleBlockSpacing: this.$props._subtitleBlockSpacing
+                subtitleBlockSpacing: this.$props._subtitleBlockSpacing,
+                vocabBoxScrollIntoView: this.$props._vocabBoxScrollIntoView,
             }
         },
         props: {
@@ -167,7 +201,8 @@
             _maximumTextWidth: Number,
             _autoMoveWordsToKnown: Boolean,
             _mediaControlsVisible: Boolean,
-            _subtitleBlockSpacing: Number
+            _subtitleBlockSpacing: Number,
+            _vocabBoxScrollIntoView: String
         },
         mounted() {
         },
@@ -186,7 +221,8 @@
                     'maximumTextWidth': this.maximumTextWidth,
                     'autoMoveWordsToKnown': this.autoMoveWordsToKnown,
                     'mediaControlsVisible': this.mediaControlsVisible,
-                    'subtitleBlockSpacing': this.subtitleBlockSpacing
+                    'subtitleBlockSpacing': this.subtitleBlockSpacing,
+                    'vocabBoxScrollIntoView': this.vocabBoxScrollIntoView
                 });
             },  
             close() {
