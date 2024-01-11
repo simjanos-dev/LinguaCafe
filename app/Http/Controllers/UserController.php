@@ -18,11 +18,10 @@ class UserController extends Controller
     public function getUsers() {
         $users = User
             ::select(['id', 'name', 'email', 'is_admin', 'password_changed', 'created_at'])
-            ->get();
-
-        foreach ($users as $user) {
-            $user->created_at_text = Carbon::parse($user->created_at)->format('Y-m-d');
-        }
+            ->get()
+            ->each(function ($user) {
+                $user->created_at_text = Carbon::parse($user->created_at)->format('Y-m-d');
+            });
 
         return json_encode($users);
     }
