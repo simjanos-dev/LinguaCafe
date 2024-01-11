@@ -9,7 +9,7 @@
             <v-card-text>
                 New features:
                 <ul>
-                    <li>Added partial support for new languages: Chinese, Dutch, Finnish, French, Italian and Korean.</li>
+                    <li>Added partial support for new languages: Chinese, Dutch, Finnish, French, Italian, Korean, Swedish, Ukrainian, Russian.</li>
                 </ul>
 
                 Bug fixes:

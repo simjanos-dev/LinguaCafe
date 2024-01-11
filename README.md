@@ -18,7 +18,10 @@ Experimental languages:
 - Finnish
 - French
 - Italian
-- Korean  
+- Korean
+- Russian
+- Swedish
+- Ukrainian  
 
 Experimental languages have been added recently and awaiting testing and community feedback to improve them. They may have problems, not work properly or have no dictionary sources provided.  
 
