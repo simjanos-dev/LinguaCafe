@@ -18,7 +18,8 @@
             <text-reader-settings
                 v-if="dialogs.settings"
                 v-model="dialogs.settings"
-                :_highlight-words="settings.highlightWords"
+                :_hide-all-highlights="settings.hideAllHighlights"
+                :_hide-new-word-highlights="settings.hideNewWordHighlights"
                 :_plain-text-mode="settings.plainTextMode"
                 :_japanese-text="settings.japaneseText"
                 :_font-size="settings.fontSize"
@@ -70,7 +71,8 @@
                         :fullscreen="settings.fullscreen"
                         :_text-blocks="textBlocks"
                         :language="language"
-                        :highlight-words="settings.highlightWords"
+                        :hide-all-highlights="settings.hideAllHighlights"
+                        :hide-new-word-highlights="settings.hideNewWordHighlights"
                         :plain-text-mode="settings.plainTextMode"
                         :font-size="settings.fontSize"
                         :line-spacing="settings.lineSpacing"
@@ -143,7 +145,8 @@
                 toolbarTop: 68,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 settings: {
-                    highlightWords: true,
+                    hideAllHighlights: false,
+                    hideNewWordHighlights: false,
                     plainTextMode: false,
                     japaneseText: false,
                     fontSize: 20,
@@ -217,7 +220,8 @@
                     }
                 }
 
-                this.settings.highlightWords = this.$cookie.get('highlight-words') === 'true';
+                this.settings.hideAllHighlights = this.$cookie.get('hide-all-highlights') === 'true';
+                this.settings.hideNewWordHighlights = this.$cookie.get('hide-new-word-highlights') === 'true';
                 this.settings.plainTextMode = this.$cookie.get('plain-text-mode') === 'true';
                 this.settings.japaneseText = this.$cookie.get('japanese-text') === 'true';
                 this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
@@ -226,8 +230,12 @@
                 this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
                 this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
 
-                if (this.$cookie.get('highlight-words') === null) {
-                    this.settings.highlightWords = true;
+                if (this.$cookie.get('hide-all-highlights') === null) {
+                    this.settings.hideAllHighlights = false;
+                }
+
+                if (this.$cookie.get('hide-new-word-highlights') === null) {
+                    this.settings.hideNewWordHighlights = false;
                 }
 
                 if (this.$cookie.get('plain-text-mode') === null) {
@@ -296,7 +304,8 @@
                     this.settings.fontSize = 30;
                 }
 
-                this.$cookie.set('highlight-words', this.settings.highlightWords, 3650);
+                this.$cookie.set('hide-all-highlights', this.settings.hideAllHighlights, 3650);
+                this.$cookie.set('hide-new-word-highlights', this.settings.hideNewWordHighlights, 3650);
                 this.$cookie.set('plain-text-mode', this.settings.plainTextMode, 3650);
                 this.$cookie.set('japanese-text', this.settings.japaneseText, 3650);
                 this.$cookie.set('font-size', this.settings.fontSize, 3650);

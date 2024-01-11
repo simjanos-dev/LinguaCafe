@@ -12,7 +12,7 @@
                 :stage="word.stage" 
                 :phrasestage="word.phraseStage" 
                 :class="{
-                    'no-highlight': !highlightWords,
+                    'no-highlight': hideAllHighlights || (hideNewWordHighlights && word.stage == 2),
                     'plain-text-mode': plainTextMode,
                     'word': true,
                     'highlighted': word.selected || word.hover,
@@ -80,7 +80,8 @@
             _phrases: Array,
             _uniqueWords: Array,
             language: String,
-            highlightWords: Boolean,
+            hideAllHighlights: Boolean,
+            hideNewWordHighlights: Boolean,
             plainTextMode: Boolean,
             fontSize: Number,
             lineSpacing: Number

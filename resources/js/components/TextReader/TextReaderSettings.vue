@@ -65,13 +65,25 @@
                     </v-col>
                 </v-row>
 
-                <!-- Highlight words -->
+                <!-- Hide all highlighting -->
                 <v-row>
-                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">Highlight words:</v-col>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">Hide all highlighting:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-switch
                             color="primary"
-                            v-model="highlightWords" 
+                            v-model="hideAllHighlights" 
+                            @change="settingChanged('hideAllHighlights')"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
+                <!-- Hide new word highlighting -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">Hide new word highlighting:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="hideNewWordHighlights" 
                             @change="settingChanged"
                         ></v-switch>
                     </v-col>
@@ -117,7 +129,8 @@
         data: function() {
             return {
                 maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
-                highlightWords: this.$props._highlightWords,
+                hideAllHighlights: this.$props._hideAllHighlights,
+                hideNewWordHighlights: this.$props._hideNewWordHighlights,
                 plainTextMode: this.$props._plainTextMode,
                 japaneseText: this.$props._japaneseText,
                 fontSize: this.$props._fontSize,
@@ -129,7 +142,8 @@
         },
         props: {
             value : Boolean,
-            _highlightWords: Boolean,
+            _hideAllHighlights: Boolean,
+            _hideNewWordHighlights: Boolean,
             _plainTextMode: Boolean,
             _japaneseText: Boolean,
             _fontSize: Number,
@@ -141,9 +155,14 @@
         mounted() {
         },
         methods: {
-            settingChanged: function() {
+            settingChanged(settingName = '') {
+                if (settingName == 'hideAllHighlights') {
+                    this.hideNewWordHighlights = this.hideAllHighlights;
+                }
+
                 this.$emit('changed', { 
-                    'highlightWords': this.highlightWords,
+                    'hideAllHighlights': this.hideAllHighlights,
+                    'hideNewWordHighlights': this.hideNewWordHighlights,
                     'plainTextMode': this.plainTextMode,
                     'japaneseText': this.japaneseText,
                     'fontSize': this.fontSize,
@@ -152,7 +171,7 @@
                     'autoMoveWordsToKnown': this.autoMoveWordsToKnown
                 });
             },  
-            close: function() {
+            close(){
                 this.$emit('input', false);
             }
         }

@@ -36,7 +36,8 @@
         <slot
             :textBlocks="textBlocks"
             :language="language"
-            :highlightWords="highlightWords"
+            :hideAllHighlights="hideAllHighlights"
+            :hideNewWordHighlights="hideNewWordHighlights"
             :plainTextMode="plainTextMode"
             :fontSize="fontSize"
             :lineSpacing="lineSpacing"
@@ -53,7 +54,8 @@
                 :_phrases="textBlock.phrases"
                 :_uniqueWords="textBlock.uniqueWords"
                 :language="language"
-                :highlightWords="highlightWords"
+                :hideAllHighlights="hideAllHighlights"
+                :hideNewWordHighlights="hideNewWordHighlights"
                 :plainTextMode="plainTextMode"
                 :fontSize="fontSize"
                 :lineSpacing="lineSpacing"
@@ -417,7 +419,8 @@
             fullscreen: Boolean,
             _textBlocks: Array,
             language: String,
-            highlightWords: Boolean,
+            hideAllHighlights: Boolean,
+            hideNewWordHighlights: Boolean,
             plainTextMode: Boolean,
             fontSize: Number,
             lineSpacing: Number

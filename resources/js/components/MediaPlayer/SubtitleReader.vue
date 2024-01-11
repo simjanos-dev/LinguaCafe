@@ -4,7 +4,8 @@
         <subtitle-reader-settings
             v-if="loaded && settingsDialog"
             v-model="settingsDialog"
-            :_highlight-words="settings.highlightWords"
+            :_hide-all-highlights="settings.hideAllHighlights"
+            :_hide-new-word-highlights="settings.hideNewWordHighlights"
             :_plain-text-mode="settings.plainTextMode"
             :_font-size="settings.fontSize"
             :_line-spacing="settings.lineSpacing"
@@ -61,14 +62,6 @@
                 <v-btn 
                     icon
                     class="mx-1" 
-                    @click="settings.highlightWords = !settings.highlightWords;saveSettings();"
-                    title="Toggle highlighting"
-                >
-                    <v-icon :color="settings.highlightWords ? 'primary' : ''">mdi-marker</v-icon>
-                </v-btn>
-                <v-btn 
-                    icon
-                    class="mx-1" 
                     @click="increaseFontSize"
                     title="Increase font size"
                 >
@@ -92,7 +85,8 @@
                 :fullscreen="false"
                 :_text-blocks="textBlocks"
                 :language="'japanese'"
-                :highlight-words="settings.highlightWords"
+                :hide-all-highlights="settings.hideAllHighlights"
+                :hide-new-word-highlights="settings.hideNewWordHighlights"
                 :plain-text-mode="false"
                 :font-size="settings.fontSize"
                 :line-spacing="settings.lineSpacing"
@@ -121,7 +115,8 @@
                                 :_phrases="textBlock.phrases"
                                 :_uniqueWords="textBlock.uniqueWords"
                                 :language="slotProps.language"
-                                :highlightWords="slotProps.highlightWords"
+                                :hideAllHighlights="slotProps.hideAllHighlights"
+                                :hideNewWordHighlights="slotProps.hideNewWordHighlights"
                                 :plainTextMode="slotProps.plainTextMode"
                                 :fontSize="slotProps.fontSize"
                                 :lineSpacing="slotProps.lineSpacing"
@@ -149,7 +144,8 @@ export default {
                 fontSize: 20,
                 lineSpacing: 1,
                 subtitleBlockSpacing: 1,
-                highlightWords: true,
+                hideAllHighlights: false,
+                hideNewWordHighlights: false,
                 plainTextMode: false,
                 autoMoveWordsToKnown: false,
                 fullscreen: false,
@@ -168,7 +164,8 @@ export default {
         }
     },
     mounted: function() {
-        this.loadSetting('highlightWords', 'subtitle-highlight-words', 'boolean', true);
+        this.loadSetting('hideAllHighlights', 'subtitle-hide-all-highlights', 'boolean', false);
+        this.loadSetting('hideNewWordHighlights', 'subtitle-hide-new-word-highlights', 'boolean', false);
         this.loadSetting('plainTextMode', 'subtitle-plain-text-mode', 'boolean', false);
         this.loadSetting('fontSize', 'subtitle-font-size', 'integer', 20);
         this.loadSetting('lineSpacing', 'subtitle-line-spacing', 'integer', 1);
@@ -210,7 +207,8 @@ export default {
                 this.settings.fontSize = 30;
             }
 
-            this.$cookie.set('subtitle-highlight-words', this.settings.highlightWords, 3650);
+            this.$cookie.set('subtitle-hide-all-highlights', this.settings.hideAllHighlights, 3650);
+            this.$cookie.set('subtitle-hide-new-word-highlights', this.settings.hideNewWordHighlights, 3650);
             this.$cookie.set('subtitle-plain-text-mode', this.settings.plainTextMode, 3650);
             this.$cookie.set('subtitle-font-size', this.settings.fontSize, 3650);
             this.$cookie.set('subtitle-line-spacing', this.settings.lineSpacing, 3650);
