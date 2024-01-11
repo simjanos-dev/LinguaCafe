@@ -7,7 +7,7 @@
         <template v-for="(word, wordIndex) in words"><!--
             --><div 
                 :key="wordIndex"
-                v-if="word.word !== 'NEWLINE'" 
+                v-if="word.word !== 'NEWLINE' && /\S/.test(word.word)" 
                 :wordindex="wordIndex" 
                 :stage="word.stage" 
                 :phrasestage="word.phraseStage" 
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-    export default {    
+    export default {
         data: function() {
             return {
                 words: this.$props._words,

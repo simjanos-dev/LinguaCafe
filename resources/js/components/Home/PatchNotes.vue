@@ -34,6 +34,10 @@
                         There was a non-standard scroll function used that caused issues in some browsers. 
                         It has been fixed, and it was added as an option for text and subtitle reader.
                     </li>
+                    <li>
+                        An issue has been fixed that caused white space characters being displayed as clickable words 
+                        on the text reader page, and it broke the software if the user clicked on them.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
