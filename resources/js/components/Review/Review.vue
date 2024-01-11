@@ -103,10 +103,7 @@
                                         :fullscreen="settings.fullscreen"
                                         :_text-blocks="textBlocks"
                                         :language="language"
-                                        :highlight-words="true"
-                                        :plain-text-mode="false"
                                         :font-size="settings.fontSize"
-                                        :line-spacing="0"
                                     ></text-block-group>
                                 </div>
                             </div>

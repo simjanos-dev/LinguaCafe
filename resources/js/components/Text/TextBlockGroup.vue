@@ -419,11 +419,23 @@
             fullscreen: Boolean,
             _textBlocks: Array,
             language: String,
-            hideAllHighlights: Boolean,
-            hideNewWordHighlights: Boolean,
-            plainTextMode: Boolean,
+            hideAllHighlights: {
+                type: Boolean,
+                default: false
+            },
+            hideNewWordHighlights: {
+                type: Boolean,
+                default: false
+            },
+            plainTextMode: {
+                type: Boolean,
+                default: false
+            },
             fontSize: Number,
-            lineSpacing: Number,
+            lineSpacing: {
+                type: Number,
+                default: 0
+            },
             vocabBoxScrollIntoView: {
                 type: String,
                 default: 'Disabled'
