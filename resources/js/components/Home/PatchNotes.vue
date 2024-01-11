@@ -9,7 +9,7 @@
             <v-card-text>
                 New features:
                 <ul>
-                    <li>Docker installation and update process has been reworked and made easier.</li>
+                    <li>Docker installation and update process has been reworked and made simpler.</li>
                     <li>The "Highlight words" option in the text and subtitle reader settings dialog has been separated to 2 options: 
                         "Hide all highlighting" and "Hide new word highlighting". This makes it possible to hide only the 
                         yellow new word highlighting.
@@ -19,6 +19,9 @@
                 Bug fixes:
                 <ul>
                     <li>Fixed all issues with "Plain text mode".</li>
+                    <li>Fixed a bug that caused words to only have top and bottom border without background when "Highlight words" option was turned off, 
+                        and the user hovered over them.</li>
+                    <li>Missing toolbar titles have been added to text reader.</li>
                 </ul>
 
                 Other changes:
