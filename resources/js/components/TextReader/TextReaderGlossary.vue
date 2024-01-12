@@ -5,7 +5,13 @@
             outlined
             class="rounded-lg"
         >
-            <v-card-title>Glossary</v-card-title>
+            <v-card-title>
+                <span class="text-h5">Glossary</span>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="close">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-card-title>
             <v-card-text class="pt-6 px-0">
                 <template v-for="(word, index) in glossary">
                     <div class="glossary-entry pa-4" :key="index">

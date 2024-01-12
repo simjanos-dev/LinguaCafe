@@ -3,31 +3,34 @@
         <div class="subheader">
             Patch notes
         </div>
-
+        
         <v-card outlined class="rounded-lg mb-8">
-            <v-card outlined class="rounded-lg mb-8">
-                <v-card-title>v0004 <v-spacer /> 2024.??.??.</v-card-title>
-                <v-card-text>
-                    <b>New features:</b>
-                    <ul>
-                        <li>
-                            Added information popups for different features.
-                        </li>
-                    </ul>
+            <v-card-title>v0004 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Added information popups for different features.
+                    </li>
+                </ul>
 
-                    <b>Bug fixes:</b>
-                    <ul>
-                        <li>
-                            Added missing toolbar titles on the review page.
-                        </li>
-                    </ul>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Added missing toolbar titles on the review page.
+                    </li>
+                    <li>
+                        Added missing dialog close buttons.
+                    </li>
+                </ul>
 
-                    <b>Other changes:</b>
-                    <ul>
-                    </ul>
-                </v-card-text>
-            </v-card>
-            
+                <b>Other changes:</b>
+                <ul>
+                </ul>
+            </v-card-text>
+        </v-card>
+        
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0003 <v-spacer /> 2024.01.12.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
