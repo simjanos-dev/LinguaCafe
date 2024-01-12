@@ -7,12 +7,12 @@
         <template v-for="(word, wordIndex) in words"><!--
             --><div 
                 :key="wordIndex"
-                v-if="word.word !== 'NEWLINE'" 
+                v-if="word.word !== 'NEWLINE' && /\S/.test(word.word)" 
                 :wordindex="wordIndex" 
                 :stage="word.stage" 
                 :phrasestage="word.phraseStage" 
                 :class="{
-                    'no-highlight': !highlightWords,
+                    'no-highlight': hideAllHighlights || (hideNewWordHighlights && word.stage == 2),
                     'plain-text-mode': plainTextMode,
                     'word': true,
                     'highlighted': word.selected || word.hover,
@@ -35,14 +35,14 @@
                 @touchend.stop="finishSelection($event)"
                 @mouseup.stop="finishSelection($event)"
                 @mouseleave=";"
-            >{{ word.word }}</div><!--
+            >{{ word.word }}<template v-if="plainTextMode && word.spaceAfter">&nbsp;</template></div><!--
             --><br v-if="word.word == 'NEWLINE'"><!--
         --></template>
     </div>
 </template>
 
 <script>
-    export default {    
+    export default {
         data: function() {
             return {
                 words: this.$props._words,
@@ -80,7 +80,8 @@
             _phrases: Array,
             _uniqueWords: Array,
             language: String,
-            highlightWords: Boolean,
+            hideAllHighlights: Boolean,
+            hideNewWordHighlights: Boolean,
             plainTextMode: Boolean,
             fontSize: Number,
             lineSpacing: Number
@@ -165,11 +166,19 @@
                 this.ongoingSelection = newSelection;
             },
             startSelectionTouch: function(event, wordIndex) {
+                if (this.$props.plainTextMode) {
+                    return;
+                }
+
                 this.touchTimer = setTimeout(() => {
                     this.startSelection(event, wordIndex);
                 }, 500);
             },
             startSelection: function(event, wordIndex) {
+                if (this.$props.plainTextMode) {
+                    return;
+                }
+
                 this.$emit('saveSelectedWord');
 
                 this.touchTimer = null;
@@ -184,10 +193,6 @@
                 this.selectionOngoing = true;
 
                 if (this.ongoingSelection.length == 1 && this.ongoingSelection[0].wordIndex == wordIndex) {
-                    return;
-                }
-
-                if (this.$props.plainTextMode) {
                     return;
                 }
 

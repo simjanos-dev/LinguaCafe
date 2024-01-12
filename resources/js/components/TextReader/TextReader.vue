@@ -3,14 +3,14 @@
         <div id="reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}" v-if="lessonId !== null">
             <div id="toolbar-box">
                 <div v-if="!finished" id="toolbar" :class="{'d-flex': true}" :style="{'top': toolbarTop + 'px'}">
-                    <v-btn icon @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
-                    <v-btn icon @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
-                    <v-btn icon @click="openDialog('settings')"><v-icon>mdi-cog</v-icon></v-btn>
-                    <v-btn icon @click="openDialog('chapters')"><v-icon>mdi-book-alphabet</v-icon></v-btn>
-                    <v-btn icon @click="openDialog('glossary')"><v-icon>mdi-translate</v-icon></v-btn>
-                    <v-btn icon @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                    <v-btn icon @click="settings.fontSize --; saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
-                    <v-btn icon @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
+                    <v-btn title="Fullscreen" icon @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                    <v-btn title="Exit fullscreen" icon @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                    <v-btn title="Text reader settings" icon @click="openDialog('settings')"><v-icon>mdi-cog</v-icon></v-btn>
+                    <v-btn title="Chapters" icon @click="openDialog('chapters')"><v-icon>mdi-book-alphabet</v-icon></v-btn>
+                    <v-btn title="Glossary" icon @click="openDialog('glossary')"><v-icon>mdi-translate</v-icon></v-btn>
+                    <v-btn title="Increase font size" icon @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                    <v-btn title="Decrease font size" icon @click="settings.fontSize --; saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                    <v-btn title="Toggle plain text mode" icon @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
                 </div>
             </div>
 
@@ -18,7 +18,8 @@
             <text-reader-settings
                 v-if="dialogs.settings"
                 v-model="dialogs.settings"
-                :_highlight-words="settings.highlightWords"
+                :_hide-all-highlights="settings.hideAllHighlights"
+                :_hide-new-word-highlights="settings.hideNewWordHighlights"
                 :_plain-text-mode="settings.plainTextMode"
                 :_japanese-text="settings.japaneseText"
                 :_font-size="settings.fontSize"
@@ -26,6 +27,7 @@
                 :_maximum-text-width="settings.maximumTextWidth"
                 :_display-suggested-translations="settings.displaySuggestedTranslations"
                 :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
+                :_vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                 @changed="saveSettings"   
             ></text-reader-settings>
             
@@ -70,10 +72,12 @@
                         :fullscreen="settings.fullscreen"
                         :_text-blocks="textBlocks"
                         :language="language"
-                        :highlight-words="settings.highlightWords"
+                        :hide-all-highlights="settings.hideAllHighlights"
+                        :hide-new-word-highlights="settings.hideNewWordHighlights"
                         :plain-text-mode="settings.plainTextMode"
                         :font-size="settings.fontSize"
                         :line-spacing="settings.lineSpacing"
+                        :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                     ></text-block-group>    
                 </v-card-text>
                 <v-alert
@@ -143,7 +147,8 @@
                 toolbarTop: 68,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 settings: {
-                    highlightWords: true,
+                    hideAllHighlights: false,
+                    hideNewWordHighlights: false,
                     plainTextMode: false,
                     japaneseText: false,
                     fontSize: 20,
@@ -151,7 +156,8 @@
                     maximumTextWidth: 0,
                     displaySuggestedTranslations: false,
                     autoMoveWordsToKnown: false,
-                    fullscreen: false
+                    fullscreen: false,
+                    vocabBoxScrollIntoView: 'scroll-into-view'
                 },
                 finished: false,
                 finishError: false,
@@ -217,7 +223,8 @@
                     }
                 }
 
-                this.settings.highlightWords = this.$cookie.get('highlight-words') === 'true';
+                this.settings.hideAllHighlights = this.$cookie.get('hide-all-highlights') === 'true';
+                this.settings.hideNewWordHighlights = this.$cookie.get('hide-new-word-highlights') === 'true';
                 this.settings.plainTextMode = this.$cookie.get('plain-text-mode') === 'true';
                 this.settings.japaneseText = this.$cookie.get('japanese-text') === 'true';
                 this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
@@ -225,9 +232,15 @@
                 this.settings.maximumTextWidth =  parseInt(this.$cookie.get('maximum-text-width'));
                 this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
                 this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
+                this.settings.vocabBoxScrollIntoView = this.$cookie.get('vocab-box-scroll-into-view');
+                
 
-                if (this.$cookie.get('highlight-words') === null) {
-                    this.settings.highlightWords = true;
+                if (this.$cookie.get('hide-all-highlights') === null) {
+                    this.settings.hideAllHighlights = false;
+                }
+
+                if (this.$cookie.get('hide-new-word-highlights') === null) {
+                    this.settings.hideNewWordHighlights = false;
                 }
 
                 if (this.$cookie.get('plain-text-mode') === null) {
@@ -256,6 +269,10 @@
 
                 if (this.$cookie.get('auto-move-words-to-known') === null) {
                     this.settings.autoMoveWordsToKnown =  true;
+                }
+
+                if (this.$cookie.get('vocab-box-scroll-into-view') === null) {
+                    this.settings.vocabBoxScrollIntoView =  'scroll-into-view';
                 }
 
                 this.saveSettings();
@@ -296,7 +313,8 @@
                     this.settings.fontSize = 30;
                 }
 
-                this.$cookie.set('highlight-words', this.settings.highlightWords, 3650);
+                this.$cookie.set('hide-all-highlights', this.settings.hideAllHighlights, 3650);
+                this.$cookie.set('hide-new-word-highlights', this.settings.hideNewWordHighlights, 3650);
                 this.$cookie.set('plain-text-mode', this.settings.plainTextMode, 3650);
                 this.$cookie.set('japanese-text', this.settings.japaneseText, 3650);
                 this.$cookie.set('font-size', this.settings.fontSize, 3650);
@@ -304,7 +322,7 @@
                 this.$cookie.set('maximum-text-width', this.settings.maximumTextWidth, 3650);
                 this.$cookie.set('display-suggested-translations', this.settings.displaySuggestedTranslations, 3650);
                 this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
-                
+                this.$cookie.set('vocab-box-scroll-into-view', this.settings.vocabBoxScrollIntoView, 3650);                
             },
             openDialog: function(dialog) {
                 if (document.fullscreenElement !== null) {
