@@ -17,6 +17,9 @@
 
                     <b>Bug fixes:</b>
                     <ul>
+                        <li>
+                            Added missing toolbar titles on the review page.
+                        </li>
                     </ul>
 
                     <b>Other changes:</b>
