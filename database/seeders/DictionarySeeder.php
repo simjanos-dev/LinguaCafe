@@ -146,5 +146,41 @@ class DictionarySeeder extends Seeder
                 'enabled' => false
             ]);
         }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL RU')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL RU',
+                'database_table_name' => 'API',
+                'language' => 'russian',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL SV')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL SV',
+                'database_table_name' => 'API',
+                'language' => 'swedish',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL UA')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL UA',
+                'database_table_name' => 'API',
+                'language' => 'ukrainian',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
     }
 }

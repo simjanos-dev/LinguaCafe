@@ -1,0 +1,54 @@
+FROM php:8.2-apache
+
+RUN curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+RUN chmod +x ./nodesource_setup.sh
+RUN ./nodesource_setup.sh
+RUN rm ./nodesource_setup.sh
+RUN apt install nodejs npm -y
+
+# install php extensions for laravel
+RUN apt update
+RUN apt install -y sqlite3
+RUN docker-php-ext-install pdo pdo_mysql fileinfo
+RUN apt install -y \
+        libpng-dev \
+        zlib1g-dev \
+        libxml2-dev \
+        libzip-dev \
+        libonig-dev \
+        zip \
+        curl \
+        unzip \
+    && docker-php-ext-configure gd \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-install zip \
+    && docker-php-source delete
+
+#php config
+RUN printf 'max_execution_time = 600\n' >> /usr/local/etc/php/conf.d/uploads.ini
+RUN printf 'upload_max_filesize = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
+RUN printf 'post_max_size = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
+RUN printf 'memory_limit = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
+
+# copy apache config
+COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+
+# set project directory owner
+RUN chown -R www-data:www-data /var/www/html
+
+# enable htaccess
+RUN a2enmod rewrite
+
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+
+# for some reason i have to install this manually,
+# despite being in the composer.json
+# RUN composer require guzzlehttp/guzzle
+
+
+ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
+CMD ["apache2-foreground"]

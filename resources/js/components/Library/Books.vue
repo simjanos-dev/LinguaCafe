@@ -324,7 +324,7 @@
                         this.anyChapterVisible = !this.books[bookIndex].chaptersVisible;
                         this.books[bookIndex].chaptersVisible = !this.books[bookIndex].chaptersVisible;
                         setTimeout(() => {
-                            document.getElementById('book-' + bookId).scrollIntoViewIfNeeded();
+                            document.getElementById('book-' + bookId).scrollIntoView();
                         }, 500);
                     }
                 }

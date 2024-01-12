@@ -65,17 +65,18 @@
             padding-left: 4px !important;
             padding-right: 4px !important;
         }
+        
+        &.no-highlight {
+            background-color: rgba(0, 0, 0, 0) !important;
+            color: var(--v-text-base) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0);
+        }
 
         &[stage="2"] {
             padding-left: 4px !important;
             padding-right: 4px !important;
         }
 
-        &.no-highlight, &.plain-text-mode {
-            background-color: rgba(0, 0, 0, 0) !important;
-            color: var(--v-text-base) !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0);
-        }
 
         &.phrase {
             background-color: var(--v-highlightedWord-base);
@@ -92,6 +93,14 @@
             &[phrasestage="0"] {
                 border-color: rgb(180, 180, 180) !important;
                 color: var(--v-text-base);
+                
+                &[stage="2"] {
+                    color: var(--v-textDark-base);
+                }
+
+                &.no-highlight {
+                    border-color: rgb(180, 180, 180) !important;
+                }
             }
 
             &[phrasestage="0"]:not([stage="2"]) {
@@ -102,10 +111,12 @@
                 }
             }
 
-            &.plain-text-mode, &.no-highlight {
+            &.no-highlight {
                 background-color: rgba(0, 0, 0, 0);
-                border-color: rgba(0, 0, 0, 0) !important;
+                border-color: rgb(180, 180, 180) !important;
                 color: var(--v-text-base);
+
+
             }
 
             &.highlighted, &:hover, &[phrasestage="0"]:hover {
@@ -134,26 +145,12 @@
             color: var(--v-highlightedWordText-base);
             margin-left: .5px !important;
             margin-right: .5px !important;
-
-            &.plain-text-mode, &.no-highlight {
-                background-color: rgba(0, 0, 0, 0);
-            }
         }
         
         &.highlighted, &:hover {
-            background-color: var(--v-readerWordSelection-base);
-            color: var(--v-highlightedWordText-base);
+            background-color: var(--v-readerWordSelection-base) !important;
+            color: var(--v-highlightedWordText-base) !important;
             border-color: var(--v-readerWordSelection-base) !important;
-        }
-
-        &.plain-text-mode {
-            cursor: default !important;
-            &:hover {
-                color: var(--v-text-base) !important;
-                user-select: text !important;
-                cursor: text !important;
-                background-color: rgba(0, 0, 0, 0);
-            }
         }
 
         &.space-after {
@@ -162,6 +159,33 @@
             &.highlighted, &.phrase {
                 margin-right: 0px !important;
                 padding-right: 5px !important;
+            }
+        }
+
+        &.plain-text-mode, &.plain-text-mode:hover {
+            margin-left: none !important;
+            margin-right: none !important;
+            padding-left: none !important;
+            padding-right: none !important;
+            background-color: rgba(0, 0, 0, 0) !important;
+            color: var(--v-text-base) !important;
+            border: none !important;
+            cursor: default !important;
+            user-select: text !important;
+
+            &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], 
+            &[stage="-3"], &[stage="-2"], &[stage="-1"], &[stage="2"], 
+            &.phrase, &.phrase-start, &.phrase-end, &.highlighted, &:hover, 
+            &.space-after, &.space-after.highlighted, &.space-after.phrase {
+                margin-left: 0px !important;
+                margin-right: 0px !important;
+                padding-left: 0px !important;
+                padding-right: 0px !important;
+                background-color: rgba(0, 0, 0, 0) !important;
+                color: var(--v-text-base) !important;
+                border: none !important;
+                cursor: default !important;
+                user-select: text !important;
             }
         }
     }

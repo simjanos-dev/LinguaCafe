@@ -30,6 +30,9 @@ return [
         'french' => 'FR',
         'italian' => 'IT',
         'korean' => 'KO',
+        'swedish' => 'SV',
+        'ukrainian' => 'UK',
+        'russian' => 'RU',
 
         'Japanese' => 'JA',
         'Norwegian' => 'NB',
@@ -41,6 +44,9 @@ return [
         'French' => 'FR',
         'Italian' => 'IT',
         'Korean' => 'KO',
+        'Swedish' => 'SV',
+        'Ukrainian' => 'UK',
+        'Russian' => 'RU',
     ],
 
     'wordsToSkip' => ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
