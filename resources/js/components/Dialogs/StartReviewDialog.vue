@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" persistent max-width="400px">
+    <v-dialog v-model="value" persistent max-width="500px">
         <v-card class="rounded-lg">
             <v-card-title>
                 <span class="text-h5">Review</span>
@@ -12,8 +12,30 @@
                 <span v-if="bookName !== ''">Book: {{ bookName }}</span><br>
                 <span v-if="chapterName !== ''">Chapter: {{ chapterName }}</span>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions class="mt-8">
+                
+                <!-- Practice mode -->
                 <v-checkbox class="mt-0 pt-0" hide-details v-model="practiceMode" label="Practice mode"></v-checkbox>
+                <v-menu offset-y left nudge-top="-12px" nudge-left="-88px">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="ml-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                    </template>
+                    <v-card outlined class="rounded-lg pa-4" width="252px">
+                        <span class="mb-1">In practice mode:</span>
+                        <ul class="mb-0">
+                            <li>
+                                Your words' and phrases' review due date will not change.
+                            </li>
+                            <li>
+                                Your reviews do not count in daily review goals.
+                            </li>
+                            <li>
+                                You will also get cards which are due to a later date.
+                            </li>
+                        </ul>
+                    </v-card>
+                </v-menu>
+
                 <v-spacer></v-spacer>
                 <v-btn rounded text @click="close">Cancel</v-btn>
                 <v-btn rounded text :to="'/review/' + practiceMode + '/' + bookId + '/' + chapterId ">Start</v-btn>

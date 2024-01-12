@@ -5,6 +5,26 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card outlined class="rounded-lg mb-8">
+                <v-card-title>v0004 <v-spacer /> 2024.??.??.</v-card-title>
+                <v-card-text>
+                    <b>New features:</b>
+                    <ul>
+                        <li>
+                            Added information popups for different features.
+                        </li>
+                    </ul>
+
+                    <b>Bug fixes:</b>
+                    <ul>
+                    </ul>
+
+                    <b>Other changes:</b>
+                    <ul>
+                    </ul>
+                </v-card-text>
+            </v-card>
+            
             <v-card-title>v0003 <v-spacer /> 2024.01.12.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
