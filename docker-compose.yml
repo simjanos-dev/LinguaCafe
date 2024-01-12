@@ -19,7 +19,8 @@ services:
         #     GUID: 1000
         # user: "www-data:www-data"
         volumes:
-            - ~/dockershare/linguacafe/logs:/var/www/html/storage/logs
+            - ~/dockershare/linguacafe/dictionaries:/var/www/html/storage/app/dictionaries
+        #     - ~/dockershare/linguacafe/logs:/var/www/html/storage/logs
         ports:
             - "9191:80"
             - "3000:3000"
