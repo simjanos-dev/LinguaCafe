@@ -14,9 +14,12 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+        # environment:
+        #     PUID: 1000
+        #     GUID: 1000
+        # user: "www-data:www-data"
         volumes:
-            - ./storage:/var/www/html/storage
-            - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+            - ~/dockershare/linguacafe/logs:/var/www/html/storage/logs
         ports:
             - "9191:80"
             - "3000:3000"
@@ -32,7 +35,7 @@ services:
         ports:
           - "3308:3306"
         volumes:
-          - ./docker/mysql:/var/lib/mysql
+          - ~/dockershare/linguacafe/mysql:/var/lib/mysql
         environment:
           MYSQL_DATABASE: linguacafe
           MYSQL_USER: linguacafe
@@ -54,7 +57,6 @@ services:
         build:
             dockerfile: ./docker/PythonDockerfile
         volumes:
-            - ./tools/django_server:/app
-            - ./storage:/var/www/html/storage
+            - ~/dockershare/linguacafe/dictionaries:/var/www/html/storage/app/dictionaries
         networks:
             - linguacafe
