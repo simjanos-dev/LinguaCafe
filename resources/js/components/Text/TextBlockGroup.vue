@@ -191,9 +191,9 @@
                                             The closer it is to 0, the closer you are to learn it, and it 
                                             will appear in reviews less frequently.<br><br>
 
-                                            <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-check</v-icon>
+                                            <v-icon class="mr-2">mdi-check</v-icon>
                                             represents known words.<br>
-                                            <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-close</v-icon>
+                                            <v-icon class="mr-2">mdi-close</v-icon>
                                             represents ignored words. Ignored words do not count in learned word statistics.
                                         </v-card>
                                     </v-menu>
