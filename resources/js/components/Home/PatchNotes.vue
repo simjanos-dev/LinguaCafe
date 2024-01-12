@@ -5,7 +5,7 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0003</v-card-title>
+            <v-card-title>v0003 <v-spacer /> 2024.01.12.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -47,6 +47,10 @@
                 <ul>
                     <li>
                         The "/storage/app/dictionaries" folder has been created in the repository, and won't have to be created manually.
+                    </li>
+                    <li>
+                        All tokenizer models have been replaced with smaller sized ones due to possible performance issues. They will be replaced 
+                        with larger models for specific languages if it causes word tagging accuracy issues.
                     </li>
                 </ul>
             </v-card-text>

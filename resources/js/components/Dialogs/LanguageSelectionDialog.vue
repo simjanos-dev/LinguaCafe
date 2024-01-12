@@ -115,9 +115,9 @@
                     'French',
                     'Italian',
                     'Korean',
+                    'Russian',
                     'Swedish',
                     'Ukrainian',
-                    'Russian',
                 ]
             };
         },

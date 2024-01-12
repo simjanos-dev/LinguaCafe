@@ -93,7 +93,7 @@
                 <v-card outlined class="rounded-lg pt-0 mr-4 mb-4" width="290px">
                     <v-card-title>Version</v-card-title>
                     <v-card-text>
-                        The current LinguaCafe version is V0001.
+                        The current LinguaCafe version is V0003.
                         <div class="footer-link-box mb-1 mt-4">
                             <router-link to="/patch-notes"><v-icon class="mr-2">mdi-update</v-icon>Patch notes</router-link>
                         </div>
