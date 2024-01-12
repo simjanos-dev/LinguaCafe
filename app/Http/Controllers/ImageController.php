@@ -12,7 +12,6 @@ class ImageController extends Controller
         $this->middleware('auth');
     }
 
-    
     public function getFlagImage($name)
     {
         return Storage::get('/images/flags/' . $name . '.png');
