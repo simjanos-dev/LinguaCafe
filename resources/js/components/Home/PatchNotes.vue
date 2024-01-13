@@ -10,7 +10,13 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        Added information popups for different features.
+                        German lemmatization for nouns and separable verbs have been improved. 
+                    </li>
+                    <li>
+                        There is a new UI for importing dictionaries.
+                    </li>
+                    <li>
+                        Information popups for different features have been added.
                     </li>
                 </ul>
 
@@ -26,6 +32,9 @@
 
                 <b>Other changes:</b>
                 <ul>
+                    <li>
+                        Auto generated lemmas sometimes had uppercase letters. It has been changed to only contain lowercase letters.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>
