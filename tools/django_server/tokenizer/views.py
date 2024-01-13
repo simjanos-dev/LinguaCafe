@@ -29,7 +29,7 @@ hiraganaConverter = pykakasi.kakasi()
 norwegian_nlp = spacy.load("nb_core_news_sm", disable = ['ner', 'parser'])
 norwegian_nlp.add_pipe("custom_sentence_splitter", first=True)
 
-german_nlp = spacy.load("de_core_news_sm", disable = ['ner', 'parser'])
+german_nlp = spacy.load("de_core_news_sm", disable = ['ner'])
 german_nlp.add_pipe("custom_sentence_splitter", first=True)
 
 korean_nlp = spacy.load("ko_core_news_sm", disable = ['ner', 'parser'])
@@ -215,11 +215,23 @@ def tokenizeText(words, language):
                     lemmaReading.append(x['hira'])
 
             gender = ''
-            if language == 'norwegian':
+            if language in ('norwegian', 'german'):
                 gender = token.morph.get("Gender")
 
-            tokenizedWords.append({'w': word, 'r': ''.join(reading), 'l': token.lemma_, 'lr': ''.join(lemmaReading), 'pos': token.pos_,'si': sentenceIndex, 'g': gender})
+            lemma = token.lemma_
+            if language == 'german' and token.pos_ == 'VERB':
+                lemma = get_separable_lemma(token)
+            
+            tokenizedWords.append({'w': word, 'r': ''.join(reading), 'l': lemma, 'lr': ''.join(lemmaReading), 'pos': token.pos_,'si': sentenceIndex, 'g': gender})
+    print(tokenizedWords)
     return tokenizedWords
+
+# used for german separable verbs
+def get_separable_lemma(token):
+    prefix = [c.text for c in token.children if c.dep_ == 'svp']
+    if len(prefix) > 0:
+        return prefix[0] + token.lemma_
+    return token.lemma_
 
 # loads n .epub file
 def loadBook(file):
