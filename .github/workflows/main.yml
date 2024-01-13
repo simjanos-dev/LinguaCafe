@@ -1,0 +1,107 @@
+# GitHub authenticates as you when using ${{ secrets.GITHUB_TOKEN }}.
+# Improve this workflow security with a GitHub PAT. Make one with the "Note" as GHCR_LINGUA_PAT here:
+# https://github.com/settings/tokens
+# then check the following permissions:
+#  repo
+#   ...
+#  workflow
+#  write:packages
+#   ...
+# Click generate, <copy to clipboard>
+# You just created a PAT
+# visit linguacafe repo, Settings -> Secrets & Variables -> Actions -> Repo Secrets -> New
+# Name: GHCR_LINGUA_PAT; Secret: <paste from clipboard>
+# update this workflow and change ${{ secrets.GITHUB_TOKEN }} to ${{ secrets.GHCR_LINGUA_PAT }}
+
+name: Build and Publish Docker images
+
+# If you want to push images on every git push to the repo:main branch
+# on:
+#   push:
+#     branches: main
+
+## If you want to push images only on a new tag/release
+on:
+  release:
+    types: [created]
+env:
+  REGISTRY: ghcr.io
+  # IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # define the job to build and publish docker images
+  build-and-push-docker-images:
+    runs-on: ubuntu-latest
+
+    # steps to perform in the job
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # set up Docker build action
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      # https://github.com/docker/metadata-action
+      - name: Docker PHP meta
+        id: meta_php
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.actor }}/linguacafe-webserver
+
+      # https://github.com/docker/metadata-action
+      - name: Docker Python meta
+        id: meta_python
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.actor }}/linguacafe-python-service
+
+
+      # https://github.com/docker/login-action#github-container-registry
+      - name: Log in to Github Packages
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://github.com/docker/build-push-action
+      - name: Build and push PHP image to GitHub Container Registry
+        id: docker_build_php
+        uses: docker/build-push-action@v3
+        with:
+          file: "PhpDockerfile"
+          # extra platforms can be added here:
+          # linux/amd64
+          # linux/arm/v6
+          # linux/arm/v7
+          # linux/arm64
+          # linux/386
+          platforms: |
+            linux/amd64
+          # Note: tags have to be all lower-case
+          tags: ${{ steps.meta_php.outputs.tags }}
+          labels: ${{ steps.meta_php.outputs.labels }}
+          push: true
+
+      - name: PHP Image digest
+        run: echo ${{ steps.docker_build_php.outputs.digest }}
+
+      # https://github.com/docker/build-push-action
+      - name: Build and push Python image to GitHub Container Registry
+        id: docker_build_python
+        uses: docker/build-push-action@v3
+        with:
+          file: "PythonDockerfile"
+          platforms: |
+            linux/amd64
+          # Note: tags have to be all lower-case
+          tags: ${{ steps.meta_python.outputs.tags }}
+          labels: ${{ steps.meta_python.outputs.labels }}
+          push: true
+
+      - name: Python Image digest
+        run: echo ${{ steps.docker_build_python.outputs.digest }}
+
