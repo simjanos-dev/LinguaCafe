@@ -12,7 +12,7 @@ use App\Models\EncounteredWord;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 use App\Models\Phrase;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\TextBlock;
 use App\Services\GoalService;
 
@@ -30,11 +30,11 @@ class HomeController extends Controller
     }
 
     public function dev() {
-        // $lessons = Lesson::get();
-        // $lessonCount = count($lessons);
-        // foreach ($lessons as $lessonIndex => $lesson) {
+        // $chapters = Chapter::get();
+        // $chapterCount = count($chapters);
+        // foreach ($chapters as $chapterIndex => $chapter) {
         //     $textBlock = new TextBlock();
-        //     $textBlock->rawText = $lesson->raw_text;
+        //     $textBlock->rawText = $chapter->raw_text;
         //     $textBlock->tokenizeRawText();
         //     $textBlock->processTokenizedWords();
         //     $textBlock->collectUniqueWords();
@@ -44,20 +44,20 @@ class HomeController extends Controller
         //     $uniqueWordIds = DB
         //         ::table('encountered_words')
         //         ->select('id')
-        //         ->where('user_id', $lesson->user_id)
-        //         ->where('language', $lesson->language)
+        //         ->where('user_id', $chapter->user_id)
+        //         ->where('language', $chapter->language)
         //         ->whereIn('word', $textBlock->uniqueWords)
         //         ->pluck('id')
         //         ->toArray();
                 
-        //     // update lesson word data
-        //     $lesson->word_count = $textBlock->getWordCount();
-        //     $lesson->unique_words = json_encode($textBlock->uniqueWords);
-        //     $lesson->unique_word_ids = json_encode($uniqueWordIds);
-        //     $lesson->setProcessedText($textBlock->processedWords);
-        //     $lesson->save();
+        //     // update chapter word data
+        //     $chapter->word_count = $textBlock->getWordCount();
+        //     $chapter->unique_words = json_encode($textBlock->uniqueWords);
+        //     $chapter->unique_word_ids = json_encode($uniqueWordIds);
+        //     $chapter->setProcessedText($textBlock->processedWords);
+        //     $chapter->save();
 
-        //     echo(($lessonIndex + 1) . '/' . $lessonCount . ' finished <br>');
+        //     echo(($chapterIndex + 1) . '/' . $chapterCount . ' finished <br>');
         //     echo str_repeat(' ',1024*64);
         //     flush();
         // }

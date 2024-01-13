@@ -333,7 +333,7 @@ class TextBlock
             $phrase->words = json_decode($phrase->words);
         }
 
-        // check if the lesson contains the phrase
+        // check if the chapter contains the phrase
         // otherwise skip the algorithm. 
         foreach ($phrase->words as $phraseWord) {
             if (!in_array($phraseWord, $this->uniqueWords, true)) {

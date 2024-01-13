@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\EncounteredWord;
 use App\Models\Book;
-use App\Models\Lesson;
+use App\Models\Chapter;
 
 class BookController extends Controller
 {
@@ -118,7 +118,7 @@ class BookController extends Controller
         $bookId = $request->post('bookId');
         $userId = Auth::user()->id;
 
-        $chapters = Lesson
+        $chapters = Chapter
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->delete();

@@ -8,7 +8,7 @@ use App\Models\Phrase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class Lesson extends Model
+class Chapter extends Model
 {
     use HasFactory;
 

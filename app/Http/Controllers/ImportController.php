@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\TextBlock;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\Book;
 
 
@@ -87,16 +87,16 @@ class ImportController extends Controller
 
         // import each chunk as a chapter
         foreach ($chunks as $chunkIndex => $chunk) {
-            $lesson = new Lesson();
-            $lesson->user_id = $userId;
-            $lesson->name = $chapterName . ' ' . ($chunkIndex + 1);
-            $lesson->read_count = 0;
-            $lesson->word_count = 0;
-            $lesson->book_id = $book->id;
-            $lesson->language = $selectedLanguage;
-            $lesson->raw_text = $textChunks[$chunkIndex];
-            $lesson->unique_words = '';
-            $lesson->setProcessedText([]);
+            $chapter = new Chapter();
+            $chapter->user_id = $userId;
+            $chapter->name = $chapterName . ' ' . ($chunkIndex + 1);
+            $chapter->read_count = 0;
+            $chapter->word_count = 0;
+            $chapter->book_id = $book->id;
+            $chapter->language = $selectedLanguage;
+            $chapter->raw_text = $textChunks[$chunkIndex];
+            $chapter->unique_words = '';
+            $chapter->setProcessedText([]);
 
             $textBlock = new TextBlock();
             $textBlock->tokenizedWords = $chunk;
@@ -114,12 +114,12 @@ class ImportController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-            // update lesson word data
-            $lesson->setProcessedText($textBlock->processedWords);
-            $lesson->word_count = $textBlock->getWordCount();
-            $lesson->unique_words = json_encode($textBlock->uniqueWords);
-            $lesson->unique_word_ids = json_encode($uniqueWordIds);
-            $lesson->save();
+            // update chapter word data
+            $chapter->setProcessedText($textBlock->processedWords);
+            $chapter->word_count = $textBlock->getWordCount();
+            $chapter->unique_words = json_encode($textBlock->uniqueWords);
+            $chapter->unique_word_ids = json_encode($uniqueWordIds);
+            $chapter->save();
         }
 
         return 'success';

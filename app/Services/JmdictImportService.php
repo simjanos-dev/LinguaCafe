@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Setting;
 use App\Models\Kanji;
 use App\Models\Radical;
-use App\Models\Lesson;
 use App\Models\VocabularyJmdict;
 use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;

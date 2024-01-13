@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Kanji;
 use App\Models\Radical;
-use App\Models\Lesson;
 use App\Models\VocabularyJmdict;
 use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
