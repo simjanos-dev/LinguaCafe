@@ -72,7 +72,7 @@ jobs:
         id: docker_build_php
         uses: docker/build-push-action@v3
         with:
-          file: "PhpDockerfile"
+          file: "./docker/PhpDockerfile"
           # extra platforms can be added here:
           # linux/amd64
           # linux/arm/v6
@@ -94,7 +94,7 @@ jobs:
         id: docker_build_python
         uses: docker/build-push-action@v3
         with:
-          file: "PythonDockerfile"
+          file: "./docker/PythonDockerfile"
           platforms: |
             linux/amd64
           # Note: tags have to be all lower-case
