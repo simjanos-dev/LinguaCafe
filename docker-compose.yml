@@ -15,7 +15,8 @@ services:
             mysql:
                 condition: service_healthy
         volumes:
-            - /your/linguacafe/folder/dictionaries:/var/www/html/storage/app/dictionaries
+            - /your/linguacafe/folder:/var/www/html/storage/app/dictionaries
+            - /your/linguacafe/folder:/var/www/html/storage/logs
         ports:
             - "9191:80"
             - "3000:3000"
@@ -53,6 +54,6 @@ services:
         build:
             dockerfile: ./docker/PythonDockerfile
         volumes:
-            - /your/linguacafe/folder/dictionaries:/var/www/html/storage/app/dictionaries
+            - /your/linguacafe/folder:/var/www/html/storage/app/dictionaries
         networks:
             - linguacafe
