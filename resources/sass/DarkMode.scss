@@ -60,6 +60,10 @@
     i.v-icon {
         color: var(--v-textDark-base);
     }
+
+    a, a:visited, a:active {
+        color: var(--v-textDark-base);
+    }
 }
 
 // table
@@ -470,6 +474,13 @@
         &:not(.learned) {
             color: var(--v-gray2-base);
         }
+    }
+}
+
+// admin dictionary settings
+#app.dark #supported-dictionaries {
+    .dictionary {
+        border: 1px dashed var(--v-gray3-base);
     }
 }
 

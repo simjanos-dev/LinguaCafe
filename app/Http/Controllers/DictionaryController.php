@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 use \Exception;
 use \DeepL\Translator;
@@ -15,6 +16,7 @@ use App\Models\ImportedDictionary;
 use App\Models\VocabularyJmdict;
 use App\Models\DeeplCache;
 use App\Models\Setting;
+use App\Services\DictionaryImportService;
 
 class DictionaryController extends Controller
 {
@@ -438,6 +440,65 @@ class DictionaryController extends Controller
 
         File::delete(storage_path('app/temp') . '/' . $fileName);
         return 'success';
+    }
+
+    /*
+        Scans the /storage/app/dictionaries folder, 
+        and returns a list of importable dictionaries.
+    */
+    public function getImportableDictionaryList() {
+        $dictionariesFound = [];
+
+        // JMDict
+        if (Storage::exists('dictionaries/jmdict_processed.txt') &&
+            Storage::exists('dictionaries/kanjidic2.xml') &&
+            Storage::exists('dictionaries/radical-strokes.txt') &&
+            Storage::exists('dictionaries/radicals.txt')) {
+            
+            $dictionary = new \stdClass();
+            $dictionary->name = 'JMDict';
+            $dictionary->databaseName = 'dict_jp_jmdict';
+            $dictionary->language = 'japanese';
+            $dictionary->color = '#74E39A'; 
+            $dictionary->expectedRecordCount = 210000;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionariesFound[] = $dictionary;
+        }
+
+        return json_encode($dictionariesFound);
+    }
+
+    public function importSupportedDictionary($dictionaryName) {
+
+        // Import jmdict files
+        if ($dictionaryName == 'JMDict') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->jmdictImport();
+                $dictionaryImportService->kanjiImport();
+                $dictionaryImportService->kanjiRadicalImport();
+            } catch (\Throwable $t) {
+                return 'error';
+            } catch (\Exception $e) {
+                return 'error';
+            }
+
+            return 'success';
+        }
+    }
+
+    /*
+        Returns the number of records in a dictionary database table.
+        It is used to display import progress bar.
+    */
+    public function getDictionaryRecordCount($dictionaryTableName) {
+        if (!Schema::hasTable($dictionaryTableName)) {
+            return 0;
+        }
+
+        $recordCount = DB::table($dictionaryTableName)->count();
+        return $recordCount;
     }
 
     public function deleteDictionary($dictionaryTableName) {

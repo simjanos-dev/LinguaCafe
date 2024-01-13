@@ -12,10 +12,9 @@ use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 
-class JmdictImportService
+class DictionaryImportService
 {
-    public function xmlToText() {
-        ob_implicit_flush(true);
+    public function jmdictXmlToText() {
         $file = fopen(base_path() . '/storage/app/dictionaries/jmdict.txt', 'w');
         $doc = new \DOMDocument();
         $reader = new \XMLReader();
@@ -25,11 +24,6 @@ class JmdictImportService
 
         while ($reader->read() && $reader->name !== 'entry');
         while ($reader->name === 'entry') {
-            if ($index % 1000 == 0) {
-                echo($index . " ");
-                echo str_pad('',4096);
-            }
-
             $entry = new \stdClass();
             $entry->all_words = '';
             $entry->all_readings = '';
@@ -108,7 +102,6 @@ class JmdictImportService
 
         fclose($file);
         echo('finished');
-        ob_implicit_flush(false);
     }
 
     public function kanjiRadicalImport() {
@@ -116,7 +109,6 @@ class JmdictImportService
         DB::beginTransaction();
         $file = fopen(base_path() . '/storage/app/dictionaries/radicals.txt', 'r');
         $index = 0;
-        ob_implicit_flush(true);
 
         // these kanjis has to be replaced with radicals
         // based on the description of the input files
@@ -160,13 +152,6 @@ class JmdictImportService
 
         // loop through the radicals files
         while (($line = fgets($file)) !== false) {
-
-            // display feedback for user
-            if ($index > 0 && $index % 100 == 0) {
-                echo($index . " ");
-                echo str_pad('',4096);
-            }
-
             // skip commented lines
             if ($line[0] == '#') {
                 continue;
@@ -206,8 +191,6 @@ class JmdictImportService
 
         // finish
         DB::commit();
-        ob_implicit_flush(false);
-        echo('finished');
     }
 
     public function kanjiImport() {
@@ -220,7 +203,6 @@ class JmdictImportService
 
         DB::statement('DELETE FROM dict_jp_kanji');
 
-        ob_implicit_flush(true);
         $doc = new \DOMDocument();
         $reader = new \XMLReader();
         $reader->open(base_path() . '/storage/app/dictionaries/kanjidic2.xml');
@@ -229,11 +211,6 @@ class JmdictImportService
         DB::beginTransaction();
         while ($reader->read() && $reader->name !== 'character');
         while ($reader->name === 'character') {
-            if ($index % 100 == 0) {
-                echo($index . " ");
-                echo str_pad('',4096);
-            }
-
             $node = simplexml_import_dom($doc->importNode($reader->expand(), true));
             
             $kanji = new Kanji();
@@ -313,17 +290,13 @@ class JmdictImportService
         }
 
         DB::commit();
-        echo('finished');
-        ob_implicit_flush(false);
     }
 
     public function jmdictImport() {
-        
-        ob_implicit_flush(true);
         $file = fopen(base_path() . '/storage/app/dictionaries/jmdict_processed.txt', 'r');
         DB::statement('DELETE FROM dict_jp_jmdict');
         DB::statement('DELETE FROM dict_jp_jmdict_words');
-        DB::statement('DELETE FROM dict_jp_jmdict_readings');                
+        DB::statement('DELETE FROM dict_jp_jmdict_readings');
 
         $index = 0;
         DB::beginTransaction();
@@ -373,8 +346,8 @@ class JmdictImportService
             
             
             if ($index % 1000 == 0) {
-                echo($index . " ");
-                echo str_pad('',4096);
+                DB::commit();
+                DB::beginTransaction();
             }
             
             $index ++;
@@ -383,7 +356,5 @@ class JmdictImportService
         DB::commit();
 
         fclose($file);
-        echo('finished');
-        ob_implicit_flush(false);
     }
 }

@@ -27,7 +27,7 @@
             Dictionaries
             <v-spacer/>
             <v-btn rounded dark color="primary" @click="importDialog = true;">
-                <v-icon class="mr-1">mdi-file-import</v-icon>
+                <v-icon class="mr-1">mdi-database-import</v-icon>
                 <span id="import-button-text">Import dictionary</span>
                 <span id="import-button-text-short">Import</span>
             </v-btn>
