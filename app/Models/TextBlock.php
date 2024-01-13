@@ -238,6 +238,24 @@ class TextBlock
                 }
             }
 
+            // german post processing
+            if ($this->language == 'german') { 
+                // nouns' lemma needs der/die/das before them
+                if ($this->tokenizedWords[$wordIndex]->pos == 'NOUN' && $this->tokenizedWords[$wordIndex]->l !== '') {
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] =='Fem') {
+                        $word->lemma = 'die ' . $word->lemma;
+                    }
+
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] == 'Masc') {
+                        $word->lemma = 'der ' . $word->lemma;
+                    }
+
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] == 'Neut') {
+                        $word->lemma = 'das ' . $word->lemma;
+                    }
+                    
+                }
+            }
             $this->processedWords[$processedWordCount] = $word;
             $processedWordCount ++;
         }
