@@ -7,6 +7,7 @@ networks:
 
 services:
     webserver:
+        image: ghcr.io/simjanos-dev/linguacafe-webserver:dev
         container_name: linguacafe-webserver
         depends_on:
             mysql:
