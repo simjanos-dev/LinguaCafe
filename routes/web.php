@@ -66,12 +66,9 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/goals/get-calendar-data', [App\Http\Controllers\GoalController::class, 'getCalendarData']);
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
 
-    // jmdict
-    Route::get('/jmdict/xml-to-text', [App\Http\Controllers\JmdictController::class, 'xmlToText']);
-    Route::get('/jmdict/import-jmdict', [App\Http\Controllers\JmdictController::class, 'importJmdict']);
-    Route::get('/jmdict/import-kanji', [App\Http\Controllers\JmdictController::class, 'importKanji']);
-    Route::get('/jmdict/import-radicals', [App\Http\Controllers\JmdictController::class, 'importRadicals']);
-    
+    // dictionaries
+    Route::get('/jmdict/xml-to-text', [App\Http\Controllers\JmdictController::class, 'jmdictXmlToText']);
+
     // settings
     Route::post('/settings/get-by-name', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
     Route::post('/settings/save', [App\Http\Controllers\SettingsController::class, 'saveSettings']);
@@ -81,6 +78,9 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
     // dictionary
+    Route::get('/dictionaries/scan', [App\Http\Controllers\DictionaryController::class, 'getImportableDictionaryList']);
+    Route::post('/dictionaries/import', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
+    Route::get('/dictionaries/get-record-count/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'getDictionaryRecordCount']);
     Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
     Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
     Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);

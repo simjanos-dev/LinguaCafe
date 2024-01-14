@@ -5,7 +5,13 @@
             outlined
             class="rounded-lg"
         >
-            <v-card-title>Chapters</v-card-title>
+            <v-card-title>
+                <span class="text-h5">Chapters</span>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="close">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-card-title>
             <v-card-text class="pt-6 px-0">
                     <v-simple-table class="book-info-table no-hover pb-4 mx-auto">
                         <thead>

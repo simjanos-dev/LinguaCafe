@@ -175,7 +175,29 @@
 
                             <!-- Stage buttons-->
                             <template v-if="selection.length == 1 || selectedPhrase !== -1">
-                                <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Level</span></div>
+                                <div class="vocab-box-subheader d-flex mb-2 mt-4">
+                                    <span class="rounded-pill py-1 px-3">Level</span>
+                                    <v-spacer />
+
+                                    <!-- Level info box -->
+                                    <v-menu offset-y left nudge-top="-12px">
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <div>
+                                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                                            </div>
+                                        </template>
+                                        <v-card outlined class="rounded-lg pa-4" width="320px">
+                                            A word's or phrase's level represents how well you know it. 
+                                            The closer it is to 0, the closer you are to learn it, and it 
+                                            will appear in reviews less frequently.<br><br>
+
+                                            <v-icon class="mr-2">mdi-check</v-icon>
+                                            represents known words.<br>
+                                            <v-icon class="mr-2">mdi-close</v-icon>
+                                            represents ignored words. Ignored words do not count in learned word statistics.
+                                        </v-card>
+                                    </v-menu>
+                                </div>
                                 <div id="vocab-box-stage-buttons" class="mb-2">
                                     <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
                                     <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>

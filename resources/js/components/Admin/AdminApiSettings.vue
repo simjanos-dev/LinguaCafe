@@ -119,7 +119,23 @@
                     :disabled="saving || characterLimitLoading"
                 ></v-text-field>
 
-                <label class="font-weight-bold mt-4 mb-0">Auto add cards while reading</label>
+
+                <!-- Auto add cards label -->
+                <label class="font-weight-bold mt-4 mb-0">
+                    Auto add cards while reading
+                    
+                    <!-- Auto add cards info box -->
+                    <v-menu offset-y nudge-top="-12px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                        </template>
+                        <v-card outlined class="rounded-lg pa-4" width="320px">
+                            Your words and phrases will be sent to Anki automatically when you highlight them (set their level to 1-7).
+                        </v-card>
+                    </v-menu>
+                </label>
+
+                <!-- Auto add cards input -->
                 <v-switch
                     v-model="settings.ankiAutoAddCards"
                     class="mt-0"
@@ -129,7 +145,22 @@
                     label="Auto add cards"
                 ></v-switch>
 
-                <label class="font-weight-bold mt-1 mb-0">Update existing cards</label>
+                <!-- Update existing cards label -->
+                <label class="font-weight-bold mt-4 mb-0">
+                    Update existing cards
+                    
+                    <!-- Update existing cards info box -->
+                    <v-menu offset-y nudge-top="-12px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                        </template>
+                        <v-card outlined class="rounded-lg pa-4" width="320px">
+                            If you send a word to Anki, and it already exists, then the translation, reading and example sentence fields will be updated.
+                        </v-card>
+                    </v-menu>
+                </label>
+                
+                <!-- Update existing cards input -->
                 <v-switch
                     v-model="settings.ankiUpdateCards"
                     class="mt-0"
@@ -139,7 +170,22 @@
                     label="Update existing cards"
                 ></v-switch>
 
-                <label class="font-weight-bold mt-1 mb-0">Show notifications</label>
+                <!-- Show notifications label -->
+                <label class="font-weight-bold mt-4 mb-0">
+                    Show notifications
+                    
+                    <!-- Show notifications info box -->
+                    <v-menu offset-y nudge-top="-12px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                        </template>
+                        <v-card outlined class="rounded-lg pa-4" width="320px">
+                            There will be a notification displayed on the screen when a word or phrase is sent to Anki with a success or error message.
+                        </v-card>
+                    </v-menu>
+                </label>
+
+                <!-- Show notifications input -->
                 <v-switch
                     v-model="settings.ankiShowNotifications"
                     class="mt-0"

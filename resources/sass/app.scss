@@ -45,13 +45,21 @@
     font-family: sans-serif !important;
 }
 
+// alert
+.v-alert.primary,
+.v-alert.success,
+.v-alert.error {
+    a, a:visited, a:active {
+        color: white;
+    }
+}
+
 #logo span  {
     font-family: Varela !important;
     font-size: 32px;
     user-select: none;
     cursor: normal;
 }
-
 
 // container size
 .container {

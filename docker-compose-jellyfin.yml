@@ -8,6 +8,8 @@ networks:
 services:
     webserver:
         container_name: linguacafe-webserver
+        # https://docs.docker.com/compose/compose-file/build/#illustrative-example
+        image: ghcr.io/simjanos-dev/linguacafe-webserver:main
         build:
             context: .
             dockerfile: ./docker/PhpDockerfile
@@ -25,7 +27,7 @@ services:
         extra_hosts:
             - "host.docker.internal:host-gateway"
     mysql:
-        image: mysql:5.7.22
+        image: mysql:8.0
         container_name: linguacafe-database
         restart: unless-stopped
         tty: true
@@ -51,6 +53,8 @@ services:
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
+        # https://docs.docker.com/compose/compose-file/build/#illustrative-example
+        image: ghcr.io/simjanos-dev/linguacafe-python-service:main
         build:
             dockerfile: ./docker/PythonDockerfile
         volumes:

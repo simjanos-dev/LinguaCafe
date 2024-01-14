@@ -238,6 +238,24 @@ class TextBlock
                 }
             }
 
+            // german post processing
+            if ($this->language == 'german') { 
+                // nouns' lemma needs der/die/das before them
+                if ($this->tokenizedWords[$wordIndex]->pos == 'NOUN' && $this->tokenizedWords[$wordIndex]->l !== '') {
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] =='Fem') {
+                        $word->lemma = 'die ' . $word->lemma;
+                    }
+
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] == 'Masc') {
+                        $word->lemma = 'der ' . $word->lemma;
+                    }
+
+                    if (count($this->tokenizedWords[$wordIndex]->g) && $this->tokenizedWords[$wordIndex]->g[0] == 'Neut') {
+                        $word->lemma = 'das ' . $word->lemma;
+                    }
+                    
+                }
+            }
             $this->processedWords[$processedWordCount] = $word;
             $processedWordCount ++;
         }
@@ -278,8 +296,8 @@ class TextBlock
                 $encounteredWord['user_id'] = Auth::user()->id;
                 $encounteredWord['language'] = $this->language;
                 $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
-                $encounteredWord['lemma'] = $this->processedWords[$wordIndex]->lemma;
-                $encounteredWord['base_word'] = $this->processedWords[$wordIndex]->lemma;
+                $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
+                $encounteredWord['base_word'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
                 $encounteredWord['kanji'] = $this->language == 'japanese' ? implode('', $kanji) : '';
                 $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
                 $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
