@@ -73,7 +73,7 @@ jobs:
         id: docker_build_php
         uses: docker/build-push-action@v3
         with:
-          file: "./docker/PhPDockerfile"
+          file: "./docker/PhpDockerfile"
           # extra platforms can be added here:
           # linux/amd64
           # linux/arm/v6
