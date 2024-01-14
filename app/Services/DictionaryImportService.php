@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Http;
 use App\Models\Setting;
 use App\Models\Kanji;
@@ -11,99 +13,160 @@ use App\Models\VocabularyJmdict;
 use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DictionaryImportService
 {
-    public function jmdictXmlToText() {
-        $file = fopen(base_path() . '/storage/app/dictionaries/jmdict.txt', 'w');
-        $doc = new \DOMDocument();
-        $reader = new \XMLReader();
-        $reader->open(base_path() . '/storage/app/dictionaries/JMdict_e.xml');
-        $index = 0;
-        
+    /*
+        Scans the /storage/app/dictionaries folder, 
+        and returns a list of importable dictionaries.
+    */
+    public function getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes) {
+        $dictionariesFound = [];
+        $files = Storage::files('dictionaries');
 
-        while ($reader->read() && $reader->name !== 'entry');
-        while ($reader->name === 'entry') {
-            $entry = new \stdClass();
-            $entry->all_words = '';
-            $entry->all_readings = '';
-            $node = simplexml_import_dom($doc->importNode($reader->expand(), true));
+        // JMDict
+        if (Storage::exists('dictionaries/jmdict_processed.txt') &&
+            Storage::exists('dictionaries/kanjidic2.xml') &&
+            Storage::exists('dictionaries/radical-strokes.txt') &&
+            Storage::exists('dictionaries/radicals.txt')) {
             
-            // get all words
-            if (isset($node->k_ele)) {
-                // first word
-                $entry->word = $node->k_ele[0]->keb->__toString();
-
-                // all words
-                for ($i = 0; $i < count($node->k_ele); $i++) {
-                    if ($i) {
-                        $entry->all_words .= ';';
-                    }
-
-                    $entry->all_words .= $node->k_ele[$i]->keb->__toString();
-                }
-            } else if (isset($node->r_ele)) {
-                // use reading if there's no kanji word
-                $entry->word = $node->r_ele[0]->reb->__toString();
-            }
-
-            // get all readings
-            if (isset($node->r_ele)) {
-                // all readings
-                for ($i = 0; $i < count($node->r_ele); $i++) {
-                    if ($i) {
-                        $entry->all_readings .= ';';
-                    }
-
-                    $entry->all_readings .= $node->r_ele[$i]->reb->__toString();
-                    if (isset($node->r_ele[$i]->re_restr)) {
-                        for ($j = 0; $j < count($node->r_ele[$i]->re_restr); $j++) {
-                            $entry->all_readings .= 'RE_RESTR' . $node->r_ele[$i]->re_restr[$j]->__toString();
-                        }
-                    }
-
-                    
-                }
-            }
-
-            // get word translation and pos
-            $entry->translations = [];
-            $entry->pos = '';
-            for ($i = 0; $i < count($node->sense); $i++) {
-                // get restrictions for translation
-                $restrictions = [];
-                for ($j = 0; $j < count($node->sense[$i]->stagr); $j++) {
-                    array_push($restrictions, $node->sense[$i]->stagr[$j]->__toString());
-                }
-
-                // definitions
-                for ($j = 0; $j < count($node->sense[$i]->gloss); $j++) {
-                    $translation = new \stdClass();
-                    $translation->restrictions = $restrictions;
-                    $translation->definition = $node->sense[$i]->gloss[$j]->__toString();
-                    array_push($entry->translations, $translation);
-                }
-
-                // part of speech
-                for ($j = 0; $j < count($node->sense[$i]->pos); $j++) {
-                    // only need these conjugations in the output file
-                    $conjugations = ["adj-i", "adj-ix", "adj-na", "v1", "v1-s", "v5aru", "v5b", "v5g", "v5k", "v5k-s", "v5m", "v5n", "v5r", "v5r-i", "v5s", "v5t", "v5u", "v5u-s", "vk", "vs", "vs-i", "vs-s"];
-                    
-                    if (mb_strlen($entry->word) > 1 && in_array(array_keys(get_object_vars($node->sense[$i]->pos[$j]))[0], $conjugations)) {
-                        $entry->pos = array_keys(get_object_vars($node->sense[$i]->pos[$j]))[0];
-                    }
-                }
-            }
-
-            fwrite($file, $entry->word . '|' . $entry->all_words . '|' . $entry->all_readings . '|' . $entry->pos . '|' . json_encode($entry->translations) . "\r\n");
-            $index ++;
-            $reader->next('entry');
+            $dictionary = new \stdClass();
+            $dictionary->name = 'JMDict';
+            $dictionary->databaseName = 'dict_jp_jmdict';
+            $dictionary->language = 'japanese';
+            $dictionary->color = '#74E39A'; 
+            $dictionary->expectedRecordCount = 210000;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'multiple files';
+            $dictionary->imported = false;
+            $dictionariesFound[] = $dictionary;
         }
 
-        fclose($file);
-        echo('finished');
+        // dict cc
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) !== 'txt') {
+                continue;
+            }
+            
+            // get language
+            $language = '';
+            $handle = fopen(Storage::path($file), "r");
+            if ($handle) {
+                if (($line = fgets($handle)) !== false) {
+                    # example line:
+                    # FI-EN vocabulary database	compiled by dict.cc
+
+                    // skip file if it's not a dict cc dictionary
+                    if (!str_contains($line, ' vocabulary database	compiled by dict.cc')) {
+                        continue;
+                    }
+
+                    // split first line by spaces
+                    $words = explode(' ', $line);
+
+                    // split second word by '-' character.
+                    if (count($words) > 1) {
+                        $fileLanguage = explode('-', $words[1]);
+
+                        // if language code does not exist in config file, 
+                        // skip this file
+                        if (!isset($dictCcLanguageCodes[$fileLanguage[0]])) {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            fclose($handle);
+
+            $dictionary = new \stdClass();
+            $dictionary->name = 'dict cc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]];
+            $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_dict_cc';
+            $dictionary->language = $dictCcLanguageCodes[$fileLanguage[0]];
+            $dictionary->color = '#FF981B'; 
+            $dictionary->expectedRecordCount = count(file(Storage::path($file)));
+            $dictionary->firstUpdateInterval = 3000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName =  pathinfo($file, PATHINFO_BASENAME);
+            $dictionariesFound[] = $dictionary;
+        }
+
+        return $dictionariesFound;
     }
 
+    /*
+        Imports a dict cc dictionary file into the database.
+    */
+    public function importDictCc($name, $language, $fileName, $databaseName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => $language,
+                'color' => '#FF981B',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        $index = 0;
+        DB::beginTransaction();
+        DB::commit();
+
+        $handle = fopen(Storage::path('dictionaries/' . $fileName), "r");
+        if (!$handle) {
+            return 'asd';
+        }
+
+        while (($line = fgets($handle)) !== false) {
+            // skip comments
+            if ($line[0] == '#') {  
+                continue;
+            }
+
+            $data = explode('	', $line);
+
+            // skip empty rows
+            if (count($data) < 2) {
+                continue;
+            }
+
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($data[0], 'UTF-8'),
+                'definitions' => mb_strtolower($data[1], 'UTF-8')
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
+
+        fclose($handle);
+        
+        return 'success';
+    }
+
+    /*
+        Imports kanji radicals.
+    */
     public function kanjiRadicalImport() {
         // init
         DB::beginTransaction();
@@ -193,6 +256,9 @@ class DictionaryImportService
         DB::commit();
     }
 
+    /*
+        Imports kanji.
+    */
     public function kanjiImport() {
         $jlpt = [
             '1' => 1,
@@ -292,6 +358,9 @@ class DictionaryImportService
         DB::commit();
     }
 
+    /*
+        Imports jmdict dictionary file.
+    */
     public function jmdictImport() {
         $file = fopen(base_path() . '/storage/app/dictionaries/jmdict_processed.txt', 'r');
         DB::statement('DELETE FROM dict_jp_jmdict');
@@ -342,8 +411,6 @@ class DictionaryImportService
                 $jmdictReading->dict_jp_jmdict_id = $vocabulary->id;
                 $jmdictReading->save();
             }
-
-            
             
             if ($index % 1000 == 0) {
                 DB::commit();
@@ -356,5 +423,98 @@ class DictionaryImportService
         DB::commit();
 
         fclose($file);
+    }
+
+    /* 
+        Converts jmdict to text. Should be moved to python.
+    */
+    public function jmdictXmlToText() {
+        $file = fopen(base_path() . '/storage/app/dictionaries/jmdict.txt', 'w');
+        $doc = new \DOMDocument();
+        $reader = new \XMLReader();
+        $reader->open(base_path() . '/storage/app/dictionaries/JMdict_e.xml');
+        $index = 0;
+        
+
+        while ($reader->read() && $reader->name !== 'entry');
+        while ($reader->name === 'entry') {
+            $entry = new \stdClass();
+            $entry->all_words = '';
+            $entry->all_readings = '';
+            $node = simplexml_import_dom($doc->importNode($reader->expand(), true));
+            
+            // get all words
+            if (isset($node->k_ele)) {
+                // first word
+                $entry->word = $node->k_ele[0]->keb->__toString();
+
+                // all words
+                for ($i = 0; $i < count($node->k_ele); $i++) {
+                    if ($i) {
+                        $entry->all_words .= ';';
+                    }
+
+                    $entry->all_words .= $node->k_ele[$i]->keb->__toString();
+                }
+            } else if (isset($node->r_ele)) {
+                // use reading if there's no kanji word
+                $entry->word = $node->r_ele[0]->reb->__toString();
+            }
+
+            // get all readings
+            if (isset($node->r_ele)) {
+                // all readings
+                for ($i = 0; $i < count($node->r_ele); $i++) {
+                    if ($i) {
+                        $entry->all_readings .= ';';
+                    }
+
+                    $entry->all_readings .= $node->r_ele[$i]->reb->__toString();
+                    if (isset($node->r_ele[$i]->re_restr)) {
+                        for ($j = 0; $j < count($node->r_ele[$i]->re_restr); $j++) {
+                            $entry->all_readings .= 'RE_RESTR' . $node->r_ele[$i]->re_restr[$j]->__toString();
+                        }
+                    }
+
+                    
+                }
+            }
+
+            // get word translation and pos
+            $entry->translations = [];
+            $entry->pos = '';
+            for ($i = 0; $i < count($node->sense); $i++) {
+                // get restrictions for translation
+                $restrictions = [];
+                for ($j = 0; $j < count($node->sense[$i]->stagr); $j++) {
+                    array_push($restrictions, $node->sense[$i]->stagr[$j]->__toString());
+                }
+
+                // definitions
+                for ($j = 0; $j < count($node->sense[$i]->gloss); $j++) {
+                    $translation = new \stdClass();
+                    $translation->restrictions = $restrictions;
+                    $translation->definition = $node->sense[$i]->gloss[$j]->__toString();
+                    array_push($entry->translations, $translation);
+                }
+
+                // part of speech
+                for ($j = 0; $j < count($node->sense[$i]->pos); $j++) {
+                    // only need these conjugations in the output file
+                    $conjugations = ["adj-i", "adj-ix", "adj-na", "v1", "v1-s", "v5aru", "v5b", "v5g", "v5k", "v5k-s", "v5m", "v5n", "v5r", "v5r-i", "v5s", "v5t", "v5u", "v5u-s", "vk", "vs", "vs-i", "vs-s"];
+                    
+                    if (mb_strlen($entry->word) > 1 && in_array(array_keys(get_object_vars($node->sense[$i]->pos[$j]))[0], $conjugations)) {
+                        $entry->pos = array_keys(get_object_vars($node->sense[$i]->pos[$j]))[0];
+                    }
+                }
+            }
+
+            fwrite($file, $entry->word . '|' . $entry->all_words . '|' . $entry->all_readings . '|' . $entry->pos . '|' . json_encode($entry->translations) . "\r\n");
+            $index ++;
+            $reader->next('entry');
+        }
+
+        fclose($file);
+        echo('finished');
     }
 }

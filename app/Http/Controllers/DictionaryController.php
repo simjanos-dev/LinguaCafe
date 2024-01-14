@@ -447,31 +447,24 @@ class DictionaryController extends Controller
         and returns a list of importable dictionaries.
     */
     public function getImportableDictionaryList() {
-        $dictionariesFound = [];
-
-        // JMDict
-        if (Storage::exists('dictionaries/jmdict_processed.txt') &&
-            Storage::exists('dictionaries/kanjidic2.xml') &&
-            Storage::exists('dictionaries/radical-strokes.txt') &&
-            Storage::exists('dictionaries/radicals.txt')) {
-            
-            $dictionary = new \stdClass();
-            $dictionary->name = 'JMDict';
-            $dictionary->databaseName = 'dict_jp_jmdict';
-            $dictionary->language = 'japanese';
-            $dictionary->color = '#74E39A'; 
-            $dictionary->expectedRecordCount = 210000;
-            $dictionary->firstUpdateInterval = 25000;
-            $dictionary->updateInterval = 10000;
-            $dictionariesFound[] = $dictionary;
-        }
-
+        
+        $dictCcLanguageCodes = config('langapp.dict_cc_language_codes');
+        $databaseLanguageCodes = config('langapp.database_name_language_codes');
+        
+        $dictionaryImportService = new DictionaryImportService();
+        $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes);
+        
         return json_encode($dictionariesFound);
     }
 
-    public function importSupportedDictionary($dictionaryName) {
+    public function importSupportedDictionary(Request $request) {
+        $dictionaryName = $request->post('dictionaryName');
+        $dictionaryFileName = $request->post('dictionaryFileName');
+        $dictionaryLanguage = $request->post('dictionaryLanguage');
+        $dictionaryDatabaseName = $request->post('dictionaryDatabaseName');
+        $dictionaryExpectedRecordCount = $request->post('dictionaryExpectedRecordCount');
 
-        // Import jmdict files
+        // import jmdict files
         if ($dictionaryName == 'JMDict') {
             try {
                 $dictionaryImportService = new DictionaryImportService();
@@ -481,6 +474,27 @@ class DictionaryController extends Controller
             } catch (\Throwable $t) {
                 return 'error';
             } catch (\Exception $e) {
+                return 'error';
+            }
+
+            return 'success';
+        }
+
+        // import dict cc files
+        if (str_contains($dictionaryName, 'dict cc')) {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importDictCc(
+                    $dictionaryName, 
+                    $dictionaryLanguage, 
+                    $dictionaryFileName, 
+                    $dictionaryDatabaseName
+                );
+            } catch (\Throwable $t) {
+                return $t->getMessage();
+                return 'error';
+            } catch (\Exception $e) {
+                return $e->getMessage();
                 return 'error';
             }
 

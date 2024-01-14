@@ -30,6 +30,10 @@
                             <td>{{ dictionary.databaseName }}</td>
                         </tr>
                         <tr>
+                            <td>Records::</td>
+                            <td>{{ formatNumber(dictionary.expectedRecordCount) }}</td>
+                        </tr>
+                        <tr>
                             <td>Language:</td>
                             <td>
                                 <v-img 
@@ -41,7 +45,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="font-weight-bold">Color:</td>
+                            <td>Color:</td>
                             <td>
                                 <v-card
                                     class="border"
@@ -50,6 +54,12 @@
                                     width="48px"
                                     height="26px"
                                 ></v-card>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Filename:</td>
+                            <td>
+                                {{ dictionary.fileName }}
                             </td>
                         </tr>
                     </tbody>
@@ -129,6 +139,7 @@
 
 <script>
     const config =  require('./../../config');
+    import {formatNumber} from './../../helper.js';
     export default {
         props: {
             dictionary: Object
@@ -173,7 +184,13 @@
                     this.updateImportProgress();
                 }, this.dictionary.firstUpdateInterval);
 
-                axios.get('/dictionaries/import/' + this.$props.dictionary.name).then((response) => {
+                axios.post('/dictionaries/import', {
+                    'dictionaryLanguage': this.$props.dictionary.language,
+                    'dictionaryName': this.$props.dictionary.name,
+                    'dictionaryDatabaseName': this.$props.dictionary.databaseName,
+                    'dictionaryExpectedRecordCount': this.$props.dictionary.expectedRecordCount,
+                    'dictionaryFileName': this.$props.dictionary.fileName
+                }).then((response) => {
                     this.importing = false;
                     this.importResult = response.data;
                 });
@@ -184,7 +201,8 @@
             close() {
                 this.$emit('import-finished');
                 this.$emit('close');
-            }
+            },
+            formatNumber: formatNumber
         }
     }
 </script>

@@ -79,7 +79,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // dictionary
     Route::get('/dictionaries/scan', [App\Http\Controllers\DictionaryController::class, 'getImportableDictionaryList']);
-    Route::get('/dictionaries/import/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
+    Route::post('/dictionaries/import', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
     Route::get('/dictionaries/get-record-count/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'getDictionaryRecordCount']);
     Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
     Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
