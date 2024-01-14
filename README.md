@@ -67,7 +67,7 @@ When editing the `docker-compose.yml` to add your storage paths, do these replac
 > /your/linguacafe/logs/folder          ->  /path/to/this/repo/storage/logs  
 > /your/linguacafe/database/folder      ->  /path/to/this/repo/docker/mysql  
 
-It is also possible to move those three folders somewhere else with all their contents and use that path instead.  
+It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.  
 
 ## JMDict dictionary import (recommended for Japanese)
 Step 1: Download JMDict files.  
