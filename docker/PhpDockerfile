@@ -33,7 +33,7 @@ RUN printf 'post_max_size = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
 RUN printf 'memory_limit = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
 
 # copy apache config
-COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 COPY ./ /var/www/html
 

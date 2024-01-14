@@ -49,9 +49,7 @@ services:
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
-        image: ghcr.io/simjanos-dev/linguacafe-python-service:main
-        build:
-            dockerfile: ./docker/PythonDockerfile
+        image: ghcr.io/simjanos-dev/linguacafe-python-service:dev
         volumes:
             - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
         networks:
