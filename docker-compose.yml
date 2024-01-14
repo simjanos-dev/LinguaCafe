@@ -8,9 +8,6 @@ networks:
 services:
     webserver:
         container_name: linguacafe-webserver
-        build:
-            context: .
-            dockerfile: ./docker/PhpDockerfile
         depends_on:
             mysql:
                 condition: service_healthy
@@ -41,9 +38,10 @@ services:
           SERVICE_NAME: linguacafe
         healthcheck:
             test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            interval: 15s
+            timeout: 15s
+            retries: 8
+        command: mysqld --general-log=1 --general-log-file=/var/lib/mysql/general-log.log
         networks:
             - linguacafe
     python:
@@ -51,8 +49,6 @@ services:
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
-        build:
-            dockerfile: ./docker/PythonDockerfile
         volumes:
             - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
         networks:
