@@ -6,6 +6,10 @@ LinguaCafe is a free self-hosted software that helps language learners learn voc
 
 You can read about all the features of LinguaCafe in this [overview](https://simjanos-dev.github.io/LinguaCafeHome/).  
 
+Supported platforms:  
+- x64, which includes most desktop computers made in the last decade.  
+- Armv8, which includes the Macs running on Apple Silicon and Raspberry Pis 3 and newer, as long as they run a 64 bit OS.  
+
 Supported languages:
 - German
 - Japanese
@@ -41,10 +45,11 @@ I couldn't install docker on windows yet. I will try to figure it out in the fut
 ## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Run these commands to clone and install LinguaCafe:
-> git clone https://github.com/simjanos-dev/LinguaCafe  
-> cd ./LinguaCafe  
-> sudo chmod 777 ./* -R  
+Step 2: Create the folders where the data will be stored. Three folders will be needed, one for dictionaries, one for logs, and one for the database.  
+
+Step 3: Copy the `docker-compose.yml` provided here and edit it to put the folders created in the step above in the indicated places. Please make sure you specify your dictionaries folder in both lines it is required.  
+
+Step 4: Finally, run this command in the same folder where you placed the `docker-compose.yml` in the prior step.
 > docker compose up -d  
 
 Your server now should be running and accessible on http://localhost:9191.  
@@ -52,11 +57,17 @@ Your server now should be running and accessible on http://localhost:9191.
 If you want to learn Japanese, it is highly recommended that you also import the JMDict files by following the steps below.
 
 ## Updating to the latest version
-Run these commands from the directory of LinguaCafe:
-> git pull  
-> docker compose down  
-> docker image rm linguacafe-webserver linguacafe-python  
+Run these commands from the directory where you placed your `docker-compose.yml`:  
+> docker compose pull
 > docker compose up -d
+
+## Migrating from versions prior to v0004
+When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:  
+> /your/linguacafe/dict/folder          ->  /path/to/this/repo/storage/app/dictionaries  
+> /your/linguacafe/logs/folder          ->  /path/to/this/repo/storage/logs  
+> /your/linguacafe/database/folder      ->  /path/to/this/repo/docker/mysql  
+
+It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.  
 
 ## JMDict dictionary import (recommended for Japanese)
 Step 1: Download JMDict files.  
