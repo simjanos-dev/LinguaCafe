@@ -36,5 +36,7 @@ RUN pip install pykakasi
 #django
 RUN pip install django
 
+COPY ./tools/django_server /app
+
 #start django server (/tools/django_server)
 #RUN /app/manage.py runserver 8678

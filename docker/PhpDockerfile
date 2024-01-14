@@ -35,6 +35,8 @@ RUN printf 'memory_limit = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
 # copy apache config
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
+COPY ./ /var/www/html
+
 # set project directory owner
 RUN chown -R www-data:www-data /var/www/html
 
@@ -48,8 +50,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # for some reason i have to install this manually,
 # despite being in the composer.json
 # RUN composer require guzzlehttp/guzzle
-
-COPY ./ /var/www/html
 
 RUN composer install \
     && npm install \
