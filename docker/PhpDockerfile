@@ -22,7 +22,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh \
     # install php extensions for laravel
     && docker-php-ext-install pdo pdo_mysql fileinfo \
     && docker-php-ext-configure gd \
-    && docker-php-ext-install "-j$(nproc) gd" \
+    && docker-php-ext-install "-j$(nproc)" gd \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install zip \
