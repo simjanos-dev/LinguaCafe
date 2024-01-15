@@ -1,8 +1,6 @@
-## Development note
-This got much more popular than I thought it would be. I expected maybe a dozen people who would be interested in it, and I was planning on developing it bit by bit. I will need some time to address every issue and add all the new requested features.
 
 ## LinguaCafe
-LinguaCafe is a free self-hosted software that helps language learners learn vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later on as effortlessly as possible.
+LinguaCafe is a free self-hosted software that helps language learners acquire vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later as effortlessly as possible.
 
 You can read about all the features of LinguaCafe in this [overview](https://simjanos-dev.github.io/LinguaCafeHome/).  
 
@@ -10,6 +8,15 @@ Supported platforms:
 - x64, which includes most desktop computers made in the last decade.  
 - Armv8, which includes the Macs running on Apple Silicon and Raspberry Pis 3 and newer, as long as they run a 64 bit OS.  
 
+![Library](/GithubImages/LibraryCover.jpg)  
+
+![Reader](/GithubImages/TextReader.jpg)  
+
+![Review](/GithubImages/ReviewBackCard.jpg)  
+
+![Vocabulary](/GithubImages/VocabularySearch.jpg)  
+
+## Language support
 Supported languages:
 - German
 - Japanese
@@ -27,41 +34,28 @@ Experimental languages:
 - Swedish
 - Ukrainian  
 
-Experimental languages have been added recently and awaiting testing and community feedback to improve them. They may have problems, not work properly or have no dictionary sources provided.  
-
-The text reader's font type is set to "notosans" in every language, which is a Japanese font type. It is likely that Chinese will need its own font type, and it is not displayed properly.
-
-![Library](/GithubImages/LibraryCover.jpg)  
-
-![Reader](/GithubImages/TextReader.jpg)  
-
-![Review](/GithubImages/ReviewBackCard.jpg)  
-
-![Vocabulary](/GithubImages/VocabularySearch.jpg)  
-
-## Installation (Windows)
-I couldn't install docker on windows yet. I will try to figure it out in the future, however if you manage to install and run docker on Windows, the commands should be the same, except you won't need "sudo chmod 777 ./* -R".
+Experimental languages have been added recently and awaiting testing and community feedback to improve them. They may have problems, not work properly or have no dictionary sources provided. If you find something that needs improving, please create a GitHub issue. 
 
 ## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Create the folders where the data will be stored. Three folders will be needed, one for dictionaries, one for logs, and one for the database.  
+Step 2: Create the folders where the data will be stored. Three folders will be needed, one for `dictionaries`, one for `logs`, and one for the `database`.  
 
-Step 3: Copy the `docker-compose.yml` provided here and edit it to put the folders created in the step above in the indicated places. Please make sure you specify your dictionaries folder in both lines it is required.  
+Step 3: Copy the `docker-compose.yml` provided here and edit it to put the folders created in the step above in the indicated places. Please make sure you specify your `dictionaries` folder in both lines it is required.  
 
 Step 4: Finally, run this command in the same folder where you placed the `docker-compose.yml` in the prior step.
 > docker compose up -d  
 
-Your server now should be running and accessible on http://localhost:9191.  
+Your server now should be running and accessible on http://localhost:9191. If you encounter any error, try stopping and restarting your docker container.
 
-If you want to learn Japanese, it is highly recommended that you also import the JMDict files by following the steps below.
+Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use. 
 
 ## Updating to the latest version
 Run these commands from the directory where you placed your `docker-compose.yml`:  
 > docker compose pull
 > docker compose up -d
 
-## Migrating from versions prior to v0004
+## Migrating from versions prior to v0.4
 When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:  
 > /your/linguacafe/dict/folder          ->  /path/to/this/repo/storage/app/dictionaries  
 > /your/linguacafe/logs/folder          ->  /path/to/this/repo/storage/logs  
@@ -69,45 +63,49 @@ When editing the `docker-compose.yml` to add your storage paths, do these replac
 
 It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.  
 
-## JMDict dictionary import (recommended for Japanese)
-Step 1: Download JMDict files.  
+## Importing dictionaries
+Step 1: Download the dictionaries that you want to use from the provided links below.
 
-Download all the processed JMDict files from the [lastest release](https://github.com/simjanos-dev/LangApp/releases) on github. Download the .txt and .xml  files, ignore the "Source code" files.
+Step 2: Copy the dictionary files to your `dictionaries` folder that you specified in the `docker-compose.yml` file during installation.
 
-Step 2: Copy the files into the LinguaCafe/storage/app/dictionaries/ directory.  
+Step 3: Go to the Admin -> Dictionaries page in LinguaCafe. Click on the `Import dictionary` button.
 
-Step 3: Login to LinguaCafe, and run these import scripts from your browser:
+Step 4: This dialog will list all your importable dictionaries that are found in your `dictionaries` folder. Click on the `import` button for the dictionary that you want to import.
 
-> http://localhost:9191/jmdict/import-jmdict  
-> http://localhost:9191/jmdict/import-kanji  
-> http://localhost:9191/jmdict/import-radicals
+After the import process is finished, your dictionary should be working.
 
-## Other dictionaries
-You can find dictionaries [here](https://github.com/simjanos-dev/Dictionaries) for other languages, and instructions on how to import them.
-I will add more sources in the future. If you know of any, I would appreciate it if you would send them to me.
+#### JMDict
+Languages: Japanese
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
 
-## Jellyfin docker config for new server
+All these 4 files are required to import JMDict:
+- jmdict_processed.txt
+- kanjidic2.xml
+- radical-strokes.txt
+- radicals.txt
 
-You do not need Jellyfin at all to use LinguaCafe, it is just an additional feature.
+This dictionary contains kanji and radicals for the Japanese language. Some Japanese features do not work without importing this dictionary.
 
-There is a pre-written configuration file for Jellyfin + LinguaCafe in docker-compose-jellyfin.yml if you do not have a Jellyfin server yet. This will set up both LinguaCafe and Jellyfin for you.
+#### Wiktionary
+Languages: Chinese, Finnish, French, German, Italian, Japanese, Korean, Norwegian, Russian, Spanish, Ukrainian
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
 
-Replace these paths with your own in docker-compose-jellyfin.yml:
-> - /your/path/to/config:/config
-> - /your/path/to/cache:/cache
-> - /your/path/to/media:/media:ro
+#### Dict.<span>cc</span>
+Languages: Dutch, Finnish, French, German, Italian, Norwegian, Russian, Spanish, Swedish
+Download: [dict.cc](https://www1.dict.cc/translation_file_request.php?l=e)
 
+This dictionary's license only allows personal use.
 
-Then run the installation commands, but replace
-> docker compose up -d  
+#### Custom dictionary
+You can also import a custom dictionary file in the form of a .csv file.
 
-with 
+#### DeepL translate
+DeepL is a machine translation service that let's you translate up to 500.000 characters/month for free and is supported by LinguaCafe. You can set your DeepL Translate API key in the admin API settings. 
 
-> docker compose -f ./docker-compose-jellyfin.yml up -d
+You must enable DeepL translate for each language on the Admin -> Dictionaries page.
 
-## Jellyfin docker config for already existing Jellyfin server
-If you already have a Jellyfin server, you can you this example to connect Jellyfin's network with LinguaCafe.
-There are probably multiple ways to do it, the only requirement is that linguacafe-webserver should be able to reach Jellyfin's server.
+## Jellyfin configuration
+You can the network configuration from this example to connect Jellyfin's network with LinguaCafe. There are probably multiple ways to do it, the only requirement is that linguacafe-webserver should be able to reach Jellyfin's server to make API requests.
 
 ```
 version: '3.5'
@@ -148,15 +146,10 @@ At this time it only works with TV Shows due to a bug, it will be fixed soon. La
 ## Anki
 Anki is supported, if your server and Anki run on the same PC (this will not be a requirement in the future) and have [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed. 
 
-## DeepL Translate
-DeepL is a machine translation service that let's you translate up to 500.000 characters/month for free and is supported by LinguaCafe. You can set your DeepL Translate API key in the admin API settings. 
-
-## Active evelopement disclaimer
-LinguaCafe is still in active development. There are a few missing features, and you might encounter some bugs while using the software. Please test it before you start actively using it, and make sure it is up to your expectations.  
+## Active development disclaimer
+LinguaCafe is still in active development. There are missing features, and you might encounter some bugs while using the software. Please test it before you start actively using it, and make sure it is up to your expectations.  
 
 At this time only one user/server is supported.  
-
-I will soon add support for multiple users on one server, write detailed instructions for Windows install and create an easier installation experience if possible.
 
 ## Contact information
 [Discord invite](https://discord.gg/SuJqqA5d)  
@@ -166,7 +159,6 @@ Subreddit: /r/linguacafe
 
 ## Attributions
 LinguaCafe uses many public resources. I am very thankful for these projects and for all the people who were working on them. They helped me greatly to create LinguaCafe.
-
 
 **Spacy tokenizer**  
 License: MIT license
@@ -204,6 +196,21 @@ License: Creative Commons Attribution-ShareAlike 4.0 International
 [JMDict Project website](https://www.edrdg.org/jmdict/j_jmdict.html)  
 [KANJIDIC2 license information](https://www.edrdg.org/edrdg/licence.html)  
 [KANJIDIC2 license](https://creativecommons.org/licenses/by-sa/4.0/)
+&nbsp;
+
+**Wiktionary**  
+License: Creative Commons Attribution-ShareAlike 3.0 Unported License
+
+[Wiktionary website](https://en.wiktionary.org/wiki/Wiktionary:Main_Page)
+[Wiktionary license](https://en.wiktionary.org/wiki/Wiktionary:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License)
+
+The specific wiktionary files that LinguaCafe uses have been downloaded from [this](https://github.com/Vuizur/Wiktionary-Dictionaries) GitHub repository.
+&nbsp;
+
+**Dict.<span>cc</span>**  
+LinguaCafe has no dict.<span>cc</span> dictionaries packaged in the software. It only provides a link to the dict.<span>cc</span> website.
+
+[Dict.cc license](https://www1.dict.cc/translation_file_request.php?l=e)
 &nbsp;
 
 **RADKFILE/KRADFILE**  

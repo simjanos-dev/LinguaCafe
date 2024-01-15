@@ -26,11 +26,11 @@
                             <td>{{ dictionary.name }}</td>
                         </tr>
                         <tr>
-                            <td>Database name:</td>
+                            <td>Database table name:</td>
                             <td>{{ dictionary.databaseName }}</td>
                         </tr>
                         <tr>
-                            <td>Records::</td>
+                            <td>Records:</td>
                             <td>{{ formatNumber(dictionary.expectedRecordCount) }}</td>
                         </tr>
                         <tr>

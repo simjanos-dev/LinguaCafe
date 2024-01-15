@@ -84,6 +84,14 @@
 
                             <div class="name">
                                 {{ dictionary.name }}
+                                <v-icon 
+                                    v-if="dictionary.imported"
+                                    color="success"
+                                    class="ml-2"
+                                    title="This dictionary is already imported."
+                                >
+                                    mdi-database-check
+                                </v-icon>
                             </div>
 
                             

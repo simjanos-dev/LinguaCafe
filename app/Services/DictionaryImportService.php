@@ -25,7 +25,7 @@ class DictionaryImportService
         $dictionariesFound = [];
         $files = Storage::files('dictionaries');
 
-        // JMDict
+        // jmdict dictionary
         if (Storage::exists('dictionaries/jmdict_processed.txt') &&
             Storage::exists('dictionaries/kanjidic2.xml') &&
             Storage::exists('dictionaries/radical-strokes.txt') &&
@@ -36,22 +36,31 @@ class DictionaryImportService
             $dictionary->databaseName = 'dict_jp_jmdict';
             $dictionary->language = 'japanese';
             $dictionary->color = '#74E39A'; 
-            $dictionary->expectedRecordCount = 210000;
+            $dictionary->expectedRecordCount = 207690;
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'multiple files';
             $dictionary->imported = false;
+
+            // check if jmdict is imported
+            $recordCount = DB::table('dict_jp_jmdict')->count();
+            if ($recordCount > 180000) {
+                $dictionary->imported = true;
+            }
+
+
+            // add jmdict to the list
             $dictionariesFound[] = $dictionary;
         }
 
-        // dict cc
+        // dict cc dictionaries
         foreach ($files as $file) {
+            // skip non txt files
             if (pathinfo($file, PATHINFO_EXTENSION) !== 'txt') {
                 continue;
             }
             
             // get language
-            $language = '';
             $handle = fopen(Storage::path($file), "r");
             if ($handle) {
                 if (($line = fgets($handle)) !== false) {
@@ -79,8 +88,10 @@ class DictionaryImportService
                 }
             }
 
+            // close file
             fclose($handle);
 
+            // add the found dictionary to the list
             $dictionary = new \stdClass();
             $dictionary->name = 'dict cc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]];
             $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_dict_cc';
@@ -89,7 +100,58 @@ class DictionaryImportService
             $dictionary->expectedRecordCount = count(file(Storage::path($file)));
             $dictionary->firstUpdateInterval = 3000;
             $dictionary->updateInterval = 10000;
+            $dictionary->fileName = pathinfo($file, PATHINFO_BASENAME);
+            $dictionary->imported = false;
+
+
+            // check if the dictionary has been imported yet
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+            
+            // add dictionary to the list
+            $dictionariesFound[] = $dictionary;
+        }
+
+        // wiktionary dictionaries
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) !== 'tsv') {
+                continue;
+            }
+
+            // get filename and split into words
+            $fileName = pathinfo($file, PATHINFO_FILENAME);
+            $words = explode('.', $fileName);
+
+            // make sure the file is in a format that's expected
+            if (count($words) < 2) {
+                continue;
+            }
+
+            // skip file if it's not a wiktionary
+            if ($words[1] !== 'wiktionary') {
+                continue;
+            }
+
+            // get language
+            $language = strtolower($words[0]);
+
+            $dictionary = new \stdClass();
+            $dictionary->name = 'wiktionary ' . $databaseLanguageCodes[$language];
+            $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$language] . '_wiktionary';
+            $dictionary->language = $language;
+            $dictionary->color = '#E9CDA0'; 
+            $dictionary->expectedRecordCount = count(file(Storage::path($file)));
+            $dictionary->firstUpdateInterval = 5000;
+            $dictionary->updateInterval = 10000;
             $dictionary->fileName =  pathinfo($file, PATHINFO_BASENAME);
+
+            // check if the wiktionary has been imported yet
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+            
+            // add wiktionary to the list
             $dictionariesFound[] = $dictionary;
         }
 
@@ -124,11 +186,10 @@ class DictionaryImportService
 
         $index = 0;
         DB::beginTransaction();
-        DB::commit();
 
         $handle = fopen(Storage::path('dictionaries/' . $fileName), "r");
         if (!$handle) {
-            return 'asd';
+            return 'error';
         }
 
         while (($line = fgets($handle)) !== false) {
@@ -158,7 +219,92 @@ class DictionaryImportService
         }
 
         DB::commit();
+        fclose($handle);
+        
+        return 'success';
+    }
 
+    /*
+        Imports a wiktionary dictionary file into the database.
+    */
+    public function importWiktionary($name, $language, $fileName, $databaseName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 256)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => $language,
+                'color' => '#E9CDA0',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        $index = 0;
+        DB::beginTransaction();
+        $handle = fopen(Storage::path('dictionaries/' . $fileName), "r");
+        if (!$handle) {
+            return 'error';
+        }
+
+        while (($line = fgets($handle)) !== false) {
+            
+            $data = explode('	', $line);
+
+            // skip empty rows
+            if (count($data) < 2) {
+                continue;
+            }
+
+            // extract word
+            $word = explode('|', $data[0])[0];
+            $word = mb_strtolower($word, 'UTF-8');
+
+            // extract definitions from <li> tags
+            $filteredDefinitions = [];
+            $definitions = mb_strtolower($data[1], 'UTF-8');
+            $definitions = explode('<li>', $definitions);
+            
+            foreach ($definitions as $definitionCounter => $definition) {
+                if (!$definitionCounter) {
+                    continue;
+                }
+
+                $filteredDefinitions[] = explode('</li>', $definition)[0];
+            }
+
+            // join filtered definitions
+            $filteredDefinitions = implode(';', $filteredDefinitions);
+
+            // skip too long definitions
+            if (strlen($filteredDefinitions) > 254) {
+                continue;
+            }
+
+            DB::table($databaseName)->insert([
+                'word' => $word,
+                'definitions' => $filteredDefinitions
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
         fclose($handle);
         
         return 'success';
@@ -421,8 +567,8 @@ class DictionaryImportService
         }   
         
         DB::commit();
-
         fclose($file);
+        DB::table('dictionaries')->where('database_table_name', 'dict_jp_jmdict')->update(['enabled' => true]);
     }
 
     /* 

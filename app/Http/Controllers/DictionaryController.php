@@ -491,13 +491,53 @@ class DictionaryController extends Controller
                     $dictionaryDatabaseName
                 );
             } catch (\Throwable $t) {
-                return $t->getMessage();
+                DB::
+                    table('dictionaries')
+                    ->where('database_table_name', $dictionaryDatabaseName)
+                    ->delete();
+
+                Schema::dropIfExists($dictionaryDatabaseName);
                 return 'error';
             } catch (\Exception $e) {
-                return $e->getMessage();
+                DB::
+                    table('dictionaries')
+                    ->where('database_table_name', $dictionaryDatabaseName)
+                    ->delete();
+
+                Schema::dropIfExists($dictionaryDatabaseName);
                 return 'error';
             }
 
+            return 'success';
+        }
+
+        // import dict cc files
+        if (str_contains($dictionaryName, 'wiktionary')) {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importWiktionary(
+                    $dictionaryName, 
+                    $dictionaryLanguage, 
+                    $dictionaryFileName, 
+                    $dictionaryDatabaseName
+                );
+            } catch (\Throwable $t) {
+                DB::
+                    table('dictionaries')
+                    ->where('database_table_name', $dictionaryDatabaseName)
+                    ->delete();
+
+                Schema::dropIfExists($dictionaryDatabaseName);
+                return 'error';
+            } catch (\Exception $e) {
+                DB::
+                    table('dictionaries')
+                    ->where('database_table_name', $dictionaryDatabaseName)
+                    ->delete();
+                    
+                Schema::dropIfExists($dictionaryDatabaseName);
+                return 'error';
+            }
             return 'success';
         }
     }
