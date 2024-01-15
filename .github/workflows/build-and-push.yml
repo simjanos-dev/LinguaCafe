@@ -18,7 +18,7 @@ name: Build and Publish Docker images
 # If you want to push images on every git push to the repo:main branch
 on:
   push:
-    branches: dev
+    branches: main
 
 ## If you want to push images only on a new tag/release
 # on:

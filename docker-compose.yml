@@ -7,7 +7,7 @@ networks:
 
 services:
     webserver:
-        image: ghcr.io/simjanos-dev/linguacafe-webserver:dev
+        image: ghcr.io/simjanos-dev/linguacafe-webserver:main
         container_name: linguacafe-webserver
         depends_on:
             mysql:
@@ -15,6 +15,7 @@ services:
         volumes:
             - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
             - /your/linguacafe/logs/folder:/var/www/html/storage/logs
+            - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
         ports:
             - "9191:80"
             - "3000:3000"
@@ -50,8 +51,9 @@ services:
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
-        image: ghcr.io/simjanos-dev/linguacafe-python-service:dev
+        image: ghcr.io/simjanos-dev/linguacafe-python-service:main
         volumes:
             - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
+            - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
         networks:
             - linguacafe

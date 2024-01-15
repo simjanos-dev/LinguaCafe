@@ -39,7 +39,7 @@ Experimental languages have been added recently and awaiting testing and communi
 ## Installation (Linux)
 Step 1: Install docker desktop
 
-Step 2: Create the folders where the data will be stored. Three folders will be needed, one for `dictionaries`, one for `logs`, and one for the `database`.  
+Step 2: Create the folders where the data will be stored. Four folders will be needed, one for `dictionaries`, one for `logs`, one for `database` and one for `temp`.  
 
 Step 3: Copy the `docker-compose.yml` provided here and edit it to put the folders created in the step above in the indicated places. Please make sure you specify your `dictionaries` folder in both lines it is required.  
 
@@ -49,6 +49,18 @@ Step 4: Finally, run this command in the same folder where you placed the `docke
 Your server now should be running and accessible on http://localhost:9191. If you encounter any error, try stopping and restarting your docker container.
 
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use. 
+
+## Known issues after first installation
+Sometimes when opening LinguaCafe the first time there is an error message about users database table. If this happens, just stop and start your containers again, it should fix the problem.
+
+> docker compose down
+> docker compose up -d
+
+If you are unable to import .epub files, it may be caused because of the permissions of your temp folder. Running this command should fix the issue.
+
+> sudo chmod 777 /your/linguacafe/temp/folder -R
+
+These will be addressed in a future update.
 
 ## Updating to the latest version
 Run these commands from the directory where you placed your `docker-compose.yml`:  
