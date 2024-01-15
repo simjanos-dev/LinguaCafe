@@ -5,7 +5,7 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0004 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-title>v0.4 <v-spacer /> 2024.01.15.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -13,7 +13,7 @@
                         German lemmatization for nouns and separable verbs have been improved. 
                     </li>
                     <li>
-                        There is a new UI for importing dictionaries.
+                        Importing dictionaries have been simplified, and has a new UI page to manage them.
                     </li>
                     <li>
                         Information popups for different features have been added.
@@ -28,19 +28,28 @@
                     <li>
                         Added missing dialog close buttons.
                     </li>
+                    <li>
+                        Auto generated lemmas sometimes had uppercase letters. It has been changed to only contain lowercase letters.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
                 <ul>
                     <li>
-                        Auto generated lemmas sometimes had uppercase letters. It has been changed to only contain lowercase letters.
+                        Docker images are now published on the GitHub Container Registry, and there is a much simpler installation and update process.
+                    </li>
+                    <li>
+                        Changed version number format.
+                    </li>
+                    <li>
+                        Updated MySQL image to 8.0.
                     </li>
                 </ul>
             </v-card-text>
         </v-card>
         
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0003 <v-spacer /> 2024.01.12.</v-card-title>
+            <v-card-title>v0.3 <v-spacer /> 2024.01.12.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -92,7 +101,7 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0002 <v-spacer /> 2024.01.09.</v-card-title>
+            <v-card-title>v0.2 <v-spacer /> 2024.01.09.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -118,7 +127,7 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0001 <v-spacer /> 2024.01.07.</v-card-title>
+            <v-card-title>v0.1 <v-spacer /> 2024.01.07.</v-card-title>
             <v-card-text>
                 Release.
             </v-card-text>
