@@ -75,7 +75,7 @@
                     <v-card-text>
                         You can contact the developer of LinguaCafe on these platforms.
                         <div class="footer-link-box mb-1 mt-4">
-                            <a href="https://discord.gg/RwxM9Vtd"><v-icon class="mr-2">mdi-message-text</v-icon>Discord server invite</a>
+                            <a href="https://discord.gg/wZYZYrdaeP"><v-icon class="mr-2">mdi-message-text</v-icon>Discord server invite</a>
                         </div>
                         <div class="footer-link-box mb-1 primary--text">
                             <v-icon class="mr-2">mdi-message-text</v-icon>Discord: linguacafe_47757
