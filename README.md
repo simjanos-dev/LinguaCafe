@@ -152,7 +152,7 @@ LinguaCafe is still in active development. There are missing features, and you m
 At this time only one user/server is supported.  
 
 ## Contact information
-[Discord invite](https://discord.gg/SuJqqA5d)  
+[Discord invite](https://discord.gg/RwxM9Vtd)  
 Discord user: linguacafe_47757  
 Reddit user: /u/linguacafe  
 Subreddit: /r/linguacafe
