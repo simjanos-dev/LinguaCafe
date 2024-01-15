@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 name: linguacafe
 
 networks:
@@ -28,15 +28,15 @@ services:
         restart: unless-stopped
         tty: true
         ports:
-          - "3308:3306"
+            - "3308:3306"
         volumes:
-          - /your/linguacafe/database/folder:/var/lib/mysql
+            - /your/linguacafe/database/folder:/var/lib/mysql
         environment:
-          MYSQL_DATABASE: linguacafe
-          MYSQL_USER: linguacafe
-          MYSQL_PASSWORD: linguacafe
-          MYSQL_ROOT_PASSWORD: linguacafe
-          SERVICE_NAME: linguacafe
+            MYSQL_DATABASE: linguacafe
+            MYSQL_USER: linguacafe
+            MYSQL_PASSWORD: linguacafe
+            MYSQL_ROOT_PASSWORD: linguacafe
+            SERVICE_NAME: linguacafe
         healthcheck:
             test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
             interval: 15s
