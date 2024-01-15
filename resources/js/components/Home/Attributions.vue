@@ -66,6 +66,28 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Wiktionary</v-card-title>
+            <v-card-text>
+                License: Creative Commons Attribution-ShareAlike 3.0 Unported License<br><br>
+                <a href="https://en.wiktionary.org/wiki/Wiktionary:Main_Page">Wiktionary website.</a><br>
+                <a href="https://en.wiktionary.org/wiki/Wiktionary:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Wiktionary license.</a><br>
+
+                The specific wiktionary files thet LinguaCafe uses have been downloaded from 
+                <a href="https://github.com/Vuizur/Wiktionary-Dictionaries">this</a> GitHub repository.<br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Dict.cc</v-card-title>
+            <v-card-text>
+                LinguaCafe has no dict.cc dictionaries packaged in the software. 
+                It only provides a link to the dict.cc website.<br><br>
+
+                <a href="https://www1.dict.cc/translation_file_request.php?l=e">Dict.cc license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
             <v-card-title class="pb-0">DMAK kanji drawing library</v-card-title>
             <v-card-text>
                 License: MIT license<br><br>

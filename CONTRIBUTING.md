@@ -32,6 +32,12 @@ If you want to add a new language that needs a new tokenizer, please create an I
 I wasn't expecting other people to contribute, so I never written a documentation, I will try to do it soon. There are a lot of old code that needs to be updated(creating service classes, putting some code into models from the controllers, updating to Laravel 11), but I hope I made it clean and readable enough for other people to work on.
 
 ## Branches
-Please make pull requests only to the "dev" branch. I will merge them and they will be added to the main branch later on the next version release.
+If you have a small bug fix that you would like to be addressed before the next main version, make the pull request into the `hotfix` branch. 
+
+In any other case, make the pull request in `dev` branch.
+
+I will merge `hotfix` into `main` as early as I have time, and I will merge `dev` into `main` at the next full version update.
+
+Please only make pull requests for code that you tested.
 
 Thank you for anyone, who want to contribute!

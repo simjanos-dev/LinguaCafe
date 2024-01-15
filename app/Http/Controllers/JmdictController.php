@@ -10,23 +10,15 @@ use App\Models\VocabularyJmdict;
 use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
-use App\Services\JmdictImportService;
+use App\Services\DictionaryImportService;
 
 class JmdictController extends Controller
 {
-    public function xmlToText() {
-        (new JmdictImportService())->xmlToText();
-    }
-
-    public function importJmdict() {
-        (new JmdictImportService())->jmdictImport();
-    }
-
-    public function importKanji() {
-        (new JmdictImportService())->kanjiImport();
-    }
-
-    public function importRadicals() {
-        (new JmdictImportService())->kanjiRadicalImport();
+    /*
+        Converts jmdict file to text from xml. 
+        Should be moved to python in the future, so this can be deleted.
+    */
+    public function jmdictXmlToText() {
+        (new DictionaryImportService())->jmdictXmlToText();
     }
 }

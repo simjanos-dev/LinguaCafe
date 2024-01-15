@@ -75,7 +75,7 @@
                     <v-card-text>
                         You can contact the developer of LinguaCafe on these platforms.
                         <div class="footer-link-box mb-1 mt-4">
-                            <a href="https://discord.gg/SuJqqA5d"><v-icon class="mr-2">mdi-message-text</v-icon>Discord server invite</a>
+                            <a href="https://discord.gg/wZYZYrdaeP"><v-icon class="mr-2">mdi-message-text</v-icon>Discord server invite</a>
                         </div>
                         <div class="footer-link-box mb-1 primary--text">
                             <v-icon class="mr-2">mdi-message-text</v-icon>Discord: linguacafe_47757
@@ -93,7 +93,7 @@
                 <v-card outlined class="rounded-lg pt-0 mr-4 mb-4" width="290px">
                     <v-card-title>Version</v-card-title>
                     <v-card-text>
-                        The current LinguaCafe version is V0003.
+                        The current LinguaCafe version is v0.4.
                         <div class="footer-link-box mb-1 mt-4">
                             <router-link to="/patch-notes"><v-icon class="mr-2">mdi-update</v-icon>Patch notes</router-link>
                         </div>

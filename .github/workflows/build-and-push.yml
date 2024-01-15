@@ -16,14 +16,15 @@
 name: Build and Publish Docker images
 
 # If you want to push images on every git push to the repo:main branch
-# on:
-#   push:
-#     branches: main
+on:
+  push:
+    branches: main
 
 ## If you want to push images only on a new tag/release
-on:
-  release:
-    types: [created]
+# on:
+#   release:
+#     types: [created]
+
 env:
   REGISTRY: ghcr.io
   # IMAGE_NAME: ${{ github.repository }}
@@ -77,7 +78,6 @@ jobs:
           # linux/amd64
           # linux/arm/v6
           # linux/arm/v7
-          # linux/arm64
           # linux/386
           platforms: |
             linux/amd64
