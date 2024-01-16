@@ -52,7 +52,7 @@ services:
         restart: unless-stopped
         tty: true
         build:
-            dockerfile: ./docker/PythonDockerfile
+            dockerfile: ./docker/PythonDockerfileDev
         volumes:
             - ./tools/django_server:/app
             - ./storage/app:/var/www/html/storage/app
