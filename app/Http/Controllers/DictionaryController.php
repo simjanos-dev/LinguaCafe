@@ -480,6 +480,20 @@ class DictionaryController extends Controller
             return 'success';
         }
 
+        // import cc cedict files
+        if ($dictionaryName == 'cc-cedict') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importCedict($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            } catch (\Throwable $t) {
+                return 'error';
+            } catch (\Exception $e) {
+                return 'error';
+            }
+
+            return 'success';
+        }
+
         // import dict cc files
         if (str_contains($dictionaryName, 'dict cc')) {
             try {

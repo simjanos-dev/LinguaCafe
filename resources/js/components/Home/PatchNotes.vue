@@ -10,6 +10,7 @@
                 <b>New features:</b>
                 <ul>
                     <li>
+                        Added CC-CEDICT dictionary support for Chinese.
                     </li>
                 </ul>
 

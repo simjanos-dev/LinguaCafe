@@ -66,6 +66,15 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">CC-CEDICT dictionary file</v-card-title>
+            <v-card-text>
+                License: Creative Commons Attribution-Share Alike 3.0 License<br><br>
+                <a href="https://cc-cedict.org/wiki/">CC-CEDICT website.</a><br>
+                <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-CEDICT license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
             <v-card-title class="pb-0">Wiktionary</v-card-title>
             <v-card-text>
                 License: Creative Commons Attribution-ShareAlike 3.0 Unported License<br><br>

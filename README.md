@@ -212,6 +212,13 @@ License: Creative Commons Attribution-ShareAlike 4.0 International
 [KANJIDIC2 license](https://creativecommons.org/licenses/by-sa/4.0/)
 &nbsp;
 
+**CC-CEDICT dictionary file**  
+License: Creative Commons Attribution-Share Alike 3.0 License
+
+[CC-CEDICT website](https://cc-cedict.org/wiki/)
+[CC-CEDICT license](https://creativecommons.org/licenses/by-sa/3.0/)
+&nbsp;
+
 **Wiktionary**  
 License: Creative Commons Attribution-ShareAlike 3.0 Unported License
 
