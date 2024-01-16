@@ -6,8 +6,9 @@ You can read about all the features of LinguaCafe in this [overview](https://sim
 
 Supported platforms:  
 - x64, which includes most desktop computers made in the last decade.  
+- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the file.  
 
-Armv8, which includes the Macs running on Apple Silicon and Raspberry Pis 3 and newer do not work at the moment. This issue will be addressed in an update soon.
+Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.  
 
 ![Library](/GithubImages/LibraryCover.jpg)  
 
