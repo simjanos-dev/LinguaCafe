@@ -11,6 +11,7 @@
         <!-- Subtitle selection list -->
         <subtitle-list
             v-if="!textBlocks.length"
+            :language="this.$props.language"
             :subtitleLoading="subtitleLoading"
             @subtitle-change="subtitleChange"
         ></subtitle-list>
@@ -45,6 +46,7 @@
             v-if="textBlocks.length"
             :textBlocks="textBlocks"
             :mediaControlsVisible="mediaControlsVisible"
+            :language="this.$props.language"
             @seekTo="seekTo"
             @settingsChange="updateSettings"
         ></subtitle-reader>
@@ -81,12 +83,9 @@ export default {
         }
     },
     props: {
+        language: String
     },
     mounted() {
-        axios.post('/jellyfin/request', {
-            method: 'GET',
-            url: '/Sessions/'
-        }).then(() => {});
     },
     beforeDestroy () {
         clearInterval(this.requestTimer);

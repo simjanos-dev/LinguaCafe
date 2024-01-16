@@ -7,6 +7,9 @@
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
             <v-card-text>
+                There were several issues with Jellyfin integration. Now it should work properly with every language and video type. 
+                Added additional information to the readme about subtitle file naming. <br><br>
+
                 <b>New features:</b>
                 <ul>
                     <li>
@@ -16,8 +19,9 @@
 
                 <b>Bug fixes:</b>
                 <ul>
-                    <li>
-                    </li>
+                    <li>Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type should be playable.</li>
+                    <li>Fixed an issue with the Media player that caused every language to be handled as Japanese.</li>
+                    <li>Fixed an issue related to Media player language support. Now all languages work with it.</li>
                 </ul>
 
                 <b>Other changes:</b>

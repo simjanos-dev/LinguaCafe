@@ -2,6 +2,30 @@
 
 return [
 
+    'languages' => [
+        /*
+            These are language codes that Jellyfin uses for subtitles. You can find out what
+            a jellyfin language code is by going to the media player, and starting a video
+            with a new language subtitle. If that new language is not added here, you will see
+            a javascript log about the unsupported languages code.
+        */
+        'jellyfin_language_codes' => [
+            'jpn' => 'japanese',
+            'eng' => 'english',
+            'nor' => 'norwegian',
+            'ger' => 'german',
+            'spa' => 'spanish',
+            'chi' => 'chinese',
+            'dut' => 'dutch',
+            'fin' => 'finnish',
+            'fre' => 'french',
+            'ita' => 'italian',
+            'kor' => 'korean',
+            'swe' => 'swedish',
+            'ukr' => 'ukrainian',
+            'rus' => 'russian'
+        ]
+    ],
     // it is the same as config.js, which should be
     // deleted and it should request this config file
     // instead

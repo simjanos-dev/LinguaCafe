@@ -85,7 +85,7 @@
                 :theme="'light'"
                 :fullscreen="false"
                 :_text-blocks="textBlocks"
-                :language="'japanese'"
+                :language="this.$props.language"
                 :hide-all-highlights="settings.hideAllHighlights"
                 :hide-new-word-highlights="settings.hideNewWordHighlights"
                 :plain-text-mode="false"
@@ -157,6 +157,7 @@ export default {
         } 
     },
     props: {
+        language: String,
         textBlocks: {
             type: Array,
             default: []

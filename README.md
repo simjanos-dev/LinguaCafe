@@ -119,7 +119,7 @@ DeepL is a machine translation service that let's you translate up to 500.000 ch
 You must enable DeepL translate for each language on the Admin -> Dictionaries page.
 
 ## Jellyfin configuration
-You can the network configuration from this example to connect Jellyfin's network with LinguaCafe. There are probably multiple ways to do it, the only requirement is that linguacafe-webserver should be able to reach Jellyfin's server to make API requests.
+You can use the network configuration from this example to connect Jellyfin's network with LinguaCafe. There are probably multiple ways to do it, the only requirement is that linguacafe-webserver should be able to reach Jellyfin's server to make API requests.
 
 ```
 version: '3.5'
@@ -142,6 +142,22 @@ services:
         networks:
             - linguacafe_linguacafe
 ```
+
+You must name your subtitle files in a way that Jellyfin will recognise as languages. These worked for me:  
+```
+Series Name - S01E01.ja.ass  
+Series Name - S01E01.de.ass  
+Movie name.es.ass  
+```  
+
+[Jellyfin external file naming](https://jellyfin.org/docs/general/server/media/external-files/)
+
+#### Possible error codes in browser console on the Media player page:
+`unsupported language code: spa`: This means that Jellyfin recognised the language of the subtitle, but it is not supported by LinguaCafe yet. If you find one of these, please open a GitHub Issue, this should be fixed.  
+
+`unsupported language code: unrecognised by jellyfin: japaaaneseee`: This means that Jellyfin did not recognise `japaaaneseee` as a language, and it can only be fixed by renaming the file following Jellyfin's naming conventions.  
+
+If you have file naming issues and renamed a file, make sure you refresh metadata in Jellyfin before reloading LinguaCafe.
 
 ## Jellyfin API usage
 Step 1: Create an API key in Jellyfin. You can do this on the Dashboard -> API Keys menu.  
