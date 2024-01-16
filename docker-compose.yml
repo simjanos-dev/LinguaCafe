@@ -10,8 +10,7 @@ services:
         image: ghcr.io/simjanos-dev/linguacafe-webserver:main
         container_name: linguacafe-webserver
         depends_on:
-            mysql:
-                condition: service_healthy
+            mysql
         volumes:
             - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
             - /your/linguacafe/logs/folder:/var/www/html/storage/logs
@@ -38,11 +37,6 @@ services:
             MYSQL_PASSWORD: linguacafe
             MYSQL_ROOT_PASSWORD: linguacafe
             SERVICE_NAME: linguacafe
-        healthcheck:
-            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-            interval: 15s
-            timeout: 15s
-            retries: 8
         command: mysqld --general-log=1 --general-log-file=/var/lib/mysql/general-log.log
         networks:
             - linguacafe

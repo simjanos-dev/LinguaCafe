@@ -53,11 +53,6 @@ Your server now should be running and accessible on http://localhost:9191. If yo
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use. 
 
 ## Known issues after first installation
-Sometimes when opening LinguaCafe the first time there is an error message about users database table. If this happens, just stop and start your containers again, it should fix the problem.
-
-> docker compose down
-> docker compose up -d
-
 If you are unable to import .epub files, it may be caused because of the permissions of your temp folder. Running this command should fix the issue.
 
 > sudo chmod 777 /your/linguacafe/temp/folder -R
