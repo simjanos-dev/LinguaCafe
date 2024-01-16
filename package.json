@@ -33,6 +33,7 @@
         "vue-cookie": "^1.1.4",
         "vue-router": "3.6.5",
         "vue2-circle-progress": "1.2.3",
-        "vuetify": "^2.6.12"
+        "vuetify": "^2.6.12",
+        "@mdi/font": "^7.4.47"
     }
 }

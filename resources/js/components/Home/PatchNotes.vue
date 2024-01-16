@@ -5,6 +5,30 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        Removed all online dependencies.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.4 <v-spacer /> 2024.01.15.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
