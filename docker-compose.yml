@@ -57,3 +57,4 @@ services:
             - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
         networks:
             - linguacafe
+        # platform: linux/amd64

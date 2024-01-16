@@ -81,6 +81,7 @@ jobs:
           # linux/386
           platforms: |
             linux/amd64
+            linux/arm64
           # Note: tags have to be all lower-case
           tags: ${{ steps.meta_php.outputs.tags }}
           labels: ${{ steps.meta_php.outputs.labels }}
