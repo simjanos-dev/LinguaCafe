@@ -3,6 +3,23 @@
 return [
 
     'languages' => [
+        // a list of the supported languages. 
+        'supported_languages' => [
+            'Chinese',
+            'Dutch',
+            'Finnish',
+            'French',
+            'German',
+            'Italian',
+            'Japanese',
+            'Norwegian',
+            'Korean',
+            'Russian',
+            'Spanish',
+            'Swedish',
+            'Ukrainian',
+        ],
+
         /*
             These are language codes that Jellyfin uses for subtitles. You can find out what
             a jellyfin language code is by going to the media player, and starting a video
