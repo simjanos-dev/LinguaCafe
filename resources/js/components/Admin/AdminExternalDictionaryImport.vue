@@ -375,60 +375,7 @@
                     databaseValidated: false,
                 },
 
-                languages: [
-                    {
-                        selected: false,
-                        name: 'chinese'
-                    },
-                    {
-                        selected: false,
-                        name: 'dutch'
-                    },
-                    {
-                        selected: false,
-                        name: 'finnish'
-                    },
-                    {
-                        selected: false,
-                        name: 'french'
-                    },
-                    {
-                        selected: false,
-                        name: 'german'
-                    },
-                    {
-                        selected: false,
-                        name: 'italian'
-                    },
-                    {
-                        selected: false,
-                        name: 'japanese'
-                    },
-                    {
-                        selected: false,
-                        name: 'korean'
-                    },
-                    {
-                        selected: false,
-                        name: 'norwegian'
-                    },
-                    {
-                        selected: false,
-                        name: 'russian'
-                    },
-                    {
-                        selected: false,
-                        name: 'spanish'
-                    },
-                    {
-                        selected: false,
-                        name: 'swedish'
-                    },
-                    {
-                        selected: false,
-                        name: 'ukrainian'
-                    },
-                ],
+                languages: [],
 
                 rules: {
                     dictionaryName: [
@@ -476,11 +423,24 @@
             };
         },
         mounted: function() {
-            axios.get('/config/get/linguacafe.languages.database_name_language_codes').then((response) => {
+            axios.all([
+                axios.get('/config/get/linguacafe.languages.supported_languages'),
+                axios.get('/config/get/linguacafe.languages.database_name_language_codes')
+            ]).then(axios.spread((response1, response2) => {
                 this.configFileLoading = false;
-                this.databaseNameLanguageCodes = response.data;
+
+                // add supported languages
+                for (let languageIndex = 0; languageIndex < response1.data.length; languageIndex++) {
+                    this.languages.push({
+                        name: response1.data[languageIndex].toLowerCase(),
+                        selected: false
+                    });
+                }
+
+                // update database name
+                this.databaseNameLanguageCodes = response2.data;
                 this.updateDatabaseName();
-            });
+            }));
         },
         methods: {
             updateDatabaseName() {

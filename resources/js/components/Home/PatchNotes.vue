@@ -19,7 +19,7 @@
 
                 <b>Bug fixes:</b>
                 <ul>
-                    <li>Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type should be playable.</li>
+                    <li>Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type is playable.</li>
                     <li>Fixed an issue with the Media player that caused every language to be handled as Japanese.</li>
                     <li>Fixed an issue related to Media player language support. Now all languages work with it.</li>
                 </ul>
@@ -28,6 +28,9 @@
                 <ul>
                     <li>
                         Removed all online dependencies.
+                    </li>
+                    <li>
+                        Updated language selection dialog design, and the language support information in the readme.
                     </li>
                 </ul>
             </v-card-text>
