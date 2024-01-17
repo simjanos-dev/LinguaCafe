@@ -256,6 +256,13 @@ class TextBlock
                     
                 }
             }
+
+            // german post processing
+            if ($this->language == 'korean') { 
+                // nouns' lemma needs der/die/das before them
+                $word->lemma = str_replace('+', '', $word->lemma);
+            }
+            
             $this->processedWords[$processedWordCount] = $word;
             $processedWordCount ++;
         }
