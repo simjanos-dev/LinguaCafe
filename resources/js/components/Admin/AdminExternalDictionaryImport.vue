@@ -2,7 +2,7 @@
     <v-card 
         id="custom-dictionary-import-dialog" 
         class="rounded-lg"
-        :loading="fileTestLoading || importing"
+        :loading="configFileLoading || fileTestLoading || importing"
     >
         <!-- Title bar -->
         <v-card-title>
@@ -43,77 +43,79 @@
                 <v-stepper-items>
                     <!-- Step 1: dictionary data -->
                     <v-stepper-content step="1">
-                        <label class="font-weight-bold">Dictionary language</label>
-                        <v-select
-                            v-model="dictionary.language"
-                            :items="languages"
-                            item-value="name"
-                            placeholder="Language"
-                            dense
-                            filled
-                            rounded
-                            @change="updateDatabaseName"
-                        >
-                            <template v-slot:selection="{ item, index }">
-                                <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
-                                <span class="text-capitalize">{{ item.name }}</span>
-                            </template>
-                            <template v-slot:item="{ item }">
-                                <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
-                                <span class="text-capitalize">{{ item.name }}</span>
-                            </template>
-                        </v-select>
+                        <div v-if="!configFileLoading">
+                            <label class="font-weight-bold">Dictionary language</label>
+                            <v-select
+                                v-model="dictionary.language"
+                                :items="languages"
+                                item-value="name"
+                                placeholder="Language"
+                                dense
+                                filled
+                                rounded
+                                @change="updateDatabaseName"
+                            >
+                                <template v-slot:selection="{ item, index }">
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
+                                    <span class="text-capitalize">{{ item.name }}</span>
+                                </template>
+                                <template v-slot:item="{ item }">
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
+                                    <span class="text-capitalize">{{ item.name }}</span>
+                                </template>
+                            </v-select>
 
-                        <label class="font-weight-bold">Dictionary name</label>
-                        <v-text-field 
-                            v-model="dictionary.name"
-                            filled
-                            dense
-                            rounded
-                            placeholder="Dictionary name"
-                            :rules="rules.dictionaryName"
-                            @keyup="updateDatabaseName"
-                            @change="updateDatabaseName"
-                            maxlength="16"
-                        ></v-text-field>
-                        
-                        <label class="font-weight-bold">Database table name</label>
-                        <v-text-field 
-                            v-model="dictionary.databaseName"
-                            class="mb-3"
-                            color="black"
-                            filled
-                            dense
-                            rounded
-                            persistent-hint
-                            hint="Can only contain lowercase letters, number and underscore."
-                            placeholder="database_name"
-                            :prefix="dictionary.databasePrefix"
-                            :rules="rules.databaseName"
-                            maxlength="28"
-                        ></v-text-field>
+                            <label class="font-weight-bold">Dictionary name</label>
+                            <v-text-field 
+                                v-model="dictionary.name"
+                                filled
+                                dense
+                                rounded
+                                placeholder="Dictionary name"
+                                :rules="rules.dictionaryName"
+                                @keyup="updateDatabaseName"
+                                @change="updateDatabaseName"
+                                maxlength="16"
+                            ></v-text-field>
+                            
+                            <label class="font-weight-bold">Database table name</label>
+                            <v-text-field 
+                                v-model="dictionary.databaseName"
+                                class="mb-3"
+                                color="black"
+                                filled
+                                dense
+                                rounded
+                                persistent-hint
+                                hint="Can only contain lowercase letters, number and underscore."
+                                placeholder="database_name"
+                                :prefix="dictionary.databasePrefix"
+                                :rules="rules.databaseName"
+                                maxlength="28"
+                            ></v-text-field>
 
-                        <label class="font-weight-bold">Display color</label>
-                        <v-menu
-                            v-model="colorPicker"
-                            width="290px"
-                            offset-y
-                            nudge-top="-10px"
-                            right
-                            :close-on-content-click="false"
-                        >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-card
-                                    class="border"
-                                    outlined
-                                    :color="dictionary.color"
-                                    width="64px"
-                                    height="32px"
-                                    @click="colorPicker = !colorPicker;"
-                                ></v-card>
-                            </template>
-                            <v-color-picker hide-inputs v-model="dictionary.color" />
-                        </v-menu>
+                            <label class="font-weight-bold">Display color</label>
+                            <v-menu
+                                v-model="colorPicker"
+                                width="290px"
+                                offset-y
+                                nudge-top="-10px"
+                                right
+                                :close-on-content-click="false"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-card
+                                        class="border"
+                                        outlined
+                                        :color="dictionary.color"
+                                        width="64px"
+                                        height="32px"
+                                        @click="colorPicker = !colorPicker;"
+                                    ></v-card>
+                                </template>
+                                <v-color-picker hide-inputs v-model="dictionary.color" />
+                            </v-menu>
+                        </div>
                     </v-stepper-content>
 
                     <!-- Step 2: dictionary file -->
@@ -342,13 +344,14 @@
 </template>
 
 <script>
-    const config =  require('./../../config');
     export default {
         props: {
             language: String
         },
         data: function() {
             return {
+                databaseNameLanguageCodes: null,
+                configFileLoading: true,
                 stepperPage: 1,
                 importing: false,
                 importResult: '',
@@ -473,12 +476,15 @@
             };
         },
         mounted: function() {
-            this.updateDatabaseName();
+            axios.get('/config/get/linguacafe.languages.database_name_language_codes').then((response) => {
+                this.configFileLoading = false;
+                this.databaseNameLanguageCodes = response.data;
+                this.updateDatabaseName();
+            });
         },
         methods: {
             updateDatabaseName() {
-                this.dictionary.databasePrefix = 'dict_' + config.languageShortForms[this.dictionary.language] + '_';
-                
+                this.dictionary.databasePrefix = 'dict_' + this.databaseNameLanguageCodes[this.dictionary.language] + '_';
                 this.dictionary.databaseName = this.dictionary.name.split(' ').join('_').toLowerCase().replace(/[^a-z0-9_]/g, '');
 
                 // remove underscores from the start of the text

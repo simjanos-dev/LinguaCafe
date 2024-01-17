@@ -138,7 +138,6 @@
 </template>
 
 <script>
-    const config =  require('./../../config');
     import {formatNumber} from './../../helper.js';
     export default {
         props: {
