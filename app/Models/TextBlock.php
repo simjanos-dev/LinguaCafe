@@ -88,7 +88,7 @@ class TextBlock
         be skipped (specialc characters mostly).
     */
     public function getWordCount() {
-        $wordsToSkip = config('langapp.wordsToSkip');      
+        $wordsToSkip = config('linguacafe.words_to_skip');      
         $wordCount = 0;
         foreach ($this->processedWords as $word) {
             if (!in_array($word->word, $wordsToSkip, true)) {
@@ -464,8 +464,8 @@ class TextBlock
         to work.
     */
     public function prepareTextForReader() {
-        $tokensWithNoSpaceBefore = config('langapp.tokensWithNoSpaceBefore');
-        $tokensWithNoSpaceAfter = config('langapp.tokensWithNoSpaceAfter');
+        $tokensWithNoSpaceBefore = config('linguacafe.tokens_with_no_space_before');
+        $tokensWithNoSpaceAfter = config('linguacafe.tokens_with_no_space_after');
 
         $this->words = [];
         $encounteredWords = DB::table('encountered_words')

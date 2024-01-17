@@ -472,7 +472,7 @@ class VocabularyController extends Controller
         Builds a search request. It's used for both searching and exporting vocabulary.
     */
     private function buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation) {
-        $wordsToSkip = config('langapp.wordsToSkip');
+        $wordsToSkip = config('linguacafe.words_to_skip');
         $selectedLanguage = Auth::user()->selected_language;
         $results = [];
 

@@ -20,7 +20,7 @@ class MediaPlayerController extends Controller
     private $jellyfinLanguageCodes = [];
 
     function __construct() {
-        $this->jellyfinLanguageCodes = config('langapp.languages.jellyfin_language_codes');
+        $this->jellyfinLanguageCodes = config('linguacafe.languages.jellyfin_language_codes');
 
         // retrieve api key and host from database
         $setting = Setting::where('name', 'jellyfinApiKey')->first();

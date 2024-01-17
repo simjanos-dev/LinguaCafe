@@ -158,7 +158,7 @@ class DictionaryController extends Controller
         $apiKey = json_decode($apiKeySetting->value);
 
         $hash = md5(mb_strtolower($term, 'UTF-8'));
-        $languageCodes = config('langapp.deepl_language_codes');
+        $languageCodes = config('linguacafe.languages.deepl_language_codes');
         $records = [];
 
         // check if search term is already cached
@@ -448,8 +448,8 @@ class DictionaryController extends Controller
     */
     public function getImportableDictionaryList() {
         
-        $dictCcLanguageCodes = config('langapp.dict_cc_language_codes');
-        $databaseLanguageCodes = config('langapp.database_name_language_codes');
+        $dictCcLanguageCodes = config('linguacafe.languages.dict_cc_language_codes');
+        $databaseLanguageCodes = config('linguacafe.languages.database_name_language_codes');
         
         $dictionaryImportService = new DictionaryImportService();
         $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes);
