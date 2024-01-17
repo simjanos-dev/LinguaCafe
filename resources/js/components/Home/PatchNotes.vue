@@ -8,20 +8,40 @@
             <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
             <v-card-text>
                 There were several issues with Jellyfin integration. Now it should work properly with every language and video type. 
-                Added additional information to the readme about subtitle file naming. <br><br>
+                Added additional information about subtitle file naming to the readme file. <br><br>
 
                 <b>New features:</b>
                 <ul>
                     <li>
                         Added CC-CEDICT dictionary support for Chinese.
                     </li>
+                    <li>
+                        Added pinyin for Chinese.
+                    </li>
                 </ul>
 
                 <b>Bug fixes:</b>
                 <ul>
-                    <li>Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type is playable.</li>
-                    <li>Fixed an issue with the Media player that caused every language to be handled as Japanese.</li>
-                    <li>Fixed an issue related to Media player language support. Now all languages work with it.</li>
+                    <li>
+                        Added Chinese font type. Now every Chinese and Japanese text should be displayed with NotoSansSC and NotoSansJP font types.
+                    </li>
+                    <li>
+                        Removed word spacing from Chinese texts.
+                    </li>
+                    <li>
+                        Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type is playable.
+                    </li>
+                    <li>
+                        Fixed an issue with the Media player that caused every language to be handled as Japanese.
+                    </li>
+                    <li>
+                        Fixed an issue related to Media player language support. Now all languages work with it.
+                    </li>
+                    <li>
+                        Fixed an issue on the vocabulary search page, that caused phrases to be displayed with commas 
+                        between the words, or with no spaces between them. It will still need further improvement for 
+                        non Japanese and Chinese languages.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>

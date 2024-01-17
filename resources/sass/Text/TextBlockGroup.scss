@@ -26,6 +26,14 @@
     overflow-y: hidden !important;
     overflow-x: visible !important;
     
+    * {
+        font-family: notosans-jp !important;
+    }
+
+    &.chinese-font * {
+        font-family: notosans-sc !important;
+    }
+
     .text-block {
         background-color: var(--v-foreground-base);
         overflow: hidden !important;
@@ -33,7 +41,6 @@
     }
 
     .word {
-        font-family: notosans !important;
         display: inline-block;
         cursor: pointer;
         margin: 1px 0px;

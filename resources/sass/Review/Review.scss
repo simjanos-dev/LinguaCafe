@@ -1,14 +1,20 @@
 @import './../variables';
 
 #review-box {
-    
     position: relative;
     display: block;
     width: 100%;
     height: 100%;
     margin: auto;
-    font-family: notosans !important;
     background-color: var(--v-background-base);
+
+    * {
+        font-family: notosans-jp !important;
+    }
+
+    &.chinese-font * {
+        font-family: notosans-sc !important;
+    }
 
     #review-reveal-button,
     #review-correct-button,
@@ -160,14 +166,31 @@
             
             .single-word {
                 display: block;
-                font-family: notosans !important;
+                // font-family: notosans-jp !important;
             }
         }
 
         #review-card-back {
             transform: rotateY( 180deg );
             .single-word, .reading {
-                font-family: notosans !important;
+                // font-family: notosans-jp !important;
+            }
+        }
+    }
+
+    // set font for chinese text
+    &.chinese-font {
+        // font-family: notosans-sc !important;
+        
+        #review-card {
+            #review-card-front .single-word {
+                // font-family: notosans-sc !important;
+            }
+
+            #review-card-back {
+                .single-word, .reading {
+                    // font-family: notosans-sc !important;
+                }
             }
         }
     }

@@ -162,7 +162,7 @@ class TextBlock
             $word->sentence_index = $this->tokenizedWords[$wordIndex]->si;
             $word->word = $this->tokenizedWords[$wordIndex]->w;
             $word->lemma = $this->tokenizedWords[$wordIndex]->l;
-            if ($this->language == 'japanese') {
+            if ($this->language == 'japanese' || $this->language == 'chinese') {
                 $word->reading = $this->tokenizedWords[$wordIndex]->r;
                 $word->lemma_reading = $this->tokenizedWords[$wordIndex]->lr;
             } else {
@@ -287,7 +287,7 @@ class TextBlock
             ){
                 $encounteredWords[] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
                 
-                if ($this->language == 'japanese') {
+                if ($this->language == 'japanese' || $this->language == 'chinese') {
                     $kanji = preg_replace($kanjipattern, "", $this->processedWords[$wordIndex]->word);
                     $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
                 }
@@ -298,7 +298,7 @@ class TextBlock
                 $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
                 $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
                 $encounteredWord['base_word'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
-                $encounteredWord['kanji'] = $this->language == 'japanese' ? implode('', $kanji) : '';
+                $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
                 $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
                 $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
                 $encounteredWord['example_sentence'] = '';
@@ -486,7 +486,7 @@ class TextBlock
             
             
             // Add space for word if the language has spaces in it.
-            $word->spaceAfter = $this->language !== 'japanese';
+            $word->spaceAfter = ($this->language !== 'japanese' && $this->language !== 'chinese');
             
             if ($wordIndex < count($this->processedWords) - 1 && in_array($this->processedWords[$wordIndex + 1]->word, $tokensWithNoSpaceBefore, true)) {
                     $word->spaceAfter = false;

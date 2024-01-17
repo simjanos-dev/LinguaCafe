@@ -1,5 +1,12 @@
 <template>
-    <div class="text-block-group w-100" @mouseup="unselectAllWords">
+    <div 
+        :class="{
+            'text-block-group': true,
+            'w-100': true,
+            'chinese-font': language == 'chinese'
+        }"
+        @mouseup="unselectAllWords"
+    >
         <!-- Anki api notifications -->
         <v-snackbar 
             :value="true" 
@@ -106,14 +113,14 @@
                                 <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
                                     <ruby>
                                         {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}
-                                        <rt v-if="$props.language == 'japanese'">
+                                        <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
                                             {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}
                                         </rt>
                                     </ruby>
                                     <v-icon color="text">mdi-arrow-right-thick</v-icon>
                                     <ruby>
                                         {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
-                                        <rt v-if="$props.language == 'japanese'">
+                                        <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
                                             {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
                                         </rt>
                                     </ruby>
@@ -126,7 +133,7 @@
                                 >
                                     <ruby>
                                         {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
-                                        <rt v-if="$props.language == 'japanese'">
+                                        <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
                                             {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
                                         </rt>
                                     </ruby>
@@ -144,14 +151,14 @@
                                 </div>
 
                                 <!-- Phrase reading -->
-                                <template v-if="$props.language == 'japanese'">
+                                <template v-if="($props.language == 'japanese' || $props.language == 'chinese')">
                                     <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Reading</span></div>
                                     <div class="expression">{{ vocabBox.reading }}</div>
                                 </template>
                             </template>
                             
                             <!-- Kanji list -->
-                            <template v-if="vocabBox.kanji.length">
+                            <template v-if="vocabBox.kanji.length && $props.language == 'japanese'">
                                 <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Kanji</span></div>
                                 <div id="vocab-box-kanji-box" class="d-flex flex-wrap ma-0">
                                     <div 
@@ -247,7 +254,7 @@
                             <!-- Word text fields -->
                             <div class="d-flex" v-if="selection.length == 1">
                                 <v-text-field 
-                                    :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
+                                    :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                                     hide-details
                                     label="Lemma"
                                     filled
@@ -256,7 +263,7 @@
                                     v-model="vocabBox.base_word"
                                 ></v-text-field>
                                 <v-text-field 
-                                    :class="{'mt-2': true, 'mb-2': $props.language !== 'japanese'}"
+                                    :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                                     hide-details
                                     label="Word"
                                     disabled
@@ -268,7 +275,7 @@
                             </div>
 
                             <!-- Reading fields -->
-                            <div class="d-flex" v-if="selection.length == 1 && $props.language == 'japanese'">
+                            <div class="d-flex" v-if="selection.length == 1 && ($props.language == 'japanese' || $props.language == 'chinese')">
                                 <v-text-field 
                                     class="my-2"
                                     hide-details
@@ -291,7 +298,7 @@
 
                             <!-- Phrase fields -->
                             <v-textarea
-                                v-if="selection.length > 1 && $props.language == 'japanese'"
+                                v-if="selection.length > 1 && ($props.language == 'japanese' || $props.language == 'chinese')"
                                 class="my-2"
                                 label="Reading"
                                 filled
@@ -305,7 +312,7 @@
 
                             <!-- Translation -->
                             <v-textarea
-                                :class="{'mt-2': $props.language !== 'japanese'}"
+                                :class="{'mt-2': $props.language !== 'japanese' && $props.language !== 'chinese'}"
                                 label="Translation"
                                 filled
                                 dense

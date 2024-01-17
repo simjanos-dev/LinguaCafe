@@ -19,7 +19,7 @@
 @import 'TextReader/TextReaderChapterList';
 @import 'TextReader/TextReaderGlossary';
 @import 'Vocabulary/Vocabulary';
-@import 'Vocabulary/VocabularyEditor';
+@import 'Vocabulary/VocabularyEditDialog';
 @import 'Vocabulary/VocabularyExport';
 @import 'Kanji/KanjiList';
 @import 'Kanji/KanjiDetails';
@@ -43,7 +43,7 @@
 }
 
 * {
-    font-family: sans-serif !important;
+    font-family: sans-serif;
 }
 
 // alert

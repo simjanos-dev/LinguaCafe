@@ -1,11 +1,12 @@
 <template>
-    <v-container id="vocabulary">
+    <v-container id="vocabulary" :class="{'chinese-font': $props.language == 'chinese'}">
         <!-- Vocabulary edit dialog -->
         <vocabulary-edit-dialog 
             v-if="vocabularyEditDialog.active"
             v-model="vocabularyEditDialog.active" 
             :item-id="vocabularyEditDialog.itemId" 
             :item-type="vocabularyEditDialog.itemType" 
+            :language="$props.language"
         ></vocabulary-edit-dialog>
 
         <!-- Vocabulary export dialog -->
@@ -203,7 +204,7 @@
             <thead>
                 <tr>
                     <th class="word">Word</th>
-                    <th class="reading" v-if="$props.language == 'japanese'">Reading</th>
+                    <th class="reading" v-if="($props.language == 'japanese' || $props.language == 'chinese')">Reading</th>
                     <th class="word-with-reading">Word</th>
                     <th class="stage px-1">Level</th>
                     <th class="translation">Definitions</th>
@@ -212,9 +213,28 @@
             </thead>
             <tbody>
                 <tr v-for="(word, index) in words" :key="index">
-                    <td class="word">{{ word.word }}</td>
-                    <td class="reading" v-if="$props.language == 'japanese'">{{ word.reading }}</td>                    
-                    <td class="word-with-reading"><ruby>{{ word.word }}<rt v-if="$props.language == 'japanese'">{{ word.reading }}</rt></ruby></td>
+                    <template v-if="word.type == 'phrase'">
+                        <td class="word" v-if="($props.language == 'japanese' || $props.language == 'chinese')">{{ (JSON.parse(word.word)).join('') }}</td>
+                        <td class="word" v-if="($props.language !== 'japanese' && $props.language !== 'chinese')">{{ (JSON.parse(word.word)).join(' ') }}</td>
+                    </template>
+                    <template v-if="word.type == 'word'">
+                        <td class="word">{{ word.word }}</td>
+                    </template>
+                    <td class="reading" v-if="($props.language == 'japanese' || $props.language == 'chinese')">{{ word.reading }}</td>
+                    
+                    <template v-if="word.type == 'phrase'">
+                        <td class="word-with-reading" v-if="($props.language == 'japanese' || $props.language == 'chinese')">
+                            {{ (JSON.parse(word.word)).join('') }}
+                        </td>
+                        <td class="word-with-reading" v-if="($props.language !== 'japanese' && $props.language !== 'chinese')">
+                            {{ (JSON.parse(word.word)).join(' ') }}
+                        </td>
+                    </template>
+                    <template v-if="word.type == 'word'">
+                        <td class="word-with-reading"><ruby>{{ word.word }}<rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">{{ word.reading }}</rt></ruby></td>
+                    </template>
+
+                    
                     
                     <td class="stage px-1" :stage="word.stage" v-if="word.stage < 0">
                         <div class="highlighted-word">{{ word.stage * -1 }}</div>

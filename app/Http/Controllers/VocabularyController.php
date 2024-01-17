@@ -522,7 +522,7 @@ class VocabularyController extends Controller
 
         // search for words and apply filters
         $wordSearch = EncounteredWord
-            ::select('id', 'base_word', 'word', 'reading', 'base_word_reading', 'stage', 'translation', 'read_count', 'lookup_count', 'added_to_srs', DB::raw("'word' AS type"))->where('user_id', Auth::user()->id)
+            ::select('id', 'base_word', 'word', DB::raw("'' AS words_searchable"), 'reading', 'base_word_reading', 'stage', 'translation', 'read_count', 'lookup_count', 'added_to_srs', DB::raw("'word' AS type"))->where('user_id', Auth::user()->id)
             ->where('language', $selectedLanguage)
             ->whereNotIn('word', $wordsToSkip);
 
@@ -547,7 +547,7 @@ class VocabularyController extends Controller
         
         // search for phrases and apply filters
         $phraseSearch = Phrase
-            ::select('id', DB::raw("'' AS base_word"), 'words_searchable as word', 'reading', DB::raw("'' AS base_word_reading"), 'stage', 'translation', DB::raw("-1 AS read_count"), DB::raw("-1 AS lookup_count"), 'added_to_srs', DB::raw("'phrase' AS type"))
+            ::select('id', DB::raw("'' AS base_word"), 'words as word', 'words_searchable', 'reading', DB::raw("'' AS base_word_reading"), 'stage', 'translation', DB::raw("-1 AS read_count"), DB::raw("-1 AS lookup_count"), 'added_to_srs', DB::raw("'phrase' AS type"))
             ->where('user_id', Auth::user()->id)
             ->where('language', $selectedLanguage);
 
