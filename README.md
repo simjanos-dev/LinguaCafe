@@ -19,24 +19,25 @@ Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 ![Vocabulary](/GithubImages/VocabularySearch.jpg)  
 
 ## Language support
-Supported languages:
-- German
-- Japanese
-- Norwegian
-- Spanish
+Lemma: a dictionary form of a word (E.g: worked -> to work).  
+Gender tagging: extending nouns' lemma with additional information (E.g: hus -> et hus).
 
-Experimental languages:
-- Chinese
-- Dutch
-- Finnish
-- French
-- Italian
-- Korean
-- Russian
-- Swedish
-- Ukrainian  
+| Flag                                                          | Language  | DeepL   | Lemma generation | Gender tagging | Dictionaries          |
+|:-------------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|-----------------------|
+| <img src='storage/app/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict |
+| <img src='storage/app/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc               |
+| <img src='storage/app/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary    |
+| <img src='storage/app/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary            |
+| <img src='storage/app/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='storage/app/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc               |
+| <img src='storage/app/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary            |
 
-Experimental languages have been added recently and awaiting testing and community feedback to improve them. They may have problems, not work properly or have no dictionary sources provided. If you find something that needs improving, please create a GitHub issue. 
 
 ## Installation (Linux)
 Step 1: Install docker desktop
@@ -55,7 +56,7 @@ Please follow the instructions on this page in the `Importing dictionaries` sect
 ## Known issues after first installation
 Sometimes when opening LinguaCafe the first time there is an error message about users database table. If this happens, just stop and start your containers again, it should fix the problem.
 
-> docker compose down
+> docker compose down  
 > docker compose up -d
 
 If you are unable to import .epub files, it may be caused because of the permissions of your temp folder. Running this command should fix the issue.
