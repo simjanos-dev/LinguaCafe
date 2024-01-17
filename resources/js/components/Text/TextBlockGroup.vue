@@ -515,22 +515,8 @@
                     if (uniqueWord.base_word !== '') {
                         this.vocabBox.searchField = uniqueWord.base_word;
 
-                        // temporary search fix for norwegian
-                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 2) == 'å ') {
-                            this.vocabBox.searchField = this.vocabBox.searchField.slice(2);
-                        }
-
-                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'et ') {
-                            this.vocabBox.searchField = this.vocabBox.searchField.slice(3);
-                        }
-
-                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'en ') {
-                            this.vocabBox.searchField = this.vocabBox.searchField.slice(3);
-                        }
-
-                        if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'ei ') {
-                            this.vocabBox.searchField = this.vocabBox.searchField.slice(3);
-                        }
+                        // remove unnecessary parts of the search term
+                        this.vocabBox.searchField = this.trimSearchTerm(this.vocabBox.searchField);
                     } else {
                         this.vocabBox.searchField = uniqueWord.word;
                     }
@@ -1226,6 +1212,41 @@
             },
             openKanji(kanji) {
                 window.location.href = '/kanji/' + kanji;
+            },
+            trimSearchTerm(searchTerm) {
+                var trimmedSearchTerm = searchTerm;
+
+                // norwegian
+                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 2) == 'å ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(2);
+                }
+
+                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'et ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                }
+
+                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'en ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                }
+
+                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'ei ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                }
+
+                // german
+                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'die ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                }
+
+                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'der ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                }
+
+                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'das ') {
+                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                }
+
+                return trimmedSearchTerm;
             }
         }
     }

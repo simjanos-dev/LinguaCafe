@@ -29,6 +29,12 @@
                         Removed word spacing from Chinese texts.
                     </li>
                     <li>
+                        Removed '+' symbol from Korean lemmas.
+                    </li>
+                    <li>
+                        Removed 'die/der/das' from the beginning of German search terms for better results.
+                    </li>
+                    <li>
                         Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type is playable.
                     </li>
                     <li>
