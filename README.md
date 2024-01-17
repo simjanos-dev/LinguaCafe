@@ -51,6 +51,9 @@ volumes:
     - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
 # ...
 volumes:
+    - /your/linguacafe/database/folder:/var/lib/mysql
+# ...
+volumes:
     - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
     - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
 ```
