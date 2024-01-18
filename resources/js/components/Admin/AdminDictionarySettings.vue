@@ -58,7 +58,6 @@
                             nudge-top="-10px"
                             right
                             :close-on-content-click="false"
-                            class="bg-white"
                         >
 
                             <template v-slot:activator="{ on, attrs }">
@@ -73,7 +72,7 @@
                             </template>
 
                             <v-color-picker hide-inputs v-model="dictionary.tempColor" />
-                            <div class="bg-white w-full d-flex">
+                            <div class="color-picker-actions w-full d-flex">
                                 <v-spacer />
                                 <v-btn
                                     rounded
