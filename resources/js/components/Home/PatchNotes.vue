@@ -53,12 +53,15 @@
                         Fixed an issue with the Media player that caused every language to be handled as Japanese.
                     </li>
                     <li>
-                        Fixed an issue related to Media player missing language support. Now all languages work with it.
+                        Fixed an issue related to Media player missing language support, now all languages work with it.
                     </li>
                     <li>
                         Fixed an issue on the vocabulary search page, that caused phrases to be displayed with commas 
                         between the words, or with no spaces between them. It will still need further improvement for 
                         non Japanese and Chinese languages.
+                    </li>
+                    <li>
+                        Fixed an error that broke the Kanji page if you had no known Kanji yet from every category.
                     </li>
                 </ul>
 
