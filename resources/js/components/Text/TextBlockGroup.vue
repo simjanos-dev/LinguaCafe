@@ -48,6 +48,8 @@
             :plainTextMode="plainTextMode"
             :fontSize="fontSize"
             :lineSpacing="lineSpacing"
+            :furiganaOnHighlightedWords="furiganaOnHighlightedWords"
+            :furiganaOnNewWords="furiganaOnNewWords"
             :updateSelection="updateSelection"
             :saveSelectedWord="saveSelectedWord"
             :updateLookupCount="updateLookupCount"
@@ -66,6 +68,8 @@
                 :plainTextMode="plainTextMode"
                 :fontSize="fontSize"
                 :lineSpacing="lineSpacing"
+                :furiganaOnHighlightedWords="furiganaOnHighlightedWords"
+                :furiganaOnNewWords="furiganaOnNewWords"
                 @textSelected="updateSelection"
                 @saveSelectedWord="saveSelectedWord"
                 @updateLookupCount="updateLookupCount"
@@ -468,8 +472,15 @@
             vocabBoxScrollIntoView: {
                 type: String,
                 default: 'Disabled'
+            },
+            furiganaOnHighlightedWords: {
+                type: Boolean,
+                default: false
+            },
+            furiganaOnNewWords: {
+                type: Boolean,
+                default: false
             }
-
         },
         watch: {
             _textBlocks: function(newVal, oldVal) {

@@ -137,6 +137,31 @@
                         ></v-select>
                     </v-col>
                 </v-row>
+
+                <!-- Furigana on highlighted words -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Furigana on highlighted words:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="furiganaOnHighlightedWords" 
+                            @change="settingChanged"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
+                <!-- Furigana on new words -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Furigana on new words:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="furiganaOnNewWords" 
+                            @change="settingChanged"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+                
             </v-card-text>
 
             <v-card-actions>
@@ -177,6 +202,8 @@
                 displaySuggestedTranslations: this.$props._displaySuggestedTranslations,
                 autoMoveWordsToKnown: this.$props._autoMoveWordsToKnown,
                 vocabBoxScrollIntoView: this.$props._vocabBoxScrollIntoView,
+                furiganaOnHighlightedWords: this.$props._furiganaOnHighlightedWords,
+                furiganaOnNewWords: this.$props._furiganaOnNewWords,
             }
         },
         props: {
@@ -190,7 +217,9 @@
             _maximumTextWidth: Number,
             _displaySuggestedTranslations: Boolean,
             _autoMoveWordsToKnown: Boolean,
-            _vocabBoxScrollIntoView: String
+            _vocabBoxScrollIntoView: String,
+            _furiganaOnHighlightedWords: Boolean,
+            _furiganaOnNewWords: Boolean
         },
         mounted() {
         },
@@ -209,7 +238,9 @@
                     'lineSpacing': this.lineSpacing,
                     'maximumTextWidth': this.maximumTextWidth,
                     'autoMoveWordsToKnown': this.autoMoveWordsToKnown,
-                    'vocabBoxScrollIntoView': this.vocabBoxScrollIntoView
+                    'vocabBoxScrollIntoView': this.vocabBoxScrollIntoView,
+                    'furiganaOnHighlightedWords': this.furiganaOnHighlightedWords,
+                    'furiganaOnNewWords': this.furiganaOnNewWords
                 });
             },  
             close(){

@@ -28,6 +28,8 @@
                 :_display-suggested-translations="settings.displaySuggestedTranslations"
                 :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
                 :_vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
+                :_furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
+                :_furigana-on-new-words="settings.furiganaOnNewWords"
                 @changed="saveSettings"   
             ></text-reader-settings>
             
@@ -78,6 +80,8 @@
                         :font-size="settings.fontSize"
                         :line-spacing="settings.lineSpacing"
                         :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
+                        :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
+                        :furigana-on-new-words="settings.furiganaOnNewWords"
                     ></text-block-group>    
                 </v-card-text>
                 <v-alert
@@ -157,7 +161,9 @@
                     displaySuggestedTranslations: false,
                     autoMoveWordsToKnown: false,
                     fullscreen: false,
-                    vocabBoxScrollIntoView: 'scroll-into-view'
+                    vocabBoxScrollIntoView: 'scroll-into-view',
+                    furiganaOnHighlightedWords: false,
+                    furiganaOnNewWords: false,
                 },
                 finished: false,
                 finishError: false,
@@ -233,6 +239,8 @@
                 this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
                 this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
                 this.settings.vocabBoxScrollIntoView = this.$cookie.get('vocab-box-scroll-into-view');
+                this.settings.furiganaOnHighlightedWords = this.$cookie.get('furigana-on-highlighted-words') === 'true';
+                this.settings.furiganaOnNewWords = this.$cookie.get('furigana-on-new-words') === 'true';
                 
 
                 if (this.$cookie.get('hide-all-highlights') === null) {
@@ -273,6 +281,14 @@
 
                 if (this.$cookie.get('vocab-box-scroll-into-view') === null) {
                     this.settings.vocabBoxScrollIntoView =  'scroll-into-view';
+                }
+
+                if (this.$cookie.get('furigana-on-highlighted-words') === null) {
+                    this.settings.furiganaOnHighlightedWords =  false;
+                }
+
+                if (this.$cookie.get('furigana-on-new-words') === null) {
+                    this.settings.furiganaOnNewWords =  false;
                 }
 
                 this.saveSettings();
@@ -323,6 +339,8 @@
                 this.$cookie.set('display-suggested-translations', this.settings.displaySuggestedTranslations, 3650);
                 this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
                 this.$cookie.set('vocab-box-scroll-into-view', this.settings.vocabBoxScrollIntoView, 3650);                
+                this.$cookie.set('furigana-on-highlighted-words', this.settings.furiganaOnHighlightedWords, 3650);
+                this.$cookie.set('furigana-on-new-words', this.settings.furiganaOnNewWords, 3650);      
             },
             openDialog: function(dialog) {
                 if (document.fullscreenElement !== null) {

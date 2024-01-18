@@ -28,14 +28,28 @@
                 
                 
                 @pointerenter="hoverPhraseSelection(wordIndex);"
-                @touchstart="startSelectionTouch($event, wordIndex)" 
-                @mousedown.stop="startSelection($event, wordIndex)" 
+                @touchstart="startSelectionTouch($event, word.word, wordIndex)" 
+                @mousedown.stop="startSelection($event, word.word, wordIndex)" 
                 @touchmove="updateSelectionTouch($event, wordIndex);" 
                 @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
                 @touchend.stop="finishSelection($event)"
                 @mouseup.stop="finishSelection($event)"
                 @mouseleave=";"
-            >{{ word.word }}<template v-if="plainTextMode && word.spaceAfter">&nbsp;</template></div><!--
+            ><!--
+                --><template v-if="language == 'japanese'"><!--
+                    --><ruby><!--
+                        -->{{ word.word }}<!--
+                        --><rt v-if="word.stage == 2 && furiganaOnNewWords" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                            -->{{ word.reading }}<!--
+                        --></rt><!--
+                        --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                            -->{{ word.reading }}<!--
+                        --></rt><!--
+                    --></ruby>
+                </template><!--
+                --><template v-if="language !== 'japanese'">{{ word.word }}</template><!--
+                --><template v-if="plainTextMode && word.spaceAfter">&nbsp;</template><!--
+            --></div><!--
             --><br v-if="word.word == 'NEWLINE'"><!--
         --></template>
     </div>
@@ -84,7 +98,9 @@
             hideNewWordHighlights: Boolean,
             plainTextMode: Boolean,
             fontSize: Number,
-            lineSpacing: Number
+            lineSpacing: Number,
+            furiganaOnHighlightedWords: Boolean,
+            furiganaOnNewWords: Boolean,
         },
         watch: { 
             _words: {
@@ -165,16 +181,16 @@
                 
                 this.ongoingSelection = newSelection;
             },
-            startSelectionTouch: function(event, wordIndex) {
+            startSelectionTouch: function(event, wordText, wordIndex) {
                 if (this.$props.plainTextMode) {
                     return;
                 }
 
                 this.touchTimer = setTimeout(() => {
-                    this.startSelection(event, wordIndex);
+                    this.startSelection(event, wordText, wordIndex);
                 }, 500);
             },
-            startSelection: function(event, wordIndex) {
+            startSelection: function(event, wordText, wordIndex) {
                 if (this.$props.plainTextMode) {
                     return;
                 }
@@ -200,14 +216,15 @@
                     this.words[i].selected = false;
                 }
                 
-                // set selected word          
+                // set selected word 
+                var uniqueWordIndex = this.getUniqueWordIndex(wordText.toLowerCase());
                 var selectedWord = {
-                    word: event.srcElement.outerText,
-                    kanji: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].kanji,
+                    word: wordText,
                     spaceAfter: this.words[wordIndex].spaceAfter,
                     wordIndex: wordIndex,
-                    uniqueWordIndex: this.getUniqueWordIndex(event.srcElement.outerText.toLowerCase()),
-                    reading: this.uniqueWords[this.getUniqueWordIndex(this.words[wordIndex].word.toLowerCase())].reading,
+                    uniqueWordIndex: uniqueWordIndex,
+                    kanji: this.uniqueWords[uniqueWordIndex].kanji,
+                    reading: this.uniqueWords[uniqueWordIndex].reading,
                     sentence_index: this.words[wordIndex].sentence_index,
                     position: event.target.getBoundingClientRect(),
                 };

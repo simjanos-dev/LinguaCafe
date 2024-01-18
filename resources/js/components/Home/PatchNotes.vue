@@ -8,7 +8,7 @@
             <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
             <v-card-text>
                 There were several issues with Jellyfin integration. Now it should work properly with every language and video type. 
-                Added additional information about subtitle file naming to the readme file. <br><br>
+                Also added information about subtitle file naming to the readme file. <br><br>
 
                 <b>New features:</b>
                 <ul>
@@ -25,7 +25,10 @@
                         Added Eurfa dictionary support for Welsh.
                     </li>
                     <li>
-                        Added pinyin for Chinese.
+                        Added pinyin support for Chinese.
+                    </li>
+                    <li>
+                        Added furigana support for Japanese.
                     </li>
                 </ul>
 
@@ -78,6 +81,10 @@
                     </li>
                     <li>
                         Updated language selection dialog design, and the supported languages information in the readme.
+                    </li>
+                    <li>
+                        Changed chapter size from 9000 to 4000 characters for importing e-books due to performance issues. There will be an option
+                        to edit this limit soon.
                     </li>
                 </ul>
             </v-card-text>
