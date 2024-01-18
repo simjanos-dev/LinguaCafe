@@ -13,7 +13,16 @@
                 <b>New features:</b>
                 <ul>
                     <li>
+                        Added support for new languages: Czech and Welsh.
+                    </li>
+                    <li>
+                        Added Kengdic dictionary support for Korean.
+                    </li>
+                    <li>
                         Added CC-CEDICT dictionary support for Chinese.
+                    </li>
+                    <li>
+                        Added Eurfa dictionary support for Welsh.
                     </li>
                     <li>
                         Added pinyin for Chinese.
@@ -22,6 +31,9 @@
 
                 <b>Bug fixes:</b>
                 <ul>
+                    <li>
+                        Removed empty and duplicated records from dictionary search results.
+                    </li>
                     <li>
                         Added Chinese font type. Now every Chinese and Japanese text should be displayed with NotoSansSC and NotoSansJP font types.
                     </li>
@@ -35,13 +47,13 @@
                         Removed 'die/der/das' from the beginning of German search terms for better results.
                     </li>
                     <li>
-                        Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed. Now every video type is playable.
+                        Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed from Jellyfin. Now every video type is playable.
                     </li>
                     <li>
                         Fixed an issue with the Media player that caused every language to be handled as Japanese.
                     </li>
                     <li>
-                        Fixed an issue related to Media player language support. Now all languages work with it.
+                        Fixed an issue related to Media player missing language support. Now all languages work with it.
                     </li>
                     <li>
                         Fixed an issue on the vocabulary search page, that caused phrases to be displayed with commas 
@@ -56,7 +68,7 @@
                         Removed all online dependencies.
                     </li>
                     <li>
-                        Updated language selection dialog design, and the language support information in the readme.
+                        Updated language selection dialog design, and the supported languages information in the readme.
                     </li>
                 </ul>
             </v-card-text>

@@ -24,6 +24,7 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 | Flag                                                          | Language  | DeepL   | Lemma generation | Gender tagging | Dictionaries          |
 |:-------------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|-----------------------|
 | <img src='storage/app/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict |
+| <img src='storage/app/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc               |
 | <img src='storage/app/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc   |
@@ -36,7 +37,9 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 | <img src='storage/app/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc               |
 | <img src='storage/app/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary            |
+| <img src='storage/app/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa     |
 
+Chinese: Mandarin language with simplified Chinese characters.
 
 ## Installation (Linux)
 Step 1: Install docker desktop
@@ -128,13 +131,28 @@ All these 4 files are required to import JMDict:
 
 This dictionary contains kanji and radicals for the Japanese language. Some Japanese features do not work without importing this dictionary.
 
+#### CC-CEDICT
+Languages: Chinese
+
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
+
+#### Kengdic
+Languages: Korean
+
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
+
+#### Eurfa
+Languages: Welsh
+
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
+
 #### Wiktionary
-Languages: Chinese, Finnish, French, German, Italian, Japanese, Korean, Norwegian, Russian, Spanish, Ukrainian
+Languages: Chinese, Czech, Finnish, French, German, Italian, Japanese, Korean, Norwegian, Russian, Spanish, Ukrainian, Welsh
 
 Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
 
 #### <span>Dict</span>.cc
-Languages: Dutch, Finnish, French, German, Italian, Norwegian, Russian, Spanish, Swedish
+Languages: Czech, Dutch, Finnish, French, German, Italian, Norwegian, Russian, Spanish, Swedish
 
 Download: [dict.cc](https://www1.dict.cc/translation_file_request.php?l=e)
 
@@ -173,19 +191,21 @@ services:
             - linguacafe_linguacafe
 ```
 
-You must name your subtitle files in a way that Jellyfin will recognise as languages. These worked for me:  
+You must name your subtitle files in a way that Jellyfin will recognize as languages. These worked for me:  
 ```
 Series Name - S01E01.ja.ass  
 Series Name - S01E01.de.ass  
 Movie name.es.ass  
 ```  
 
+Language codes for subtitles filenames that Jellyfin recognizes: Chinese: `zh`, Czech: `cs`, Dutch: `nl`, Finnish: `fi`, French: `fr`, German: `de`, Italian: `it`, Japanese: `ja`, Korean: `ko`, Norwegian: `no`, Russian: `ru`, Spanish: `es`, Swedish: `sv`, Ukrainian: `uk`, Welsh: `cy`
+
 [Jellyfin external file naming](https://jellyfin.org/docs/general/server/media/external-files/)
 
 #### Possible error codes in browser console on the Media player page:
-`unsupported language code: spa`: This means that Jellyfin recognised the language of the subtitle, but it is not supported by LinguaCafe yet. If you find one of these, please open a GitHub Issue, this should be fixed.  
+`unsupported language code: spa`: This means that Jellyfin recognized the language of the subtitle, but it is not supported by LinguaCafe yet. If you find one of these, please open a GitHub Issue, this should be fixed.  
 
-`unsupported language code: unrecognised by jellyfin: japaaaneseee`: This means that Jellyfin did not recognise `japaaaneseee` as a language, and it can only be fixed by renaming the file following Jellyfin's naming conventions.  
+`unsupported language code: unrecognized by jellyfin: japaaaneseee`: This means that Jellyfin did not recognize `japaaaneseee` as a language, and it can only be fixed by renaming the file following Jellyfin's naming conventions.  
 
 If you have file naming issues and renamed a file, make sure you refresh metadata in Jellyfin before reloading LinguaCafe.
 
@@ -282,6 +302,15 @@ License: GNU Library General Public License, version 2.0
 
 [Kengdic github](https://github.com/garfieldnate/kengdic)
 [Kengdic license](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.en.html)
+&nbsp;
+
+**Eurfa dictionary file**  
+License: The GNU General Public License 3
+
+[Eurfa download website](https://www.kaggle.com/datasets/rtatman/eurfa-welsh-dictionary?resource=download)
+[Eurfa bitbucket](https://bitbucket.org/donnek/eurfa/src/master/)
+[Eurfa creator's website](http://kevindonnelly.org.uk/)
+[Eurfa license](https://bitbucket.org/donnek/eurfa/src/master/gpl.txt)
 &nbsp;
 
 **Wiktionary**

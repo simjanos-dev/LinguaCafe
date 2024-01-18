@@ -6,6 +6,7 @@ return [
         // a list of the supported languages. 
         'supported_languages' => [
             'Chinese',
+            'Czech',
             'Dutch',
             'Finnish',
             'French',
@@ -18,6 +19,7 @@ return [
             'Spanish',
             'Swedish',
             'Ukrainian',
+            'Welsh',
         ],
 
         /*
@@ -40,7 +42,9 @@ return [
             'kor' => 'korean',
             'swe' => 'swedish',
             'ukr' => 'ukrainian',
-            'rus' => 'russian'
+            'rus' => 'russian',
+            'wel' => 'welsh',
+            'cze' => 'czech',
         ],
 
         /*
@@ -61,6 +65,8 @@ return [
             'swedish' => 'sv',
             'ukrainian' => 'ua',
             'russian' => 'ru',
+            'welsh' => 'cy',
+            'czech' => 'cs',
 
             'Japanese' => 'jp',
             'Norwegian' => 'no',
@@ -74,7 +80,9 @@ return [
             'Korean' => 'ko',
             'Swedish' => 'sv',
             'Ukrainian' => 'ua',
-            'Russian' => 'ru'
+            'Russian' => 'ru',
+            'Welsh' => 'cy',
+            'Czech' => 'cs',
         ],
 
         /*
@@ -85,6 +93,7 @@ return [
         */
         'dict_cc_language_codes' => [
             'NO' => 'norwegian',
+            'CS' => 'czech',
             'DE' => 'german',
             'NL' => 'dutch',
             'ES' => 'spanish',
@@ -111,6 +120,7 @@ return [
             'swedish' => 'SV',
             'ukrainian' => 'UK',
             'russian' => 'RU',
+            'czech' => 'CS',
 
             'Japanese' => 'JA',
             'Norwegian' => 'NB',
@@ -126,6 +136,7 @@ return [
             'Swedish' => 'SV',
             'Ukrainian' => 'UK',
             'Russian' => 'RU',
+            'Czech' => 'CS',
         ],
     ],
     'words_to_skip' => ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',

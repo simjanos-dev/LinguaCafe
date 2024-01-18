@@ -14,6 +14,7 @@ use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader;
 
 class DictionaryImportService
 {
@@ -115,6 +116,28 @@ class DictionaryImportService
             $dictionariesFound[] = $dictionary;
         }
 
+        // eurfa welsh dictionary
+        if (Storage::exists('dictionaries/Eurfa_Welsh_Dictionary.csv')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'eurfa';
+            $dictionary->databaseName = 'dict_cy_eurfa';
+            $dictionary->language = 'welsh';
+            $dictionary->color = '#32DB4D'; 
+            $dictionary->expectedRecordCount =  210579 * 2;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'Eurfa_Welsh_Dictionary.csv';
+            $dictionary->imported = false;
+
+            // check if kengdic is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // add kengdic to the list
+            $dictionariesFound[] = $dictionary;
+        }
+        
         // dict cc dictionaries
         foreach ($files as $file) {
             // skip non txt files
@@ -362,6 +385,69 @@ class DictionaryImportService
 
         DB::commit();
         fclose($handle);
+        
+        return 'success';
+    }
+
+    /*
+        Imports a  dictionary file into the database.
+    */
+    public function importEurfa($name, $databaseName, $fileName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => 'welsh',
+                'color' => '#32DB4D',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        DB::beginTransaction();
+        $index = 0;
+        $csv = Reader::createFromPath(storage_path('app/dictionaries') . '/' . $fileName, 'r');
+        $records = $csv->getRecords();
+        $uniqueWords = [];
+        foreach ($records as$record) {
+
+            // check if both columns exist
+            if (!isset($record[1]) || !isset($record[2]) || !isset($record[3])) {
+                throw new \Exception('Missing data.');
+            }
+
+            // add word 
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($record[1], 'UTF-8'),
+                'definitions' => $record[3]
+            ]);
+
+            // add lemma too, because there is no lemmatisation for welsh
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($record[2], 'UTF-8'),
+                'definitions' => $record[3]
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
         
         return 'success';
     }

@@ -201,6 +201,9 @@ def tokenizeText(words, language):
     if language == 'ukrainian':
         doc = ukrainian_nlp(words)
 
+    if language in ('welsh', 'czech'):
+        doc = multi_nlp(words)
+
     for sentenceIndex, sentence in enumerate(doc.sents):
         for token in sentence:
             word = str(token.text)

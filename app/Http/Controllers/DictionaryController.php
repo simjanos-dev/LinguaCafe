@@ -128,11 +128,18 @@ class DictionaryController extends Controller
         foreach ($dictionaryWords as $word) {
             $definitions = explode(';', $word->definitions);
             
+            if (strlen($word->definitions) === 0) {
+                continue;
+            }
+
             // check if there are duplicate records
             $duplicate = false;
             foreach ($records as $record) {
                 if ($record->word == $word->word) {
-                    $record->definitions[] = $word->definitions;
+                    if (!in_array($word->definitions, $record->definitions, true)) {
+                        $record->definitions[] = $word->definitions;
+                    }
+                    
                     $duplicate = true;
                 }
             }
@@ -480,7 +487,7 @@ class DictionaryController extends Controller
             return 'success';
         }
 
-        // import cc cedict files
+        // import cc cedict file
         if ($dictionaryName == 'cc-cedict') {
             try {
                 $dictionaryImportService = new DictionaryImportService();
@@ -494,7 +501,7 @@ class DictionaryController extends Controller
             return 'success';
         }
 
-        // import kengdic files
+        // import kengdic file
         if ($dictionaryName == 'kengdic') {
             try {
                 $dictionaryImportService = new DictionaryImportService();
@@ -507,6 +514,23 @@ class DictionaryController extends Controller
 
             return 'success';
         }
+
+        // import eurfa files
+        if ($dictionaryName == 'eurfa') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            } catch (\Throwable $t) {
+                return $t->getMessage();
+                return 'error';
+            } catch (\Exception $e) {
+                return $e->getMessage();
+                return 'error';
+            }
+
+            return 'success';
+        }
+        
 
         // import dict cc files
         if (str_contains($dictionaryName, 'dict cc')) {
