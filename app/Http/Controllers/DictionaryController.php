@@ -484,7 +484,21 @@ class DictionaryController extends Controller
         if ($dictionaryName == 'cc-cedict') {
             try {
                 $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importCedict($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+                $dictionaryImportService->importCeDict($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            } catch (\Throwable $t) {
+                return 'error';
+            } catch (\Exception $e) {
+                return 'error';
+            }
+
+            return 'success';
+        }
+
+        // import kengdic files
+        if ($dictionaryName == 'kengdic') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
             } catch (\Throwable $t) {
                 return 'error';
             } catch (\Exception $e) {

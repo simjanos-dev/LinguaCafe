@@ -30,7 +30,7 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 | <img src='storage/app/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary    |
-| <img src='storage/app/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary            |
+| <img src='storage/app/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic   |
 | <img src='storage/app/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc   |
 | <img src='storage/app/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
@@ -275,6 +275,13 @@ License: Creative Commons Attribution-Share Alike 3.0 License
 
 [CC-CEDICT website](https://cc-cedict.org/wiki/)
 [CC-CEDICT license](https://creativecommons.org/licenses/by-sa/3.0/)
+&nbsp;
+
+**Kengdic dictionary file**  
+License: GNU Library General Public License, version 2.0
+
+[Kengdic github](https://github.com/garfieldnate/kengdic)
+[Kengdic license](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.en.html)
 &nbsp;
 
 **Wiktionary**

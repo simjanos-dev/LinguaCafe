@@ -93,6 +93,28 @@ class DictionaryImportService
             $dictionariesFound[] = $dictionary;
         }
 
+        // kengdic dictionary
+        if (Storage::exists('dictionaries/kengdic.tsv')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'kengdic';
+            $dictionary->databaseName = 'dict_ko_kengdic';
+            $dictionary->language = 'korean';
+            $dictionary->color = '#DDBFE4'; 
+            $dictionary->expectedRecordCount =  117509;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'kengdic.tsv';
+            $dictionary->imported = false;
+
+            // check if kengdic is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // add kengdic to the list
+            $dictionariesFound[] = $dictionary;
+        }
+
         // dict cc dictionaries
         foreach ($files as $file) {
             // skip non txt files
@@ -199,8 +221,9 @@ class DictionaryImportService
     }
 
     /*
+        Imports a cc-cedict dictionary file into the database.
     */
-    public function importCedict($name, $databaseName, $fileName) {
+    public function importCeDict($name, $databaseName, $fileName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -255,6 +278,78 @@ class DictionaryImportService
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
                 'definitions' => mb_strtolower($definitions, 'UTF-8')
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
+        fclose($handle);
+        
+        return 'success';
+    }
+
+    /*
+        Imports a kengdic dictionary file into the database.
+    */
+    public function importKengdic($name, $databaseName, $fileName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => 'korean',
+                'color' => '#DDBFE4',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        $index = 0;
+        DB::beginTransaction();
+        $handle = fopen(Storage::path('dictionaries/' . $fileName), "r");
+        
+        if (!$handle) {
+            return 'error';
+        }
+
+        while (($line = fgets($handle)) !== false) {
+            // skip first line
+            if (str_contains($line, 'id	surface')) {
+                continue;
+            }
+
+            $data = explode('	', $line);
+
+            // skip possible empty rows
+            if (count($data) < 4) {
+                continue;
+            }
+
+            // skip empty definitions
+            if (strlen(trim($data[3])) == 0) {
+                continue;
+            }
+
+
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($data[1], 'UTF-8'),
+                'definitions' => mb_strtolower($data[3], 'UTF-8')
             ]);
 
             if ($index % 1000 == 0) {

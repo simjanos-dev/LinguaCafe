@@ -75,6 +75,15 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Kengdic dictionary file</v-card-title>
+            <v-card-text>
+                License: GNU Library General Public License, version 2.0<br><br>
+                <a href="https://github.com/garfieldnate/kengdic">Kengdic github.</a><br>
+                <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.0.en.html">Kengdic license.</a><br>
+            </v-card-text>
+        </v-card>
+        
+        <v-card outlined class="rounded-lg mb-6">
             <v-card-title class="pb-0">Wiktionary</v-card-title>
             <v-card-text>
                 License: Creative Commons Attribution-ShareAlike 3.0 Unported License<br><br>
