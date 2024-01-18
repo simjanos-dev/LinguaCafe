@@ -63,6 +63,12 @@
                     <li>
                         Fixed an error that broke the Kanji page if you had no known Kanji yet from every category.
                     </li>
+                    <li>
+                        Fixed dark theme style on color picker.
+                    </li>
+                    <li>
+                        Added a missing label to text reader's settings dialog.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>

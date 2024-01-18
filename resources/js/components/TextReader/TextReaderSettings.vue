@@ -40,7 +40,7 @@
                             v-model="maximumTextWidth"
                             :tick-labels="['Small', '', '', '', '', '', 'Full']"
                             :tick-size="0"
-                            :max="5"
+                            :max="6"
                             thumb-label="always"
                             thumb-size="38"
                             step="1"
