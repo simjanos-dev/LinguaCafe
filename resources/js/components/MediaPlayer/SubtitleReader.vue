@@ -1,21 +1,23 @@
 <template>
     <div id="subtitle-reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}">
         <!-- Settings -->
-        <subtitle-reader-settings
-            v-if="loaded && settingsDialog"
+        <text-reader-settings
+            v-show="settingsDialog"
             v-model="settingsDialog"
-            :_hide-all-highlights="settings.hideAllHighlights"
-            :_hide-new-word-highlights="settings.hideNewWordHighlights"
-            :_plain-text-mode="settings.plainTextMode"
-            :_font-size="settings.fontSize"
-            :_line-spacing="settings.lineSpacing"
-            :_maximum-text-width="settings.maximumTextWidth"
-            :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
-            :_media-controls-visible="settings.mediaControlsVisible"
-            :_subtitle-block-spacing="settings.subtitleBlockSpacing"
-            :_vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
-            @changed="saveSettings"   
-        ></subtitle-reader-settings>
+            ref="textReaderSettings"
+            :enabledSettings="[
+                'hideAllHighlights', 
+                'hideNewWordHighlights', 
+                'fontSize', 
+                'lineSpacing', 
+                'maximumTextWidth', 
+                'vocabBoxScrollIntoView', 
+                'furiganaOnHighlightedWords', 
+                'furiganaOnNewWords', 
+                'mediaControlsVisible',
+            ]"
+            @changed="updateSettings"
+        ></text-reader-settings>
 
         <!-- Toolbar buttons -->
         <div 
@@ -32,7 +34,7 @@
                     class="mx-1" 
                     @click="toggleFullscreen"
                     title="Fullscreen" 
-                    v-if="!settings.fullscreen"
+                    v-if="!fullscreenMode"
                 >
                     <v-icon dark>mdi-arrow-expand-all</v-icon>
                 </v-btn>
@@ -40,7 +42,7 @@
                     icon
                     class="mx-1" 
                     @click="toggleFullscreen"
-                    title="Exit fullscreen" v-if="settings.fullscreen" 
+                    title="Exit fullscreen" v-if="fullscreenMode" 
                 >
                     <v-icon dark>mdi-arrow-collapse-all</v-icon>
                 </v-btn>
@@ -82,6 +84,7 @@
         <!-- Subtitle reader -->
         <v-card id="subtitle-reader" outlined class="vocab-box-area rounded-lg pa-4 mx-auto" v-if="textBlocks.length">
             <text-block-group
+                ref="textBlockGroup"
                 :theme="'light'"
                 :fullscreen="false"
                 :_text-blocks="textBlocks"
@@ -92,42 +95,56 @@
                 :font-size="settings.fontSize"
                 :line-spacing="settings.lineSpacing"
                 :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
+                :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
+                :furigana-on-new-words="settings.furiganaOnNewWords"
                 v-slot="slotProps"
             >
                 <template v-for="(textBlock, textBlockIndex) in slotProps.textBlocks">
-                    <div 
-                        class="subtitle d-flex rounded-lg true" 
-                        :style="{'padding-bottom': (settings.subtitleBlockSpacing * 16) + 'px'}"
-                    >
-                        <div class="d-flex flex-column justify-start flex-nowrap">
-                            <span 
-                                class="subtitle-timestamp d-flex"
-                                @click="seekTo(textBlock.start)"
+                    
+                        <div 
+                            class="subtitle d-flex rounded-lg true" 
+                            style="min-height: 200px"
+                        >
+                            <v-lazy
+                                v-model="slotProps.textBlocks[textBlockIndex].isActive"
+                                :options="{
+                                    threshold: .5
+                                }"
+                                
                             >
-                                {{ textBlock.startText }}
-                                <v-icon>mdi-skip-next</v-icon>
-                            </span>
+                                <div class="d-flex">
+                                    <div class="subtitle-timestamp-box d-flex flex-column justify-start flex-nowrap">
+                                        <span 
+                                            class="subtitle-timestamp d-flex"
+                                            @click="seekTo(slotProps.textBlocks[textBlockIndex].start)"
+                                        >
+                                            {{ slotProps.textBlocks[textBlockIndex].startText }}
+                                            <v-icon>mdi-skip-next</v-icon>
+                                        </span>
+                                    </div>
+                                    <div class="subtitle-content rounded-lg">
+                                        <text-block
+                                            :key="slotProps.textBlocks[textBlockIndex].id"
+                                            ref="textBlock"
+                                            :textBlockId="slotProps.textBlocks[textBlockIndex].id"
+                                            :_words="slotProps.textBlocks[textBlockIndex].words"
+                                            :_phrases="slotProps.textBlocks[textBlockIndex].phrases"
+                                            :_uniqueWords="slotProps.textBlocks[textBlockIndex].uniqueWords"
+                                            :language="slotProps.language"
+                                            :hideAllHighlights="slotProps.hideAllHighlights"
+                                            :hideNewWordHighlights="slotProps.hideNewWordHighlights"
+                                            :fontSize="slotProps.fontSize"
+                                            :lineSpacing="slotProps.lineSpacing"
+                                            :furiganaOnHighlightedWords="slotProps.furiganaOnHighlightedWords"
+                                            :furiganaOnNewWords="slotProps.furiganaOnNewWords"
+                                            @textSelected="slotProps.updateSelection"
+                                            @saveSelectedWord="slotProps.saveSelectedWord"
+                                            @updateLookupCount="slotProps.updateLookupCount"
+                                        ></text-block>
+                                    </div>
+                                </div>
+                            </v-lazy>
                         </div>
-                        <div class="subtitle-content rounded-lg">
-                            <text-block
-                                :key="textBlock.id"
-                                ref="textBlock"
-                                :textBlockId="textBlock.id"
-                                :_words="textBlock.words"
-                                :_phrases="textBlock.phrases"
-                                :_uniqueWords="textBlock.uniqueWords"
-                                :language="slotProps.language"
-                                :hideAllHighlights="slotProps.hideAllHighlights"
-                                :hideNewWordHighlights="slotProps.hideNewWordHighlights"
-                                :plainTextMode="slotProps.plainTextMode"
-                                :fontSize="slotProps.fontSize"
-                                :lineSpacing="slotProps.lineSpacing"
-                                @textSelected="slotProps.updateSelection"
-                                @saveSelectedWord="slotProps.saveSelectedWord"
-                                @updateLookupCount="slotProps.updateLookupCount"
-                            ></text-block>
-                        </div>
-                    </div>
                 </template>
             </text-block-group>
         </v-card>
@@ -138,27 +155,30 @@
 export default {
     data: function () {
         return {
-            loaded: false,
-            maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
+            lazytest: false,
+            maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
             settingsDialog: false,
+            fullscreenMode: false,
             settings: {
+                furiganaOnHighlightedWords: false,
+                furiganaOnNewWords: false,
                 maximumTextWidth: 3,
                 fontSize: 20,
                 lineSpacing: 1,
-                subtitleBlockSpacing: 1,
                 hideAllHighlights: false,
                 hideNewWordHighlights: false,
-                plainTextMode: false,
                 autoMoveWordsToKnown: false,
-                fullscreen: false,
                 mediaControlsVisible: this.$props.mediaControlsVisible,
                 vocabBoxScrollIntoView: 'scroll-into-view'
-            }
+            },
+            textBlocks: this.$props._textBlocks,
+            unloadInvisibleTextBlocksInterval: null,
+            scrollEvent: null,
         } 
     },
     props: {
         language: String,
-        textBlocks: {
+        _textBlocks: {
             type: Array,
             default: []
         },
@@ -168,83 +188,57 @@ export default {
         }
     },
     mounted: function() {
-        this.loadSetting('hideAllHighlights', 'subtitle-hide-all-highlights', 'boolean', false);
-        this.loadSetting('hideNewWordHighlights', 'subtitle-hide-new-word-highlights', 'boolean', false);
-        this.loadSetting('plainTextMode', 'subtitle-plain-text-mode', 'boolean', false);
-        this.loadSetting('fontSize', 'subtitle-font-size', 'integer', 20);
-        this.loadSetting('lineSpacing', 'subtitle-line-spacing', 'integer', 1);
-        this.loadSetting('maximumTextWidth', 'subtitle-maximum-text-width', 'integer', 3);
-        this.loadSetting('autoMoveWordsToKnown', 'subtitle-auto-move-words-to-known', 'boolean', false);
-        this.loadSetting('subtitleBlockSpacing', 'subtitle-block-spacing', 'integer', 1);
-        this.loadSetting('vocabBoxScrollIntoView', 'subtitle-vocab-box-scroll-into-view', 'string', 'scroll-into-view');
-
-        this.saveSettings();
-        this.loaded = true;
+        this.unloadInvisibleTextBlocksInterval = setInterval(this.unloadInvisibleTextBlocks, 5000);
+        window.addEventListener('scroll', this.updateVocabBoxPosition);
+    },
+    beforeDestroy() {
+        clearTimeout(this.unloadInvisibleTextBlocksInterval);
+        window.removeEventListener('scroll', this.updateVocabBoxPosition);
     },
     methods: {
+        updateVocabBoxPosition() {
+            this.$refs.textBlockGroup.updateVocabBoxPosition();
+
+            this.$nextTick(() => {
+                this.$refs.textBlockGroup.updateVocabBoxPosition();
+            });
+        },
+        unloadInvisibleTextBlocks() {
+            var visibleCount = 0;
+            var subtitleDoms = document.getElementsByClassName('subtitle');
+            for(let i = 0; i < subtitleDoms.length; i++) {
+                var rect = subtitleDoms[i].getBoundingClientRect();
+                var subtitleTop = rect.top;
+                var subtitleBottom = rect.bottom;
+
+                var isVisible = (subtitleTop >= -500) && (subtitleBottom <= window.innerHeight + 500);
+                this.textBlocks[i].isActive = isVisible;
+                if (isVisible) {
+                    visibleCount++;
+                }
+            }
+
+            this.updateVocabBoxPosition();
+        },
         seekTo: function(position) {
             this.$emit('seekTo', position);
         },
-        loadSetting: function(name, cookieName, type, defaultValue) {
-            if (this.$cookie.get(cookieName) === null) {
-                this.settings[name] = defaultValue;
-            } else {
-                if (type == 'boolean') {
-                    this.settings[name] = this.$cookie.get(cookieName) === 'true';
-                }
-
-                if (type == 'integer') {
-                    this.settings[name] = parseInt(this.$cookie.get(cookieName));
-                }
-
-                if (type == 'string') {
-                    this.settings[name] = this.$cookie.get(cookieName);
-                }
-            }
-
-        },
-        saveSettings: function(newSettings = null) {
-            if (newSettings !== null) {
-                this.settings = newSettings;
-            }
-
-            if (this.settings.fontSize < 12) {
-                this.settings.fontSize = 12;
-            }
-
-            if (this.settings.fontSize > 30) {
-                this.settings.fontSize = 30;
-            }
-
-            this.$cookie.set('subtitle-hide-all-highlights', this.settings.hideAllHighlights, 3650);
-            this.$cookie.set('subtitle-hide-new-word-highlights', this.settings.hideNewWordHighlights, 3650);
-            this.$cookie.set('subtitle-plain-text-mode', this.settings.plainTextMode, 3650);
-            this.$cookie.set('subtitle-font-size', this.settings.fontSize, 3650);
-            this.$cookie.set('subtitle-line-spacing', this.settings.lineSpacing, 3650);
-            this.$cookie.set('subtitle-maximum-text-width', this.settings.maximumTextWidth, 3650);
-            this.$cookie.set('subtitle-auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
-            this.$cookie.set('subtitle-block-spacing', this.settings.subtitleBlockSpacing, 3650);
-            this.$cookie.set('subtitle-vocab-box-scroll-into-view', this.settings.vocabBoxScrollIntoView, 3650);
-
-            this.$emit('settingsChange', this.settings);
-        },
-        toggleMediaPlayer: function() {
-            this.settings.mediaControlsVisible = !this.settings.mediaControlsVisible;
-            this.$emit('settingsChange', this.settings);
+        updateSettings(settings) {
+            this.settings = settings;
+            this.$emit('settingsChanged', settings, this.fullscreenMode);
+            this.$forceUpdate();
         },
         toggleFullscreen: function() {
-            if (this.settings.fullscreen) {
+            if (this.fullscreenMode) {
                 document.exitFullscreen();
-                this.settings.fullscreen = false;
+                this.fullscreenMode = false;
             } else if (document.fullscreenEnabled) {
                 document.getElementsByClassName('fullscreen-box')[0].requestFullscreen();
-                this.settings.fullscreen = true;
+                this.fullscreenMode = true;
             }
-            
-            this.$emit('settingsChange', this.settings);
         },
         openSettings: function() {
-            if (this.settings.fullscreen) {
+            if (this.fullscreenMode) {
                 this.toggleFullscreen();
             }
             
@@ -252,11 +246,19 @@ export default {
         },
         increaseFontSize: function() {
             this.settings.fontSize ++;
-            this.saveSettings();
+            this.toolbarSettingChanged();
         },
         decreaseFontSize: function() {
             this.settings.fontSize --;
-            this.saveSettings();
+            this.toolbarSettingChanged();
+        },
+        toggleMediaPlayer: function() {
+            this.settings.mediaControlsVisible = !this.settings.mediaControlsVisible;
+            this.toolbarSettingChanged();
+        },
+        toolbarSettingChanged() {
+            this.$refs.textReaderSettings.changeSetting('fontSize', this.settings.fontSize);
+            this.$refs.textReaderSettings.changeSetting('mediaControlsVisible', this.settings.mediaControlsVisible, true);
         }
     }
 }

@@ -44,11 +44,11 @@
         <!-- Subtitle reader -->
         <subtitle-reader
             v-if="textBlocks.length"
-            :textBlocks="textBlocks"
+            :_textBlocks="textBlocks"
             :mediaControlsVisible="mediaControlsVisible"
             :language="this.$props.language"
             @seekTo="seekTo"
-            @settingsChange="updateSettings"
+            @settingsChanged="updateSettings"
         ></subtitle-reader>
     </v-container>
 </template>
@@ -59,7 +59,7 @@ export default {
     data: function () {
         return {
             requestTimer: null,
-            maximumTextWidthData: ['800px', '1000px', '1200px', '1400px', '1600px', '100%'],
+            maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
             maximumTextWidth: 3,
             userId: '',
             sessionId: '',
@@ -142,10 +142,10 @@ export default {
                 }
             });
         },
-        updateSettings: function(settings) {
+        updateSettings: function(settings, fullscreenMode) {
             this.maximumTextWidth = settings.maximumTextWidth;
             this.mediaControlsVisible = settings.mediaControlsVisible;
-            this.fullscreen = settings.fullscreen;
+            this.fullscreen = fullscreenMode;
         },
         subtitleChange: function(selectedSubtitle) {
             clearInterval(this.requestTimer);
@@ -161,6 +161,12 @@ export default {
 
             axios.post('/jellyfin/process-subtitles', selectedSubtitle).then((result) => {
                 this.subtitleLoading = false;
+
+                // add isActive for lazy loading
+                for (let textBlockIndex = 0; textBlockIndex < result.data.length; textBlockIndex++) {
+                    result.data[textBlockIndex].isActive = false;
+                }
+
                 this.textBlocks = result.data
                 
                 this.updatePlayState();

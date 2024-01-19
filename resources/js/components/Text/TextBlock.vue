@@ -39,10 +39,10 @@
                 --><template v-if="language == 'japanese'"><!--
                     --><ruby><!--
                         -->{{ word.word }}<!--
-                        --><rt v-if="word.stage == 2 && furiganaOnNewWords" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                        --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
                             -->{{ word.reading }}<!--
                         --></rt><!--
-                        --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                        --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
                             -->{{ word.reading }}<!--
                         --></rt><!--
                     --></ruby>

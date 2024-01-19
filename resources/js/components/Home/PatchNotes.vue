@@ -86,6 +86,14 @@
                         Changed chapter size from 9000 to 4000 characters for importing e-books due to performance issues. There will be an option
                         to edit this limit soon.
                     </li>
+                    <li>
+                        Unified text reader and subtitle reader settings. Users don't have to modify settings at both places separately anymore.
+                    </li>
+                    <li>
+                        Added dynamic subtitle rendering for Media player, which increased speed significantly. For this I had to reamove 
+                        customizable spacing between subtitles, due to a but that moved the vocabulary box around. This will be fixed in the
+                        future.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

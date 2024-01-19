@@ -925,6 +925,7 @@
                 var selectedWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
                 
 
+                // update unique words in all blocks
                 for (var j  = 0; j < this.textBlocks.length; j++) {
                     for (var i  = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
                         if (this.textBlocks[j].uniqueWords[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
@@ -932,6 +933,16 @@
                             this.textBlocks[j].uniqueWords[i].reading = this.vocabBox.reading;
                             this.textBlocks[j].uniqueWords[i].base_word = this.vocabBox.base_word;
                             this.textBlocks[j].uniqueWords[i].base_word_reading = this.vocabBox.base_word_reading;
+                            this.textBlocks[j].uniqueWords[i].stage = selectedWord.stage;
+                        }
+                    }
+                }
+
+                // update stages in all text
+                for (var j  = 0; j < this.textBlocks.length; j++) {
+                    for (var i  = 0; i < this.textBlocks[j].words.length; i++) {
+                        if (this.textBlocks[j].words[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
+                            this.textBlocks[j].words[i].stage = selectedWord.stage;
                         }
                     }
                 }
@@ -960,6 +971,8 @@
                 if (exampleSentenceChanged) {
                     this.updateExampleSentence();
                 }
+
+                this.$forceUpdate();
             },
             setStage(stage) {
                 // determine if saving is needed
