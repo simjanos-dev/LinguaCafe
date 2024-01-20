@@ -15,6 +15,7 @@ yarn-error.log
 /public/css/*.css
 /public/js/*.js
 !/public/css/awesomefont.css
+!/public/css/vuetify.min.css
 /public/js/dmak/kanji/*.svg
 /docker/mysql/*
 /tools/django_server/django_server/__pycache__
