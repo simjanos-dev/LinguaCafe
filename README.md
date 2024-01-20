@@ -70,19 +70,10 @@ Run these commands from the directory where you placed your `docker-compose.yml`
 docker compose pull
 docker compose up -d
 ```
-
-## Migrating from versions prior to v0.4
-When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:
-
-```
-/your/linguacafe/dict/folder          ->  /path/to/this/repo/storage/app/dictionaries
-/your/linguacafe/logs/folder          ->  /path/to/this/repo/storage/logs
-/your/linguacafe/database/folder      ->  /path/to/this/repo/docker/mysql
-```
-
-It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.
-
 ## Migrating from v0.4 to v0.5
+Due to a problem with the v0.4 folder structure, you have to recover your book cover images if you want to keep them, 
+and change your folder structure. 
+
 First if you have assigned cover images to your books, recover them by running the following command:
 ```
 docker cp linguacafe-webserver:/var/www/html/storage/app/images/book_images ./
@@ -96,6 +87,17 @@ Now download and prepare the folder structure for v0.5 with the following comman
 git clone -b quickstart git@github.com:sergiolaverde0/LinguaCafe.git linguacafe-0.5 && cd linguacafe && chmod 777 -R ./
 ```
 Finally, copy the contents of the folders from v0.4 in the respective folder or subfolder for v0.5, and run `docker compose up -d` to get the service back online.
+
+## Migrating from versions prior to v0.4
+When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:
+
+```
+/your/linguacafe/dict/folder          ->  /path/to/this/repo/storage/app/dictionaries
+/your/linguacafe/logs/folder          ->  /path/to/this/repo/storage/logs
+/your/linguacafe/database/folder      ->  /path/to/this/repo/docker/mysql
+```
+
+It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.
 
 ## Importing dictionaries
 Step 1: Download the dictionaries that you want to use from the provided links below.
