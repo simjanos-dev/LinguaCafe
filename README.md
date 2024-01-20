@@ -54,39 +54,55 @@ Your server now should be running and accessible on http://localhost:9191. If yo
 
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
-## Known issues after first installation
-If you are unable to import .epub files, it may be caused because of the permissions of your temp folder. Running this command should fix the issue.
+## Updating to the latest version 
+If you are below v0.6, please use the migration guides below instead of this.
 
-```
-sudo chmod 777 /your/linguacafe/temp/folder -R
-```
-
-These will be addressed in a future update.
-
-## Updating to the latest version
 Run these commands from the directory where you placed your `docker-compose.yml`:
 
 ```
 docker compose pull
 docker compose up -d
 ```
-## Migrating from v0.4 to v0.5
-Due to a problem with the v0.4 folder structure, you have to recover your book cover images if you want to keep them, 
-and change your folder structure. 
 
-First if you have assigned cover images to your books, recover them by running the following command:
+## Migrating from v0.4 to v0.5
+The difference since v0.4 is only the placement of the folders. We have decided to mount the 
+whole `/storage` folder, so users won't have to create several folders. Due to an oversight 
+with the v0.4 folder structure, you have to recover your book cover images, and change your 
+folder structure. 
+
+Run this command to recover your book cover images while the docker server is running:
 ```
 docker cp linguacafe-webserver:/var/www/html/storage/app/images/book_images ./
 ```
-Now you have a folder with your book covers. Then go to the location of the folders you created for v0.4, run the following command and write your password when asked:
+
+Run this command from your old linguacafe folder to stop the servers:
+```
+docker compose stop
+```
+
+The easiest way to migrate to the new structure is to clone the `deploy` branch from github, 
+which contains all the necessary folder structure and files. Then you can copy your old
+database and book images there.  
+
+Run this command to download and create the new folder structure. This will create a `linguacafe` folder:
+```
+git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe
+```
+
+Next copy your old database and book images to the new `linguacafe` folder. Copying the database will need root permissions.
+```
+/your/old/database          ->      /linguacafe/database
+/your/old/book_images       ->      /linguacafe/storage/images/book_images
+```
+
+Run this command from the new `linguacafe` folder, to make sure all your files and folders have the necessary permission.
 ```
 sudo chmod 777 -R ./
 ```
-Now download and prepare the folder structure for v0.5 with the following commands:
+Finally, start the server:
 ```
-git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe-0.5 && cd linguacafe && chmod 777 -R ./
+docker-compose pull && docker compose up -d --force-recreate
 ```
-Finally, copy the contents of the folders from v0.4 in the respective folder or subfolder for v0.5, and run `docker compose up -d` to get the service back online.
 
 ## Migrating from versions prior to v0.4
 When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:
