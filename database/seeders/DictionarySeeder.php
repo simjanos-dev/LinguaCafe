@@ -182,5 +182,17 @@ class DictionarySeeder extends Seeder
                 'enabled' => false
             ]);
         }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL CS')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL CS',
+                'database_table_name' => 'API',
+                'language' => 'czech',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
     }
 }

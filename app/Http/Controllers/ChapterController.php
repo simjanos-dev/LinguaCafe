@@ -64,7 +64,7 @@ class ChapterController extends Controller
     public function getChapterForReader(Request $request) 
     {        
         $lessonId = $request->chapterId;
-        $wordsToSkip = config('langapp.wordsToSkip');
+        $wordsToSkip = config('linguacafe.words_to_skip');
         $selectedLanguage = Auth::user()->selected_language;
         
 

@@ -5,6 +5,7 @@
 @import '~bootstrap/scss/bootstrap';
 
 // Pages
+@import 'Dialogs/LanguageSelectionDialog';
 @import 'Login/Login';
 @import 'Home/Home';
 @import 'media_player';
@@ -14,11 +15,12 @@
 @import 'flash_card_collections';
 @import 'edit_flash_card_collection';
 @import 'Text/TextBlockGroup';
+@import 'Text/VocabularyBox';
 @import 'TextReader/TextReader';
 @import 'TextReader/TextReaderChapterList';
 @import 'TextReader/TextReaderGlossary';
 @import 'Vocabulary/Vocabulary';
-@import 'Vocabulary/VocabularyEditor';
+@import 'Vocabulary/VocabularyEditDialog';
 @import 'Vocabulary/VocabularyExport';
 @import 'Kanji/KanjiList';
 @import 'Kanji/KanjiDetails';
@@ -42,7 +44,7 @@
 }
 
 * {
-    font-family: sans-serif !important;
+    font-family: sans-serif;
 }
 
 // alert

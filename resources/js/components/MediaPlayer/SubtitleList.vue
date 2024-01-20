@@ -67,14 +67,19 @@
                     <div class="subtitle-language">
                         <v-img 
                             class="border mx-auto" 
-                            :src="'/images/flags/' + subtitle.language" 
+                            :src="'/images/flags/' + subtitle.language + '.png'" 
                             max-width="43" 
                             height="28"
                         ></v-img> 
                     </div>
                     <div class="subtitle-user">{{ session.userName }}</div>
                     <div class="subtitle-client">{{ session.client }}</div>
-                    <div class="subtitle-media">{{ session.seriesName }} S{{ ('0' + session.seriesSeason).slice(-2) }}E{{ ('0' + session.seriesEpisode).slice(-2) }} - {{ session.title }}</div>
+                    <div class="subtitle-media" v-if="session.type == 'Episode'">
+                        {{ session.seriesName }} S{{ ('0' + session.seriesSeason).slice(-2) }}E{{ ('0' + session.seriesEpisode).slice(-2) }} - {{ session.title }}
+                    </div>
+                    <div class="subtitle-media" v-if="session.type == 'Movie'">
+                        {{ session.movieName }}
+                    </div>
                 </div>
             </template>
 
@@ -110,7 +115,8 @@ export default {
         }
     },
     props: {
-        subtitleLoading: Boolean
+        subtitleLoading: Boolean,
+        language: String,
     },
     mounted() {
         this.loadSubtitleList();
@@ -120,26 +126,53 @@ export default {
             this.subtitleListLoading = true;
             this.sessions = [];
             axios.get('/jellyfin/subtitles').then(async (result) => {
-                this.sessions = result.data;
+                var sessions = result.data;
+
+                // remove unsupported and not-selected langauge subtitles
+                for (let sessionIndex = 0; sessionIndex < sessions.length; sessionIndex++) {
+                    for (let subtitleIndex = sessions[sessionIndex].subtitles.length - 1; subtitleIndex >= 0; subtitleIndex--) {
+
+                        // remove unsupported language subtitle
+                        if (!sessions[sessionIndex].subtitles[subtitleIndex].supportedLanguage) {
+                            console.log('unsupported language code:', sessions[sessionIndex].subtitles[subtitleIndex].language);
+                        }
+
+                        // remove note-selected language subtitle
+                        if (sessions[sessionIndex].subtitles[subtitleIndex].language !== this.$props.language) {
+                            sessions[sessionIndex].subtitles.splice(subtitleIndex, 1);
+                        }
+                    }
+                }
+
+                this.sessions = sessions;
                 this.subtitleListLoading = false;
             });
         },
         selectSubtitle: function(selectedSession, selectedSubtitle) {
-            this.$emit('subtitle-change', {
+            var subtitleData = {
                 subtitle: this.sessions[selectedSession].subtitles[selectedSubtitle].text,
                 language: this.sessions[selectedSession].subtitles[selectedSubtitle].language,
                 client: this.sessions[selectedSession].client,
                 userName: this.sessions[selectedSession].userName,
                 userId: this.sessions[selectedSession].userId,
                 title: this.sessions[selectedSession].title,
-                seriesName: this.sessions[selectedSession].seriesName,
-                seriesEpisode: this.sessions[selectedSession].seriesEpisode,
-                seriesSeason: this.sessions[selectedSession].seriesSeason,
+                type: this.sessions[selectedSession].type,
+                
                 nowPlayingItemId: this.sessions[selectedSession].nowPlayingItemId,
                 runTimeTicks: this.sessions[selectedSession].runTimeTicks,
                 mediaSourceId: this.sessions[selectedSession].mediaSourceId,
                 sessionId: this.sessions[selectedSession].sessionId
-            });
+            };
+
+            if (subtitleData.type == 'Movie') {
+                subtitleData.movieName = this.sessions[selectedSession].movieName;
+            } else {
+                subtitleData.seriesName = this.sessions[selectedSession].seriesName;
+                subtitleData.seriesEpisode = this.sessions[selectedSession].seriesEpisode;
+                subtitleData.seriesSeason = this.sessions[selectedSession].seriesSeason;
+            }
+
+            this.$emit('subtitle-change', subtitleData);
         }
     }
 }

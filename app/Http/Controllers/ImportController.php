@@ -58,7 +58,7 @@ class ImportController extends Controller
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importFile' => $file,
-            'chunkSize' => 9000
+            'chunkSize' => 4000
         ]);
         
         // get text and token chunks

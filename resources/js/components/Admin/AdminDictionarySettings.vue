@@ -58,7 +58,6 @@
                             nudge-top="-10px"
                             right
                             :close-on-content-click="false"
-                            class="bg-white"
                         >
 
                             <template v-slot:activator="{ on, attrs }">
@@ -73,7 +72,7 @@
                             </template>
 
                             <v-color-picker hide-inputs v-model="dictionary.tempColor" />
-                            <div class="bg-white w-full d-flex">
+                            <div class="color-picker-actions w-full d-flex">
                                 <v-spacer />
                                 <v-btn
                                     rounded
@@ -101,7 +100,7 @@
 
                     <!-- Language -->
                     <td>
-                        <v-img class="mx-auto border" :src="'/images/flags/' + dictionary.language" max-width="43" height="28" /> 
+                        <v-img class="mx-auto border" :src="'/images/flags/' + dictionary.language + '.png'" max-width="43" height="28" /> 
                     </td>
 
                     <!-- Enabled/disabled -->
@@ -141,7 +140,7 @@
                 elevation="0"
             >
                 <v-card-title class="expansion-card-title py-3 px-0" @click="toggleExpansion(index)">
-                    <v-img class="mx-4 border" :src="'/images/flags/' + dictionary.language" max-width="43" height="28" />
+                    <v-img class="mx-4 border" :src="'/images/flags/' + dictionary.language + '.png'" max-width="43" height="28" />
                     {{ dictionary.name }}
                     <v-spacer />
                     <v-icon class="mr-4">{{ dictionary.expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -217,7 +216,7 @@
                             <!-- Language -->
                             <tr>
                                 <td>Language</td>
-                                <td><v-img class="mx-auto border" :src="'/images/flags/' + dictionary.language" max-width="43" height="28" /> </td>
+                                <td><v-img class="mx-auto border" :src="'/images/flags/' + dictionary.language + '.png'" max-width="43" height="28" /> </td>
                             </tr>
 
                             <!-- Enabled/disabled -->

@@ -1,34 +1,38 @@
 <template>
-    <div id="fullscreen-box" :class="{'fullscreen-mode': settings.fullscreen}" :style="{'background-color': $vuetify.theme.currentTheme.background}">
+    <div id="fullscreen-box" :class="{'fullscreen-mode': fullscreenMode}" :style="{'background-color': $vuetify.theme.currentTheme.background}">
         <div id="reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}" v-if="lessonId !== null">
             <div id="toolbar-box">
                 <div v-if="!finished" id="toolbar" :class="{'d-flex': true}" :style="{'top': toolbarTop + 'px'}">
-                    <v-btn title="Fullscreen" icon @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
-                    <v-btn title="Exit fullscreen" icon @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                    <v-btn title="Fullscreen" icon @click="fullscreen" v-if="!fullscreenMode"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                    <v-btn title="Exit fullscreen" icon @click="exitFullscreen" v-if="fullscreenMode"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
                     <v-btn title="Text reader settings" icon @click="openDialog('settings')"><v-icon>mdi-cog</v-icon></v-btn>
                     <v-btn title="Chapters" icon @click="openDialog('chapters')"><v-icon>mdi-book-alphabet</v-icon></v-btn>
                     <v-btn title="Glossary" icon @click="openDialog('glossary')"><v-icon>mdi-translate</v-icon></v-btn>
-                    <v-btn title="Increase font size" icon @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                    <v-btn title="Decrease font size" icon @click="settings.fontSize --; saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
-                    <v-btn title="Toggle plain text mode" icon @click="settings.plainTextMode = !settings.plainTextMode; saveSettings();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
+                    <v-btn title="Increase font size" icon @click="settings.fontSize ++; toolbarSettingChanged();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                    <v-btn title="Decrease font size" icon @click="settings.fontSize --; toolbarSettingChanged();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                    <v-btn title="Toggle plain text mode" icon @click="settings.plainTextMode = !settings.plainTextMode; toolbarSettingChanged();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
                 </div>
             </div>
 
             <!-- Settings -->
             <text-reader-settings
-                v-if="dialogs.settings"
+                v-show="dialogs.settings"
                 v-model="dialogs.settings"
-                :_hide-all-highlights="settings.hideAllHighlights"
-                :_hide-new-word-highlights="settings.hideNewWordHighlights"
-                :_plain-text-mode="settings.plainTextMode"
-                :_japanese-text="settings.japaneseText"
-                :_font-size="settings.fontSize"
-                :_line-spacing="settings.lineSpacing"
-                :_maximum-text-width="settings.maximumTextWidth"
-                :_display-suggested-translations="settings.displaySuggestedTranslations"
-                :_auto-move-words-to-known="settings.autoMoveWordsToKnown"
-                :_vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
-                @changed="saveSettings"   
+                ref="textReaderSettings"
+                :enabledSettings="[
+                    'hideAllHighlights', 
+                    'hideNewWordHighlights', 
+                    'plainTextMode', 
+                    'verticalText', 
+                    'fontSize', 
+                    'lineSpacing', 
+                    'maximumTextWidth', 
+                    'autoMoveWordsToKnown', 
+                    'vocabBoxScrollIntoView', 
+                    'furiganaOnHighlightedWords', 
+                    'furiganaOnNewWords', 
+                ]"
+                @changed="updateSettings"
             ></text-reader-settings>
             
             <!-- Chapters -->
@@ -53,7 +57,7 @@
                 :class="{
                     'vocab-box-area': true, 
                     'plain-text-mode': settings.plainTextMode, 
-                    'japanese-text': settings.japaneseText, 
+                    'vertical-text': settings.verticalText, 
                     'rounded-lg': true,
                     'ml-2': true,
                     'pa-4': $vuetify.breakpoint.smAndUp,
@@ -69,7 +73,7 @@
                         v-if="textBlocks.length"
                         ref="textBlock"
                         :theme="theme"
-                        :fullscreen="settings.fullscreen"
+                        :fullscreen="fullscreenMode"
                         :_text-blocks="textBlocks"
                         :language="language"
                         :hide-all-highlights="settings.hideAllHighlights"
@@ -78,6 +82,8 @@
                         :font-size="settings.fontSize"
                         :line-spacing="settings.lineSpacing"
                         :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
+                        :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
+                        :furigana-on-new-words="settings.furiganaOnNewWords"
                     ></text-block-group>    
                 </v-card-text>
                 <v-alert
@@ -150,15 +156,18 @@
                     hideAllHighlights: false,
                     hideNewWordHighlights: false,
                     plainTextMode: false,
-                    japaneseText: false,
                     fontSize: 20,
                     lineSpacing: 1,
-                    maximumTextWidth: 0,
-                    displaySuggestedTranslations: false,
+                    maximumTextWidth: 3,
                     autoMoveWordsToKnown: false,
-                    fullscreen: false,
-                    vocabBoxScrollIntoView: 'scroll-into-view'
+                    subtitleBlockSpacing: 1,
+                    vocabBoxScrollIntoView: 'scroll-into-view',
+                    verticalText: false,
+                    furiganaOnHighlightedWords: false,
+                    furiganaOnNewWords: false,
+                    mediaControlsVisible: true
                 },
+                fullscreenMode: false,
                 finished: false,
                 finishError: false,
                 newlySavedWords: 0,
@@ -223,59 +232,6 @@
                     }
                 }
 
-                this.settings.hideAllHighlights = this.$cookie.get('hide-all-highlights') === 'true';
-                this.settings.hideNewWordHighlights = this.$cookie.get('hide-new-word-highlights') === 'true';
-                this.settings.plainTextMode = this.$cookie.get('plain-text-mode') === 'true';
-                this.settings.japaneseText = this.$cookie.get('japanese-text') === 'true';
-                this.settings.fontSize =  parseInt(this.$cookie.get('font-size'));
-                this.settings.lineSpacing =  parseInt(this.$cookie.get('line-spacing'));
-                this.settings.maximumTextWidth =  parseInt(this.$cookie.get('maximum-text-width'));
-                this.settings.displaySuggestedTranslations = this.$cookie.get('display-suggested-translations') === 'true';
-                this.settings.autoMoveWordsToKnown = this.$cookie.get('auto-move-words-to-known') === 'true';
-                this.settings.vocabBoxScrollIntoView = this.$cookie.get('vocab-box-scroll-into-view');
-                
-
-                if (this.$cookie.get('hide-all-highlights') === null) {
-                    this.settings.hideAllHighlights = false;
-                }
-
-                if (this.$cookie.get('hide-new-word-highlights') === null) {
-                    this.settings.hideNewWordHighlights = false;
-                }
-
-                if (this.$cookie.get('plain-text-mode') === null) {
-                    this.settings.plainTextMode = false;
-                }
-
-                if (this.$cookie.get('japanese-text') === null) {
-                    this.settings.japaneseText =  false;
-                }
-
-                if (this.$cookie.get('font-size') === null) {
-                    this.settings.fontSize =  20;
-                }
-
-                if (this.$cookie.get('line-spacing') === null) {
-                    this.settings.lineSpacing =  1;
-                }
-
-                if (this.$cookie.get('maximum-text-width') === null) {
-                    this.settings.maximumTextWidth =  1;
-                }
-
-                if (this.$cookie.get('display-suggested-translations') === null) {
-                    this.settings.displaySuggestedTranslations =  false;
-                }
-
-                if (this.$cookie.get('auto-move-words-to-known') === null) {
-                    this.settings.autoMoveWordsToKnown =  true;
-                }
-
-                if (this.$cookie.get('vocab-box-scroll-into-view') === null) {
-                    this.settings.vocabBoxScrollIntoView =  'scroll-into-view';
-                }
-
-                this.saveSettings();
                 this.$forceUpdate();
                 this.updateGlossary();
                 this.updateToolbarPosition();
@@ -283,15 +239,15 @@
             fullscreen: function() {
                 if (document.fullscreenEnabled) {
                     document.getElementById('fullscreen-box').requestFullscreen();
-                    this.settings.fullscreen = true;
+                    this.fullscreenMode = true;
                 }
             },
             exitFullscreen: function() {
                 document.exitFullscreen();
-                this.settings.fullscreen = false;
+                this.fullscreenMode = false;
             },
             updateFullscreen: function() {
-                this.settings.fullscreen = document.fullscreenElement !== null;
+                this.fullscreenMode = document.fullscreenElement !== null;
             },
             updateToolbarPosition: function(event) {
                 this.toolbarTop = 28 - document.documentElement.scrollTop;
@@ -300,29 +256,13 @@
                     this.toolbarTop = 0;
                 }
             },
-            saveSettings: function(newSettings = null) {
-                if (newSettings !== null) {
-                    this.settings = newSettings;
-                }
-
-                if (this.settings.fontSize < 12) {
-                    this.settings.fontSize = 12;
-                }
-
-                if (this.settings.fontSize > 30) {
-                    this.settings.fontSize = 30;
-                }
-
-                this.$cookie.set('hide-all-highlights', this.settings.hideAllHighlights, 3650);
-                this.$cookie.set('hide-new-word-highlights', this.settings.hideNewWordHighlights, 3650);
-                this.$cookie.set('plain-text-mode', this.settings.plainTextMode, 3650);
-                this.$cookie.set('japanese-text', this.settings.japaneseText, 3650);
-                this.$cookie.set('font-size', this.settings.fontSize, 3650);
-                this.$cookie.set('line-spacing', this.settings.lineSpacing, 3650);
-                this.$cookie.set('maximum-text-width', this.settings.maximumTextWidth, 3650);
-                this.$cookie.set('display-suggested-translations', this.settings.displaySuggestedTranslations, 3650);
-                this.$cookie.set('auto-move-words-to-known', this.settings.autoMoveWordsToKnown, 3650);
-                this.$cookie.set('vocab-box-scroll-into-view', this.settings.vocabBoxScrollIntoView, 3650);                
+            updateSettings(settings) {
+                this.settings = settings;
+                this.$forceUpdate();
+            },
+            toolbarSettingChanged() {
+                this.$refs.textReaderSettings.changeSetting('fontSize', this.settings.fontSize);
+                this.$refs.textReaderSettings.changeSetting('plainTextMode', this.settings.plainTextMode, true);
             },
             openDialog: function(dialog) {
                 if (document.fullscreenElement !== null) {

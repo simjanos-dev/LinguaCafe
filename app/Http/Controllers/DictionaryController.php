@@ -128,11 +128,18 @@ class DictionaryController extends Controller
         foreach ($dictionaryWords as $word) {
             $definitions = explode(';', $word->definitions);
             
+            if (strlen($word->definitions) === 0) {
+                continue;
+            }
+
             // check if there are duplicate records
             $duplicate = false;
             foreach ($records as $record) {
                 if ($record->word == $word->word) {
-                    $record->definitions[] = $word->definitions;
+                    if (!in_array($word->definitions, $record->definitions, true)) {
+                        $record->definitions[] = $word->definitions;
+                    }
+                    
                     $duplicate = true;
                 }
             }
@@ -158,7 +165,7 @@ class DictionaryController extends Controller
         $apiKey = json_decode($apiKeySetting->value);
 
         $hash = md5(mb_strtolower($term, 'UTF-8'));
-        $languageCodes = config('langapp.deepl_language_codes');
+        $languageCodes = config('linguacafe.languages.deepl_language_codes');
         $records = [];
 
         // check if search term is already cached
@@ -448,8 +455,8 @@ class DictionaryController extends Controller
     */
     public function getImportableDictionaryList() {
         
-        $dictCcLanguageCodes = config('langapp.dict_cc_language_codes');
-        $databaseLanguageCodes = config('langapp.database_name_language_codes');
+        $dictCcLanguageCodes = config('linguacafe.languages.dict_cc_language_codes');
+        $databaseLanguageCodes = config('linguacafe.languages.database_name_language_codes');
         
         $dictionaryImportService = new DictionaryImportService();
         $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes);
@@ -479,6 +486,51 @@ class DictionaryController extends Controller
 
             return 'success';
         }
+
+        // import cc cedict file
+        if ($dictionaryName == 'cc-cedict') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importCeDict($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            } catch (\Throwable $t) {
+                return 'error';
+            } catch (\Exception $e) {
+                return 'error';
+            }
+
+            return 'success';
+        }
+
+        // import kengdic file
+        if ($dictionaryName == 'kengdic') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            } catch (\Throwable $t) {
+                return 'error';
+            } catch (\Exception $e) {
+                return 'error';
+            }
+
+            return 'success';
+        }
+
+        // import eurfa files
+        if ($dictionaryName == 'eurfa') {
+            try {
+                $dictionaryImportService = new DictionaryImportService();
+                $dictionaryImportService->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            } catch (\Throwable $t) {
+                return $t->getMessage();
+                return 'error';
+            } catch (\Exception $e) {
+                return $e->getMessage();
+                return 'error';
+            }
+
+            return 'success';
+        }
+        
 
         // import dict cc files
         if (str_contains($dictionaryName, 'dict cc')) {

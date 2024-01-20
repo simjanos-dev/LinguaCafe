@@ -40,10 +40,13 @@
         text-align: center;
         cursor: pointer; 
         color: var(--v-text-base);
-        font-family: notosans !important;
+        
+        * {
+            font-family: notosans-jp !important;
+        }
 
         &:not(.learned) {
             color: var(--v-gray-base);
         }
     }
-}
+}   

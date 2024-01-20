@@ -59,6 +59,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/statistics/get', [App\Http\Controllers\HomeController::class, 'getStatistics']);
     Route::get('/language/change/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
     Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
+    Route::get('/config/get/{configPath}', [App\Http\Controllers\HomeController::class, 'getConfig']);
 
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);
@@ -74,7 +75,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/settings/save', [App\Http\Controllers\SettingsController::class, 'saveSettings']);
     
     // images 
-    Route::get('/images/flags/{name}', [App\Http\Controllers\ImageController::class, 'getFlagImage']);
     Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
     // dictionary

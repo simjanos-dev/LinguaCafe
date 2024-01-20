@@ -1,10 +1,11 @@
 <template>
-    <v-dialog v-model="value" persistent width="700px">
+    <v-dialog  v-model="value" persistent width="700px">
         <v-card 
             id="vocabulary-edit-dialog" 
             :class="{
                     'rounded-lg': true, 
-                    'phrase': $props.itemType == 'Phrase'
+                    'phrase': $props.itemType == 'Phrase',
+                    'chinese-font': $props.language == 'chinese'
             }" 
             :loading="loading || saving"
         >
@@ -205,7 +206,8 @@
             itemType: {
                 type: String,
                 default: 'Word'
-            }
+            },
+            language: String
         },
         emits: ['input'],
         data: function() {
@@ -222,7 +224,11 @@
                 this.item = response.data;
                 
                 if (this.$props.itemType == 'Phrase') {
-                    this.item.words = JSON.parse(this.item.words);
+                    if (this.$props.language == 'japanese' || this.$props.language == 'chinese') {
+                        this.item.words = JSON.parse(this.item.words).join('');
+                    } else {
+                        this.item.words = JSON.parse(this.item.words).join(' ');
+                    }
                 }
             });
         },

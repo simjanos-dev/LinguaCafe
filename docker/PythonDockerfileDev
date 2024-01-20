@@ -1,0 +1,43 @@
+FROM ubuntu:22.04
+
+WORKDIR /app
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends \
+        python3 \
+        pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install -U --no-cache-dir \
+        setuptools \
+        wheel \
+#youtube api
+        youtube_transcript_api \
+#ebook library
+        ebooklib \
+#pykakasi
+        pykakasi \
+#django
+        django \
+#spacy
+        spacy  \
+#chinese reading
+        pinyin
+
+RUN python3 -m spacy download ja_core_news_sm \
+    && python3 -m spacy download ko_core_news_sm \
+    && python3 -m spacy download de_core_news_sm \
+    && python3 -m spacy download nb_core_news_sm \
+    && python3 -m spacy download es_core_news_sm \
+    && python3 -m spacy download zh_core_web_sm \
+    && python3 -m spacy download nl_core_news_sm \
+    && python3 -m spacy download fi_core_news_sm \
+    && python3 -m spacy download fr_core_news_sm \
+    && python3 -m spacy download it_core_news_sm \
+    && python3 -m spacy download ru_core_news_sm \
+    && python3 -m spacy download sv_core_news_sm \
+    && python3 -m spacy download uk_core_news_sm \
+    && python3 -m spacy download xx_ent_wiki_sm
+
+#start django server (/tools/django_server)
+#RUN /app/manage.py runserver 8678

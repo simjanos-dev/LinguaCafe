@@ -10,6 +10,20 @@ div.v-list.filter-popup {
 }
 
 #vocabulary {
+    #vocabulary-list {
+        .word, .translation {
+            font-family: notosans-jp !important;
+        }
+    }
+
+    &.chinese-font #vocabulary-list {
+        .word, .translation {
+            font-family: notosans-sc !important;
+        }
+
+        font-family: notosans-sc !important;
+    }
+
     #filters .filter-menu {
         &.show-filters {
             display: none;

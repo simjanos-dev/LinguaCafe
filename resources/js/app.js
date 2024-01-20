@@ -51,8 +51,10 @@ Vue.component('statistics', Statistics);
 // text 
 import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
+import VocabularyBox from './components/Text/VocabularyBox.vue';
 Vue.component('text-block', TextBlock);
 Vue.component('text-block-group', TextBlockGroup);
+Vue.component('vocabulary-box', VocabularyBox);
 
 // text reader
 import TextReaderSettings from './components/TextReader/TextReaderSettings.vue';
@@ -65,9 +67,7 @@ Vue.component('text-reader-chapter-list', TextReaderChapterList);
 // media player
 const SubtitleReader = require('./components/MediaPlayer/SubtitleReader.vue').default;
 const SubtitleList = require('./components/MediaPlayer/SubtitleList.vue').default;
-const SubtitleReaderSettings = require('./components/MediaPlayer/SubtitleReaderSettings.vue').default;
 Vue.component('subtitle-reader', SubtitleReader);
-Vue.component('subtitle-reader-settings', SubtitleReaderSettings);
 Vue.component('subtitle-list', SubtitleList);
 
 // vocabulary

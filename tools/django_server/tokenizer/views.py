@@ -8,6 +8,7 @@ import time
 import re
 import ebooklib 
 import html
+import pinyin
 from ebooklib import epub
 
 @Language.component("custom_sentence_splitter")
@@ -22,6 +23,9 @@ def custom_sentence_splitter(doc):
 
 
 # create tokenizers
+multi_nlp = spacy.load("xx_ent_wiki_sm", disable = ['ner'])
+multi_nlp.add_pipe("custom_sentence_splitter", first=True)
+
 japanese_nlp = spacy.load("ja_core_news_sm", disable = ['ner', 'parser'])
 japanese_nlp.add_pipe("custom_sentence_splitter", first=True)
 hiraganaConverter = pykakasi.kakasi()
@@ -197,12 +201,19 @@ def tokenizeText(words, language):
     if language == 'ukrainian':
         doc = ukrainian_nlp(words)
 
+    if language in ('welsh', 'czech'):
+        doc = multi_nlp(words)
+
     for sentenceIndex, sentence in enumerate(doc.sents):
         for token in sentence:
             word = str(token.text)
             if word == ' ' or word == '' or word == ' ':
                 continue
-            #get reading
+            
+            #get lemma
+            lemma = token.lemma_
+            
+            #get hiragana reading
             reading = list()
             lemmaReading = list()
             if language == 'japanese':
@@ -213,16 +224,24 @@ def tokenizeText(words, language):
                 result = hiraganaConverter.convert(token.lemma_)
                 for x in result:
                     lemmaReading.append(x['hira'])
+            
+                reading = ''.join(reading)
+                lemmaReading = ''.join(lemmaReading)
 
+            #get pinyin reading
+            if language == 'chinese':
+                reading = pinyin.get(word)
+                lemmaReading = pinyin.get(lemma)
+
+            #get gender
             gender = ''
             if language in ('norwegian', 'german'):
                 gender = token.morph.get("Gender")
 
-            lemma = token.lemma_
             if language == 'german' and token.pos_ == 'VERB':
                 lemma = get_separable_lemma(token)
             
-            tokenizedWords.append({'w': word, 'r': ''.join(reading), 'l': lemma, 'lr': ''.join(lemmaReading), 'pos': token.pos_,'si': sentenceIndex, 'g': gender})
+            tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': sentenceIndex, 'g': gender})
     print(tokenizedWords)
     return tokenizedWords
 

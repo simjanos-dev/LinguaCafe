@@ -76,7 +76,7 @@
                             <div class="language d-flex align-center">
                                 <v-img 
                                     class="border" 
-                                    :src="'/images/flags/' + dictionary.language" 
+                                    :src="'/images/flags/' + dictionary.language + '.png'" 
                                     max-width="43" 
                                     height="28"
                                 ></v-img> 
@@ -114,8 +114,6 @@
 
 <script>
 import axios from 'axios';
-
-    const config =  require('./../../config');
     export default {
         props: {
             value : Boolean,

@@ -5,6 +5,110 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                The docker installation process has been improved since the last version. Fixed all the known issues with it, and 
+                removed the requirement for users to create their folders manually and to modify the docker-compose.yml file.
+
+                <br><br>
+                There were several issues with Jellyfin integration. Now it should work properly with every language and video type. 
+                Also added information about subtitle file naming to the readme file. <br><br>
+
+                Lemma modifications only apply to new words that haven't been imported yet. There will be an option in the future, to 
+                overwrite already existing lemmas.<br><br>
+
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Added support for new languages: Czech and Welsh.
+                    </li>
+                    <li>
+                        Added Kengdic dictionary support for Korean.
+                    </li>
+                    <li>
+                        Added CC-CEDICT dictionary support for Chinese.
+                    </li>
+                    <li>
+                        Added Eurfa dictionary support for Welsh.
+                    </li>
+                    <li>
+                        Added pinyin support for Chinese.
+                    </li>
+                    <li>
+                        Added furigana support for Japanese.
+                    </li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Removed empty and duplicated records from dictionary search results.
+                    </li>
+                    <li>
+                        Added Chinese font type. Now every Chinese and Japanese text should be displayed with NotoSansSC and NotoSansJP font types.
+                    </li>
+                    <li>
+                        Removed word spacing from Chinese texts.
+                    </li>
+                    <li>
+                        Removed '+' symbol from Korean lemmas.
+                    </li>
+                    <li>
+                        Removed 'die/der/das' from the beginning of German search terms for better results.
+                    </li>
+                    <li>
+                        Fixed an issue with the Media player that only allowed TV Show subtitles to be displayed from Jellyfin. Now every video type is playable.
+                    </li>
+                    <li>
+                        Fixed an issue with the Media player that caused every language to be handled as Japanese.
+                    </li>
+                    <li>
+                        Fixed an issue related to Media player missing language support, now all languages work with it.
+                    </li>
+                    <li>
+                        Fixed an issue on the vocabulary search page, that caused phrases to be displayed with commas 
+                        between the words, or with no spaces between them. It will still need further improvement for 
+                        non Japanese and Chinese languages.
+                    </li>
+                    <li>
+                        Fixed an error that broke the Kanji page if you had no known Kanji yet from every category.
+                    </li>
+                    <li>
+                        Fixed dark theme style on color picker.
+                    </li>
+                    <li>
+                        Added a missing label to text reader's settings dialog.
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        Moved the dictionary search to the main section of the popup vocabulary.
+                    </li>
+                    <li>
+                        Removed all online dependencies.
+                    </li>
+                    <li>
+                        Updated language selection dialog design, and the supported languages information in the readme.
+                    </li>
+                    <li>
+                        Changed chapter size from 9000 to 4000 characters for importing e-books due to performance issues. There will be an option
+                        to edit this limit soon.
+                    </li>
+                    <li>
+                        Unified text reader and subtitle reader settings. Users don't have to modify settings at both places separately anymore.
+                    </li>
+                    <li>
+                        Added dynamic subtitle rendering for Media player, which increased performance significantly. For this I had to remove 
+                        customizable spacing between subtitles, due to a bug that moved the vocabulary box around. This will be fixed in the
+                        future.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.4 <v-spacer /> 2024.01.15.</v-card-title>
             <v-card-text>
                 <b>New features:</b>

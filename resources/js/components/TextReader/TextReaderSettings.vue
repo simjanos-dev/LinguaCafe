@@ -12,13 +12,13 @@
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-card-text class="pt-6">
+            <v-card-text class="pt-6" v-if="settingsLoaded">
                 <!-- Line spacing -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('lineSpacing')">
                     <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Space between lines:</v-col>
                     <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
                         <v-slider
-                            v-model="lineSpacing"
+                            v-model="settings.lineSpacing"
                             :tick-labels="['Small', '', '', '', '', '', '', '', '', '', 'Large']"
                             :tick-size="0"
                             :max="10"
@@ -26,38 +26,38 @@
                             thumb-size="38"
                             step="1"
                             track-color="#c5c5c5"
-                            @change="settingChanged"
+                            @change="saveSettings"
                         >
                         </v-slider>
                     </v-col>
                 </v-row>
 
                 <!-- Maximum text width -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('maximumTextWidth')">
                     <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Maximum text width:</v-col>
                     <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
                         <v-slider
-                            v-model="maximumTextWidth"
+                            v-model="settings.maximumTextWidth"
                             :tick-labels="['Small', '', '', '', '', '', 'Full']"
                             :tick-size="0"
-                            :max="5"
+                            :max="6"
                             thumb-label="always"
                             thumb-size="38"
                             step="1"
                             track-color="#c5c5c5"
-                            @change="settingChanged"
+                            @change="saveSettings"
                         >
-                            <template v-slot:thumb-label>{{ maximumTextWidthData[maximumTextWidth] }}</template>
+                            <template v-slot:thumb-label>{{ maximumTextWidthData[settings.maximumTextWidth] }}</template>
                         </v-slider>
                     </v-col>
                 </v-row>
 
                 <!-- Font size -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('fontSize')">
                     <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Font size:</v-col>
                     <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
                         <v-slider
-                            v-model="fontSize"
+                            v-model="settings.fontSize"
                             :tick-labels="['Small', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'Large']"
                             :tick-size="0"
                             :min="12"
@@ -66,66 +66,66 @@
                             thumb-label="always"
                             thumb-size="38"
                             track-color="#c5c5c5"
-                            @change="settingChanged"
+                            @change="saveSettings"
                         ></v-slider>
                     </v-col>
                 </v-row>
 
                 <!-- Hide all highlighting -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('hideAllHighlights')">
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">Hide all highlighting:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-switch
                             color="primary"
-                            v-model="hideAllHighlights" 
-                            @change="settingChanged('hideAllHighlights')"
+                            v-model="settings.hideAllHighlights" 
+                            @change="saveSettings('hideAllHighlights')"
                         ></v-switch>
                     </v-col>
                 </v-row>
 
                 <!-- Hide new word highlighting -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('hideNewWordHighlights')">
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">Hide new word highlighting:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-switch
                             color="primary"
-                            v-model="hideNewWordHighlights" 
-                            @change="settingChanged"
+                            v-model="settings.hideNewWordHighlights" 
+                            @change="saveSettings"
                         ></v-switch>
                     </v-col>
                 </v-row>
 
-                <!-- Japanese vertical text -->
-                <v-row>
-                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Japanese vertical text:</v-col>
+                <!-- Vertical text -->
+                <v-row v-if="this.$props.enabledSettings.includes('verticalText')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Vertical text:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-switch
                             color="primary"
-                            v-model="japaneseText" 
-                            @change="settingChanged"
+                            v-model="settings.verticalText" 
+                            @change="saveSettings"
                             disabled
                         ></v-switch>
                     </v-col>
                 </v-row>
                 
                 <!-- Auto move words to known -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('autoMoveWordsToKnown')">
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Auto move words to known:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-switch
                             color="primary"
-                            v-model="autoMoveWordsToKnown" 
-                            @change="settingChanged"
+                            v-model="settings.autoMoveWordsToKnown" 
+                            @change="saveSettings"
                         ></v-switch>
                     </v-col>
                 </v-row>
 
                 <!-- Vocab box scroll into view -->
-                <v-row>
+                <v-row v-if="this.$props.enabledSettings.includes('vocabBoxScrollIntoView')">
                     <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Scroll to vocabulary method:</v-col>
                     <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-select
-                            v-model="vocabBoxScrollIntoView"
+                            v-model="settings.vocabBoxScrollIntoView"
                             :items="vocabBoxScrollIntoViewData"
                             item-text="name"
                             item-value="value"
@@ -133,10 +133,65 @@
                             rounded
                             filled
                             hide-details
-                            @change="settingChanged"
+                            @change="saveSettings"
                         ></v-select>
                     </v-col>
                 </v-row>
+
+                <!-- Furigana on highlighted words -->
+                <v-row v-if="this.$props.enabledSettings.includes('furiganaOnHighlightedWords')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Furigana on highlighted words:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="settings.furiganaOnHighlightedWords" 
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
+                <!-- Furigana on new words -->
+                <v-row v-if="this.$props.enabledSettings.includes('furiganaOnNewWords')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Furigana on new words:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="settings.furiganaOnNewWords" 
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
+                <!-- Subtitle block spacing -->
+                <v-row v-if="this.$props.enabledSettings.includes('subtitleBlockSpacing')">
+                    <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Space between subtitles:</v-col>
+                    <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
+                        <v-slider
+                            v-model="settings.subtitleBlockSpacing"
+                            :tick-size="0"
+                            :min="0"
+                            :max="5"
+                            step="1"
+                            thumb-label="always"
+                            thumb-size="38"
+                            track-color="#c5c5c5"
+                            @change="saveSettings"
+                        ></v-slider>
+                    </v-col>
+                </v-row>
+
+                <!-- Subtitle block spacing -->
+                <v-row v-if="this.$props.enabledSettings.includes('mediaControlsVisible')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">Media player visible:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="settings.mediaControlsVisible" 
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+                
             </v-card-text>
 
             <v-card-actions>
@@ -152,6 +207,23 @@
         emits: ['input'],   
         data: function() {
             return {
+                settingsLoaded: false,
+                cookieNames: {
+                    hideAllHighlights: 'hide-all-highlights',
+                    hideNewWordHighlights: 'hide-new-word-highlights',
+                    plainTextMode: 'plain-text-mode',
+                    fontSize: 'font-size',
+                    lineSpacing: 'line-spacing',
+                    maximumTextWidth: 'maximum-text-width',
+                    autoMoveWordsToKnown: 'auto-move-words-to-known',
+                    vocabBoxScrollIntoView: 'vocab-box-scroll-into-view',
+                    verticalText: 'vertical-text',
+                    furiganaOnHighlightedWords: 'furigana-on-highlighted-words',
+                    furiganaOnNewWords: 'furigana-on-new-words',
+                    mediaControlsVisible: 'media-controls-visible',
+                    subtitleBlockSpacing: 'block-spacing',
+                },
+                settings: {},
                 vocabBoxScrollIntoViewData: [
                     {
                         name: 'Disabled',
@@ -167,51 +239,130 @@
                     }
                 ],
                 maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
-                hideAllHighlights: this.$props._hideAllHighlights,
-                hideNewWordHighlights: this.$props._hideNewWordHighlights,
-                plainTextMode: this.$props._plainTextMode,
-                japaneseText: this.$props._japaneseText,
-                fontSize: this.$props._fontSize,
-                lineSpacing: this.$props._lineSpacing,
-                maximumTextWidth: this.$props._maximumTextWidth,
-                displaySuggestedTranslations: this.$props._displaySuggestedTranslations,
-                autoMoveWordsToKnown: this.$props._autoMoveWordsToKnown,
-                vocabBoxScrollIntoView: this.$props._vocabBoxScrollIntoView,
             }
         },
         props: {
             value : Boolean,
-            _hideAllHighlights: Boolean,
-            _hideNewWordHighlights: Boolean,
-            _plainTextMode: Boolean,
-            _japaneseText: Boolean,
-            _fontSize: Number,
-            _lineSpacing: Number,
-            _maximumTextWidth: Number,
-            _displaySuggestedTranslations: Boolean,
-            _autoMoveWordsToKnown: Boolean,
-            _vocabBoxScrollIntoView: String
+            enabledSettings: Array,
         },
         mounted() {
+            if (this.$props.enabledSettings.includes('hideAllHighlights')) {
+                this.loadSetting('hideAllHighlights', 'boolean', false);
+            }
+
+            if (this.$props.enabledSettings.includes('hideNewWordHighlights')) {
+                this.loadSetting('hideNewWordHighlights', 'boolean', false);
+            }
+
+            if (this.$props.enabledSettings.includes('plainTextMode')) {
+                this.loadSetting('plainTextMode', 'boolean', false);
+            }
+            
+            if (this.$props.enabledSettings.includes('fontSize')) {
+                this.loadSetting('fontSize', 'integer', 20);
+            }
+
+            if (this.$props.enabledSettings.includes('lineSpacing')) {
+                this.loadSetting('lineSpacing', 'integer', 1);
+            }
+            
+            if (this.$props.enabledSettings.includes('maximumTextWidth')) {
+                this.loadSetting('maximumTextWidth', 'integer', 3);
+            }
+
+            if (this.$props.enabledSettings.includes('autoMoveWordsToKnown')) {
+                this.loadSetting('autoMoveWordsToKnown', 'boolean', false);
+            }
+
+            if (this.$props.enabledSettings.includes('subtitleBlockSpacing')) {
+                this.loadSetting('subtitleBlockSpacing', 'integer', 1);
+            }
+
+            if (this.$props.enabledSettings.includes('vocabBoxScrollIntoView')) {
+                this.loadSetting('vocabBoxScrollIntoView', 'string', 'scroll-into-view');
+            }
+
+            if (this.$props.enabledSettings.includes('verticalText')) {
+                this.loadSetting('verticalText', 'string', false);
+            }
+
+            if (this.$props.enabledSettings.includes('furiganaOnHighlightedWords')) {
+                this.loadSetting('furiganaOnHighlightedWords', 'boolean', false);
+            }
+
+            if (this.$props.enabledSettings.includes('furiganaOnNewWords')) {
+                this.loadSetting('furiganaOnNewWords', 'boolean', false);
+            }
+
+            if (this.$props.enabledSettings.includes('mediaControlsVisible')) {
+                this.loadSetting('mediaControlsVisible', 'boolean', true);
+            }
+            
+            this.settingsLoaded = true;
+            this.saveSettings();
         },
         methods: {
-            settingChanged(settingName = '') {
+            saveSettings(settingName = '') {
                 if (settingName == 'hideAllHighlights') {
-                    this.hideNewWordHighlights = this.hideAllHighlights;
+                    this.settings.hideNewWordHighlights = this.settings.hideAllHighlights;
                 }
 
-                this.$emit('changed', { 
-                    'hideAllHighlights': this.hideAllHighlights,
-                    'hideNewWordHighlights': this.hideNewWordHighlights,
-                    'plainTextMode': this.plainTextMode,
-                    'japaneseText': this.japaneseText,
-                    'fontSize': this.fontSize,
-                    'lineSpacing': this.lineSpacing,
-                    'maximumTextWidth': this.maximumTextWidth,
-                    'autoMoveWordsToKnown': this.autoMoveWordsToKnown,
-                    'vocabBoxScrollIntoView': this.vocabBoxScrollIntoView
-                });
-            },  
+                if (this.$props.enabledSettings.includes('fontSize')) {
+                    if (this.settings.fontSize < 12) {
+                        this.settings.fontSize = 12;
+                    }
+
+                    if (this.settings.fontSize > 30) {
+                        this.settings.fontSize = 30;
+                    }
+                }
+
+                this.saveSetting('hideAllHighlights');
+                this.saveSetting('hideNewWordHighlights');
+                this.saveSetting('plainTextMode');
+                this.saveSetting('verticalText');
+                this.saveSetting('fontSize');
+                this.saveSetting('lineSpacing');
+                this.saveSetting('maximumTextWidth');
+                this.saveSetting('displaySuggestedTranslations');
+                this.saveSetting('autoMoveWordsToKnown');
+                this.saveSetting('vocabBoxScrollIntoView');
+                this.saveSetting('furiganaOnHighlightedWords');
+                this.saveSetting('furiganaOnNewWords');
+                this.saveSetting('mediaPlayerVisible');
+                this.$emit('changed', this.settings);
+            },
+            saveSetting(name) {
+                if (this.$props.enabledSettings.includes(name)) {
+                    this.$cookie.set(this.cookieNames[name], this.settings[name], 3650);
+                }
+            },
+            changeSetting(name, value, emitResult = false) {
+                this.settings[name] = value;
+                this.saveSetting(name);
+
+                if (emitResult) {
+                    this.$emit('changed', this.settings);
+                }
+            },
+            loadSetting: function(name, type, defaultValue) {
+                if (this.$cookie.get(this.cookieNames[name]) === null) {
+                    this.settings[name] = defaultValue;
+                } else {
+                    if (type == 'boolean') {
+                        this.settings[name] = this.$cookie.get(this.cookieNames[name]) === 'true';
+                    }
+
+                    if (type == 'integer') {
+                        this.settings[name] = parseInt(this.$cookie.get(this.cookieNames[name]));
+                    }
+
+                    if (type == 'string') {
+                        this.settings[name] = this.$cookie.get(this.cookieNames[name]);
+                    }
+                }
+
+            },
             close(){
                 this.$emit('input', false);
             }

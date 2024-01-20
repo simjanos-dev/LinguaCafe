@@ -66,6 +66,35 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">CC-CEDICT dictionary file</v-card-title>
+            <v-card-text>
+                License: Creative Commons Attribution-Share Alike 3.0 License<br><br>
+                <a href="https://cc-cedict.org/wiki/">CC-CEDICT website.</a><br>
+                <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-CEDICT license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Kengdic dictionary file</v-card-title>
+            <v-card-text>
+                License: GNU Library General Public License, version 2.0<br><br>
+                <a href="https://github.com/garfieldnate/kengdic">Kengdic github.</a><br>
+                <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.0.en.html">Kengdic license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Eurfa dictionary file</v-card-title>
+            <v-card-text>
+                License: The GNU General Public License 3<br><br>
+                <a href="https://www.kaggle.com/datasets/rtatman/eurfa-welsh-dictionary?resource=download">Eurfa download website</a><br>
+                <a href="https://bitbucket.org/donnek/eurfa/src/master/">Eurfa bitbucket</a><br>
+                <a href="http://kevindonnelly.org.uk/">Eurfa creator's website</a><br>
+                <a href="https://bitbucket.org/donnek/eurfa/src/master/gpl.txt">Eurfa license</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
             <v-card-title class="pb-0">Wiktionary</v-card-title>
             <v-card-text>
                 License: Creative Commons Attribution-ShareAlike 3.0 Unported License<br><br>

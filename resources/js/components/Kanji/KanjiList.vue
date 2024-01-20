@@ -58,7 +58,7 @@
             </template>
 
             <!-- JLPT info -->
-            <v-alert width="100%" class="my-5" type="info" border="left" v-if="groupBy == 1 && !loading">
+            <v-alert width="100%" class="my-5" type="info" color="primary" border="left" v-if="groupBy == 1 && !loading">
                 The JLPT data is from the previous 4 level system, which was changed in 2010. There is no official kanji list for the current JLPT.
                 The old levels are similar to the current ones, except that the old N2 is now divided between N2 and N3.
             </v-alert>
@@ -67,10 +67,10 @@
             <template v-for="(group, groupIndex) in kanji" v-if="!loading">
                 <div class="subheader mt-8" v-if="group.length">
                     <template v-if="groupIndex == 0">
-                        {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }})
+                        {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex] === undefined ? 0 : knownKanjiCounts[groupIndex].total }})
                     </template>
                     <template v-else>
-                        {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex].total }}/{{ totalKanjiCounts[groupIndex].total }})
+                        {{ groupNames[groupBy][groupIndex] }} ({{ knownKanjiCounts[groupIndex] === undefined ? 0 : knownKanjiCounts[groupIndex].total }}/{{ totalKanjiCounts[groupIndex].total }})
                     </template>
                 </div>
                 <v-card outlined class="d-flex flex-wrap rounded-lg" v-if="group.length">

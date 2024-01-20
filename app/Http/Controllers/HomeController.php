@@ -150,4 +150,10 @@ class HomeController extends Controller
 
         (new GoalService())->createGoalsForLanguage($user->id, $language);
     }
+
+    public function getConfig($configPath) {
+        $config = config($configPath);
+
+        return json_encode($config);
+    }
 }

@@ -26,6 +26,14 @@
     overflow-y: hidden !important;
     overflow-x: visible !important;
     
+    * {
+        font-family: notosans-jp !important;
+    }
+
+    &.chinese-font * {
+        font-family: notosans-sc !important;
+    }
+
     .text-block {
         background-color: var(--v-foreground-base);
         overflow: hidden !important;
@@ -33,7 +41,6 @@
     }
 
     .word {
-        font-family: notosans !important;
         display: inline-block;
         cursor: pointer;
         margin: 1px 0px;
@@ -186,206 +193,6 @@
                 border: none !important;
                 cursor: default !important;
                 user-select: text !important;
-            }
-        }
-    }
-
-    #vocab-box {
-        position: absolute;
-        background-color: var(--v-foreground-base);
-        z-index: 5;
-        transition: transform .12s linear !important;
-        transform-origin: top;
-        border-right: none;
-        box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.38);
-        user-select: text;
-
-        // subheader
-        .vocab-box-subheader span {
-            background-color: var(--v-gray-base);
-            color: var(--v-text-base);
-            border-radius: 8px;
-            user-select: none;
-        }
-
-        .vocab-box-content {
-            box-sizing: border-box;
-            width: calc(100% - 44px);
-        }
-
-        .vocab-box-toolbar {
-            box-sizing: border-box;
-            width: 44px;
-            min-height: 100%;
-            border-radius: 0px;
-            background-color: var(--v-primary-base);
-
-            i.v-icon {
-                color: var(--v-gray-base);
-            }
-        }
-
-        .v-window-item {
-            background-color: var(--v-foreground-base);
-        }
-
-        .vocab-box-subheader {
-            color: rgb(120, 120, 120);
-        }
-
-        #vocab-box-kanji-box .kanji {
-            width: 38px;
-            height: 38px;
-            line-height: 38px;
-            border: 1px solid var(--v-customBorder-base);
-            text-align: center;
-            font-size: 20px;
-            user-select: none;
-            cursor: pointer;
-
-            &:hover {
-                background-color: var(--v-gray3-base);
-            }
-        }
-
-        #vocab-box-stage-buttons {
-            width: 100% !important;
-            display: flex;
-            align-items: stretch;
-
-            button.v-btn {
-                box-shadow: none;
-                margin: 0px;
-                border: none;
-                border-radius: 0px;
-                height: 52px;
-                width: unset !important;
-                min-width: unset !important;
-                padding: 0px !important;
-                flex: 1;
-
-                border-top: 1px solid var(--v-customBorder-base);
-                border-bottom: 1px solid var(--v-customBorder-base);
-
-                &:first-of-type {
-                    border-left: 1px solid var(--v-customBorder-base);
-                    border-top-left-radius: 32px;
-                    border-bottom-left-radius: 32px;
-                }
-
-                &:last-of-type {
-                    border-right: 1px solid var(--v-customBorder-base);
-                    border-top-right-radius: 32px;
-                    border-bottom-right-radius: 32px;
-                }
-
-                &.v-btn--active {
-                    background-color: var(--v-primary-base);
-                    border-color: var(--v-primary-base);
-                    color: white;
-                }
-            }
-        }
-
-        .expression {
-            font-size: 22px;
-
-            rt {
-                font-size: 18px;
-            }
-        }
-
-        #definitions {
-            font-size: 16px;
-        }
-
-        &.closed {
-            padding: 0px !important;
-            transform: scale(1, 0);
-        }
-
-        &:after, &:before {
-            bottom: 100%;
-            left: 50%;
-            border: solid transparent;
-            content: "";
-            height: 0;
-            width: 0;
-            position: absolute;
-            pointer-events: none;
-        }
-        
-        &:after {
-            border-color: rgba(0, 0, 0, 0);
-            border-bottom-color: var(--v-foreground-base);
-            border-width: 14px;
-            margin-left: -14px;
-        }
-        
-        &:before {
-            border-color: rgba(0, 0, 0, 0);
-            border-bottom-color: var(--v-customBorder-base);
-            border-width: 16px;
-            margin-left: -16px;
-        }
-
-        #vocab-box-edit-page .v-input__slot {
-            font-size: 18px;
-        }
-
-        #search-results {
-            display: block;
-            width: 100%;
-            height: 200px;
-            overflow-y: scroll;
-
-            .search-result {
-                display: block;
-                margin-bottom: 16px;
-
-
-                .search-result-title {
-                    display: block;
-                    width: 100%;
-                    height: 32 px;
-                    line-height: 32px;
-
-                    .dictionary {
-                        display: inline-block;
-                        float: right;
-                    }
-                }
-                
-                .search-result-definition {
-                    position: relative;
-                    display: block;
-                    width: 100%;
-                    min-height: 36px;
-                    line-height: 36px;
-                    user-select: none;
-                    cursor: pointer;
-                    text-align: right;
-                    overflow: hidden;
-                    padding-right: 32px;
-
-                    &:hover {
-                        background-color: #e0e0e0;
-                    }
-
-                    i.v-icon {
-                        position: absolute;
-                        right: 4px;
-                        top: calc(50% - 12px);
-                    }
-                }
-
-                .search-result-other-forms {
-                    width: 100%;
-                }
-
-                &.jmdict .search-result-title {
-                    background-color: #74e39a;
-                }
             }
         }
     }

@@ -1,5 +1,12 @@
 <template>
-    <v-container v-if="currentReviewIndex !== -1" id="review-box" :class="{'pa-0': $vuetify.breakpoint.smAndDown}">
+    <v-container 
+        v-if="currentReviewIndex !== -1" 
+        id="review-box" 
+        :class="{
+            'pa-0': $vuetify.breakpoint.smAndDown, 
+            'chinese-font': language == 'chinese'
+        }"
+    >
         <div id="review" v-if="!finished">
             <!-- Progress bar -->
             <div id="review-progress-line" class="d-flex align-center">
@@ -87,7 +94,7 @@
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
                             <!-- Phrase only mode -->
                             <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="language == 'japanese'">
+                                <template v-if="language == 'japanese' || language == 'chinese'">
                                     {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
                                 </template>
                                 <template v-else>
@@ -123,7 +130,7 @@
 
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
                             <div :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="language == 'japanese'">
+                                <template v-if="language == 'japanese' || language == 'chinese'">
                                     {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
                                 </template>
                                 <template v-else>
@@ -133,7 +140,7 @@
                         </template>
 
                         <!-- Reading -->
-                        <div class="reading" v-if="reviews[currentReviewIndex] !== undefined && language == 'japanese'" :style="{'font-size': (settings.fontSize) + 'px'}">
+                        <div class="reading" v-if="reviews[currentReviewIndex] !== undefined && (language == 'japanese' || language == 'chinese')" :style="{'font-size': (settings.fontSize) + 'px'}">
                             <hr>
                             <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                             {{ reviews[currentReviewIndex].reading }}
@@ -220,7 +227,7 @@
                 reviews: [],
                 totalReviews: [],
                 correctReviews: 0,
-                language: this.$props._language,
+                language: '',
                 readWords: 0,
                 finishedReviews: -1,
                 finished: false,
@@ -228,7 +235,6 @@
             }
         },
         props: {
-            
         },
         mounted: function() {
             var data = {};

@@ -14,6 +14,7 @@ use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader;
 
 class DictionaryImportService
 {
@@ -44,6 +45,10 @@ class DictionaryImportService
 
             // check if jmdict is imported
             $recordCount = DB::table('dict_jp_jmdict')->count();
+            /*
+                jmdict table always exist, so I check if it has been
+                imported with this arbitrary number.
+            */
             if ($recordCount > 180000) {
                 $dictionary->imported = true;
             }
@@ -53,6 +58,86 @@ class DictionaryImportService
             $dictionariesFound[] = $dictionary;
         }
 
+        // cc cedict dictionary
+        if (Storage::exists('dictionaries/cedict_ts.u8')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'cc-cedict';
+            $dictionary->databaseName = 'dict_zh_cedict';
+            $dictionary->language = 'chinese';
+            $dictionary->color = '#EF4556'; 
+            $dictionary->expectedRecordCount = 0;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'cedict_ts.u8';
+            $dictionary->imported = false;
+
+            // check if cc cedict is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // check record count
+            $handle = fopen(Storage::path('dictionaries/cedict_ts.u8'), "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    if (str_contains($line, '#! entries=')) {
+                        $dictionary->expectedRecordCount = intval(explode('#! entries=', $line)[1]);
+                        break;
+                    }
+                }
+            }
+            
+            // close file
+            fclose($handle);
+
+            // add cc cedict to the list
+            $dictionariesFound[] = $dictionary;
+        }
+
+        // kengdic dictionary
+        if (Storage::exists('dictionaries/kengdic.tsv')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'kengdic';
+            $dictionary->databaseName = 'dict_ko_kengdic';
+            $dictionary->language = 'korean';
+            $dictionary->color = '#DDBFE4'; 
+            $dictionary->expectedRecordCount =  117509;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'kengdic.tsv';
+            $dictionary->imported = false;
+
+            // check if kengdic is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // add kengdic to the list
+            $dictionariesFound[] = $dictionary;
+        }
+
+        // eurfa welsh dictionary
+        if (Storage::exists('dictionaries/Eurfa_Welsh_Dictionary.csv')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'eurfa';
+            $dictionary->databaseName = 'dict_cy_eurfa';
+            $dictionary->language = 'welsh';
+            $dictionary->color = '#32DB4D'; 
+            $dictionary->expectedRecordCount =  210579 * 2;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'Eurfa_Welsh_Dictionary.csv';
+            $dictionary->imported = false;
+
+            // check if kengdic is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // add kengdic to the list
+            $dictionariesFound[] = $dictionary;
+        }
+        
         // dict cc dictionaries
         foreach ($files as $file) {
             // skip non txt files
@@ -104,7 +189,7 @@ class DictionaryImportService
             $dictionary->imported = false;
 
 
-            // check if the dictionary has been imported yet
+            // check if the dictionary has been imported
             if (Schema::hasTable($dictionary->databaseName)) {
                 $dictionary->imported = true;
             }
@@ -146,7 +231,7 @@ class DictionaryImportService
             $dictionary->updateInterval = 10000;
             $dictionary->fileName =  pathinfo($file, PATHINFO_BASENAME);
 
-            // check if the wiktionary has been imported yet
+            // check if the wiktionary has been imported
             if (Schema::hasTable($dictionary->databaseName)) {
                 $dictionary->imported = true;
             }
@@ -156,6 +241,215 @@ class DictionaryImportService
         }
 
         return $dictionariesFound;
+    }
+
+    /*
+        Imports a cc-cedict dictionary file into the database.
+    */
+    public function importCeDict($name, $databaseName, $fileName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => 'chinese',
+                'color' => '#EF4556',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        $index = 0;
+        DB::beginTransaction();
+
+        $handle = fopen(Storage::path('dictionaries/' . $fileName), "r");
+        
+        if (!$handle) {
+            return 'error';
+        }
+
+        while (($line = fgets($handle)) !== false) {
+            // skip comments
+            if ($line[0] == '#') {  
+                continue;
+            }
+
+            $data = explode(' ', $line);
+
+            // skip possible empty rows
+            if (count($data) < 2) {
+                continue;
+            }
+
+            // collect definitions
+            $definitions = explode('/', $line);
+            array_shift($definitions);
+            array_pop($definitions);
+            $definitions = implode(';', $definitions);
+            
+
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($data[1], 'UTF-8'),
+                'definitions' => mb_strtolower($definitions, 'UTF-8')
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
+        fclose($handle);
+        
+        return 'success';
+    }
+
+    /*
+        Imports a kengdic dictionary file into the database.
+    */
+    public function importKengdic($name, $databaseName, $fileName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => 'korean',
+                'color' => '#DDBFE4',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        $index = 0;
+        DB::beginTransaction();
+        $handle = fopen(Storage::path('dictionaries/' . $fileName), "r");
+        
+        if (!$handle) {
+            return 'error';
+        }
+
+        while (($line = fgets($handle)) !== false) {
+            // skip first line
+            if (str_contains($line, 'id	surface')) {
+                continue;
+            }
+
+            $data = explode('	', $line);
+
+            // skip possible empty rows
+            if (count($data) < 4) {
+                continue;
+            }
+
+            // skip empty definitions
+            if (strlen(trim($data[3])) == 0) {
+                continue;
+            }
+
+
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($data[1], 'UTF-8'),
+                'definitions' => mb_strtolower($data[3], 'UTF-8')
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
+        fclose($handle);
+        
+        return 'success';
+    }
+
+    /*
+        Imports a  dictionary file into the database.
+    */
+    public function importEurfa($name, $databaseName, $fileName) {
+        // create dictionary table 
+        Schema::dropIfExists($databaseName);
+        Schema::create($databaseName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // add dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $name,
+                'database_table_name' => $databaseName,
+                'language' => 'welsh',
+                'color' => '#32DB4D',
+                'imported' => true,
+                'enabled' => true
+            ]);
+        }
+
+        DB::beginTransaction();
+        $index = 0;
+        $csv = Reader::createFromPath(storage_path('app/dictionaries') . '/' . $fileName, 'r');
+        $records = $csv->getRecords();
+        $uniqueWords = [];
+        foreach ($records as$record) {
+
+            // check if both columns exist
+            if (!isset($record[1]) || !isset($record[2]) || !isset($record[3])) {
+                throw new \Exception('Missing data.');
+            }
+
+            // add word 
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($record[1], 'UTF-8'),
+                'definitions' => $record[3]
+            ]);
+
+            // add lemma too, because there is no lemmatisation for welsh
+            DB::table($databaseName)->insert([
+                'word' => mb_strtolower($record[2], 'UTF-8'),
+                'definitions' => $record[3]
+            ]);
+
+            if ($index % 1000 == 0) {
+                DB::commit();
+                DB::beginTransaction();
+            }
+            
+            $index ++;
+        }
+
+        DB::commit();
+        
+        return 'success';
     }
 
     /*
