@@ -88,11 +88,12 @@ Run this command to download and create the new folder structure. This will crea
 ```
 git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe
 ```
+If you are an Apple silicon Mac user, uncomment the `platform: linux/amd64` line in the new `linguacafe/docker-compose.yml`.
 
-Next copy your old database and book images to the new `linguacafe` folder. Copying the database will need root permissions.
+Next copy your old database and book images to the new `linguacafe` folder. Copying the database will need root permissions. I advise you also make a copy of your database in case anything goes wrong.
 ```
 /your/old/database          ->      /linguacafe/database
-/your/old/book_images       ->      /linguacafe/storage/images/book_images
+/your/old/book_images       ->      /linguacafe/storage/app/images/book_images
 ```
 
 Run this command from the new `linguacafe` folder, to make sure all your files and folders have the necessary permission.
@@ -103,6 +104,8 @@ Finally, start the server:
 ```
 docker-compose pull && docker compose up -d --force-recreate
 ```
+
+Your old linguacafe folder can be deleted.
 
 ## Migrating from versions prior to v0.4
 When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:
