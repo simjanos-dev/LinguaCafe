@@ -14,7 +14,6 @@ services:
                 condition: service_healthy
         volumes:
             - ./storage:/var/www/html/storage
-        user: 1000:1000
         ports:
             - "9191:80"
             - "3000:3000"
@@ -31,7 +30,6 @@ services:
             - "3308:3306"
         volumes:
             - ./mysql:/var/lib/mysql
-        user: 1000:1000
         environment:
             MYSQL_DATABASE: linguacafe
             MYSQL_USER: linguacafe
@@ -54,7 +52,6 @@ services:
         image: ghcr.io/simjanos-dev/linguacafe-python-service:main
         volumes:
             - ./storage:/var/www/html/storage
-        user: 1000:1000
         networks:
             - linguacafe
         # platform: linux/amd64
