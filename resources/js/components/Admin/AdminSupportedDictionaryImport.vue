@@ -38,7 +38,7 @@
                             <td>
                                 <v-img 
                                     class="border" 
-                                    :src="'/images/flags/' + dictionary.language" 
+                                    :src="'/images/flags/' + dictionary.language + '.png'" 
                                     max-width="43" 
                                     height="28"
                                 ></v-img> 

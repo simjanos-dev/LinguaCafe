@@ -67,7 +67,7 @@
                     <div class="subtitle-language">
                         <v-img 
                             class="border mx-auto" 
-                            :src="'/images/flags/' + subtitle.language" 
+                            :src="'/images/flags/' + subtitle.language + '.png'" 
                             max-width="43" 
                             height="28"
                         ></v-img> 

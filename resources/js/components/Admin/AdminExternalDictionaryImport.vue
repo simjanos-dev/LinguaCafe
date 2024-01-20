@@ -56,11 +56,11 @@
                                 @change="updateDatabaseName"
                             >
                                 <template v-slot:selection="{ item, index }">
-                                    <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
                                     <span class="text-capitalize">{{ item.name }}</span>
                                 </template>
                                 <template v-slot:item="{ item }">
-                                    <img class="mr-2 border" :src="'/images/flags/' + item.name" width="40" height="26">
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
                                     <span class="text-capitalize">{{ item.name }}</span>
                                 </template>
                             </v-select>
@@ -200,7 +200,7 @@
                                     <td class="font-weight-bold">Language:</td>
                                     <td>
                                         <img 
-                                            :src="'/images/flags/' + dictionary.language.toLowerCase()" 
+                                            :src="'/images/flags/' + dictionary.language.toLowerCase() + '.png'" 
                                             class="mr-2 border" 
                                             width="40" 
                                             height="26"

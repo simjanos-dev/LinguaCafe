@@ -24,7 +24,7 @@
                             <v-img 
                                 eager
                                 class="border" 
-                                :src="'/images/flags/' + language.toLowerCase()" 
+                                :src="'/images/flags/' + language.toLowerCase() + '.png'" 
                                 max-width="43" 
                                 height="28"
                             ></v-img> 

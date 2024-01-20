@@ -23,21 +23,21 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 
 | Flag                                                          | Language  | DeepL   | Lemma generation | Gender tagging | Dictionaries          |
 |:-------------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|-----------------------|
-| <img src='storage/app/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict |
-| <img src='storage/app/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc               |
-| <img src='storage/app/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary    |
-| <img src='storage/app/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic   |
-| <img src='storage/app/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='storage/app/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc               |
-| <img src='storage/app/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary            |
-| <img src='storage/app/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa     |
+| <img src='public/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict |
+| <img src='public/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc   |
+| <img src='public/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc               |
+| <img src='public/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc   |
+| <img src='public/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='public/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc   |
+| <img src='public/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='public/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary    |
+| <img src='public/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic   |
+| <img src='public/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc   |
+| <img src='public/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='public/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
+| <img src='public/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc               |
+| <img src='public/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary            |
+| <img src='public/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa     |
 
 Chinese: Mandarin language with simplified Chinese characters.
 

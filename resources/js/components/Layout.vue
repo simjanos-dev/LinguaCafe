@@ -28,7 +28,7 @@
                             <span class="pl-6">Theme</span>
                         </v-btn>
                         <v-btn id="language" rounded text class="ma-2" @click="languageSelectionDialog = true">
-                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase()" max-width="43" height="28"></v-img> 
+                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="43" height="28"></v-img> 
                             <span class="pl-6 text-capitalize">{{ selectedLanguage }}</span>
                         </v-btn>
                     </template>
@@ -39,7 +39,7 @@
                             <v-icon>mdi-palette</v-icon>
                         </v-btn>
                         <v-btn id="language" rounded text class="mini-drawer-button" @click="languageSelectionDialog = true">
-                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase()" max-width="31" height="20"></v-img> 
+                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="31" height="20"></v-img> 
                         </v-btn>
                     </template>
                 </template>
