@@ -47,7 +47,7 @@ Step 1: Install docker desktop and git.
 Step 2: Run the following commands from the location where you want to store your files:
 
 ```
-git clone -b deploy git@github.com:simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe && chmod 777 -R ./ && docker compose up -d
+git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe && chmod 777 -R ./ && docker compose up -d
 ```
 
 Your server now should be running and accessible on http://localhost:9191. If you encounter any error, try stopping your containers with `docker compose down` and then restarting them again with `docker compose up -d`.
@@ -84,7 +84,7 @@ sudo chmod 777 -R ./
 ```
 Now download and prepare the folder structure for v0.5 with the following commands:
 ```
-git clone -b deploy git@github.com:simjanos-dev/LinguaCafe.git linguacafe-0.5 && cd linguacafe && chmod 777 -R ./
+git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe-0.5 && cd linguacafe && chmod 777 -R ./
 ```
 Finally, copy the contents of the folders from v0.4 in the respective folder or subfolder for v0.5, and run `docker compose up -d` to get the service back online.
 
