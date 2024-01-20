@@ -50,8 +50,6 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/linguacafe-webserver
-        tags: |
-          type=ref, event=branch
 
       # https://github.com/docker/metadata-action
       - name: Docker Python meta
@@ -67,7 +65,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_LINGUA_PAT }}
+          password: ${{ secrets.GCHR_LINGUA_PAT }}
 
       # https://github.com/docker/build-push-action
       - name: Build and push PHP image to GitHub Container Registry
