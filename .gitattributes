@@ -1,9 +1,0 @@
-* text=auto
-*.css linguist-vendored
-*.scss linguist-vendored
-*.js linguist-vendored
-CHANGELOG.md export-ignore
-
-# make sure executables have the right line endings
-*.sh text eol=lf
-./tools/django_server/manage.py text eol=lf

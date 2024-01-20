@@ -13,9 +13,7 @@ services:
             mysql:
                 condition: service_healthy
         volumes:
-            - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
-            - /your/linguacafe/logs/folder:/var/www/html/storage/logs
-            - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
+            - ./storage:/var/www/html/storage
         ports:
             - "9191:80"
             - "3000:3000"
@@ -31,7 +29,7 @@ services:
         ports:
             - "3308:3306"
         volumes:
-            - /your/linguacafe/database/folder:/var/lib/mysql
+            - ./database:/var/lib/mysql
         environment:
             MYSQL_DATABASE: linguacafe
             MYSQL_USER: linguacafe
@@ -53,8 +51,7 @@ services:
         tty: true
         image: ghcr.io/simjanos-dev/linguacafe-python-service:main
         volumes:
-            - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
-            - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
+            - ./storage:/var/www/html/storage
         networks:
             - linguacafe
         # platform: linux/amd64
