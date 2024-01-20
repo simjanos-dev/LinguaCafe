@@ -77,7 +77,7 @@ docker cp linguacafe-webserver:/var/www/html/storage/app/images/book_images ./
 
 Run this command from your old linguacafe folder to stop the servers:
 ```
-docker compose stop
+docker compose down
 ```
 
 The easiest way to migrate to the new structure is to clone the `deploy` branch from github, 
