@@ -29,7 +29,8 @@ services:
         ports:
             - "3308:3306"
         volumes:
-            - ./mysql:/var/lib/mysql
+            - ./database:/var/lib/mysql
+        user: 1000:1000
         environment:
             MYSQL_DATABASE: linguacafe
             MYSQL_USER: linguacafe
