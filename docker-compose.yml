@@ -10,7 +10,7 @@ services:
         image: ghcr.io/simjanos-dev/linguacafe-webserver:main
         container_name: linguacafe-webserver
         depends_on:
-            mysql
+            - mysql
         volumes:
             - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
             - /your/linguacafe/logs/folder:/var/www/html/storage/logs
