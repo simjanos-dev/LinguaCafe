@@ -138,8 +138,9 @@
                                             :furiganaOnHighlightedWords="slotProps.furiganaOnHighlightedWords"
                                             :furiganaOnNewWords="slotProps.furiganaOnNewWords"
                                             @textSelected="slotProps.updateSelection"
-                                            @saveSelectedWord="slotProps.saveSelectedWord"
+                                            @unselectAllWords="slotProps.unselectAllWords"
                                             @updateLookupCount="slotProps.updateLookupCount"
+                                            @startSelection="slotProps.startSelection"
                                         ></text-block>
                                     </div>
                                 </div>

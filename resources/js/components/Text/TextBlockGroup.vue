@@ -51,8 +51,9 @@
             :furiganaOnHighlightedWords="furiganaOnHighlightedWords"
             :furiganaOnNewWords="furiganaOnNewWords"
             :updateSelection="updateSelection"
-            :saveSelectedWord="saveSelectedWord"
+            :unselectAllWords="unselectAllWords"
             :updateLookupCount="updateLookupCount"
+            :startSelection="startSelection"
         >
             <text-block
                 v-for="textBlock in textBlocks"
@@ -71,341 +72,39 @@
                 :furiganaOnHighlightedWords="furiganaOnHighlightedWords"
                 :furiganaOnNewWords="furiganaOnNewWords"
                 @textSelected="updateSelection"
-                @saveSelectedWord="saveSelectedWord"
+                @unselectAllWords="unselectAllWords"
                 @updateLookupCount="updateLookupCount"
+                @startSelection="startSelection"
             ></text-block>
         </slot>
 
         <!-- Vocab box -->
-        <v-card 
-            v-if="selection.length"
-            id="vocab-box" 
-            :class="{
-                'new-phrase': selection.length > 1 && selectedPhrase == 1, 
-                'rounded-lg': true,
-                'closed': vocabBox.closed,
-                'd-flex': true
-            }" 
-            :style="{
-                'top': vocabBox.position.top + 'px', 
-                'left': vocabBox.position.left + 'px',
-                'width': vocabBox.width + 'px'
-            }"
-            @mouseup.stop=";"
-        >
-            <v-overlay 
-                v-if="selection.length > 1 && phraseCurrentlySaving"
-                class="text-center rounded-lg" 
-                absolute 
-                :value="phraseCurrentlySaving" 
-                opacity="0.6" 
-            >
-                <span class="h5">Saving phrase, please wait a second.</span><br><br>
-                <v-progress-circular indeterminate size="64" color="white"></v-progress-circular>
-            </v-overlay>
-            
-            <!-- Vocab box content -->
-            <div class="vocab-box-content pa-4 pb-1">
-                <v-tabs-items v-model="vocabBox.tab">
-                    <!-- Word info page -->
-                    <v-tab-item :value="0">
-                        <v-card-text class="pa-0">
-                            <!-- Single word -->
-                            <template v-if="selection.length == 1">
-                                <div class="vocab-box-subheader mb-2 mt-0"><span class="rounded-pill py-1 px-3">Word</span></div>
-                                <!-- With base word -->
-                                <div class="expression" v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word !== ''">
-                                    <ruby>
-                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word}}
-                                        <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
-                                            {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word_reading}}
-                                        </rt>
-                                    </ruby>
-                                    <v-icon color="text">mdi-arrow-right-thick</v-icon>
-                                    <ruby>
-                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
-                                        <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
-                                            {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
-                                        </rt>
-                                    </ruby>
-                                </div>
-                                
-                                <!-- No base word -->
-                                <div 
-                                    class="expression" 
-                                    v-if="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].base_word == ''"
-                                >
-                                    <ruby>
-                                        {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word}}
-                                        <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
-                                            {{textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].reading}}
-                                        </rt>
-                                    </ruby>
-                                </div>
-                            </template>
-
-                            <!-- Phrase -->
-                            <template v-if="selection.length > 1">
-                                <div class="vocab-box-subheader mb-2 mt-0"><span class="rounded-pill py-1 px-3">Phrase</span></div>
-                                <!-- Phrase text -->
-                                <div class="expression">
-                                    <template v-for="(word, index) in selection" v-if="word.word !== 'NEWLINE'">
-                                        <span :class="{'mr-2': word.spaceAfter}">{{ word.word }}</span>
-                                    </template>
-                                </div>
-
-                                <!-- Phrase reading -->
-                                <template v-if="($props.language == 'japanese' || $props.language == 'chinese')">
-                                    <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Reading</span></div>
-                                    <div class="expression">{{ vocabBox.reading }}</div>
-                                </template>
-                            </template>
-                            
-                            <!-- Kanji list -->
-                            <template v-if="vocabBox.kanji.length && $props.language == 'japanese'">
-                                <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Kanji</span></div>
-                                <div id="vocab-box-kanji-box" class="d-flex flex-wrap ma-0">
-                                    <div 
-                                        class="kanji rounded-lg mr-2" 
-                                        v-for="kanji, index in vocabBox.kanji" 
-                                        :key="index"
-                                        @click="openKanji(kanji)"
-                                    >
-                                        {{ kanji }}
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- Definitions -->
-                            <template v-if="vocabBox.translationText.length">
-                                <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Definitions</span></div>
-                                <ul id="definitions" class="ma-0">
-                                    <li v-for="translation, index in vocabBox.translationList" :key="index">{{ translation }}</li>
-                                </ul>
-                            </template>
-
-                            <!-- Stage buttons-->
-                            <template v-if="selection.length == 1 || selectedPhrase !== -1">
-                                <div class="vocab-box-subheader d-flex mb-2 mt-4">
-                                    <span class="rounded-pill py-1 px-3">Level</span>
-                                    <v-spacer />
-
-                                    <!-- Level info box -->
-                                    <v-menu offset-y left nudge-top="-12px">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <div>
-                                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
-                                            </div>
-                                        </template>
-                                        <v-card outlined class="rounded-lg pa-4" width="320px">
-                                            A word's or phrase's level represents how well you know it. 
-                                            The closer it is to 0, the closer you are to learn it, and it 
-                                            will appear in reviews less frequently.<br><br>
-
-                                            <v-icon class="mr-2">mdi-check</v-icon>
-                                            represents known words.<br>
-                                            <v-icon class="mr-2">mdi-close</v-icon>
-                                            represents ignored words. Ignored words do not count in learned word statistics.
-                                        </v-card>
-                                    </v-menu>
-                                </div>
-                                <div id="vocab-box-stage-buttons" class="mb-2">
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -7}" @click="setStage(-7)">7</v-btn>
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -6}" @click="setStage(-6)">6</v-btn>
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -5}" @click="setStage(-5)">5</v-btn>
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -4}" @click="setStage(-4)">4</v-btn>
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -3}" @click="setStage(-3)">3</v-btn>
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -2}" @click="setStage(-2)">2</v-btn>
-                                    <v-btn :class="{'v-btn--active': vocabBox.selectedStageButton == -1}" @click="setStage(-1)">1</v-btn>
-                                    <v-btn 
-                                        :class="{'v-btn--active': vocabBox.selectedStageButton == 0}"
-                                        @click="setStage(0)" 
-                                    >
-                                        <v-icon>mdi-check</v-icon>
-                                    </v-btn>
-                                    <v-btn 
-                                        :class="{'v-btn--active': vocabBox.selectedStageButton == 1}" 
-                                        @click="setStage(1)" 
-                                        v-if="selection.length == 1"
-                                    >
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                </div>
-                            </template>
-                        </v-card-text>
-
-                        <v-card-actions v-if="selection.length > 1" class="mt-2 pl-0">
-                            <v-btn 
-                                small
-                                rounded
-                                color="success"
-                                @click="addNewPhrase"
-                                v-if="selection.length > 1 && selectedPhrase == -1"
-                            >Save phrase</v-btn>
-                            <v-btn 
-                                small
-                                rounded
-                                color="error"
-                                @click="deletePhrase"
-                                v-if="selectedPhrase !== -1"
-                            >Delete phrase</v-btn>
-                        </v-card-actions>
-                    </v-tab-item>
-
-                    <!-- Editing page -->
-                    <v-tab-item :value="1">
-                        <v-card-text id="vocab-box-edit-page" class="pa-0">
-                            <!-- Word text fields -->
-                            <div class="d-flex" v-if="selection.length == 1">
-                                <v-text-field 
-                                    :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
-                                    hide-details
-                                    label="Lemma"
-                                    filled
-                                    dense
-                                    rounded
-                                    v-model="vocabBox.base_word"
-                                ></v-text-field>
-                                <v-text-field 
-                                    :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
-                                    hide-details
-                                    label="Word"
-                                    disabled
-                                    filled
-                                    dense
-                                    rounded
-                                    :value="textBlocks[selectedTextBlock].uniqueWords[selection[0].uniqueWordIndex].word"
-                                ></v-text-field>
-                            </div>
-
-                            <!-- Reading fields -->
-                            <div class="d-flex" v-if="selection.length == 1 && ($props.language == 'japanese' || $props.language == 'chinese')">
-                                <v-text-field 
-                                    class="my-2"
-                                    hide-details
-                                    label="Lemma reading"
-                                    filled
-                                    dense
-                                    rounded
-                                    v-model="vocabBox.base_word_reading"
-                                ></v-text-field>
-                                <v-text-field 
-                                    class="my-2"
-                                    hide-details
-                                    label="Reading"
-                                    filled
-                                    dense
-                                    rounded
-                                    v-model="vocabBox.reading"
-                                ></v-text-field>
-                            </div>
-
-                            <!-- Phrase fields -->
-                            <v-textarea
-                                v-if="selection.length > 1 && ($props.language == 'japanese' || $props.language == 'chinese')"
-                                class="my-2"
-                                label="Reading"
-                                filled
-                                dense
-                                no-resize
-                                rounded
-                                hide-details
-                                height="100"
-                                v-model="vocabBox.reading"
-                            ></v-textarea>
-
-                            <!-- Translation -->
-                            <v-textarea
-                                :class="{'mt-2': $props.language !== 'japanese' && $props.language !== 'chinese'}"
-                                label="Translation"
-                                filled
-                                dense
-                                no-resize
-                                rounded
-                                hide-details
-                                height="100"
-                                v-model="vocabBox.translationText"
-                                @change="updateVocabBoxTranslationList"
-                            ></v-textarea>
-
-                            <!-- Search term -->
-                            <!-- <div class="vocab-box-subheader mt-2">Dictionary search</div> -->
-                            <v-text-field 
-                                label="Dictionary search"
-                                class="mt-2 mb-3"
-                                filled
-                                dense
-                                rounded
-                                width="100%"
-                                hide-details
-                                v-model="vocabBox.searchField"
-                                @change="makeSearchRequest"
-                            ></v-text-field>
-
-                            <!-- Search results -->
-                            <div id="search-results" class="mb-4 pa-2">
-                                <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in vocabBox.searchResults" :key="searchresultIndex">
-                                    <!-- Regular record -->
-                                    <template v-if="searchResult.dictionary !== 'JMDict'">
-                                        <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                                            <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
-                                            <div 
-                                                v-for="(definition, definitionIndex) in record.definitions" 
-                                                :key="definitionIndex" 
-                                                class="search-result-definition rounded"
-                                                @click="addDefinitionToInput(definition)"
-                                            >
-                                                {{ definition }} <v-icon>mdi-plus</v-icon>
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <!-- JMDict record -->
-                                    <template v-if="searchResult.dictionary == 'JMDict'">
-                                        <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                                            <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
-                                            <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in record.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
-                                                {{ definition }} <v-icon>mdi-plus</v-icon>
-                                            </div>
-                                        
-                                            <template v-if="record.otherForms.length">
-                                                <div class="vocab-box-subheader">Other forms:</div>
-                                                <div class="d-flex flex-wrap">
-                                                    <div v-for="(form, formIndex) in record.otherForms" :key="formIndex">
-                                                        {{ form }}<span class="mr-2" v-if="formIndex < record.otherForms.length - 1">, </span>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </v-card-text>
-                    </v-tab-item>
-                </v-tabs-items>
-            </div>
-
-            <!-- Vocab box toolbar -->
-            <div class="vocab-box-toolbar d-flex flex-column align-center flex-wrap pt-1 rounded-r-lg">
-                <v-btn dark icon @click="unselectAllWords" title="Close"><v-icon>mdi-close</v-icon></v-btn>
-                <v-btn dark icon @click="openVocabBoxEditPage" title="Edit" v-if="vocabBox.tab == 0"><v-icon>mdi-pencil</v-icon></v-btn>
-                <v-btn dark icon @click="vocabBox.tab = 0;" v-if="vocabBox.tab == 1" title="Back"><v-icon>mdi-arrow-left</v-icon></v-btn>
-                <v-menu left offset-y class="rounded-lg">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn dark icon v-bind="attrs" v-on="on" title="More options">
-                            <v-icon>mdi-dots-horizontal</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-btn 
-                        v-if="selection.length === 1 || selectedPhrase !== -1"
-                        class="menu-button justify-start" 
-                        @click="addSelectedWordToAnki"
-                    >
-                        <v-icon class="mr-1">mdi-cards</v-icon>Send to anki
-                    </v-btn>
-                </v-menu>
-            </div>
-        </v-card>
+        <vocabulary-box
+            ref="vocabularyBox"
+            v-if="modernVocabBox.active"
+            :language="$props.language"
+            :active="modernVocabBox.active"
+            :type="modernVocabBox.type"
+            :positionLeft="modernVocabBox.positionLeft"
+            :positionTop="modernVocabBox.positionTop"
+            :width="modernVocabBox.width"
+            :kanjiList="modernVocabBox.kanjiList"
+            :word="modernVocabBox.word"
+            :phrase="modernVocabBox.phrase"
+            :stage="modernVocabBox.stage"
+            :_reading="modernVocabBox.reading"
+            :_baseWord="modernVocabBox.baseWord"
+            :_baseWordReading="modernVocabBox.baseWordReading"
+            :_phraseReading="modernVocabBox.phraseReading"
+            :_translationText="modernVocabBox.translationText"
+            :_searchField="modernVocabBox.searchField"
+            @setStage="setStage"
+            @unselectAllWords="unselectAllWords"
+            @updateVocabBoxData="updateVocabBoxData"
+            @addNewPhrase="addNewPhrase"
+            @deletePhrase="deletePhrase"
+            @addSelectedWordToAnki="addSelectedWordToAnki"
+        ></vocabulary-box>
     </div>
 </template>
 
@@ -436,6 +135,35 @@
                     base_word: '',
                     base_word_reading: '',
                     kanji: [],
+                },
+                modernVocabBox: {
+                    active: false,
+                    // word, new phrase, existing phrase
+                    type: 'word',
+
+                    // data for word
+                    word: '',
+                    reading: '',
+                    baseWord: '',
+                    baseWordReading: '',
+                    stage: 0,
+
+                    // data for phrase
+                    phrase: [],
+                    phraseReading: '',
+
+                    // data for both
+                    kanjiList: [],
+                    translationText: '',
+                    translationList: [],
+
+                    // ui data
+                    tab: 0,
+                    width: 400,
+                    positionLeft: 0,
+                    positionTop: 0,
+                    searchField: '',
+                    searchResults: [],
                 },
                 selection: [],
                 selectedPhrase: -1,
@@ -502,53 +230,70 @@
         },  
         methods: {
             updateSelection(newSelection, newSelectedPhrase, textBlockId) {
-                this.vocabBox.tab = 0;
+                this.modernVocabBox.tab = 0;
                 this.selection = newSelection;
                 this.selectedPhrase = newSelectedPhrase;
                 this.selectedTextBlock = textBlockId;
 
                 // update vocab box data
-                this.vocabBox.closed = false;
-                this.vocabBox.searchField = '';
-                this.vocabBox.translationText = '';
-                this.vocabBox.reading = '';
-                this.vocabBox.kanji = [];
-                this.vocabBox.base_word = '';
-                this.vocabBox.base_word_reading = '';
+                this.modernVocabBox.active = false;
+                this.$nextTick(() => {
+                    this.modernVocabBox.active = true;
+                });
 
-                let uniqueWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
+                this.modernVocabBox.searchField = '';
+                this.modernVocabBox.translationText = '';
+                this.modernVocabBox.word = '';
+                this.modernVocabBox.phrase = [];
+                this.modernVocabBox.reading = '';
+                this.modernVocabBox.kanjiList = [];
+                this.modernVocabBox.baseWord = '';
+                this.modernVocabBox.baseWordReading = '';
+
                 
                 if (this.selection.length == 1) {
-                    this.vocabBox.translationText = uniqueWord.translation;
-                    this.vocabBox.reading = uniqueWord.reading;
-                    this.vocabBox.base_word = uniqueWord.base_word;
-                    this.vocabBox.base_word_reading = uniqueWord.base_word_reading;
+                    var uniqueWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
+                    this.modernVocabBox.type = 'word';
+                    this.modernVocabBox.word = uniqueWord.word;
+                    this.modernVocabBox.reading = uniqueWord.reading;
+                    this.modernVocabBox.baseWord = uniqueWord.base_word;
+                    this.modernVocabBox.baseWordReading = uniqueWord.base_word_reading;
+                    this.modernVocabBox.translationText = uniqueWord.translation;
+                    this.modernVocabBox.stage = uniqueWord.stage;
                     if (uniqueWord.base_word !== '') {
-                        this.vocabBox.searchField = uniqueWord.base_word;
+                        this.modernVocabBox.searchField = uniqueWord.base_word;
 
                         // remove unnecessary parts of the search term
-                        this.vocabBox.searchField = this.trimSearchTerm(this.vocabBox.searchField);
+                        this.modernVocabBox.searchField = this.trimSearchTerm(this.modernVocabBox.searchField);
                     } else {
-                        this.vocabBox.searchField = uniqueWord.word;
+                        this.modernVocabBox.searchField = uniqueWord.word;
                     }
                 } else {
                     if (this.selectedPhrase !== -1) {
-                        this.vocabBox.reading = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].reading;
-                        this.vocabBox.translationText = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].translation;
+                        this.modernVocabBox.type = 'phrase';
+                        this.modernVocabBox.reading = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].reading;
+                        this.modernVocabBox.translationText = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].translation;
+                        this.modernVocabBox.stage = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage;
+                    } else {
+                        this.modernVocabBox.type = 'new-phrase';
                     }
 
                     for (let i = 0; i < this.selection.length; i++) {
                         if (this.selection[i].word.toLowerCase() == 'newline') {
                             continue;
                         }
+                     
+                        if (this.selection.length > 1) {
+                            this.modernVocabBox.phrase.push(this.selection[i]);
+                        }
 
-                        this.vocabBox.searchField += this.selection[i].word;
+                        this.modernVocabBox.searchField += this.selection[i].word;
                         if (this.selection[i].spaceAfter) {
-                            this.vocabBox.searchField += ' ';
+                            this.modernVocabBox.searchField += ' ';
                         }
 
                         if (this.selectedPhrase == -1) {
-                            this.vocabBox.reading += this.selection[i].reading;
+                            this.modernVocabBox.reading += this.selection[i].reading;
                         }
                     }
                 }
@@ -557,50 +302,53 @@
                 for (let wordIndex = 0; wordIndex < this.selection.length; wordIndex ++) {
                     var kanji = this.selection[wordIndex].kanji;
                     for (let kanjiIndex = 0; kanjiIndex < kanji.length; kanjiIndex ++) {
-                        if (this.vocabBox.kanji.indexOf(kanji[kanjiIndex]) === -1) {
-                            this.vocabBox.kanji.push(kanji[kanjiIndex]);
+                        if (this.modernVocabBox.kanjiList.indexOf(kanji[kanjiIndex]) === -1) {
+                            this.modernVocabBox.kanjiList.push(kanji[kanjiIndex]);
                         }
                     }
                 }
 
-                this.updateVocabBoxTranslationList();
                 this.updateVocabBoxPosition();
-                this.updateSelectedWordStage();
+                // this.updateSelectedWordStage();
             },
-            saveSelectedWord() {
+            startSelection() {
+                if (this.$refs.vocabularyBox !== undefined) {
+                    this.$refs.vocabularyBox.inputChanged();
+                }
+
                 if (this.selection.length == 1) {
                     this.saveWord();
                 } else if (this.selectedPhrase !== -1) {
                     this.savePhrase();
                 }
+                
+                this.modernVocabBox.active = false;
             },
-            unselectAllWords(fast = false, save = true) {
-                if (save && this.selection.length == 1) {
+            unselectAllWords() {
+                this.modernVocabBox.active = false;
+                if (this.selection.length == 1) {
                     this.saveWord();
-                } else if (save && this.selectedPhrase !== -1) {
+                } else if (this.selectedPhrase !== -1) {
                     this.savePhrase();
                 }
 
-                this.vocabBox.closed = true;
                 this.selectedPhrase = -1;
                 this.selection = [];
-                let delay = fast ? 0 : 120;
-
-                if (delay) {
-                    setTimeout(this.unselectAllWordsProcess, delay);
-                } else {
-                    this.unselectAllWordsProcess();
-                }
+                
+                this.unselectAllWordsProcess();
+                this.$forceUpdate();
             },
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
                 this.selection = [];
-                this.vocabBox.kanji = [];
-                this.vocabBox.searchField = '';
-                this.vocabBox.translationText = '';
-                this.vocabBox.reading = '';
-                this.vocabBox.base_word = '';
-                this.vocabBox.base_word_reading = '';
+                this.modernVocabBox.kanjiList = [];
+                this.modernVocabBox.word = '';
+                this.modernVocabBox.phrase = '';
+                this.modernVocabBox.searchField = '';
+                this.modernVocabBox.translationText = '';
+                this.modernVocabBox.reading = '';
+                this.modernVocabBox.baseWord = '';
+                this.modernVocabBox.baseWordReading = '';
                 
                 for (let j = 0; j < this.textBlocks.length; j++) {
                     this.unselectWordInTextBlock(j);
@@ -635,9 +383,6 @@
                 }
 
             },
-            updateVocabBoxTranslationList() {
-                this.vocabBox.translationList = this.vocabBox.translationText.split(';');
-            },
             updateSelectedWordLookupCount(id) {
 
             },
@@ -652,8 +397,8 @@
                 if (this.selection.length == 1) {
                     var data = {
                         word: this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].word,
-                        reading: this.vocabBox.reading,
-                        translation: this.vocabBox.translationText,
+                        reading: this.modernVocabBox.reading,
+                        translation: this.modernVocabBox.translationText,
                         exampleSentence: exampleSentenceText,
                     };
                 } else {
@@ -667,8 +412,8 @@
                     
                     var data = {
                         word: wordsText,
-                        reading: this.vocabBox.reading,
-                        translation: this.vocabBox.translationText,
+                        reading: this.modernVocabBox.reading,
+                        translation: this.modernVocabBox.translationText,
                         exampleSentence: exampleSentenceText
                     };
                 }
@@ -707,7 +452,7 @@
                     id: -1,
                     stage: 0,
                     words: [],
-                    reading: this.vocabBox.reading,
+                    reading: this.modernVocabBox.reading,
                     translation: '',
                 };
 
@@ -777,6 +522,7 @@
                 this.updateSelectedWordStage();
                 this.updateVocabBoxPosition();
                 this.savePhrase();
+                this.modernVocabBox.type = 'phrase';
             },
             getSelectedPhraseIndex() {
                 var phraseIndex = -1;
@@ -850,8 +596,8 @@
                 for (var j  = 0; j < this.textBlocks.length; j++) {
                     for (var i  = 0; i < this.textBlocks[j].phrases.length; i++) {
                         if (this.textBlocks[j].phrases[i].id == selectedPhraseId) {
-                            this.textBlocks[j].phrases[i].translation = this.vocabBox.translationText;
-                            this.textBlocks[j].phrases[i].reading = this.vocabBox.reading;
+                            this.textBlocks[j].phrases[i].translation = this.modernVocabBox.translationText;
+                            this.textBlocks[j].phrases[i].reading = this.modernVocabBox.reading;
                         }
                     }
                 }
@@ -921,6 +667,15 @@
                     }
                 }
             },
+            updateVocabBoxData(newVocabBoxData) {
+                this.modernVocabBox.reading = newVocabBoxData.reading;
+                this.modernVocabBox.baseWord = newVocabBoxData.baseWord;
+                this.modernVocabBox.baseWordReading = newVocabBoxData.baseWordReading;
+                this.modernVocabBox.phraseReading = newVocabBoxData.phraseReading;
+                this.modernVocabBox.translationText = newVocabBoxData.translationText;
+                
+                this.$forceUpdate();
+            },
             saveWord(withStage = false, exampleSentenceChanged = false) {
                 var selectedWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
                 
@@ -929,10 +684,10 @@
                 for (var j  = 0; j < this.textBlocks.length; j++) {
                     for (var i  = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
                         if (this.textBlocks[j].uniqueWords[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
-                            this.textBlocks[j].uniqueWords[i].translation = this.vocabBox.translationText;
-                            this.textBlocks[j].uniqueWords[i].reading = this.vocabBox.reading;
-                            this.textBlocks[j].uniqueWords[i].base_word = this.vocabBox.base_word;
-                            this.textBlocks[j].uniqueWords[i].base_word_reading = this.vocabBox.base_word_reading;
+                            this.textBlocks[j].uniqueWords[i].translation = this.modernVocabBox.translationText;
+                            this.textBlocks[j].uniqueWords[i].reading = this.modernVocabBox.reading;
+                            this.textBlocks[j].uniqueWords[i].base_word = this.modernVocabBox.baseWord;
+                            this.textBlocks[j].uniqueWords[i].base_word_reading = this.modernVocabBox.baseWordReading;
                             this.textBlocks[j].uniqueWords[i].stage = selectedWord.stage;
                         }
                     }
@@ -949,10 +704,10 @@
                 
                 var saveData = {
                     id: selectedWord.id,
-                    translation: selectedWord.translation,
-                    reading: selectedWord.reading,
-                    base_word: selectedWord.base_word,
-                    base_word_reading: selectedWord.base_word_reading,
+                    translation: this.modernVocabBox.translationText,
+                    reading: this.modernVocabBox.reading,
+                    base_word: this.modernVocabBox.base_word,
+                    base_word_reading: this.modernVocabBox.base_word_reading,
                     example_sentence: selectedWord.example_sentence,
                     lookup_count: selectedWord.lookup_count,
                 };
@@ -1011,7 +766,7 @@
                 }
 
                 // add word/phrase to anki
-                if (this.ankiAutoAddCards && stage < 0 && (this.vocabBox.selectedStageButton >= 0 || this.vocabBox.selectedStageButton === undefined)) {
+                if (this.ankiAutoAddCards && stage < 0 && (this.modernVocabBox.stage >= 0 || this.modernVocabBox.stage === undefined)) {
                     this.addSelectedWordToAnki();
                 }
                 
@@ -1023,16 +778,18 @@
                 } else if (save == 'phrase') {
                     this.savePhrase(true, stage < 0);
                 }
+
+                this.modernVocabBox.stage = stage;
             },
             updateSelectedWordStage() {
                 if (this.selectedPhrase == -1 && this.selection.length) {
-                    this.vocabBox.selectedStageButton = parseInt(this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage);
+                    this.modernVocabBox.stage = parseInt(this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage);
                 } else if (this.selectedPhrase !== -1){
-                    this.vocabBox.selectedStageButton = parseInt(this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage);
+                    this.modernVocabBox.stage = parseInt(this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage);
                 }
 
-                if (this.vocabBox.selectedStageButton == 2) {
-                    this.vocabBox.selectedStageButton = undefined;
+                if (this.modernVocabBox.stage == 2) {
+                    this.modernVocabBox.stage = undefined;
                 }
             },
             getExampleSentence(withSpaces = false) {
@@ -1078,115 +835,9 @@
                     exampleSentenceWords: JSON.stringify(exampleSentence),
                 });
             },
-            makeSearchRequest() {
-                this.vocabBox.searchResults = [];
-                this.inflections = [];
-                if (!this.selection.length || this.vocabBox.searchField == '') {
-                    return;
-                }
-
-                axios.post('/dictionary/search', {
-                    language: this.$props.language,
-                    term: this.vocabBox.searchField
-                }).then((response) => {
-                    this.processVocabularySearchResults(response.data);
-                });
-
-                // search inflections
-                // axios.post('/dictionary/search/inflections', {
-                //     dictionary: 'jmdict',
-                //     term: this.vocabBox.searchField
-                // })
-                // .then((response) => {
-                //     this.processInflectionSearchResults(response.data);
-                // });
-            },
-            processVocabularySearchResults(data) {
-                this.vocabBox.searchResults = [];
-
-                for (var dictionaryIndex = 0; dictionaryIndex < data.length; dictionaryIndex++) {
-                    if (data[dictionaryIndex].name == 'JMDict') {
-                        let searchResult = {
-                            dictionary: data[dictionaryIndex].name,
-                            color: data[dictionaryIndex].color,
-                            records: []
-                        };
-
-                        for (var jmdictIndex = 0; jmdictIndex < data[dictionaryIndex].jmdictRecords.length; jmdictIndex++) {
-                            var jmdictRecord = data[dictionaryIndex].jmdictRecords[jmdictIndex];
-                            
-                            searchResult.records.push({
-                                word: jmdictRecord.words.length ? jmdictRecord.words[0] : '',
-                                otherForms: data[dictionaryIndex].jmdictRecords[jmdictIndex].words,
-                                definitions: data[dictionaryIndex].jmdictRecords[jmdictIndex].definitions,
-                            });                            
-                        }
-
-                        this.vocabBox.searchResults.push(searchResult);
-                    } else {
-                        let searchResult = {
-                            dictionary: data[dictionaryIndex].name,
-                            color: data[dictionaryIndex].color,
-                            records: []
-                        };
-
-                        for (var recordIndex = 0; recordIndex < data[dictionaryIndex].records.length; recordIndex++) {
-                            searchResult.records.push({
-                                word: data[dictionaryIndex].records[recordIndex].word,
-                                definitions: data[dictionaryIndex].records[recordIndex].definitions,
-                            });                            
-                        }
-
-                        this.vocabBox.searchResults.push(searchResult);
-                    }
-                }
-            },
-            processInflectionSearchResults(data) {
-                var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
-                    
-                for (var i = 0; i < data.length; i++) {
-                    if (!displayedInflections.includes(data[i].name)) {
-                        continue;
-                    }
-
-                    var index = this.inflections.findIndex(item => item.name === data[i].name);
-                    if (index == -1) {
-                        this.inflections.push({
-                            name: data[i].name,
-                        });
-
-                        index = this.inflections.length - 1;
-                    }
-
-                    // add different forms to the item
-                    if (data[i].form == 'aff-plain:') {
-                        this.inflections[index].affPlain = data[i].value;
-                    }
-
-                    if (data[i].form == 'aff-formal:') {
-                        this.inflections[index].affFormal = data[i].value;
-                    }
-
-                    if (data[i].form == 'neg-plain:') {
-                        this.inflections[index].negPlain = data[i].value;
-                    }
-
-                    if (data[i].form == 'neg-formal:') {
-                        this.inflections[index].negFormal = data[i].value;
-                    }
-                }
-            },
-            addDefinitionToInput(definition) {
-                if (this.vocabBox.translationText.length && this.vocabBox.translationText[this.vocabBox.translationText.length - 1] !== ';') {
-                    this.vocabBox.translationText += ';';
-                }
-
-                this.vocabBox.translationText += definition;
-                this.updateVocabBoxTranslationList();
-            },
             updateVocabBoxPosition() {
                 var margin = 8;
-                this.vocabBox.width = window.innerWidth > 440 ? 400 : window.innerWidth - 24;
+                this.modernVocabBox.width = 400;
 
                 if (!this.selection.length) {
                     return;
@@ -1200,20 +851,17 @@
                     var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                this.vocabBox.position.left = selectedWordPositions.right - vocabBoxArea.left - this.vocabBox.width / 2 - (selectedWordPositions.right - selectedWordPositions.left) / 2;
+                this.modernVocabBox.positionLeft = selectedWordPositions.right - vocabBoxArea.left - this.modernVocabBox.width / 2 - (selectedWordPositions.right - selectedWordPositions.left) / 2;
 
                 if (window.innerWidth  < 440) {
-                    this.vocabBox.position.left = 0;
-                } else if (this.vocabBox.position.left < margin) {
-                    this.vocabBox.position.left = margin;
-                } else if (this.vocabBox.position.left > vocabBoxArea.right - vocabBoxArea.left - this.vocabBox.width - margin) {
-                    this.vocabBox.position.left = vocabBoxArea.right - vocabBoxArea.left - this.vocabBox.width - margin;
+                    this.modernVocabBox.positionLeft = 0;
+                } else if (this.modernVocabBox.positionLeft < margin) {
+                    this.modernVocabBox.positionLeft = margin;
+                } else if (this.modernVocabBox.positionLeft > vocabBoxArea.right - vocabBoxArea.left - this.modernVocabBox.width - margin) {
+                    this.modernVocabBox.positionLeft = vocabBoxArea.right - vocabBoxArea.left - this.modernVocabBox.width - margin;
                 }
 
-                var appElement = document.getElementById('app');
-                var bodyElement = document.body;
-
-                this.vocabBox.position.top = selectedWordPositions.bottom - vocabBoxArea.top + 15;
+                this.modernVocabBox.positionTop = selectedWordPositions.bottom - vocabBoxArea.top + 15;
 
                 this.scrollToVocabBox();
             },
@@ -1234,40 +882,37 @@
                 this.vocabBox.tab = 1;
                 setTimeout(this.scrollToVocabBox, 120);
             },
-            openKanji(kanji) {
-                window.location.href = '/kanji/' + kanji;
-            },
             trimSearchTerm(searchTerm) {
                 var trimmedSearchTerm = searchTerm;
 
                 // norwegian
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 2) == 'å ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(2);
+                if (this.$props.language == 'norwegian' && this.modernVocabBox.searchField.substring(0, 2) == 'å ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(2);
                 }
 
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'et ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                if (this.$props.language == 'norwegian' && this.modernVocabBox.searchField.substring(0, 3) == 'et ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(3);
                 }
 
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'en ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                if (this.$props.language == 'norwegian' && this.modernVocabBox.searchField.substring(0, 3) == 'en ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(3);
                 }
 
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'ei ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                if (this.$props.language == 'norwegian' && this.modernVocabBox.searchField.substring(0, 3) == 'ei ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(3);
                 }
 
                 // german
-                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'die ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                if (this.$props.language == 'german' && this.modernVocabBox.searchField.substring(0, 4) == 'die ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(4);
                 }
 
-                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'der ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                if (this.$props.language == 'german' && this.modernVocabBox.searchField.substring(0, 4) == 'der ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(4);
                 }
 
-                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'das ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                if (this.$props.language == 'german' && this.modernVocabBox.searchField.substring(0, 4) == 'das ') {
+                    trimmedSearchTerm = this.modernVocabBox.searchField.slice(4);
                 }
 
                 return trimmedSearchTerm;

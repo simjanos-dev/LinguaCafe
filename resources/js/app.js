@@ -51,8 +51,10 @@ Vue.component('statistics', Statistics);
 // text 
 import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
+import VocabularyBox from './components/Text/VocabularyBox.vue';
 Vue.component('text-block', TextBlock);
 Vue.component('text-block-group', TextBlockGroup);
+Vue.component('vocabulary-box', VocabularyBox);
 
 // text reader
 import TextReaderSettings from './components/TextReader/TextReaderSettings.vue';

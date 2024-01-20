@@ -37,7 +37,7 @@
                 @mouseleave=";"
             ><!--
                 --><template v-if="language == 'japanese'"><!--
-                    --><ruby><!--
+                    --><ruby class="rubyword" :wordindex="wordIndex"><!--
                         -->{{ word.word }}<!--
                         --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
                             -->{{ word.reading }}<!--
@@ -59,6 +59,7 @@
     export default {
         data: function() {
             return {
+                phraseLengthLimit: 14,
                 words: this.$props._words,
                 phrases: this.$props._phrases,
                 uniqueWords: this.$props._uniqueWords,
@@ -165,13 +166,15 @@
                 // select the phrasew
                 do {
                     if (this.words[currentWordIndex].word !== 'NEWLINE') {
+                        var uniqueWordIndex = this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase());
+                        var uniqueWord = this.uniqueWords[uniqueWordIndex];
                         newSelection.push({
                             word: this.words[currentWordIndex].word,
-                            kanji: this.uniqueWords[this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase())].kanji,
-                            reading: this.uniqueWords[this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase())].reading,
+                            reading: uniqueWord.reading,
+                            kanji: uniqueWord.kanji,
                             sentence_index: this.words[currentWordIndex].sentence_index,
                             wordIndex: currentWordIndex,
-                            uniqueWordIndex: this.getUniqueWordIndex(this.words[currentWordIndex].word.toLowerCase()),
+                            uniqueWordIndex: uniqueWordIndex,
                             spaceAfter: this.words[currentWordIndex].spaceAfter,
                         });
                     }
@@ -195,7 +198,7 @@
                     return;
                 }
 
-                this.$emit('saveSelectedWord');
+                this.$emit('startSelection');
 
                 this.touchTimer = null;
                 if (event == undefined) {
@@ -217,21 +220,18 @@
                 }
                 
                 // set selected word 
-                var uniqueWordIndex = this.getUniqueWordIndex(wordText.toLowerCase());
                 var selectedWord = {
                     word: wordText,
                     spaceAfter: this.words[wordIndex].spaceAfter,
                     wordIndex: wordIndex,
-                    uniqueWordIndex: uniqueWordIndex,
-                    kanji: this.uniqueWords[uniqueWordIndex].kanji,
-                    reading: this.uniqueWords[uniqueWordIndex].reading,
-                    sentence_index: this.words[wordIndex].sentence_index,
-                    position: event.target.getBoundingClientRect(),
+                    sentence_index: this.words[wordIndex].sentence_index
                 };
+                
                 
                 this.ongoingSelection = [selectedWord];
                 this.words[wordIndex].selected = true;
                 this.ongoingSelectionStartingWordIndex = wordIndex;
+                
             },
             updateSelectionMouse: function(event, wordIndex) {
                 if (!this.ongoingSelection.length || event == undefined || event.buttons !== 1 || this.touchTimer) {
@@ -255,7 +255,7 @@
                 var element = document.elementFromPoint( touch.clientX, touch.clientY );
 
                 var wordIndex = null;
-                if (element !== null && element.classList.contains('word')) {
+                if (element !== null && element.classList.contains('word') || element.classList.contains('rubyword')) {
                     wordIndex = element.getAttribute('wordindex');
                 }
 
@@ -269,6 +269,8 @@
                 }
 
                 if (wordIndex == this.ongoingSelection[0].wordIndex ||
+                    (wordIndex < this.ongoingSelection[0].wordIndex && this.ongoingSelection.length == this.phraseLengthLimit) ||
+                    (wordIndex > this.ongoingSelection[this.ongoingSelection.length - 1].wordIndex && this.ongoingSelection.length == this.phraseLengthLimit) ||
                     wordIndex == this.ongoingSelection[this.ongoingSelection.length - 1].wordIndex) {
                         return;
                 }
@@ -281,33 +283,30 @@
                     var lastWordIndex = this.ongoingSelectionStartingWordIndex;
                 }
                 
-                if (firstWordIndex < this.ongoingSelectionStartingWordIndex - 14) {
-                    firstWordIndex = this.ongoingSelectionStartingWordIndex - 14;
+                if (firstWordIndex < this.ongoingSelectionStartingWordIndex - this.phraseLengthLimit + 1) {
+                    firstWordIndex = this.ongoingSelectionStartingWordIndex - this.phraseLengthLimit + 1;
                 }
 
-                if (lastWordIndex - firstWordIndex > 14) {
-                    lastWordIndex -= lastWordIndex - firstWordIndex - 14;
+                if (lastWordIndex - firstWordIndex > this.phraseLengthLimit + 1) {
+                    lastWordIndex -= lastWordIndex - firstWordIndex - this.phraseLengthLimit + 1;
                 }
 
                 this.ongoingSelection = [];
                 for (let i  = 0; i < this.words.length; i++) {
                     this.words[i].selected = false;
 
-                    if (i < firstWordIndex || i > lastWordIndex) {
+                    if (i < firstWordIndex || i > lastWordIndex || this.words[i].word === 'NEWLINE') {
                         continue;
                     }
 
                     this.words[i].selected = true;
                     var selectedWord = {
                         word: this.words[i].word,
-                        kanji: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].kanji,
                         wordIndex: i,
-                        uniqueWordIndex: this.getUniqueWordIndex(this.words[i].word.toLowerCase()),
-                        reading: this.uniqueWords[this.getUniqueWordIndex(this.words[i].word.toLowerCase())].reading,
                         sentence_index: this.words[i].sentence_index,
                         spaceAfter: this.words[i].spaceAfter,
                     };
-
+                    
                     this.ongoingSelection.push(selectedWord);
                 }
             },
@@ -347,8 +346,13 @@
                     this.words[i].selected = false;
                 }
 
+                // set words to selected, and collect their information
                 for (let i = 0; i < this.ongoingSelection.length; i++) {
                     this.words[this.ongoingSelection[i].wordIndex].selected = true;
+                    var uniqueWordIndex = this.getUniqueWordIndex(this.ongoingSelection[i].word.toLowerCase());
+                    this.ongoingSelection[i].uniqueWordIndex = uniqueWordIndex;
+                    this.ongoingSelection[i].reading = this.uniqueWords[uniqueWordIndex].reading;
+                    this.ongoingSelection[i].kanji = this.uniqueWords[uniqueWordIndex].kanji;
                 }
                 
                 this.selection = this.ongoingSelection;

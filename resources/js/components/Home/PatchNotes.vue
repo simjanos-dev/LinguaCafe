@@ -7,8 +7,15 @@
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
             <v-card-text>
+                The docker installation process has been improved since the last version. Fixed all the known issues with it, and 
+                removed the requirement for users to create their folders manually and to modify the docker-compose.yml file.
+
+                <br><br>
                 There were several issues with Jellyfin integration. Now it should work properly with every language and video type. 
                 Also added information about subtitle file naming to the readme file. <br><br>
+
+                Lemma modifications only apply to new words that haven't been imported yet. There will be an option in the future, to 
+                overwrite already existing lemmas.<br><br>
 
                 <b>New features:</b>
                 <ul>
@@ -77,6 +84,9 @@
                 <b>Other changes:</b>
                 <ul>
                     <li>
+                        Moved the dictionary search to the main section of the popup vocabulary.
+                    </li>
+                    <li>
                         Removed all online dependencies.
                     </li>
                     <li>
@@ -90,8 +100,8 @@
                         Unified text reader and subtitle reader settings. Users don't have to modify settings at both places separately anymore.
                     </li>
                     <li>
-                        Added dynamic subtitle rendering for Media player, which increased speed significantly. For this I had to reamove 
-                        customizable spacing between subtitles, due to a but that moved the vocabulary box around. This will be fixed in the
+                        Added dynamic subtitle rendering for Media player, which increased performance significantly. For this I had to remove 
+                        customizable spacing between subtitles, due to a bug that moved the vocabulary box around. This will be fixed in the
                         future.
                     </li>
                 </ul>
