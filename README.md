@@ -41,34 +41,19 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 
 Chinese: Mandarin language with simplified Chinese characters.
 
-## Installation (Linux)
-Step 1: Install docker desktop
+## Quick Start Guide (Linux and MacOs)
+Step 1: Install docker desktop and git.
 
-Step 2: Create the folders where the data will be stored. Four folders will be needed, one for `dictionaries`, one for `logs`, one for `database` and one for `temp`.
-
-Step 3: Copy the `docker-compose.yml` provided [here](https://raw.githubusercontent.com/simjanos-dev/LinguaCafe/main/docker-compose.yml) and edit it to put the folders created in the step above in the indicated places.
-
-```yml
-volumes:
-    - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
-    - /your/linguacafe/logs/folder:/var/www/html/storage/logs
-    - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
-# ...
-volumes:
-    - /your/linguacafe/database/folder:/var/lib/mysql
-# ...
-volumes:
-    - /your/linguacafe/dict/folder:/var/www/html/storage/app/dictionaries
-    - /your/linguacafe/temp/folder:/var/www/html/storage/app/temp
-```
-
-Step 4: Finally, run this command in the same folder where you placed the `docker-compose.yml` in the prior step.
+Step 2: Run the following commands from the location where you want to store your files:
 
 ```
+git clone -b quickstart git@github.com:sergiolaverde0/LinguaCafe.git linguacafe
+cd linguacafe
+chmod 777 -R ./
 docker compose up -d
 ```
 
-Your server now should be running and accessible on http://localhost:9191. If you encounter any error, try stopping and restarting your docker container.
+Your server now should be running and accessible on http://localhost:9191. If you encounter any error, try stopping your containers with `docker compose down` and then restarting them again with `docker compose up -d`.
 
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
@@ -106,6 +91,23 @@ When editing the `docker-compose.yml` to add your storage paths, do these replac
 ```
 
 It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.
+
+## Migrating from v0.4 to v0.5
+First if you have assigned cover images to your books, recover them by running the following command:
+```
+docker cp linguacafe-webserver:/var/www/html/storage/app/images/book_images ./
+```
+Now you have a folder with your book covers. Then go to the location of the folders you created for v0.4, run the following command and write your password when asked:
+```
+sudo chmod 777 -R ./
+```
+Now download and prepare the folder structure for v0.5 with the following commands:
+```
+git clone -b quickstart git@github.com:sergiolaverde0/LinguaCafe.git linguacafe
+cd linguacafe
+chmod 777 -R ./
+```
+Finally, copy the contents of the folders from v0.4 in the respective folder or subfolder for v0.5, and run `docker compose up -d` to get the service back online.
 
 ## Importing dictionaries
 Step 1: Download the dictionaries that you want to use from the provided links below.
