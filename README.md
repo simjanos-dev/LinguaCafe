@@ -1,4 +1,7 @@
 ## LinguaCafe
+
+![GitHub Release](https://img.shields.io/github/v/release/simjanos-dev/LinguaCafe?logo=buymeacoffee&logoColor=white&color=%23C5947D) ![Discord](https://img.shields.io/discord/1193631644662386788?logo=discord&logoColor=white&label=Discord&color=%235460ce&link=https%3A%2F%2Fdiscord.gg%2FwZYZYrdaeP) ![Static Badge](https://img.shields.io/badge/Jellyfin-API-%23983883?logo=jellyfin&logoColor=white) ![Static Badge](https://img.shields.io/badge/DeepL-API-%23983883?logo=deepl&logoColor=white) ![Static Badge](https://img.shields.io/badge/Anki-API-%23983883?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBoZWlnaHQ9IjQ4cHQiIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4cHQiPjxsaW5lYXJHcmFkaWVudCBpZD0iYSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCg0OS4wNzcgMCAwIDQ5LjY1MSAtMS4wMTcgLS45MDkpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHgyPSIuOTA3NDg4IiB5MT0iLjUiIHkyPSIuOTIwMDc4IiBmaWxsPSIjZmZmZmZmIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiIGZpbGw9IiNmZmZmZmYiLz48c3RvcCBvZmZzZXQ9Ii44Mzg4ODM5NzkzOCIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgZmlsbD0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdGggZD0ibTIwLjUwOSAxMi42OTdjLS4yNzggMS4yNTktMS41MjggMi4wNjEtMi43OSAxLjc5LTEuMjYzLS4yNzEtMi4wNjItMS41MTktMS43ODUtMi43ODRsMS40ODQtNi44OTNjLjY3OS0zLjE1NiAzLjA4NS0zLjg2NiA1LjM2OS0xLjU4NGw4LjE2OSA4LjE2MSAxMS4yNzMtLjkxYzMuMjE4LS4yNiA0LjY1NSAxLjg3MiAzLjIwNyA0Ljc1N2wtNC45MzQgOS44MjkgMy44MjYgOS45MTVjMS4xNjIgMy4wMTItLjQ4MSA1LjAzOC0zLjY2OCA0LjUyMWwtMTEuMzE4LTEuODM2LTguOTM5IDcuMzZjLTIuNDkyIDIuMDUzLTQuODI5IDEuMTE3LTUuMjE2LTIuMDg4bC0xLjMtMTAuNzcxLTkuOTctNi4zNDZjLTIuNzIzLTEuNzM0LTIuNTIxLTQuMTYzLjQ1Mi01LjQyMmw4LjE4NC0zLjQ2NGMxLjE4OS0uNTAzIDIuNTYyLjA1MiAzLjA2NiAxLjI0LjUwMyAxLjE4OC0uMDUyIDIuNTYyLTEuMjQxIDMuMDY2bC01LjM2OSAyLjI4MSA5LjI1NCA1Ljg4NCAxLjI0IDEwLjI5NiA4LjUwNS02Ljk5NiAxMS4xMjYgMS44MDEtMy43NDQtOS42OTggNC43NjEtOS40NjUtMTAuOTczLjg4OS03Ljc2OC03Ljc1NnoiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=)
+
 LinguaCafe is a free self-hosted software that helps language learners acquire vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later as effortlessly as possible.
 
 You can read about all the features of LinguaCafe in this [overview](https://simjanos-dev.github.io/LinguaCafeHome/).
@@ -57,13 +60,12 @@ Do not modify the mysql username, password and database name.
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
-If you are below v0.6, please use the migration guides below instead of this.
+If you are below v0.5, please use the migration guides below instead of this.
 
-Run these commands from the directory where you placed your `docker-compose.yml`:
+Run this command from your `linguacafe` folder:
 
 ```
-docker compose pull
-docker compose up -d
+docker compose pull && docker compose up -d
 ```
 
 ## Migrating from v0.4 to v0.5
