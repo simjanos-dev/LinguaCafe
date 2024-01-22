@@ -706,8 +706,8 @@
                     id: selectedWord.id,
                     translation: this.modernVocabBox.translationText,
                     reading: this.modernVocabBox.reading,
-                    base_word: this.modernVocabBox.base_word,
-                    base_word_reading: this.modernVocabBox.base_word_reading,
+                    base_word: this.modernVocabBox.baseWord,
+                    base_word_reading: this.modernVocabBox.baseWordReading,
                     example_sentence: selectedWord.example_sentence,
                     lookup_count: selectedWord.lookup_count,
                 };

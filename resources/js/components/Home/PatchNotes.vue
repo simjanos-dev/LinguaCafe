@@ -5,7 +5,19 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.5 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-title>v0.5.1 <v-spacer /> 2024.01.22.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed a bug that prevented lemmas end lemma readings to be saved.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.5 <v-spacer /> 2024.01.21.</v-card-title>
             <v-card-text>
                 The docker installation process has been improved since the last version. Fixed all the known issues with it, and 
                 removed the requirement for users to create their folders manually and to modify the docker-compose.yml file.

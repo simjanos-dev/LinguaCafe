@@ -232,10 +232,8 @@ Step 3: Set the Jellyfin host in LinguaCafe on to the Admin->API menu. If you us
 
 Step 4: Save the settings.
 
-Now you should be able to read any external subtitles from any TV Show you play in any of your Jellyfin clients on the Media player page.
+Now you should be able to read any external subtitles from any video you play in any of your Jellyfin clients on the Media player page.
 Unfortunately there is the noticable lag when you click on a timestamp to jump to a subtitle. I could only make it work without delays with the native "Jellyfin media player" client on my PC.
-
-At this time it only works with TV Shows due to a bug, it will be fixed soon. Later on there will be also an option to save the subtitles in the library like any text.
 
 ## Anki
 Anki is supported, if your server and Anki run on the same PC (this will not be a requirement in the future) and have [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed.
