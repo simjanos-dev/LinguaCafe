@@ -1,6 +1,7 @@
 *
 !public/
 !temp/
+!temp/.gitkeep
 !.gitignore
 !images
 !images/book_images
