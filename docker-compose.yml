@@ -7,18 +7,18 @@ networks:
 
 services:
     webserver:
-        image: ghcr.io/simjanos-dev/linguacafe-webserver:main
+        image: ghcr.io/simjanos-dev/linguacafe-webserver:${VERSION:-main}
         container_name: linguacafe-webserver
         depends_on:
             - mysql
         volumes:
             - ./storage:/var/www/html/storage
         environment:
-            DB_DATABASE: linguacafe
-            DB_USERNAME: linguacafe
-            DB_PASSWORD: linguacafe
+            DB_DATABASE: ${DB_DATABASE:-linguacafe}
+            DB_USERNAME: ${DB_USERNAME:-linguacafe}
+            DB_PASSWORD: ${DB_PASSWORD:-linguacafe}
         ports:
-            - "9191:80"
+            - "${PORT:-9191}:80"
         networks:
             - linguacafe
         extra_hosts:
@@ -31,10 +31,10 @@ services:
         volumes:
             - ./database:/var/lib/mysql
         environment:
-            MYSQL_DATABASE: linguacafe
-            MYSQL_USER: linguacafe
-            MYSQL_PASSWORD: linguacafe
-            MYSQL_ROOT_PASSWORD: linguacafe
+            MYSQL_DATABASE: ${DB_DATABASE:-linguacafe}
+            MYSQL_USER: ${DB_USERNAME:-linguacafe}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-linguacafe}
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-linguacafe}
             SERVICE_NAME: linguacafe
         command: mysqld --general-log=1 --general-log-file=/var/lib/mysql/general-log.log
         networks:
@@ -44,7 +44,7 @@ services:
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
-        image: ghcr.io/simjanos-dev/linguacafe-python-service:main
+        image: ghcr.io/simjanos-dev/linguacafe-python-service:${VERSION:-main}
         volumes:
             - ./storage:/var/www/html/storage
         networks:
