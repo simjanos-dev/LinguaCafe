@@ -223,7 +223,7 @@
             },
             vocabularySidebar: {
                 type: Boolean,
-                default: true
+                default: false
             },
             vocabularySidebarFits: {
                 type: Boolean,
