@@ -52,9 +52,13 @@ Vue.component('statistics', Statistics);
 import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
 import VocabularyBox from './components/Text/VocabularyBox.vue';
+import VocabularySideBox from './components/Text/VocabularySideBox.vue';
+import VocabularySearchBox from './components/Text/VocabularySearchBox.vue';
 Vue.component('text-block', TextBlock);
 Vue.component('text-block-group', TextBlockGroup);
 Vue.component('vocabulary-box', VocabularyBox);
+Vue.component('vocabulary-side-box', VocabularySideBox);
+Vue.component('vocabulary-search-box', VocabularySearchBox);
 
 // text reader
 import TextReaderSettings from './components/TextReader/TextReaderSettings.vue';

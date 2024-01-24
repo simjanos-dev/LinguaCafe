@@ -31,6 +31,7 @@
                     'vocabBoxScrollIntoView', 
                     'furiganaOnHighlightedWords', 
                     'furiganaOnNewWords', 
+                    'vocabularySidebar'
                 ]"
                 @changed="updateSettings"
             ></text-reader-settings>
@@ -55,16 +56,23 @@
                 v-if="!finished"
                 id="reader"
                 :class="{
-                    'vocab-box-area': true, 
                     'plain-text-mode': settings.plainTextMode, 
                     'vertical-text': settings.verticalText, 
                     'rounded-lg': true,
                     'ml-2': true,
-                    'pa-4': $vuetify.breakpoint.smAndUp,
-                    'pa-3': $vuetify.breakpoint.xsOnly
                 }" 
+                :style="{
+                    'height': $vuetify.breakpoint.mdAndUp ? 'calc(100% - 24px - 24px)' : 'calc(100% - 24px - 24px - 64px)',
+                    'padding-right': settings.vocabularySidebar && vocabularySidebarFits ? '400px !important' : '0px'
+                }"
             >
-                <v-card-text>
+            <v-card-text id="reader-content" :class="{
+                'vocab-box-area': true, 
+                'px-6': $vuetify.breakpoint.smAndUp,
+                'px-3': $vuetify.breakpoint.xsOnly,
+                'pt-4': $vuetify.breakpoint.smAndUp,
+                'pt-3': $vuetify.breakpoint.xsOnly,
+                }">
                     <div id="chapter-name" class="mb-4" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
                         {{ lessonName }}
                     </div>
@@ -84,20 +92,26 @@
                         :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                         :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
                         :furigana-on-new-words="settings.furiganaOnNewWords"
+                        :vocabulary-sidebar="settings.vocabularySidebar"
+                        :vocabulary-sidebar-fits="vocabularySidebarFits"
                     ></text-block-group>    
+                    <v-alert
+                        class="my-3" 
+                        border="left"
+                        type="error"
+                        v-if="finishError"
+                        >
+                        Something went wrong. Please try again.
+                    </v-alert>
+                    <div :class="{
+                        'd-flex': true, 
+                        'mb-t': $vuetify.breakpoint.smAndUp,
+                        'mb-3': $vuetify.breakpoint.xsOnly,
+                    }">
+                        <v-spacer></v-spacer>
+                        <v-btn rounded color="primary" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn>
+                    </div>
                 </v-card-text>
-                <v-alert
-                    class="my-3" 
-                    border="left"
-                    type="error"
-                    v-if="finishError"
-                    >
-                    Something went wrong. Please try again.
-                </v-alert>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn rounded color="primary" @click="finish()"><v-icon>mdi-text-box-check</v-icon> Finish reading</v-btn>
-                </v-card-actions>
             </v-card>&nbsp;
             
             <!-- Finish -->
@@ -152,6 +166,7 @@
                 maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 toolbarTop: 68,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                vocabularySidebarFits: true,
                 settings: {
                     hideAllHighlights: false,
                     hideNewWordHighlights: false,
@@ -165,7 +180,8 @@
                     verticalText: false,
                     furiganaOnHighlightedWords: false,
                     furiganaOnNewWords: false,
-                    mediaControlsVisible: true
+                    mediaControlsVisible: true,
+                    vocabularySidebar: true
                 },
                 fullscreenMode: false,
                 finished: false,
@@ -214,15 +230,9 @@
                 this.language = data.language;
                 this.lessons = data.lessons;
 
-                this.afterMounted();
-            });
-        },
-        // this runs after the initial data
-        // was downloaded with axios
-        methods: {
-            afterMounted: function() {
                 document.getElementById('app').addEventListener('mouseup', this.finishSelection);
                 window.addEventListener('resize', this.updateToolbarPosition);
+                window.addEventListener('resize', this.vocabularySidebarTest);
                 window.addEventListener('scroll', this.updateToolbarPosition);
                 document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
                 for (let i = 0; i < this.lessons.length; i++) {
@@ -235,6 +245,20 @@
                 this.$forceUpdate();
                 this.updateGlossary();
                 this.updateToolbarPosition();
+                this.vocabularySidebarTest();
+                this.$forceUpdate();
+            });
+        },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.updateToolbarPosition);
+            window.removeEventListener('resize', this.vocabularySidebarTest);
+            window.removeEventListener('scroll', this.updateToolbarPosition);
+        },
+        // this runs after the initial data
+        // was downloaded with axios
+        methods: {
+            vocabularySidebarTest() {
+                this.vocabularySidebarFits = window.innerWidth >= 960;
             },
             fullscreen: function() {
                 if (document.fullscreenEnabled) {
@@ -259,6 +283,10 @@
             updateSettings(settings) {
                 this.settings = settings;
                 this.$forceUpdate();
+
+                setTimeout(() => {
+                    this.$refs.textBlock.updateVocabBoxPosition();
+                }, 200);
             },
             toolbarSettingChanged() {
                 this.$refs.textReaderSettings.changeSetting('fontSize', this.settings.fontSize);

@@ -5,7 +5,6 @@
             'w-100': true,
             'chinese-font': language == 'chinese'
         }"
-        @mouseup="unselectAllWords"
     >
         <!-- Anki api notifications -->
         <v-snackbar 
@@ -78,10 +77,10 @@
             ></text-block>
         </slot>
 
-        <!-- Vocab box -->
+        <!--Vocabulary popup box-->
         <vocabulary-box
+            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && modernVocabBox.active"
             ref="vocabularyBox"
-            v-if="modernVocabBox.active"
             :language="$props.language"
             :active="modernVocabBox.active"
             :type="modernVocabBox.type"
@@ -105,6 +104,35 @@
             @deletePhrase="deletePhrase"
             @addSelectedWordToAnki="addSelectedWordToAnki"
         ></vocabulary-box>
+
+        <!--Vocabulary sidebar-->
+        <vocabulary-side-box
+            v-if="$props.vocabularySidebarFits && $props.vocabularySidebar"
+            :key="'vocabulary-side-box-' + modernVocabBox.key"
+            ref="vocabularySideBox"
+            :language="$props.language"
+            :active="modernVocabBox.active"
+            :type="modernVocabBox.type"
+            :positionLeft="modernVocabBox.positionLeft"
+            :positionTop="modernVocabBox.positionTop"
+            :height="modernVocabBox.height"
+            :kanjiList="modernVocabBox.kanjiList"
+            :word="modernVocabBox.word"
+            :phrase="modernVocabBox.phrase"
+            :stage="modernVocabBox.stage"
+            :_reading="modernVocabBox.reading"
+            :_baseWord="modernVocabBox.baseWord"
+            :_baseWordReading="modernVocabBox.baseWordReading"
+            :_phraseReading="modernVocabBox.phraseReading"
+            :_translationText="modernVocabBox.translationText"
+            :_searchField="modernVocabBox.searchField"
+            @setStage="setStage"
+            @unselectAllWords="unselectAllWords"
+            @updateVocabBoxData="updateVocabBoxData"
+            @addNewPhrase="addNewPhrase"
+            @deletePhrase="deletePhrase"
+            @addSelectedWordToAnki="addSelectedWordToAnki"
+        ></vocabulary-side-box>
     </div>
 </template>
 
@@ -118,28 +146,11 @@
                 ankiAutoAddCards: false,
                 ankiShowNotifications: false,
                 textBlocks: this.$props._textBlocks,
-                vocabBox: {
-                    tab: 0,
-                    closed: true,
-                    selectedStageButton: 0,
-                    width: window.innerWidth > 440 ? 400 : window.innerWidth - 20,
-                    position: {
-                        left: 0,
-                        top: 0
-                    },
-                    searchField: '',
-                    searchResults: [],
-                    translationText: '',
-                    translationList: [],
-                    reading: '',
-                    base_word: '',
-                    base_word_reading: '',
-                    kanji: [],
-                },
                 modernVocabBox: {
+                    key: 0,
                     active: false,
                     // word, new phrase, existing phrase
-                    type: 'word',
+                    type: 'empty',
 
                     // data for word
                     word: '',
@@ -162,6 +173,7 @@
                     width: 400,
                     positionLeft: 0,
                     positionTop: 0,
+                    height: 0,
                     searchField: '',
                     searchResults: [],
                 },
@@ -208,6 +220,14 @@
             furiganaOnNewWords: {
                 type: Boolean,
                 default: false
+            },
+            vocabularySidebar: {
+                type: Boolean,
+                default: true
+            },
+            vocabularySidebarFits: {
+                type: Boolean,
+                default: true
             }
         },
         watch: {
@@ -216,7 +236,8 @@
             }
         },
         mounted() {
-            window.addEventListener('resize', this.updateVocabBoxPosition);
+            window.addEventListener('resize', this.updateVocabBoxPositionDelay);
+            window.addEventListener('mouseup', this.unselectAllWords);
 
             axios.post('/settings/get-by-name', {
                 'settingNames': [
@@ -227,19 +248,23 @@
                 this.ankiAutoAddCards = response.data.ankiAutoAddCards;
                 this.ankiShowNotifications = response.data.ankiShowNotifications;
             });
+
+            this.updateVocabBoxPositionDelay();
         },  
+        beforeDestroy() {
+            window.removeEventListener('resize', this.updateVocabBoxPositionDelay);
+            window.removeEventListener('mouseup', this.unselectAllWords);
+        },
         methods: {
             updateSelection(newSelection, newSelectedPhrase, textBlockId) {
                 this.modernVocabBox.tab = 0;
                 this.selection = newSelection;
                 this.selectedPhrase = newSelectedPhrase;
                 this.selectedTextBlock = textBlockId;
+                this.modernVocabBox.active = true;
 
                 // update vocab box data
-                this.modernVocabBox.active = false;
-                this.$nextTick(() => {
-                    this.modernVocabBox.active = true;
-                });
+                this.modernVocabBox.key ++;
 
                 this.modernVocabBox.searchField = '';
                 this.modernVocabBox.translationText = '';
@@ -309,11 +334,15 @@
                 }
 
                 this.updateVocabBoxPosition();
-                // this.updateSelectedWordStage();
+                this.modernVocabBox.key ++;
             },
             startSelection() {
                 if (this.$refs.vocabularyBox !== undefined) {
                     this.$refs.vocabularyBox.inputChanged();
+                }
+
+                if (this.$refs.vocabularySideBox !== undefined) {
+                    this.$refs.vocabularySideBox.inputChanged();
                 }
 
                 if (this.selection.length == 1) {
@@ -341,9 +370,12 @@
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
                 this.selection = [];
+                this.modernVocabBox.key ++;
                 this.modernVocabBox.kanjiList = [];
+                this.modernVocabBox.stage = 2;
+                this.modernVocabBox.type = 'empty';
                 this.modernVocabBox.word = '';
-                this.modernVocabBox.phrase = '';
+                this.modernVocabBox.phrase = [];
                 this.modernVocabBox.searchField = '';
                 this.modernVocabBox.translationText = '';
                 this.modernVocabBox.reading = '';
@@ -835,16 +867,29 @@
                     exampleSentenceWords: JSON.stringify(exampleSentence),
                 });
             },
+            updateVocabBoxPositionDelay() {
+                setTimeout(() => {
+                    this.updateVocabBoxPosition();
+                }, 200);
+            },
             updateVocabBoxPosition() {
                 var margin = 8;
                 this.modernVocabBox.width = 400;
+                var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
+                var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
+
+                // update sidebar
+                if (this.$props.vocabularySidebarFits && this.$props.vocabularySidebar) {
+                    this.modernVocabBox.height = vocabBoxAreaElement.offsetHeight;
+                    this.modernVocabBox.positionLeft = vocabBoxArea.right;
+                    this.modernVocabBox.positionTop = vocabBoxArea.top;
+                    return;
+                }
 
                 if (!this.selection.length) {
                     return;
                 }
 
-                var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
-                var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
                 if (this.selection.length == 1) {
                     var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
                 } else if (this.selection.length > 1) {
@@ -861,7 +906,7 @@
                     this.modernVocabBox.positionLeft = vocabBoxArea.right - vocabBoxArea.left - this.modernVocabBox.width - margin;
                 }
 
-                this.modernVocabBox.positionTop = selectedWordPositions.bottom - vocabBoxArea.top + 15;
+                this.modernVocabBox.positionTop = selectedWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
 
                 this.scrollToVocabBox();
             },
@@ -876,11 +921,6 @@
                         vocabBox.scrollIntoViewIfNeeded(false);
                     }
                 }, 450);
-            },
-            openVocabBoxEditPage() {
-                this.makeSearchRequest();
-                this.vocabBox.tab = 1;
-                setTimeout(this.scrollToVocabBox, 120);
             },
             trimSearchTerm(searchTerm) {
                 var trimmedSearchTerm = searchTerm;

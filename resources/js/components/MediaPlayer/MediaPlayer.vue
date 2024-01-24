@@ -1,5 +1,5 @@
 <template>
-    <v-container 
+    <div 
         id="media-player" 
             :class="{
                 'pt-0': textBlocks.length, 
@@ -50,7 +50,7 @@
             @seekTo="seekTo"
             @settingsChanged="updateSettings"
         ></subtitle-reader>
-    </v-container>
+    </div>
 </template>
 
 

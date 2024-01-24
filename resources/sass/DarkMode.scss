@@ -356,7 +356,8 @@
         box-shadow: none;
     }
 
-    #vocab-box #vocab-box-kanji-box .kanji {
+    #vocab-box #vocab-box-kanji-box .kanji,
+    #vocab-side-box #vocab-box-kanji-box .kanji {
         border: 1px solid var(--v-gray3-base);
 
         &:hover {
@@ -381,7 +382,8 @@
     }
 
     // search result title color
-    #vocab-box #search-results .search-result .search-result-title {
+    #vocab-box #search-results .search-result .search-result-title, 
+    #vocab-side-box #search-results .search-result .search-result-title {
         color: var(--v-textDark-base);
     }
 
@@ -403,18 +405,21 @@
     
 
     // vocab box stage buttons border
-    #vocab-box #vocab-box-stage-buttons .v-btn {
+    #vocab-box #vocab-box-stage-buttons .v-btn,
+    #vocab-side-box #vocab-box-stage-buttons .v-btn {
         border-color: var(--v-gray3-base);
         color: var(--v-text-base) !important;
     }
 
     // vocab box stage button
-    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active {
+    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active, 
+    #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active {
         background-color: var(--v-gray-base) !important;
     }
 
     
-    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i {
+    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i,
+    #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active i {
         color: var(--v-text-base) !important;
     }
 

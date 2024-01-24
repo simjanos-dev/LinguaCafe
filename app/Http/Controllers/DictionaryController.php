@@ -370,6 +370,7 @@ class DictionaryController extends Controller
         Imports a csv file into a custom dictionary database table.
     */
     public function importDictionaryCsvFile(Request $request) {
+        set_time_limit(2400);
         $skipHeader = boolval($request->post('skipHeader') === 'true');
         $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
         $dictionaryName = $request->post('dictionaryName');
@@ -465,6 +466,7 @@ class DictionaryController extends Controller
     }
 
     public function importSupportedDictionary(Request $request) {
+        set_time_limit(2400);
         $dictionaryName = $request->post('dictionaryName');
         $dictionaryFileName = $request->post('dictionaryFileName');
         $dictionaryLanguage = $request->post('dictionaryLanguage');

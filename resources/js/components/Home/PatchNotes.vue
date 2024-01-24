@@ -3,7 +3,40 @@
         <div class="subheader">
             Patch notes
         </div>
-        
+       
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.6 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Added a fixed, always open sidebar vocabulary as a default option for screens wider than 960px. It can be turned off in the text reader settings.
+                    </li>
+                </ul>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Users clicking anywhere outside of the vocabulary box will close the vocabulary box. Previously it only worked if the user clicked on empty space inside the text box.
+                    </li>
+                    <li>
+                        Increased maximum execution time for importing dictionaries. If your dictionary import did not end with a success message but still functional, I recommend importing it again, because it probably did not import all the records from the dictionary file.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.5.2 <v-spacer /> 2024.01.23.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed a problem with deployment, and added a simple migration guide.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.5.1 <v-spacer /> 2024.01.22.</v-card-title>
             <v-card-text>

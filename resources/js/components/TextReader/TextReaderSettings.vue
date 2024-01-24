@@ -12,7 +12,12 @@
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-card-text class="pt-6" v-if="settingsLoaded">
+            <v-card-text class="pt-6 pb-12" v-if="settingsLoaded">
+                <!-- Text section-->
+                <div class="subheader d-flex mb-2">
+                    Text
+                </div>
+
                 <!-- Line spacing -->
                 <v-row v-if="this.$props.enabledSettings.includes('lineSpacing')">
                     <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Space between lines:</v-col>
@@ -107,36 +112,6 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
-                
-                <!-- Auto move words to known -->
-                <v-row v-if="this.$props.enabledSettings.includes('autoMoveWordsToKnown')">
-                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Auto move words to known:</v-col>
-                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
-                        <v-switch
-                            color="primary"
-                            v-model="settings.autoMoveWordsToKnown" 
-                            @change="saveSettings"
-                        ></v-switch>
-                    </v-col>
-                </v-row>
-
-                <!-- Vocab box scroll into view -->
-                <v-row v-if="this.$props.enabledSettings.includes('vocabBoxScrollIntoView')">
-                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Scroll to vocabulary method:</v-col>
-                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
-                        <v-select
-                            v-model="settings.vocabBoxScrollIntoView"
-                            :items="vocabBoxScrollIntoViewData"
-                            item-text="name"
-                            item-value="value"
-                            dense
-                            rounded
-                            filled
-                            hide-details
-                            @change="saveSettings"
-                        ></v-select>
-                    </v-col>
-                </v-row>
 
                 <!-- Furigana on highlighted words -->
                 <v-row v-if="this.$props.enabledSettings.includes('furiganaOnHighlightedWords')">
@@ -191,6 +166,67 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
+
+                <!-- Auto move words to known -->
+                <v-row v-if="this.$props.enabledSettings.includes('autoMoveWordsToKnown')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Auto move words to known:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
+                            v-model="settings.autoMoveWordsToKnown"
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
+                <!-- Vocabulary box section-->
+                <div class="subheader subheader-margin-top d-flex mb-2">
+                    Vocabulary box
+                </div>
+
+                <!-- Vocab box scroll into view -->
+                <v-row v-if="this.$props.enabledSettings.includes('vocabBoxScrollIntoView')">
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Scroll to vocabulary method:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="settings.vocabBoxScrollIntoView"
+                            :items="vocabBoxScrollIntoViewData"
+                            item-text="name"
+                            item-value="value"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
+                    </v-col>
+                </v-row>
+
+                <!-- Vocabulary sidebar -->
+                <v-row v-if="this.$props.enabledSettings.includes('vocabularySidebar')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">
+                        Vocabulary sidebar:
+                    </v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <!-- Vocabulary sidebar info box -->
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                An always visible sidebar vocabulary in a fixed position, that replaces the popup vocabulary. <br><br>
+                                This option is only available for devices with at least 960px screen width, and it is also only available in subtitle reader if the media controls are hidden. 
+                            </v-card>
+                        </v-menu>
+
+                        <v-switch
+                            color="primary"
+                            v-model="settings.vocabularySidebar" 
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
                 
             </v-card-text>
 
@@ -222,6 +258,7 @@
                     furiganaOnNewWords: 'furigana-on-new-words',
                     mediaControlsVisible: 'media-controls-visible',
                     subtitleBlockSpacing: 'block-spacing',
+                    vocabularySidebar: 'vocabulary-sidebar'
                 },
                 settings: {},
                 vocabBoxScrollIntoViewData: [
@@ -297,6 +334,10 @@
             if (this.$props.enabledSettings.includes('mediaControlsVisible')) {
                 this.loadSetting('mediaControlsVisible', 'boolean', true);
             }
+
+            if (this.$props.enabledSettings.includes('vocabularySidebar')) {
+                this.loadSetting('vocabularySidebar', 'boolean', true);
+            }
             
             this.settingsLoaded = true;
             this.saveSettings();
@@ -330,6 +371,8 @@
                 this.saveSetting('furiganaOnHighlightedWords');
                 this.saveSetting('furiganaOnNewWords');
                 this.saveSetting('mediaPlayerVisible');
+                this.saveSetting('vocabularySidebar');
+
                 this.$emit('changed', this.settings);
             },
             saveSetting(name) {

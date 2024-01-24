@@ -12,8 +12,7 @@ services:
             context: .
             dockerfile: ./docker/PhpDockerfileDev
         depends_on:
-            mysql:
-                condition: service_healthy
+            - mysql
         volumes:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
@@ -39,11 +38,6 @@ services:
           MYSQL_PASSWORD: linguacafe
           MYSQL_ROOT_PASSWORD: linguacafe
           SERVICE_NAME: linguacafe
-        healthcheck:
-            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-            interval: 5s
-            timeout: 5s
-            retries: 3
         networks:
             - linguacafe
     python:
