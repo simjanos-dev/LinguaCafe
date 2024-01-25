@@ -381,7 +381,17 @@
                 }
             },
             changeSetting(name, value, emitResult = false) {
-                this.settings[name] = value;
+                this.settings[name] = value
+                
+                if (this.settings.fontSize < 12) {
+                    this.settings.fontSize = 12;
+                }
+
+                if (this.settings.fontSize > 30) {
+                    this.settings.fontSize = 30;
+                }
+
+                ;
                 this.saveSetting(name);
 
                 if (emitResult) {

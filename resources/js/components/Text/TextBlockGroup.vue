@@ -228,6 +228,10 @@
             vocabularySidebarFits: {
                 type: Boolean,
                 default: true
+            },
+            hotkeysEnabled: {
+                type: Boolean,
+                default: false
             }
         },
         watch: {
@@ -236,6 +240,7 @@
             }
         },
         mounted() {
+            window.addEventListener('keydown', this.hotkeyHandle);
             window.addEventListener('resize', this.updateVocabBoxPositionDelay);
             window.addEventListener('mouseup', this.unselectAllWords);
 
@@ -254,8 +259,193 @@
         beforeDestroy() {
             window.removeEventListener('resize', this.updateVocabBoxPositionDelay);
             window.removeEventListener('mouseup', this.unselectAllWords);
+            window.removeEventListener('keydown', this.hotkeyHandle);
         },
         methods: {
+            hotkeyHandle(event) {
+                console.log(event.which);
+                if (!this.$props.hotkeysEnabled) {
+                    return;
+                }
+                
+                switch(event.which) {
+                    // set stage 0-7
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                        event.preventDefault();
+                        this.setStage(48 - event.which);
+                        break;
+
+                    // set stage to ignore
+                    case 88:
+                        event.preventDefault();
+                        this.setStage(1);
+                        break;
+
+                    // increase font size
+                    case 38:
+                    case 87:
+                        event.preventDefault();
+                        this.$emit('increase-font-size');
+                        break;
+                    
+                    // decrease font size
+                    case 40:
+                    case 83:
+                        event.preventDefault();
+                        this.$emit('decrease-font-size');
+                        break;
+
+                    // add selected word to anki
+                    case 82:
+                        event.preventDefault();
+                        this.addSelectedWordToAnki();
+                        break;
+
+                    // unselect all words
+                    case 27:
+                        event.preventDefault();
+                        this.unselectAllWords();
+                        break;
+
+                    // previous
+                    case 37:
+                    case 65:
+                        event.preventDefault();
+                        this.selectPreviousWord(event.ctrlKey, event.shiftKey);
+                        break;
+
+                    // next
+                    case 39:
+                    case 68:
+                        event.preventDefault();
+                        this.selectNextWord(event.ctrlKey, event.shiftKey);
+                        break;
+                }
+            },
+            selectPreviousWord(newWordOnly, highlightedWordOnly) {
+                if (!this.selection.length) {
+                    var currentWordIndex = this.textBlocks[0].words.length - 1;
+                } else {
+                    var currentWordIndex = this.selection[0].wordIndex;
+                }
+
+                
+                console.log('prev. current:', currentWordIndex);
+                var wordToSelect = -1;
+                var selectedTextBlock = this.selectedTextBlock === -1 ? 0 : this.selectedTextBlock;
+
+                // there are no previous words
+                if (currentWordIndex == 0) {
+                    return;
+                }
+
+                // go through the text backwards, and find a word to select 
+                for (var wordIndex = currentWordIndex - 1; wordIndex >= 0; wordIndex--) {
+                    // skip not displayed whitespace words
+                    if (document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordIndex  + '"]') === null) {
+                        continue;
+                    }
+
+                    // select the previous word if it's a simple arrow key press
+                    if (!newWordOnly && !highlightedWordOnly) {
+                        wordToSelect = wordIndex;
+                        break;
+                    }
+
+                    // select the previous new word
+                    if (newWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage == 2) {
+                        wordToSelect = wordIndex;
+                        break;
+                    }
+
+                    // select the previous highlighted word
+                    if (highlightedWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage < 0) {
+                        wordToSelect = wordIndex;
+                        break;
+                    }
+                }
+
+                // return if no selectable word was found
+                if (wordToSelect === -1) {
+                    return;
+                }
+                
+                // select the new word
+                this.unselectAllWords();
+                this.$nextTick(() => {
+                    var wordElement = document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordToSelect  + '"]');
+                    var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
+                    var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
+                    wordElement.dispatchEvent(mouseDownEvent);
+                    wordElement.dispatchEvent(mouseUpEvent);
+                });
+            },
+            selectNextWord(newWordOnly, highlightedWordOnly) {
+                if (!this.selection.length) {
+                    var currentWordIndex = 0;
+                } else {
+                    var currentWordIndex = this.selection[this.selection.length - 1].wordIndex;
+                }
+
+                
+                console.log('prev. current:', currentWordIndex);
+                var wordToSelect = -1;
+                var selectedTextBlock = this.selectedTextBlock === -1 ? 0 : this.selectedTextBlock;
+
+                // there are no next words to select
+                if (currentWordIndex == this.textBlocks[selectedTextBlock].words.length - 1) {
+                    return;
+                }
+
+                // go through the text forward, and find a word to select 
+                for (var wordIndex = currentWordIndex + 1; wordIndex < this.textBlocks[selectedTextBlock].words.length; wordIndex++) {
+                    // skip not displayed whitespace words
+                    if (document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordIndex  + '"]') === null) {
+                        continue;
+                    }
+
+                    // select the previous word if it's a simple arrow key press
+                    if (!newWordOnly && !highlightedWordOnly) {
+                        wordToSelect = wordIndex;
+                        break;
+                    }
+
+                    // select the previous new word
+                    if (newWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage == 2) {
+                        wordToSelect = wordIndex;
+                        break;
+                    }
+
+                    // select the previous highlighted word
+                    if (highlightedWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage < 0) {
+                        wordToSelect = wordIndex;
+                        break;
+                    }
+
+                }
+
+                // return if no selectable word was found
+                if (wordToSelect === -1) {
+                    return;
+                }
+
+                // select the new word
+                this.unselectAllWords();
+                this.$nextTick(() => {
+                    var wordElement = document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordToSelect  + '"]');
+                    var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
+                    var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
+                    wordElement.dispatchEvent(mouseDownEvent);
+                    wordElement.dispatchEvent(mouseUpEvent);
+                });
+            },
             updateSelection(newSelection, newSelectedPhrase, textBlockId) {
                 this.modernVocabBox.tab = 0;
                 this.selection = newSelection;
@@ -419,6 +609,10 @@
 
             },
             addSelectedWordToAnki() {
+                if (this.selection.length === 0 || (this.selection.length > 1 && this.selectedPhrase === -1)) {
+                    return;
+                }
+
                 // get example sentence and add space. 
                 var exampleSentence = this.getExampleSentence(true);
                 var exampleSentenceText = '';
@@ -762,6 +956,10 @@
                 this.$forceUpdate();
             },
             setStage(stage) {
+                if (!this.selection.length || (this.selection.length > 1 && this.selectedPhrase === -1)) {
+                    return;
+                }
+
                 // determine if saving is needed
                 var save = 'none';
                 if (this.selection.length == 1 && this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage !== stage) {

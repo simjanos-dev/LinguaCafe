@@ -64,6 +64,8 @@ Vue.component('vocabulary-search-box', VocabularySearchBox);
 import TextReaderSettings from './components/TextReader/TextReaderSettings.vue';
 import TextReaderGlossary from './components/TextReader/TextReaderGlossary.vue';
 import TextReaderChapterList from './components/TextReader/TextReaderChapterList.vue';
+import TextReaderHotkeyInformationDialog from './components/TextReader/TextReaderHotkeyInformationDialog';
+Vue.component('text-reader-hotkey-information-dialog', TextReaderHotkeyInformationDialog);
 Vue.component('text-reader-settings', TextReaderSettings);
 Vue.component('text-reader-glossary', TextReaderGlossary);
 Vue.component('text-reader-chapter-list', TextReaderChapterList);
@@ -79,6 +81,10 @@ import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
 import VocabularyExportDialog from './components/Vocabulary/VocabularyExportDialog';
 Vue.component('vocabulary-edit-dialog', VocabularyEditDialog);
 Vue.component('vocabulary-export-dialog', VocabularyExportDialog);
+
+// review
+import ReviewHotkeyInformationDialog from './components/Review/ReviewHotkeyInformationDialog';
+Vue.component('review-hotkey-information-dialog', ReviewHotkeyInformationDialog);
 
 // dialogs
 import ErrorDialog from './components/Dialogs/ErrorDialog';

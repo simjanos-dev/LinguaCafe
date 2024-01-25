@@ -191,6 +191,21 @@
 }
 
 @media (max-width: 500px) {
+    #text-reader-hotkeys .hotkey {
+        justify-content: flex-start !important;
+        flex-wrap: wrap;
+        
+        span {
+            width: 100% !important;
+            &:nth-child(1) {
+                &::after {
+                    content: ':'
+                }
+            }
+        }
+
+        margin-bottom: 20px;
+    }
 }
 
 @media (max-width: 400px) {

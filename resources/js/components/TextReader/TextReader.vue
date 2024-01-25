@@ -1,5 +1,11 @@
 <template>
     <div id="fullscreen-box" :class="{'fullscreen-mode': fullscreenMode}" :style="{'background-color': $vuetify.theme.currentTheme.background}">
+        <!-- Hotkey information dialog -->
+        <text-reader-hotkey-information-dialog
+            v-model="hotkeyDialog"
+        ></text-reader-hotkey-information-dialog>
+
+        <!-- Toolbar -->
         <div id="reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}" v-if="lessonId !== null">
             <div id="toolbar-box">
                 <div v-if="!finished" id="toolbar" :class="{'d-flex': true}" :style="{'top': toolbarTop + 'px'}">
@@ -8,9 +14,10 @@
                     <v-btn title="Text reader settings" icon @click="openDialog('settings')"><v-icon>mdi-cog</v-icon></v-btn>
                     <v-btn title="Chapters" icon @click="openDialog('chapters')"><v-icon>mdi-book-alphabet</v-icon></v-btn>
                     <v-btn title="Glossary" icon @click="openDialog('glossary')"><v-icon>mdi-translate</v-icon></v-btn>
-                    <v-btn title="Increase font size" icon @click="settings.fontSize ++; toolbarSettingChanged();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                    <v-btn title="Decrease font size" icon @click="settings.fontSize --; toolbarSettingChanged();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                    <v-btn title="Increase font size" icon @click="increaseFontSize"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                    <v-btn title="Decrease font size" icon @click="decreaseFontSize"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                     <v-btn title="Toggle plain text mode" icon @click="settings.plainTextMode = !settings.plainTextMode; toolbarSettingChanged();"><v-icon :color="settings.plainTextMode ? 'primary' : ''">mdi-marker</v-icon></v-btn>
+                    <v-btn title="Show hotkey information" icon @click="hotkeyDialog = !hotkeyDialog;"><v-icon>mdi-keyboard-outline</v-icon></v-btn>
                 </div>
             </div>
 
@@ -94,6 +101,9 @@
                         :furigana-on-new-words="settings.furiganaOnNewWords"
                         :vocabulary-sidebar="settings.vocabularySidebar"
                         :vocabulary-sidebar-fits="vocabularySidebarFits"
+                        :hotkeys-enabled="true"
+                        @increase-font-size="increaseFontSize"
+                        @decrease-font-size="decreaseFontSize"
                     ></text-block-group>    
                     <v-alert
                         class="my-3" 
@@ -157,6 +167,7 @@
     export default {
         data: function() {
             return {
+                hotkeyDialog: false,
                 textBlocks: [],
                 dialogs: {
                     settings: false,
@@ -345,6 +356,14 @@
                 this.glossary.sort((a, b) => {
                     return a.stage - b.stage;
                 });
+            },
+            increaseFontSize() {
+                this.settings.fontSize ++; 
+                this.toolbarSettingChanged();
+            },
+            decreaseFontSize() {
+                this.settings.fontSize --; 
+                this.toolbarSettingChanged();
             },
             finish: function() {
                 axios.post('/chapter/finish', {
