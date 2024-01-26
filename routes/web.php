@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/books', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/books/{bookId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/book/create', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/{id}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/read/{id}', [App\Http\Controllers\HomeController::class, 'index']);

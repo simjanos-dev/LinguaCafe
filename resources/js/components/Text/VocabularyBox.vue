@@ -169,6 +169,7 @@
                             height="100"
                             v-model="translationText"
                             @change="inputChanged"
+                            @keydown.stop=";"
                         ></v-textarea>
 
                         <!-- Search box -->
@@ -211,6 +212,7 @@
                                 rounded
                                 v-model="baseWord"
                                 @change="inputChanged"
+                                @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
                                 :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
@@ -222,6 +224,7 @@
                                 rounded
                                 :value="word"
                                 @change="inputChanged"
+                                @keydown.stop=";"
                             ></v-text-field>
                         </div>
 
@@ -236,6 +239,7 @@
                                 rounded
                                 v-model="baseWordReading"
                                 @change="inputChanged"
+                                @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
                                 class="my-2"
@@ -246,6 +250,7 @@
                                 rounded
                                 v-model="reading"
                                 @change="inputChanged"
+                                @keydown.stop=";"
                             ></v-text-field>
                         </div>
 
@@ -262,6 +267,7 @@
                             height="100"
                             v-model="reading"
                             @change="inputChanged"
+                            @keydown.stop=";"
                         ></v-textarea>
                     </v-card-text>
                 </v-tab-item>

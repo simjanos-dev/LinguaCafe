@@ -15,14 +15,25 @@
                     <li>
                         Added hotkeys for the text reader and review pages.
                     </li>
+                    <li>
+                        Added proper finish reading screen.
+                    </li>
                 </ul>
+                
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Users clicking anywhere outside of the vocabulary box will close the vocabulary box. Previously it only worked if the user clicked on empty space inside the text box.
+                        Users clicking anywhere outside of the vocabulary box will close the vocabulary box. Previously it only worked if the user clicked on an empty space inside the text box.
                     </li>
                     <li>
                         Increased maximum execution time for importing dictionaries. If your dictionary import did not end with a success message but still functional, I recommend importing it again, because it probably did not import all the records from the dictionary file.
+                    </li>
+                </ul>
+                
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        Updated node.js to v20.11.0.
                     </li>
                 </ul>
             </v-card-text>

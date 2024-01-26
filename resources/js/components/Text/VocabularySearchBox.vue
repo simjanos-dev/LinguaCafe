@@ -10,6 +10,7 @@
             hide-details
             v-model="searchField"
             @change="makeSearchRequest"
+            @keydown.stop=";"
         ></v-text-field>
 
         <!-- Search results -->

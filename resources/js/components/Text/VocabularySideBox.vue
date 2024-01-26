@@ -58,6 +58,7 @@
                     rounded
                     v-model="baseWord"
                     @change="inputChanged"
+                    @keydown.stop=";"
                 ></v-text-field>
                 <v-icon class="mt-1 mx-1">mdi-arrow-right</v-icon>
                 <v-text-field 
@@ -70,6 +71,7 @@
                     rounded
                     :value="word"
                     @change="inputChanged"
+                    @keydown.stop=";"
                 ></v-text-field>
             </div>
 
@@ -84,6 +86,7 @@
                     rounded
                     v-model="baseWordReading"
                     @change="inputChanged"
+                    @keydown.stop=";"
                 ></v-text-field>
                 <v-icon class="mt-1 mx-1">mdi-arrow-right</v-icon>
                 <v-text-field 
@@ -95,6 +98,7 @@
                     rounded
                     v-model="reading"
                     @change="inputChanged"
+                    @keydown.stop=";"
                 ></v-text-field>
             </div>
 
@@ -111,6 +115,7 @@
                 height="80"
                 disabled
                 :value="phraseText"
+                @keydown.stop=";"
             ></v-textarea>
 
             <!-- Phrase reading -->
@@ -126,6 +131,7 @@
                 height="80"
                 v-model="reading"
                 @change="inputChanged"
+                @keydown.stop=";"
             ></v-textarea>
             
             <!-- Stage buttons-->
@@ -190,6 +196,7 @@
                 height="100"
                 v-model="translationText"
                 @change="inputChanged"
+                @keydown.stop=";"
             ></v-textarea>
         </div>
 
@@ -316,7 +323,6 @@
                 this.$emit('unselectAllWords');
             },
             addSelectedWordToAnki() {
-                console.log('sending to anki');
                 this.$emit('addSelectedWordToAnki');
             },
             close() {

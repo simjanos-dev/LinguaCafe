@@ -107,7 +107,7 @@
 
         <!--Vocabulary sidebar-->
         <vocabulary-side-box
-            v-if="$props.vocabularySidebarFits && $props.vocabularySidebar"
+            v-if="$props.vocabularySidebarFits && $props.vocabularySidebar && !modernVocabBox.sidebarHidden"
             :key="'vocabulary-side-box-' + modernVocabBox.key"
             ref="vocabularySideBox"
             :language="$props.language"
@@ -147,6 +147,13 @@
                 ankiShowNotifications: false,
                 textBlocks: this.$props._textBlocks,
                 modernVocabBox: {
+                    /*
+                        Keep the sidebar hidden until the first position
+                        update, so it won't jump around on the screen when
+                        a text is opened.
+                    */
+                    sidebarHidden: true,
+
                     key: 0,
                     active: false,
                     // word, new phrase, existing phrase
@@ -263,7 +270,6 @@
         },
         methods: {
             hotkeyHandle(event) {
-                console.log(event.which);
                 if (!this.$props.hotkeysEnabled) {
                     return;
                 }
@@ -285,7 +291,9 @@
                     // set stage to ignore
                     case 88:
                         event.preventDefault();
-                        this.setStage(1);
+                        if (this.selection.length == 1) {
+                            this.setStage(1);
+                        }
                         break;
 
                     // increase font size
@@ -303,7 +311,7 @@
                         break;
 
                     // add selected word to anki
-                    case 82:
+                    case 70:
                         event.preventDefault();
                         this.addSelectedWordToAnki();
                         break;
@@ -336,8 +344,6 @@
                     var currentWordIndex = this.selection[0].wordIndex;
                 }
 
-                
-                console.log('prev. current:', currentWordIndex);
                 var wordToSelect = -1;
                 var selectedTextBlock = this.selectedTextBlock === -1 ? 0 : this.selectedTextBlock;
 
@@ -394,8 +400,6 @@
                     var currentWordIndex = this.selection[this.selection.length - 1].wordIndex;
                 }
 
-                
-                console.log('prev. current:', currentWordIndex);
                 var wordToSelect = -1;
                 var selectedTextBlock = this.selectedTextBlock === -1 ? 0 : this.selectedTextBlock;
 
@@ -1078,6 +1082,7 @@
 
                 // update sidebar
                 if (this.$props.vocabularySidebarFits && this.$props.vocabularySidebar) {
+                    this.modernVocabBox.sidebarHidden = false;
                     this.modernVocabBox.height = vocabBoxAreaElement.offsetHeight;
                     this.modernVocabBox.positionLeft = vocabBoxArea.right;
                     this.modernVocabBox.positionTop = vocabBoxArea.top;

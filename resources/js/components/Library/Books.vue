@@ -320,13 +320,23 @@
                 for (let bookIndex = 0; bookIndex < this.books.length; bookIndex ++) {
                     if (bookId !== this.books[bookIndex].id) {
                         this.books[bookIndex].chaptersVisible = false;
+                        
                     } else {
                         this.anyChapterVisible = !this.books[bookIndex].chaptersVisible;
                         this.books[bookIndex].chaptersVisible = !this.books[bookIndex].chaptersVisible;
+
                         setTimeout(() => {
                             document.getElementById('book-' + bookId).scrollIntoView();
                         }, 500);
                     }
+                }
+
+                if (this.anyChapterVisible && this.$router.currentRoute.fullPath !== ('/books/' + bookId)) {
+                    this.$router.push('/books/' + bookId);
+                }
+
+                if (!this.anyChapterVisible && this.$router.currentRoute.fullPath !== ('/books')) {
+                    this.$router.push('/books');
                 }
             },
             showStartReviewDialog(bookId, bookName) {
@@ -347,6 +357,10 @@
                     }
 
                     this.books = response.data;
+
+                    if (this.$route.params.bookId !== undefined) {
+                        this.toggleChapters(parseInt(this.$route.params.bookId));
+                    }
                 });
             },
             formatNumber: formatNumber

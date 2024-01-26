@@ -145,7 +145,7 @@ const router = new VueRouter({
         { path: '/login', component: LoginForm },
         { path: '/admin', component: AdminLayout },
         { path: '/media-player', component: MediaPlayer },
-        { path: '/books', component: Books },
+        { path: '/books/:bookId?', component: Books },
         { path: '/chapters/read/:chapterId', component: TextReader },
         { path: '/flashcards', component: FlashcardCollectionList },
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollection },

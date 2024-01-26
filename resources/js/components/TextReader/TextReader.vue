@@ -124,46 +124,58 @@
                 </v-card-text>
             </v-card>&nbsp;
             
-            <!-- Finish -->
-            <div v-if="finished" id="finished-box">
-                <div id="lesson-finished-text">Congratulations! You have finished {{ lessonName }}!</div>
+            <!-- Finish box -->
+            <v-card 
+                v-if="finished" 
+                outlined 
+                id="finished-box"
+                class="rounded-lg mx-auto"
+                width="500px"
+            >
+                <!-- Title -->
+                <v-card-title><v-icon large color="success" class="mr-1">mdi-bookmark-check</v-icon>Congratulations!</v-card-title>
+                
+                <!-- Text -->
+                <v-card-text>
+                    You have finished reading this chapter: <b>{{ lessonName }}</b>, and you have read <b>{{ formatNumber(wordCount) }}</b> words. Keep up the good work, and your 
+                    <span class="text-capitalize">{{ language }}</span> skills will improve steadily. Consistency is key!
 
-                <table id="finished-stats" class="table-sm table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Word type</th>
-                            <th scope="col">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Read words:</td>
-                            <td> {{ wordCount }} </td>
-                        </tr>
-                        <tr>
-                            <td>Newly saved words:</td>
-                            <td> {{ newlySavedWords }} </td>
-                        </tr>
-                        <tr>
-                            <td>Learned words:</td>
-                            <td> {{ learnedWords }} </td>
-                        </tr>
-                        <tr>
-                            <td>Progressed words:</td>
-                            <td> {{ progressedWords }} </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="text-center">
-                    <v-btn depressed :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/' + bookId">Go to lessons</v-btn>
-                    <v-btn depressed :small="$vuetify.breakpoint.xsOnly" color="primary" :to="'/chapters/read/' + nextLesson" v-if="nextLesson !== -1">Go to next lesson</v-btn>
-                </div>
-            </div>
+                    <template v-if="nextLesson === -1">
+                        <br><br>
+                        This was the last chapter in this book.
+                    </template>
+                </v-card-text>
+                
+                <!-- Actions -->
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn 
+                        rounded 
+                        depressed 
+                        color="primary" 
+                        @click="$router.push('/books/' + bookId)"
+                    >
+                        <v-icon class="mr-1">mdi-book-open-variant</v-icon>
+                        Library
+                    </v-btn>
+                    <v-btn 
+                        v-if="nextLesson !== -1"
+                        rounded 
+                        depressed 
+                        color="primary" 
+                        :to="'/chapters/read/' + nextLesson" 
+                    >
+                        <v-icon class="mr-1">mdi-page-next-outline</v-icon>
+                        Next chapter
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
         </div>
     </div>
 </template>
 
 <script>
+    import {formatNumber} from './../../helper.js';
     export default {
         data: function() {
             return {
@@ -247,7 +259,7 @@
                 window.addEventListener('scroll', this.updateToolbarPosition);
                 document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
                 for (let i = 0; i < this.lessons.length; i++) {
-                    if (this.lessons[i].id == this.lessonId && i < this.lessons.length - 1 && this.lessons[i + 1].read_count) {
+                    if (this.lessons[i].id == this.lessonId && i < this.lessons.length - 1) {
                         this.nextLesson = this.lessons[i + 1].id;
                         break;
                     }
@@ -382,7 +394,8 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
+            },
+            formatNumber: formatNumber
         }
     }
 </script>

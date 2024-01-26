@@ -52,7 +52,7 @@
                     <span class="primary--text" style="width: 170px;">s</span><span>Decrease font size</span>
                 </div>
                 <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">r</span><span>Send word or phrase to anki</span>
+                    <span class="primary--text" style="width: 170px;">f</span><span>Send word or phrase to anki</span>
                 </div>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">Esc</span><span>Unselect word or phrase</span>
