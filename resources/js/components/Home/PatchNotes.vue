@@ -13,6 +13,9 @@
                         Added an always open and fixed sidebar vocabulary as a default option for screens wider than 960px. It can be turned off in the text reader settings.
                     </li>
                     <li>
+                        Added youtube subtitle import option.
+                    </li>
+                    <li>
                         Added hotkeys for the text reader and review pages.
                     </li>
                     <li>

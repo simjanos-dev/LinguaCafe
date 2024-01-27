@@ -10,6 +10,10 @@ import ebooklib
 import html
 import pinyin
 from ebooklib import epub
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import TranscriptsDisabled
+
+from urllib import parse
 
 @Language.component("custom_sentence_splitter")
 def custom_sentence_splitter(doc):    
@@ -91,44 +95,6 @@ def tokenizer(request):
         for text in postData['raw_text']:
             tokenizedText.append(tokenizeText(text, language))
         return HttpResponse(json.dumps(tokenizedText), content_type="application/json")
-
-# returns a raw text and a tokenized text 
-# of n .epub file cut into chunks
-def importBook(request):
-    postData = json.loads(request.body)
-    
-    # load book
-    content = loadBook(postData['importFile'])
-    content = content.replace('\r\n', ' NEWLINE ')
-    content = content.replace('\n', ' NEWLINE ')
-
-    # split text into sentences
-    for sentenceEnding in sentenceEndings:
-        content = content.replace(sentenceEnding, sentenceEnding + 'TMP_ST')
-    sentences = content.split('TMP_ST')
-
-    # split book into chunks
-    chunks = list()
-    processedChunks = list()
-    for sentenceIndex, sentence in enumerate(sentences):
-        if (len(processedChunks) == 0 or len(processedChunks[-1]) > postData['chunkSize']):
-            chunks.append('')
-            processedChunks.append('')
-
-        chunks[-1] += sentences[sentenceIndex]
-        chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
-        chunks[-1] = chunks[-1].replace('\xa0', ' ')
-        processedChunks[-1] += sentences[sentenceIndex]
-
-
-    #tokenize each chunk
-    for chunkIndex, chunk in enumerate(processedChunks):
-        if postData['textProcessingMethod'] == 'simple':
-            processedChunks[chunkIndex] = tokenizeTextSimple(processedChunks[chunkIndex], postData['language'])
-        else:
-            processedChunks[chunkIndex] = tokenizeText(processedChunks[chunkIndex], postData['language'])
-
-    return HttpResponse(json.dumps({'textChunks': chunks, 'processedChunks': processedChunks}), content_type="application/json")
 
 # Cuts a text into sentences and words. Works like 
 # tokenizer, but provides no additional data for words.
@@ -242,7 +208,6 @@ def tokenizeText(words, language):
                 lemma = get_separable_lemma(token)
             
             tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': sentenceIndex, 'g': gender})
-    print(tokenizedWords)
     return tokenizedWords
 
 # used for german separable verbs
@@ -269,3 +234,101 @@ def loadBook(file):
             content = content + epubPage
 
     return str(content)
+
+# returns a raw text and a tokenized text 
+# of n .epub file cut into chunks
+def importBook(request):
+    postData = json.loads(request.body)
+    
+    # load book
+    content = loadBook(postData['importFile'])
+    content = content.replace('\r\n', ' NEWLINE ')
+    content = content.replace('\n', ' NEWLINE ')
+
+    # split text into sentences
+    for sentenceEnding in sentenceEndings:
+        content = content.replace(sentenceEnding, sentenceEnding + 'TMP_ST')
+    sentences = content.split('TMP_ST')
+
+    # split book into chunks
+    chunks = list()
+    processedChunks = list()
+    for sentenceIndex, sentence in enumerate(sentences):
+        if (len(processedChunks) == 0 or len(processedChunks[-1]) > postData['chunkSize']):
+            chunks.append('')
+            processedChunks.append('')
+
+        chunks[-1] += sentences[sentenceIndex]
+        chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
+        chunks[-1] = chunks[-1].replace('\xa0', ' ')
+        processedChunks[-1] += sentences[sentenceIndex]
+
+
+    # tokenize each chunk
+    for chunkIndex, chunk in enumerate(processedChunks):
+        if postData['textProcessingMethod'] == 'simple':
+            processedChunks[chunkIndex] = tokenizeTextSimple(processedChunks[chunkIndex], postData['language'])
+        else:
+            processedChunks[chunkIndex] = tokenizeText(processedChunks[chunkIndex], postData['language'])
+
+    return HttpResponse(json.dumps({'textChunks': chunks, 'processedChunks': processedChunks}), content_type="application/json")
+
+# cuts the text given in post data into chunks, and tokenizes them
+def importText(request):
+    postData = json.loads(request.body)
+    
+    # load text
+    text = postData['importText']
+    text = text.replace('\r\n', ' NEWLINE ')
+    text = text.replace('\n', ' NEWLINE ')
+
+    # split text into sentences
+    for sentenceEnding in sentenceEndings:
+        text = text.replace(sentenceEnding, sentenceEnding + 'TMP_ST')
+    sentences = text.split('TMP_ST')
+
+    # split the text into chunks
+    chunks = list()
+    processedChunks = list()
+    for sentenceIndex, sentence in enumerate(sentences):
+        if (len(processedChunks) == 0 or len(processedChunks[-1]) > postData['chunkSize']):
+            chunks.append('')
+            processedChunks.append('')
+
+        chunks[-1] += sentences[sentenceIndex]
+        chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
+        chunks[-1] = chunks[-1].replace('\xa0', ' ')
+        processedChunks[-1] += sentences[sentenceIndex]
+
+
+    #tokenize each chunk
+    for chunkIndex, chunk in enumerate(processedChunks):
+        if postData['textProcessingMethod'] == 'simple':
+            processedChunks[chunkIndex] = tokenizeTextSimple(processedChunks[chunkIndex], postData['language'])
+        else:
+            processedChunks[chunkIndex] = tokenizeText(processedChunks[chunkIndex], postData['language'])
+
+    return HttpResponse(json.dumps({'textChunks': chunks, 'processedChunks': processedChunks}), content_type="application/json")
+
+def getYoutubeSubtitles(request):
+    postData = json.loads(request.body)
+    
+    parsedUrl = parse.urlparse(postData['url'])
+    videoId = parse.parse_qs(parsedUrl.query)['v'][0]
+
+    try:
+        subtitles = YouTubeTranscriptApi.list_transcripts(videoId)
+    except TranscriptsDisabled: 
+        return HttpResponse(json.dumps(list()), content_type="application/json")
+
+    subtitleList = list()
+    for subtitle in subtitles:
+        subtitleList.append({
+            'language': subtitle.language, 
+            'languageLowerCase': subtitle.language.lower(), 
+            'languageCode': subtitle.language_code, 
+            'text': '\n'.join(line['text'] for line in subtitle.fetch())
+        })
+
+    
+    return HttpResponse(json.dumps(subtitleList), content_type="application/json")

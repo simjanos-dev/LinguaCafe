@@ -499,6 +499,11 @@
 }
 
 // color picker actions
-.color-picker-actions {
+#app.dark .color-picker-actions {
     background-color: var(--v-foreground-base);
+}
+
+// library import dialog
+#app.dark #import-dialog .youtube-subtitle-source #selected-youtube-subtitle {
+    background-color: var(--v-gray-base);
 }

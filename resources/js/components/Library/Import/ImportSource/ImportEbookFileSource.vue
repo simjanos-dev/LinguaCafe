@@ -55,7 +55,7 @@
             selectImportFile() {
                 this.$emit('file-selected', {
                     importFile: this.ebookFile,
-                    isImportFileValid: this.$refs.importFileForm.validate()
+                    isImportSourceValid: this.$refs.importFileForm.validate()
                 });
             }
         }

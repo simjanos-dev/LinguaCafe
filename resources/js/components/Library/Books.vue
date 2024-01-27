@@ -359,8 +359,10 @@
                     this.books = response.data;
 
                     if (this.$route.params.bookId !== undefined) {
-                        this.toggleChapters(parseInt(this.$route.params.bookId));
-                    }
+                        this.$nextTick(() => {
+                            this.toggleChapters(parseInt(this.$route.params.bookId));
+                        });
+                    } 
                 });
             },
             formatNumber: formatNumber

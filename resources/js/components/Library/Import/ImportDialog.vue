@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" persistent width="1000px">
+    <v-dialog v-model="value" scrollable persistent width="1000px">
         <v-card id="import-dialog" class="rounded-lg" :loading="importLoading">
             <!-- Card title -->
             <v-card-title>
@@ -16,14 +16,14 @@
                 <v-stepper id="import-stepper" v-model="stepperPage" elevation="0" class="pb-0" min-height="640px">
                     <v-stepper-header>
                         <v-stepper-step :complete="stepperPage > 1" step="1" :color="stepperPage > 1 ? 'success' : 'primary'">
-                            Source
-                            <small>Import source</small>
+                            Type
+                            <small>Import type</small>
                         </v-stepper-step>
                         <v-divider/>
 
                         <v-stepper-step :complete="stepperPage > 2" step="2" :color="stepperPage > 2 ? 'success' : 'primary'">
-                            File
-                            <small>Import file</small>
+                            Source
+                            <small>Import source</small>
                         </v-stepper-step>
                         <v-divider/>
 
@@ -60,11 +60,16 @@
                         </v-stepper-content>
 
                         <!-- Import file selection -->
-                        <v-stepper-content step="2">
-                            <import-ebook-file-selection
+                        <v-stepper-content :class="{'youtube-subtitle-source': importType == 'youtube'}" step="2">
+                            <import-ebook-file-source
                                 v-if="stepperPage > 1 && importType == 'e-book'"
                                 @file-selected="selectImportFile" 
-                            ></import-ebook-file-selection>
+                            ></import-ebook-file-source>
+                            <import-youtube-subtitle-source
+                                v-if="stepperPage > 1 && importType == 'youtube'"
+                                :language="$props.language"
+                                @text-selected="selectImportText" 
+                            ></import-youtube-subtitle-source>
                         </v-stepper-content>
 
                         <!-- Library import settings -->
@@ -144,7 +149,8 @@
                     color="primary" 
                     :disabled="
                         (stepperPage == 1) ||
-                        (stepperPage == 2 && importType === 'e-book' && (!isImportFileValid || importFile === null)) ||
+                        (stepperPage == 2 && importType === 'e-book' && (!isImportSourceValid || importFile === null)) ||
+                        (stepperPage == 2 && importType === 'youtube' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 3 && !isLibraryValid)
                     "
                     @click="stepForward"
@@ -174,11 +180,15 @@
                 importLoading: false,
                 importResult: '',
                 stepperPage: 1  ,
-                isImportFileValid: false,
+                isImportSourceValid: false,
                 isLibraryValid: false,
                 textProcessingMethod: 'detailed',
                 importType: '',
+
+                // These come from the source step item.
                 importFile: null,
+                importText: '',
+                
                 newOrExistingBook: '',
                 bookId: -1,
                 bookName: '',
@@ -199,7 +209,11 @@
             },
             selectImportFile(data) {
                 this.importFile = data.importFile;
-                this.isImportFileValid = data.isImportFileValid;
+                this.isImportSourceValid = data.isImportSourceValid;
+            },
+            selectImportText(data) {
+                this.importText = data.text;
+                this.isImportSourceValid = data.isImportSourceValid;
             },
             libraryInputChanged(data) {
                 this.isLibraryValid = data.isFormValid;
@@ -226,7 +240,8 @@
 
                 if(this.stepperPage < 2) {
                     this.importFile = null;
-                    this.isImportFileValid = false;
+                    this.importText = '';
+                    this.isImportSourceValid = false;
                     this.importType = '';
                 }
 
@@ -244,7 +259,13 @@
             finishImport() {
                 var data = new FormData();
                 data.set('importType', this.importType);
-                data.set('importFile', this.importFile);
+                
+                if (this.importType === 'e-book') {
+                    data.set('importFile', this.importFile);
+                } else {
+                    data.set('importText', this.importText);
+                }
+
                 data.set('textProcessingMethod', this.textProcessingMethod);
                 data.set('bookId', this.bookId);
                 data.set('bookName', this.bookName);

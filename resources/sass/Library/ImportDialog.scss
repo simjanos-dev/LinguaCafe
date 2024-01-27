@@ -1,6 +1,40 @@
 @import './../variables';
 
 #import-dialog {
+
+    .youtube-subtitle-source {
+        position: relative;
+        min-height: 628px;
+
+        #selected-youtube-subtitle-label {
+            height: 36px;
+            line-height: 38px;
+            margin-bottom: 0px;
+        }
+
+        #selected-youtube-subtitle {
+            font-size: 16px;
+            line-height: 28px;
+            background-color: var(--v-gray3-base);
+            color: var(--v-text-base)
+        }
+
+        #youtube-subtitles {
+            .youtube-subtitle {
+                line-height: 30px;
+                font-size: 16px;
+                cursor: pointer;
+                user-select: none;
+                transition: .2s;
+                padding-top: 11px;
+
+                &:hover {
+                    background-color: var(--v-gray-base);
+                }
+            }
+        }
+    }
+
     .import-type-group {
         display: flex;
         width: 100%;
@@ -72,5 +106,11 @@
                 width: 136px;
             }
         }
+    }
+}
+
+@media (max-width: 500px) {
+    .v-stepper__content {
+        padding: 0px !important;
     }
 }
