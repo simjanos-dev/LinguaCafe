@@ -1,5 +1,7 @@
 FROM php:8.2-apache
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 RUN curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh \
     && chmod +x ./nodesource_setup.sh \
     && ./nodesource_setup.sh \
@@ -38,22 +40,21 @@ RUN printf 'max_execution_time = 600\n' >> /usr/local/etc/php/conf.d/uploads.ini
 # copy apache config
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-COPY ./ /var/www/html
+COPY --chown=www-data:www-data ./ /var/www/html
 
 # set project directory owner
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN chown -R www-data:www-data /var/www/html \
     # enable htaccess
-    && a2enmod rewrite \
+RUN a2enmod rewrite
     # install composer
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # for some reason i have to install this manually,
 # despite being in the composer.json
 # RUN composer require guzzlehttp/guzzle
 
-RUN composer install \
-    && npm install \
+RUN composer install --optimize-autoloader --no-dev\
+    && npm install --production\
     && npm run prod
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
