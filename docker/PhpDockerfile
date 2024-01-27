@@ -55,7 +55,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 RUN composer install --optimize-autoloader --no-dev\
     && npm install \
-    && npm run prod
+    && npm run prod \
+    && rm -rf /usr/local/share/.cache \
+        /root/.npm \
+        /tmp/* \
+        /usr/local/bin/composer
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
 CMD ["apache2-foreground"]
