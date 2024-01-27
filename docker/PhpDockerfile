@@ -54,7 +54,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # RUN composer require guzzlehttp/guzzle
 
 RUN composer install --optimize-autoloader --no-dev\
-    && npm install --production\
+    && npm install \
     && npm run prod
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
