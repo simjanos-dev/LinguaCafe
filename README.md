@@ -60,14 +60,17 @@ Do not modify the mysql username, password and database name.
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
-If you are below v0.5, please use the migration guides below instead of this.
-
-Run this command from your `linguacafe` folder:
+If you are below v0.5.2, please use the migration guides below instead of this.
 
 ```
-docker compose pull && docker compose up -d
+git pull && docker compose pull && docker compose up -d
 ```
 
+## Migrating from v0.5 or v0.5.1 to higher
+There was an issue again with docker, this time it is an easy fix. Please create a backup of your database, and run this command instead of the one provided in the general update guide:
+```
+git restore ./database/.gitkeep && git restore ./docker-compose.yml && git restore ./storage/app/dictionaries/.gitkeep && git restore ./storage/app/images/book_images/default.jpg && git pull && docker compose pull && docker compose up -d
+```
 ## Migrating from v0.4 to v0.5
 The difference since v0.4 is only the placement of the folders. We have decided to mount the whole `/storage` folder, so users won't have to create several folders. Due to an oversight with the v0.4 folder structure, you have to recover your book cover images, and change your folder structure. 
 
