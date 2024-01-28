@@ -1,13 +1,13 @@
 version: '3'
-name: linguacafe
+name: linguacafe-dev
 
 networks:
-    linguacafe:
+    linguacafe-dev:
         driver: bridge
 
 services:
     webserver:
-        container_name: linguacafe-webserver
+        container_name: linguacafe-webserver-dev
         build:
             context: .
             dockerfile: ./docker/PhpDockerfileDev
@@ -16,16 +16,21 @@ services:
         volumes:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+        environment:
+            PYTHON_CONTAINER_NAME: linguacafe-python-service-dev
+            DB_DATABASE: linguacafe-dev
+            DB_USERNAME: linguacafe-dev
+            DB_PASSWORD: linguacafe-dev
+            DB_HOST: linguacafe-database-dev
         ports:
             - "3000:3000"
-            - "81:80"
         networks:
-            - linguacafe
+            - linguacafe-dev
         extra_hosts:
             - "host.docker.internal:host-gateway"
     mysql:
         image: mysql:8.0
-        container_name: linguacafe-database
+        container_name: linguacafe-database-dev
         restart: unless-stopped
         tty: true
         ports:
@@ -33,15 +38,15 @@ services:
         volumes:
           - ./docker/mysql:/var/lib/mysql
         environment:
-          MYSQL_DATABASE: linguacafe
-          MYSQL_USER: linguacafe
-          MYSQL_PASSWORD: linguacafe
-          MYSQL_ROOT_PASSWORD: linguacafe
-          SERVICE_NAME: linguacafe
+            MYSQL_DATABASE: linguacafe-dev
+            MYSQL_USER: linguacafe-dev
+            MYSQL_PASSWORD: linguacafe-dev
+            MYSQL_ROOT_PASSWORD: linguacafe-dev
+            SERVICE_NAME: linguacafe-dev
         networks:
-            - linguacafe
+            - linguacafe-dev
     python:
-        container_name: linguacafe-python-service
+        container_name: linguacafe-python-service-dev 
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
@@ -51,4 +56,4 @@ services:
             - ./tools/django_server:/app
             - ./storage/app:/var/www/html/storage/app
         networks:
-            - linguacafe
+            - linguacafe-dev

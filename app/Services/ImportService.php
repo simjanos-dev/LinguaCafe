@@ -11,8 +11,13 @@ use App\Models\Book;
 
 class ImportService
 {
+
+    // stores the python service container's name
+    private $pythonService = '';
+
     public function __construct()
     {
+        $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
     
     public function importBook($textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
@@ -21,7 +26,7 @@ class ImportService
         $selectedLanguage = Auth::user()->selected_language;
 
         // tokenize book
-        $text = Http::post('linguacafe-python-service:8678/tokenizer/import-book', [
+        $text = Http::post($this->pythonService . ':8678/tokenizer/import-book', [
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importFile' => $file,
@@ -45,7 +50,7 @@ class ImportService
         $selectedLanguage = Auth::user()->selected_language;
 
         // tokenize book
-        $text = Http::post('linguacafe-python-service:8678/tokenizer/import-text', [
+        $text = Http::post($this->pythonService . ':8678/tokenizer/import-text', [
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importText' => $importText,
@@ -129,7 +134,7 @@ class ImportService
     }
 
     public function getYoutubeSubtitles($url) {
-        $subtitleList = Http::post('linguacafe-python-service:8678/tokenizer/get-youtube-subtitle-list', [
+        $subtitleList = Http::post($this->pythonService . ':8678/tokenizer/get-youtube-subtitle-list', [
             'url' => $url,
         ]);
         

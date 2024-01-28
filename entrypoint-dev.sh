@@ -1,8 +1,7 @@
 #!/bin/sh
 
 composer install \
-    && npm install \
-    && npm run prod
+    && npm install
 
 retry_count=0
 
