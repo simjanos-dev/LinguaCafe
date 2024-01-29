@@ -60,10 +60,10 @@ Do not modify the mysql username, password and database name.
 Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
-If you are below v0.5.2, please use the migration guides below instead of this.
+If you are below v0.5.2, please use the migration guides below instead of this command.
 
 ```
-git pull && docker compose pull && docker compose up -d
+git pull && docker compose pull && docker compose up -d --force-recreate
 ```
 
 ## Migrating from v0.5 or v0.5.1 to higher
