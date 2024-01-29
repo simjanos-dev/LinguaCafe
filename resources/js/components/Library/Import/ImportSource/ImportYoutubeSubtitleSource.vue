@@ -76,6 +76,7 @@
                 <v-spacer />
 
             <v-btn
+                v-if="$vuetify.breakpoint.smAndUp"
                 rounded
                 depressed
                 color="primary"
@@ -88,6 +89,14 @@
             class="rounded-xl pa-6 mt-2"
             v-html="subtitles[selectedSubtitle].displayText"
         ></div>
+        <v-btn
+            v-if="selectedSubtitle !== -1 && $vuetify.breakpoint.xsOnly"
+            rounded
+            depressed
+            color="primary"
+            class="mt-2"
+            @click="unselectSubtitle"
+        >Select another subtitle</v-btn>
     </div>
 </template>
 
