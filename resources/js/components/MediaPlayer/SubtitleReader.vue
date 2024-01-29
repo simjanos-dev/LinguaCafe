@@ -15,7 +15,8 @@
                 'furiganaOnHighlightedWords', 
                 'furiganaOnNewWords', 
                 'mediaControlsVisible',
-                'vocabularySidebar'
+                'vocabularySidebar',
+                'vocabularyHoverBox'
             ]"
             @changed="updateSettings"
         ></text-reader-settings>
@@ -109,6 +110,7 @@
                     :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                     :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
                     :furigana-on-new-words="settings.furiganaOnNewWords"
+                    :vocabulary-hover-box="settings.vocabularyHoverBox"
                     :vocabulary-sidebar="settings.vocabularySidebar"
                     :vocabulary-sidebar-fits="vocabularySidebarFits"
                     v-slot="slotProps"
@@ -155,6 +157,7 @@
                                                 @unselectAllWords="slotProps.unselectAllWords"
                                                 @updateLookupCount="slotProps.updateLookupCount"
                                                 @startSelection="slotProps.startSelection"
+                                                @updateHoveredWords="slotProps.updateHoveredWords"
                                             ></text-block>
                                         </div>
                                     </div>
@@ -186,7 +189,8 @@ export default {
                 hideNewWordHighlights: false,
                 autoMoveWordsToKnown: false,
                 mediaControlsVisible: this.$props.mediaControlsVisible,
-                vocabBoxScrollIntoView: 'scroll-into-view'
+                vocabBoxScrollIntoView: 'scroll-into-view',
+                vocabularyHoverBox: true
             },
             textBlocks: this.$props._textBlocks,
             unloadInvisibleTextBlocksInterval: null,

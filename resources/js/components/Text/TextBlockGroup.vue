@@ -261,6 +261,10 @@
             hotkeysEnabled: {
                 type: Boolean,
                 default: false
+            },
+            vocabularyHoverBox: {
+                type: Boolean,
+                default: false
             }
         },
         watch: {
@@ -553,7 +557,7 @@
                 this.vocabBox.key ++;
             },
             updateHoverVocabularyBox(data) {
-                if (data.hoveredWords === null) {
+                if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
                     this.hoverVocabBox.active = false;
                     this.hoverVocabBox.positionLeft = 0;
                     this.hoverVocabBox.positionTop = 0;

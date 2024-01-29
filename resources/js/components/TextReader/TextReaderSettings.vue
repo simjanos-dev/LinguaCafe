@@ -179,6 +179,27 @@
                     </v-col>
                 </v-row>
 
+                <!-- Auto highlight words -->
+                <v-row v-if="this.$props.enabledSettings.includes('autoHighlightWords')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Auto highlight words:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                Auto highlight words when you add a translation to them.
+                            </v-card>
+                        </v-menu>
+
+                        <v-switch
+                            color="primary"
+                            v-model="settings.autoHighlightWords"
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
                 <!-- Vocabulary box section-->
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Vocabulary box
@@ -226,7 +247,27 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
+                
+                <!-- Vocabulary hover box -->
+                <v-row v-if="this.$props.enabledSettings.includes('vocabularyHoverBox')">
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Vocabulary hover box:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                A minimalistic vocabulary box that appears when you move the mouse over a word or phrase.
+                            </v-card>
+                        </v-menu>
 
+                        <v-switch
+                            color="primary"
+                            v-model="settings.vocabularyHoverBox"
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
                 
             </v-card-text>
 
@@ -258,7 +299,9 @@
                     furiganaOnNewWords: 'furigana-on-new-words',
                     mediaControlsVisible: 'media-controls-visible',
                     subtitleBlockSpacing: 'block-spacing',
-                    vocabularySidebar: 'vocabulary-sidebar'
+                    vocabularySidebar: 'vocabulary-sidebar',
+                    vocabularyHoverBox: 'vocabulary-hover-box',
+                    autoHighlightWords: 'auto-highlight-words'
                 },
                 settings: {},
                 vocabBoxScrollIntoViewData: [
@@ -338,6 +381,14 @@
             if (this.$props.enabledSettings.includes('vocabularySidebar')) {
                 this.loadSetting('vocabularySidebar', 'boolean', true);
             }
+
+            if (this.$props.enabledSettings.includes('vocabularyHoverBox')) {
+                this.loadSetting('vocabularyHoverBox', 'boolean', true);
+            }
+
+            if (this.$props.enabledSettings.includes('autoHighlightWords')) {
+                this.loadSetting('autoHighlightWords', 'boolean', true);
+            }           
             
             this.settingsLoaded = true;
             this.saveSettings();
@@ -372,6 +423,8 @@
                 this.saveSetting('furiganaOnNewWords');
                 this.saveSetting('mediaPlayerVisible');
                 this.saveSetting('vocabularySidebar');
+                this.saveSetting('vocabularyHoverBox');
+                this.saveSetting('autoHighlightWords');
 
                 this.$emit('changed', this.settings);
             },

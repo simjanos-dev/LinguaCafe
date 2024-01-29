@@ -138,7 +138,8 @@ class TextBlock
             $replacedTexts[] = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
         }
 
-        $tokenizedTextArray = Http::post($this->pythonService . ':8678/tokenizer/', [
+        $pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
+        $tokenizedTextArray = Http::post($pythonService . ':8678/tokenizer/', [
             'raw_text' => $replacedTexts,
             'language' => $language
         ]);

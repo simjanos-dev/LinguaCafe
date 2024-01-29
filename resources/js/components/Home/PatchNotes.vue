@@ -5,12 +5,15 @@
         </div>
        
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.6 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-title>v0.6 <v-spacer /> 2024.01.29.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
                     <li>
                         Added an always open and fixed sidebar vocabulary as a default option for screens wider than 960px. It can be turned off in the text reader settings.
+                    </li>
+                    <li>
+                        Added a minimalistic vocabulary box, that appears when the user moves the mouse over a word. It can be turned off in the text reader settings.
                     </li>
                     <li>
                         Added youtube subtitle import option.

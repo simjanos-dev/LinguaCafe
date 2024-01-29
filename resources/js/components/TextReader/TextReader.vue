@@ -38,7 +38,8 @@
                     'vocabBoxScrollIntoView', 
                     'furiganaOnHighlightedWords', 
                     'furiganaOnNewWords', 
-                    'vocabularySidebar'
+                    'vocabularySidebar',
+                    'vocabularyHoverBox'
                 ]"
                 @changed="updateSettings"
             ></text-reader-settings>
@@ -99,6 +100,7 @@
                         :vocab-box-scroll-into-view="settings.vocabBoxScrollIntoView"
                         :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
                         :furigana-on-new-words="settings.furiganaOnNewWords"
+                        :vocabulary-hover-box="settings.vocabularyHoverBox"
                         :vocabulary-sidebar="settings.vocabularySidebar"
                         :vocabulary-sidebar-fits="vocabularySidebarFits"
                         :hotkeys-enabled="true"
@@ -204,7 +206,8 @@
                     furiganaOnHighlightedWords: false,
                     furiganaOnNewWords: false,
                     mediaControlsVisible: true,
-                    vocabularySidebar: true
+                    vocabularySidebar: true,
+                    vocabularyHoverBox: true
                 },
                 fullscreenMode: false,
                 finished: false,

@@ -1,8 +1,8 @@
 version: '3'
-name: linguacafe-dev
+name: linguacafedev
 
 networks:
-    linguacafe-dev:
+    linguacafedev:
         driver: bridge
 
 services:
@@ -25,7 +25,7 @@ services:
         ports:
             - "3000:3000"
         networks:
-            - linguacafe-dev
+            - linguacafedev
         extra_hosts:
             - "host.docker.internal:host-gateway"
     mysql:
@@ -44,7 +44,7 @@ services:
             MYSQL_ROOT_PASSWORD: linguacafe-dev
             SERVICE_NAME: linguacafe-dev
         networks:
-            - linguacafe-dev
+            - linguacafedev
     python:
         container_name: linguacafe-python-service-dev 
         command: /app/manage.py runserver 0.0.0.0:8678
@@ -56,4 +56,4 @@ services:
             - ./tools/django_server:/app
             - ./storage/app:/var/www/html/storage/app
         networks:
-            - linguacafe-dev
+            - linguacafedev
