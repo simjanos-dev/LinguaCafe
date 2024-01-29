@@ -115,7 +115,7 @@
                     </v-alert>
                     <div :class="{
                         'd-flex': true, 
-                        'mb-t': $vuetify.breakpoint.smAndUp,
+                        'mt-16': $vuetify.breakpoint.smAndUp,
                         'mb-3': $vuetify.breakpoint.xsOnly,
                     }">
                         <v-spacer></v-spacer>

@@ -376,6 +376,15 @@
         border-radius: 8px;
     }
 
+    // vocab hover box border color
+    #vocab-hover-box {
+        border-color: rgb(130, 130, 130);
+    
+        &:before {
+            border-bottom-color: rgb(130, 130, 130);
+        }
+    }
+
     // vocab box lemma arrow
     #vocab-box .expression i {
         color: var(--v-text-base);

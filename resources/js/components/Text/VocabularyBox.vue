@@ -176,6 +176,7 @@
                         <vocabulary-search-box
                             :language="$props.language"
                             :_searchTerm="searchField"
+                            @addDefinitionToInput="addDefinitionToInput"
                         ></vocabulary-search-box>
                     </v-card-text>
 

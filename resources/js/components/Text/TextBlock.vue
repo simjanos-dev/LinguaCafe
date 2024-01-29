@@ -28,6 +28,7 @@
                 
                 
                 @pointerenter="hoverPhraseSelection(wordIndex);"
+                @pointerleave="updateHoveredWords(null)"
                 @touchstart="startSelectionTouch($event, word.word, wordIndex)" 
                 @mousedown.stop="startSelection($event, word.word, wordIndex)" 
                 @touchmove="updateSelectionTouch($event, wordIndex);" 
@@ -130,10 +131,22 @@
         },
         methods: {
             hoverPhraseSelection: function(wordIndex) {
+                // collection for hover vocabulary box
+                var hoveredWords = [];
+                var hoveredPhraseIndex = -1;
+
                 this.removePhraseHover();
                 var phraseIndexes = this.words[wordIndex].phraseIndexes;
                 if (!phraseIndexes.length) {
+
+                    // update hovered words
+                    hoveredWords.push(this.words[wordIndex]);
+                    hoveredWords[0].wordIndex = wordIndex;
+                    this.updateHoveredWords(hoveredWords);
+
                     return;
+                } else {
+                    hoveredPhraseIndex = this.words[wordIndex].phraseIndexes[0];
                 }
 
                 // find the first word of the phrase
@@ -141,18 +154,48 @@
                 while (currentWordIndex > 0 && (this.words[currentWordIndex - 1].word == 'NEWLINE' || this.words[currentWordIndex - 1].phraseIndexes.some(el => phraseIndexes.includes(el)))) {
                     currentWordIndex--;
                 }
-
                 // highlight the phrase
-                
                 do {
+                    // add words for hover vocabulary box
+                    if (this.words[currentWordIndex].phraseIndexes.includes(hoveredPhraseIndex) && this.words[currentWordIndex].word !== 'NEWLINE') {
+                        hoveredWords.push(this.words[currentWordIndex]);
+                        hoveredWords[hoveredWords.length - 1].wordIndex = currentWordIndex;
+                    }
+
                     this.words[currentWordIndex].hover = true;
                     currentWordIndex ++;
                 } while(currentWordIndex < this.words.length && (this.words[currentWordIndex].word == 'NEWLINE' || this.words[currentWordIndex].phraseIndexes.some(el => phraseIndexes.includes(el))));
+
+                this.updateHoveredWords(hoveredWords, hoveredPhraseIndex);
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
                     this.words[i].hover = false;
                 }
+            },
+            updateHoveredWords: function(hoveredWords, hoveredPhraseIndex) {
+                var data = {
+                    textBlockId: this.$props.textBlockId,
+                    hoveredWords: JSON.parse(JSON.stringify(hoveredWords)),
+                    translation: '',
+                    reading: '',
+                };
+
+                if (hoveredWords !== null && hoveredWords.length === 1) {
+                    var uniqueWordIndex = this.getUniqueWordIndex(hoveredWords[0].word.toLowerCase());
+                    var uniqueWord = this.uniqueWords[uniqueWordIndex];
+                    
+                    data.translation = uniqueWord.translation;
+                    data.reading = uniqueWord.reading;
+                }
+
+                if (hoveredWords !== null && hoveredWords.length > 1) {
+                    data.translation = this.phrases[hoveredPhraseIndex].translation;
+                    data.reading = this.phrases[hoveredPhraseIndex].reading;
+                }
+                
+
+                this.$emit('updateHoveredWords', data);
             },
             selectPhraseInstanceByWord: function(wordIndex, phraseIndex) {
                 var currentWordIndex = wordIndex;
