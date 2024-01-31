@@ -7,6 +7,7 @@
             :item-id="vocabularyEditDialog.itemId" 
             :item-type="vocabularyEditDialog.itemType" 
             :language="$props.language"
+            @saved="loadVocabularySearchPage"
         ></vocabulary-edit-dialog>
 
         <!-- Vocabulary export dialog -->
@@ -339,39 +340,42 @@
                 this.currentPage = parseInt(this.$route.params.page);
             }
 
-            axios.post('/vocabulary/search', {
-                text: (this.filters.text == '') ? 'anytext' : this.filters.text,
-                book: this.filters.book,
-                chapter: this.filters.chapter,
-                stage: this.filters.stage,
-                translation: this.filters.translation,
-                phrases: this.filters.phrases,
-                orderBy: this.filters.orderBy,
-                page: this.currentPage,
-            }).then(function (response) {
-                this.loading = false;
-                var data = response.data;
-                this.filters.bookIndex = data.bookIndex;
-                this.words = data.words;
-                this.books = data.books;
-                this.pageCount = data.pageCount;
-                this.currentPage = parseInt(data.currentPage);
-                this.wordCount = data.wordCount;
-
-                if (this.pageCount - this.currentPage < 3) {
-                    this.paginationLimitBefore += 3 - (this.pageCount - this.currentPage);
-                }
-
-                if (this.currentPage < 4) {
-                    this.paginationLimitAfter += 4 - this.currentPage;
-                }
-
-                if (this.filters.text == 'anytext') {
-                    this.filters.text = '';
-                }
-            }.bind(this)).catch(function (error) {}).then(function () {});
+            this.loadVocabularySearchPage();
         },
         methods: {
+            loadVocabularySearchPage() {
+                axios.post('/vocabulary/search', {
+                    text: (this.filters.text == '') ? 'anytext' : this.filters.text,
+                    book: this.filters.book,
+                    chapter: this.filters.chapter,
+                    stage: this.filters.stage,
+                    translation: this.filters.translation,
+                    phrases: this.filters.phrases,
+                    orderBy: this.filters.orderBy,
+                    page: this.currentPage,
+                }).then((response) => {
+                    this.loading = false;
+                    var data = response.data;
+                    this.filters.bookIndex = data.bookIndex;
+                    this.words = data.words;
+                    this.books = data.books;
+                    this.pageCount = data.pageCount;
+                    this.currentPage = parseInt(data.currentPage);
+                    this.wordCount = data.wordCount;
+
+                    if (this.pageCount - this.currentPage < 3) {
+                        this.paginationLimitBefore += 3 - (this.pageCount - this.currentPage);
+                    }
+
+                    if (this.currentPage < 4) {
+                        this.paginationLimitAfter += 4 - this.currentPage;
+                    }
+
+                    if (this.filters.text == 'anytext') {
+                        this.filters.text = '';
+                    }
+                });
+            },
             openExportDialog() {
                 this.vocabularyExportDialog.active = true;
             },

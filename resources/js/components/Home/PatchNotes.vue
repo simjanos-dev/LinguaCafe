@@ -18,11 +18,15 @@
                     <li>
                         A list of words which were not counted in statistics now will automatically set to ignored when imported. Also added all numbers and more symbols to the list.
                     </li>
+                    <li>
+                        Vocabulary search page's edit dialog now will close by its own after saving it, and the search results will be updated automatically.
+                    </li>
                 </ul>
                 
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
+                        Fixed a bug that caused the records on the vocabulary search page to appear in random order inside the specified order by parameter.
                     </li>
                 </ul>
                 

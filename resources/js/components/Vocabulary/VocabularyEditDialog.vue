@@ -262,7 +262,7 @@
                 axios.post('/vocabulary/word/save', saveData).then(() => {
                     this.saved = true;
                     this.saving = false;
-                    this.close();
+                    this.updateVocabularySearch();
                 });
             },
             savePhrase: function(withStage = false, exampleSentenceChanged = false) {                
@@ -276,13 +276,17 @@
                 axios.post('/vocabulary/phrase/save', saveData).then(() => {
                     this.saved = true;
                     this.saving = false;
-                    this.close();
+                    this.updateVocabularySearch();
                 });
             },
             changed: function() {
                 this.saved = false;
             },
             close: function() {
+                this.$emit('input', false);
+            },
+            updateVocabularySearch: function() {
+                this.$emit('saved');
                 this.$emit('input', false);
             }
         }

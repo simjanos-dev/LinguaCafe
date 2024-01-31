@@ -594,6 +594,8 @@ class VocabularyController extends Controller
             $search = $search->orderBy('stage', 'desc');
         }
 
+        $search = $search->orderBy('id')->orderBy('type');
+
         return $search;
     }
 
