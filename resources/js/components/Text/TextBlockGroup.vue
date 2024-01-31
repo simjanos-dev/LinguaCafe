@@ -161,6 +161,7 @@
                 hoverVocabBox: {
                     active: false,
                     key: 0,
+                    textBlockId: -1,
                     hoveredWords: null,
                     hoveredPhrase: -1,
                     reading: '',
@@ -317,9 +318,7 @@
                     // set stage to ignore
                     case 88:
                         event.preventDefault();
-                        if (this.selection.length == 1) {
-                            this.setStage(1);
-                        }
+                        this.setStage(1);
                         break;
 
                     // increase font size
@@ -558,20 +557,23 @@
             },
             updateHoverVocabularyBox(data) {
                 if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
+                    this.hoverVocabBox.hoveredWords = null;
                     this.hoverVocabBox.active = false;
                     this.hoverVocabBox.positionLeft = 0;
                     this.hoverVocabBox.positionTop = 0;
                     this.hoverVocabBox.translation = '';
                     this.hoverVocabBox.reading = '';
-                    
+                    this.hoverVocabBox.hoveredPhrase = -1;
+                    this.textBlockId = -1;                    
                     return;
                 } else {
                     this.hoverVocabBox.hoveredWords = data.hoveredWords;
                     this.hoverVocabBox.key ++;
-                    this.hoverVocabBox.hoveredPhrase = -1;
+                    this.hoverVocabBox.hoveredPhrase = data.hoveredPhrase;
                     this.hoverVocabBox.translation = data.translation;
                     this.hoverVocabBox.reading = data.reading;
                     this.hoverVocabBox.active = (data.translation.length > 0 || data.reading.length > 0);
+                    this.hoverVocabBox.textBlockId = data.textBlockId;
                 }
 
                 var margin = 8;
@@ -1027,6 +1029,36 @@
                 this.$forceUpdate();
             },
             setStage(stage) {
+                var hoverSetStage = false;
+                
+                // do not set selected phrases to ignored
+                if (this.selection.length > 1 && stage === 1) {
+                    return;
+                }
+
+                if (!this.selection.length && this.hoverVocabBox.hoveredWords !== null) {
+                    hoverSetStage = true;
+
+                    // do not set hovered phrases to ignored
+                    if (this.hoverVocabBox.hoveredWords.length > 1 && stage === 1) {
+                        return;
+                    }
+
+                    // select hovered word and click on it
+                    for (let i = 0; i < this.hoverVocabBox.hoveredWords.length; i++) {
+                        if (!this.hoverVocabBox.hoveredWords[i].hover) {
+                            continue;
+                        }
+                    
+                        var wordElement = document.querySelector('[textblock="' + this.hoverVocabBox.textBlockId + '"] [wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]');
+                        var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
+                        var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
+                        wordElement.dispatchEvent(mouseDownEvent);
+                        wordElement.dispatchEvent(mouseUpEvent);
+                        break;
+                    }
+                }
+
                 if (!this.selection.length || (this.selection.length > 1 && this.selectedPhrase === -1)) {
                     return;
                 }
@@ -1040,9 +1072,17 @@
                 }
 
                 if (this.selectedPhrase == -1 && this.selection.length == 1) {
-                    this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage = stage;
                     if (stage == 0) {
                         this.learnedWords ++;
+                    }
+
+                    // set stage for all unique words that match the selected word
+                    for (var j  = 0; j < this.textBlocks.length; j++) {
+                        for (var i  = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
+                            if (this.textBlocks[j].uniqueWords[i].word == this.selection[0].word.toLowerCase()) {
+                                this.textBlocks[j].uniqueWords[i].stage = stage;
+                            }
+                        }
                     }
 
                     // set stage for all words that match the selected word
@@ -1081,6 +1121,11 @@
                 }
 
                 this.vocabBox.stage = stage;
+
+                // unselect word if it was hovered
+                if (hoverSetStage) {
+                    this.unselectAllWords();
+                }
             },
             updateSelectedWordStage() {
                 if (this.selectedPhrase == -1 && this.selection.length) {

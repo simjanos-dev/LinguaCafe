@@ -140,7 +140,9 @@
                 if (!phraseIndexes.length) {
 
                     // update hovered words
-                    hoveredWords.push(this.words[wordIndex]);
+                    var word = JSON.parse(JSON.stringify(this.words[wordIndex]));
+                    word.hover = true;
+                    hoveredWords.push(word);
                     hoveredWords[0].wordIndex = wordIndex;
                     this.updateHoveredWords(hoveredWords);
 
@@ -154,15 +156,17 @@
                 while (currentWordIndex > 0 && (this.words[currentWordIndex - 1].word == 'NEWLINE' || this.words[currentWordIndex - 1].phraseIndexes.some(el => phraseIndexes.includes(el)))) {
                     currentWordIndex--;
                 }
+                
                 // highlight the phrase
                 do {
+                    this.words[currentWordIndex].hover = true;
+
                     // add words for hover vocabulary box
                     if (this.words[currentWordIndex].phraseIndexes.includes(hoveredPhraseIndex) && this.words[currentWordIndex].word !== 'NEWLINE') {
                         hoveredWords.push(this.words[currentWordIndex]);
                         hoveredWords[hoveredWords.length - 1].wordIndex = currentWordIndex;
                     }
 
-                    this.words[currentWordIndex].hover = true;
                     currentWordIndex ++;
                 } while(currentWordIndex < this.words.length && (this.words[currentWordIndex].word == 'NEWLINE' || this.words[currentWordIndex].phraseIndexes.some(el => phraseIndexes.includes(el))));
 
