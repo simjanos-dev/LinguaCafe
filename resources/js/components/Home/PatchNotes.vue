@@ -5,6 +5,36 @@
         </div>
        
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.7 <v-spacer /> 2024.02.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Replaced the python Django server with Bottle for better performance.
+                    </li>
+                    <li>
+                        Added dynamic language model loading. Models are only going to be loaded at the first import for each language. This will significantly decrease memory use based on which and how many langauges are used on a server after its startup.
+                    </li>
+                    <li>
+                        A list of words which were not counted in statistics now will automatically set to ignored when imported. Also added all numbers and more symbols to the list.
+                    </li>
+                </ul>
+                
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+                
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.6 <v-spacer /> 2024.01.29.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
