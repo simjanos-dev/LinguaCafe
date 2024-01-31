@@ -65,6 +65,6 @@ class ImportController extends Controller
         $url = $request->post('url');
         $subtitleList = (new ImportService())->getYoutubeSubtitles($url);
 
-        return json_encode($subtitleList);
+        return $subtitleList;
     }
 }

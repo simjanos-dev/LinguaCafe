@@ -138,6 +138,6 @@ class ImportService
             'url' => $url,
         ]);
         
-        return json_decode($subtitleList);
+        return $subtitleList;
     }
 }

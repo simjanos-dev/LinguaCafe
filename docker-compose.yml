@@ -42,7 +42,7 @@ services:
             - linguacafe
     python:
         container_name: linguacafe-python-service
-        command: /app/manage.py runserver 0.0.0.0:8678
+        command: "python3 /app/tokenizer.py"
         restart: unless-stopped
         tty: true
         image: ghcr.io/simjanos-dev/linguacafe-python-service:main

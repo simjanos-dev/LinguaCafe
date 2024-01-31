@@ -47,13 +47,13 @@ services:
             - linguacafedev
     python:
         container_name: linguacafe-python-service-dev 
-        command: /app/manage.py runserver 0.0.0.0:8678
+        command: "python3 /app/tokenizer.py"
         restart: unless-stopped
         tty: true
         build:
             dockerfile: ./docker/PythonDockerfileDev
         volumes:
-            - ./tools/django_server:/app
+            - ./tools:/app
             - ./storage/app:/var/www/html/storage/app
         networks:
             - linguacafedev

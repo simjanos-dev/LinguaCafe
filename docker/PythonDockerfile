@@ -17,8 +17,8 @@ RUN pip install -U --no-cache-dir \
         ebooklib \
 #kanji reading
         pykakasi \
-#django
-        django \
+#bottle
+        bottle \
 #spacy
         spacy \
 #chinese reading
@@ -39,7 +39,4 @@ RUN python3 -m spacy download ja_core_news_sm \
     && python3 -m spacy download uk_core_news_sm \
     && python3 -m spacy download xx_ent_wiki_sm
 
-COPY ./tools/django_server /app
-
-#start django server (/tools/django_server)
-#RUN /app/manage.py runserver 8678
+COPY ./tools /app
