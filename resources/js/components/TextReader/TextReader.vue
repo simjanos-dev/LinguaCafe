@@ -39,7 +39,8 @@
                     'furiganaOnHighlightedWords', 
                     'furiganaOnNewWords', 
                     'vocabularySidebar',
-                    'vocabularyHoverBox'
+                    'vocabularyHoverBox',
+                    'autoHighlightWords'
                 ]"
                 @changed="updateSettings"
             ></text-reader-settings>
@@ -102,6 +103,7 @@
                         :furigana-on-new-words="settings.furiganaOnNewWords"
                         :vocabulary-hover-box="settings.vocabularyHoverBox"
                         :vocabulary-sidebar="settings.vocabularySidebar"
+                        :auto-highlight-words="settings.autoHighlightWords"
                         :vocabulary-sidebar-fits="vocabularySidebarFits"
                         :hotkeys-enabled="true"
                         @increase-font-size="increaseFontSize"
@@ -207,7 +209,8 @@
                     furiganaOnNewWords: false,
                     mediaControlsVisible: true,
                     vocabularySidebar: true,
-                    vocabularyHoverBox: true
+                    vocabularyHoverBox: true,
+                    autoHighlightWords: true
                 },
                 fullscreenMode: false,
                 finished: false,

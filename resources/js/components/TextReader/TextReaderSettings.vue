@@ -248,9 +248,14 @@
                     </v-col>
                 </v-row>
                 
+                <!-- Vocabulary box section-->
+                <div class="subheader subheader-margin-top d-flex mb-2">
+                    Vocabulary hover box
+                </div>
+
                 <!-- Vocabulary hover box -->
                 <v-row v-if="this.$props.enabledSettings.includes('vocabularyHoverBox')">
-                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Vocabulary hover box:</v-col>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Hover vocabulary box:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-menu offset-y left nudge-top="-12px">
                             <template v-slot:activator="{ on, attrs }">
@@ -264,6 +269,17 @@
                         <v-switch
                             color="primary"
                             v-model="settings.vocabularyHoverBox"
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
+                <!-- Vocabulary hover box dictionary search -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Hover vocabulary dictionary search:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-switch
+                            color="primary"
                             @change="saveSettings"
                         ></v-switch>
                     </v-col>

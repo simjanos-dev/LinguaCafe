@@ -104,6 +104,7 @@
             :word="vocabBox.word"
             :phrase="vocabBox.phrase"
             :stage="vocabBox.stage"
+            :auto-highlight-words="$props.autoHighlightWords"
             :_reading="vocabBox.reading"
             :_baseWord="vocabBox.baseWord"
             :_baseWordReading="vocabBox.baseWordReading"
@@ -133,6 +134,7 @@
             :word="vocabBox.word"
             :phrase="vocabBox.phrase"
             :stage="vocabBox.stage"
+            :auto-highlight-words="$props.autoHighlightWords"
             :_reading="vocabBox.reading"
             :_baseWord="vocabBox.baseWord"
             :_baseWordReading="vocabBox.baseWordReading"
@@ -270,6 +272,10 @@
             vocabularyHoverBox: {
                 type: Boolean,
                 default: false
+            },
+            autoHighlightWords: {
+                type: Boolean,
+                default: true
             }
         },
         watch: {

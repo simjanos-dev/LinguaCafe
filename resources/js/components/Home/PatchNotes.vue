@@ -16,13 +16,19 @@
                         Added dynamic language model loading. Models are only going to be loaded at the first import for each language. This will significantly decrease memory use based on which and how many langauges are used on a server after its startup.
                     </li>
                     <li>
+                        Setting words' and phrases' levels is now possible while hovering over them.
+                    </li>
+                    <li>
+                        Added dictionary search for mouse hover vocabulary box. 
+                    </li>
+                    <li>
+                        Added an option to automatically highlight words when it gets a translation added to it. 
+                    </li>
+                    <li>
                         A list of words which were not counted in statistics now will be automatically set to ignored when imported. Also added all numbers and more symbols to the list.
                     </li>
                     <li>
                         Vocabulary search page's edit dialog now will close on its own after saving it, and the search results will be updated automatically.
-                    </li>
-                    <li>
-                        Setting words' and phrases' levels is now possible while hovering over them.
                     </li>
                 </ul>
                 

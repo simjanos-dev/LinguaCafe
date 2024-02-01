@@ -195,7 +195,7 @@
                 hide-details
                 height="100"
                 v-model="translationText"
-                @change="inputChanged"
+                @change="inputChanged('translation')"
                 @keydown.stop=";"
             ></v-textarea>
         </div>
@@ -231,6 +231,7 @@
 <script>
     export default {
         props: {
+            autoHighlightWords: Boolean,
             language: String,
             active: Boolean,
             type: String,
@@ -306,9 +307,9 @@
                 }
 
                 this.translationText += definition;
-                this.inputChanged();
+                this.inputChanged('translation');
             },
-            inputChanged() {
+            inputChanged(inputName = '') {
                 this.updateVocabBoxTranslationList();
 
                 this.$emit('updateVocabBoxData', {
@@ -318,6 +319,10 @@
                     phraseReading: this.phraseReading,
                     translationText: this.translationText
                 });
+
+                if (inputName == 'translation' && this.$props.stage >= 0 && this.$props.autoHighlightWords && this.translationText !== '') {
+                    this.setStage(-7);
+                }
             },
             unselectAllWords() {
                 this.$emit('unselectAllWords');
