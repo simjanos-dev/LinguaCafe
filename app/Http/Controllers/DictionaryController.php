@@ -113,17 +113,85 @@ class DictionaryController extends Controller
     }
 
     /*
+        This function returns a list of exact matches from dictionaries for the hover popup vocabulary.
+    */
+    public function searchDefinitionsForHoverVocabulary(Request $request) {
+        $language = $request->post('language');
+        $term = $request->post('term');
+        $key = $request->post('key');
+        $limit = 15;
+        $searchResults = [];
+        
+        $dictionaries = Dictionary
+            ::where('enabled', true)
+            ->where('language', $language)
+            ->get();
+
+        // go through each dictionary and search in them
+        foreach ($dictionaries as $dictionary) {
+            $results = [];
+
+            // make search based on dictionary type
+            if ($dictionary->name == 'JMDict') {
+                $searchRecords = $this->searchJmDict($term, true);
+            } else if ($dictionary->database_table_name == 'API') {
+                // skip dictionary if it's an api
+                continue;
+            } else {
+                $searchRecords = $this->searchImportedDictionary($dictionary->database_table_name, $term, true);
+            }
+
+            // add definitions to the final search results
+            foreach ($searchRecords as $searchRecord) {
+                foreach ($searchRecord->definitions as $definition) {
+                    // break loop if the search result limit is reached
+                    if (count($searchResults) > $limit) {
+                        break;
+                    }
+                    
+                    // add definitions based on dictionary type
+                    if ($dictionary->name == 'JMDict') {
+                        foreach (explode(',', $definition) as $splitDefinition) {
+                            $searchResults[] = $splitDefinition;
+                        }
+                    } else {
+                        $searchResults[] = $definition;
+                    }
+                }
+            }
+        }
+
+        /*
+            Return the found definitions and the search term. Search
+            term must be returned so the client knows which request it.
+        */
+        $result = new \stdClass();
+        $result->term = $term;
+        $result->definitions = array_values(array_unique($searchResults));
+        return json_encode($result);
+    }
+
+    /*
         This function searches a dictionary imported by an admin/user.
     */
-    private function searchImportedDictionary($dictionaryTable, $term) {
+    private function searchImportedDictionary($dictionaryTable, $term, $strict = false) {
         $records = [];
         
-        $dictionaryWords = ImportedDictionary
+        // if strict is true, only return exact matches
+        if ($strict) {
+            $dictionaryWords = ImportedDictionary
             ::fromTable($dictionaryTable)
-            ->where('word', 'LIKE', $term . '%')
-            ->orderByRaw('LENGTH(word)')
+            ->where('word', $term)
             ->limit(40)
             ->get();
+        } else {
+            $dictionaryWords = ImportedDictionary
+                ::fromTable($dictionaryTable)
+                ->where('word', 'LIKE', $term . '%')
+                ->orderByRaw('LENGTH(word)')
+                ->limit(40)
+                ->get();
+        }
 
         foreach ($dictionaryWords as $word) {
             $definitions = explode(';', $word->definitions);
@@ -204,10 +272,10 @@ class DictionaryController extends Controller
         This function searches JMDict, which requires
         custom search function.
     */
-    private function searchJmDict($term) {
+    private function searchJmDict($term, $strict = false) {
         $ids = [];
         // exact word matches
-        $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', 'like', $term)->get()->toArray();
+        $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', $term)->get()->toArray();
         foreach ($search as $result) {
             if (!in_array($result, $ids, true)) {
                 array_push($ids, $result);
@@ -215,26 +283,29 @@ class DictionaryController extends Controller
         }
 
         // exact reading matches
-        $search = VocabularyJmdict::select('id')->whereRelation('readings', 'reading', 'like', $term)->get()->toArray();
+        $search = VocabularyJmdict::select('id')->whereRelation('readings', 'reading', $term)->get()->toArray();
         foreach ($search as $result) {
             if (!in_array($result, $ids, true)) {
                 array_push($ids, $result);
             }
         }
 
-        // partial word matches, max 10
-        $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', 'like', $term . '%')->get()->toArray();
-        foreach ($search as $result) {
-            if (!in_array($result, $ids, true) && count($ids) < 10) {
-                array_push($ids, $result);
+        // if strict is true, do not return partial matches
+        if (!$strict) {
+            // partial word matches, max 10
+            $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', 'like', $term . '%')->get()->toArray();
+            foreach ($search as $result) {
+                if (!in_array($result, $ids, true) && count($ids) < 10) {
+                    array_push($ids, $result);
+                }
             }
-        }
 
-        // partial reading matches, max 10
-        $search = VocabularyJmdict::select('id')->whereRelation('readings', 'reading', 'like', $term . '%')->get()->toArray();
-        foreach ($search as $result) {
-            if (!in_array($result, $ids, true) && count($ids) < 10) {
-                array_push($ids, $result);
+            // partial reading matches, max 10
+            $search = VocabularyJmdict::select('id')->whereRelation('readings', 'reading', 'like', $term . '%')->get()->toArray();
+            foreach ($search as $result) {
+                if (!in_array($result, $ids, true) && count($ids) < 10) {
+                    array_push($ids, $result);
+                }
             }
         }
 

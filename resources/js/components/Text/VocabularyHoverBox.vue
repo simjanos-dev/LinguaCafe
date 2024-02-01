@@ -2,7 +2,7 @@
     <v-card 
         outlined 
         id="vocab-hover-box" 
-        class="d-flex flex-wrap rounded-lg pa-2"
+        class="d-flex flex-wrap rounded-lg pa-4"
         :style="{
             'position': 'absolute',
             'left': $props.positionLeft + 'px',
@@ -13,10 +13,34 @@
             {{ $props.reading }}
         </div>
 
-        <ul class="mb-0" v-if="$props.translation.length">
-            <li v-for="(translation, translationIndex) in translationList" :key="translationIndex">
-                {{ translation }}
+        <!-- Translations -->
+        <ul class="mb-0 pl-0">
+            <!-- User translations -->
+            <li v-for="(translation, translationIndex) in userTranslationList" :key="'user-' + translationIndex">
+                <v-icon small>mdi-account-edit</v-icon> {{ translation }}
             </li>
+
+            <!-- Dictionary translations loading -->
+            <template v-if="$props.dictionaryTranslation === 'loading'">
+                <li>
+                    <v-progress-circular indeterminate class="mx-1" size="10" width="2" color="primary"></v-progress-circular> searching
+                </li>
+            </template>
+
+            <!-- Dictionary translations -->
+            <template v-if="$props.dictionaryTranslation !== 'loading' && dictionaryTranslationList.length">
+                <li v-for="(translation, translationIndex) in dictionaryTranslationList" :key="'dictionary-' + translationIndex">
+                    <v-icon small>mdi-list-box</v-icon> {{ translation }}
+                </li>
+            </template>
+
+            <!-- No dictionary search result -->
+            <template v-if="$props.dictionaryTranslation !== 'loading' && !dictionaryTranslationList.length">
+                <li>
+                    <v-icon small>mdi-list-box</v-icon> no dictionary results
+                </li>
+            </template>
+
         </ul>
     </v-card>
 </template>
@@ -25,18 +49,28 @@
     export default {
         data: function() {
             return {
-                translationList: []
+                userTranslationList: [],
+                dictionaryTranslationList: []
             }
         },
         props: {
-            translation: String,
+            userTranslation: String,
+            dictionaryTranslation: String,
             positionLeft: Number,
             positionTop: Number,
             reading: String
         },
         mounted() {
-            this.translationList = this.$props.translation.split(';');
+            this.translationList = []; 
+            this.dictionaryList = []; 
 
+            if (this.$props.userTranslation.length) {
+                this.userTranslationList = this.$props.userTranslation.split(';');
+            }
+
+            if (this.$props.dictionaryTranslation.length) {
+                this.dictionaryTranslationList = this.$props.dictionaryTranslation.split(';');
+            }
         },
         methods: {
         }

@@ -83,7 +83,8 @@
         <vocabulary-hover-box
             v-if="hoverVocabBox.active && (($props.vocabularySidebar && $props.vocabularySidebarFits) || !vocabBox.active)"
             :key="'vocabulary-hover-box' + hoverVocabBox.key"
-            :translation="hoverVocabBox.translation"
+            :user-translation="hoverVocabBox.userTranslation"
+            :dictionary-translation="hoverVocabBox.dictionaryTranslation"
             :positionLeft="hoverVocabBox.positionLeft"
             :positionTop="hoverVocabBox.positionTop"
             :reading="hoverVocabBox.reading"
@@ -159,13 +160,16 @@
                 ankiShowNotifications: false,
                 textBlocks: this.$props._textBlocks,
                 hoverVocabBox: {
+                    dictionarySearchDelay: null,
+                    dictionarySearchTerm: '',
                     active: false,
                     key: 0,
                     textBlockId: -1,
                     hoveredWords: null,
                     hoveredPhrase: -1,
                     reading: '',
-                    translation: '',
+                    userTranslation: '',
+                    dictionaryTranslation: '',
                     positionLeft: 0,
                     positionTop: 0,
                 },
@@ -557,11 +561,13 @@
             },
             updateHoverVocabularyBox(data) {
                 if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
+                    this.hoverVocabBox.dictionarySearchTerm = '';
                     this.hoverVocabBox.hoveredWords = null;
                     this.hoverVocabBox.active = false;
                     this.hoverVocabBox.positionLeft = 0;
                     this.hoverVocabBox.positionTop = 0;
-                    this.hoverVocabBox.translation = '';
+                    this.hoverVocabBox.userTranslation = '';
+                    this.hoverVocabBox.dictionaryTranslation = '';
                     this.hoverVocabBox.reading = '';
                     this.hoverVocabBox.hoveredPhrase = -1;
                     this.textBlockId = -1;                    
@@ -570,14 +576,45 @@
                     this.hoverVocabBox.hoveredWords = data.hoveredWords;
                     this.hoverVocabBox.key ++;
                     this.hoverVocabBox.hoveredPhrase = data.hoveredPhrase;
-                    this.hoverVocabBox.translation = data.translation;
+                    this.hoverVocabBox.userTranslation = data.translation;
+                    this.hoverVocabBox.dictionaryTranslation = 'loading';
                     this.hoverVocabBox.reading = data.reading;
-                    this.hoverVocabBox.active = (data.translation.length > 0 || data.reading.length > 0);
+                    this.hoverVocabBox.active = true;
                     this.hoverVocabBox.textBlockId = data.textBlockId;
+
+                    // clear previous delay timeout 
+                    if (this.hoverVocabBox.dictionarySearchDelay !== null) {
+                        clearTimeout(this.hoverVocabBox.dictionarySearchDelay);
+                    }
+
+                    // call the hover vocabulary search function with a delay
+                    this.hoverVocabBox.dictionarySearchDelay = setTimeout(() => {
+                        if (data.hoveredWords.length === 1) {
+                            var term = data.hoveredWords[0].word;
+                            if (data.hoveredWords[0].lemma.length) {
+                                term = this.trimSearchTerm(data.hoveredWords[0].lemma);
+                            }
+                        } else {
+
+                            // build search term for phrases, and adding spaces
+                            var term = '';
+                            for (let i = 0; i < data.hoveredWords.length; i++) {
+                                term += data.hoveredWords[i].word;
+                                
+                                if (data.hoveredWords[i].spaceAfter && i < data.hoveredWords.length - 1) {
+                                    term += ' ';
+                                }
+                            }
+
+                            data.hoveredWords.map(hoveredWord => hoveredWord.word).join('');
+                        }
+                        
+                        this.makeHoverVocabularyBoxSearchRequest(term);
+                    }, 300);
                 }
 
                 var margin = 8;
-                var hoverVocabBoxWidth = 240;
+                var hoverVocabBoxWidth = 300;
                 var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
                 var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
 
@@ -598,6 +635,31 @@
                 }
 
                 this.hoverVocabBox.positionTop = hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
+            },
+            makeHoverVocabularyBoxSearchRequest(term) {
+                term = term.toLowerCase();
+
+                this.hoverVocabBox.dictionarySearchTerm = term;
+
+                // make dictionary search
+                axios.post('/dictionary/search-for-hover-vocabulary', {
+                    language: this.$props.language,
+                    term: term
+                }).then((response) => {
+                    // return if a different word has been selected  
+                    // after the request was sent
+                    if (this.hoverVocabBox.dictionarySearchTerm !== response.data.term) {
+                        return;
+                    }
+
+                    // return if there is no word selected anymore
+                    if (this.hoverVocabBox.dictionarySearchTerm === '') {
+                        return;
+                    }
+
+                    this.hoverVocabBox.key ++;
+                    this.hoverVocabBox.dictionaryTranslation = response.data.definitions.join(';');
+                });
             },
             startSelection() {
                 if (this.$refs.vocabularyBox !== undefined) {
@@ -1238,36 +1300,37 @@
                 }, 450);
             },
             trimSearchTerm(searchTerm) {
+                searchTerm = searchTerm.toLowerCase();
                 var trimmedSearchTerm = searchTerm;
 
                 // norwegian
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 2) == 'å ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(2);
+                if (this.$props.language == 'norwegian' && searchTerm.substring(0, 2) == 'å ') {
+                    trimmedSearchTerm = searchTerm.slice(2);
                 }
 
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'et ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                if (this.$props.language == 'norwegian' && searchTerm.substring(0, 3) == 'et ') {
+                    trimmedSearchTerm = searchTerm.slice(3);
                 }
 
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'en ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                if (this.$props.language == 'norwegian' && searchTerm.substring(0, 3) == 'en ') {
+                    trimmedSearchTerm = searchTerm.slice(3);
                 }
 
-                if (this.$props.language == 'norwegian' && this.vocabBox.searchField.substring(0, 3) == 'ei ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(3);
+                if (this.$props.language == 'norwegian' && searchTerm.substring(0, 3) == 'ei ') {
+                    trimmedSearchTerm = searchTerm.slice(3);
                 }
 
                 // german
-                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'die ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                if (this.$props.language == 'german' && searchTerm.substring(0, 4) == 'die ') {
+                    trimmedSearchTerm = searchTerm.slice(4);
                 }
 
-                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'der ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                if (this.$props.language == 'german' && searchTerm.substring(0, 4) == 'der ') {
+                    trimmedSearchTerm = searchTerm.slice(4);
                 }
 
-                if (this.$props.language == 'german' && this.vocabBox.searchField.substring(0, 4) == 'das ') {
-                    trimmedSearchTerm = this.vocabBox.searchField.slice(4);
+                if (this.$props.language == 'german' && searchTerm.substring(0, 4) == 'das ') {
+                    trimmedSearchTerm = searchTerm.slice(4);
                 }
 
                 return trimmedSearchTerm;

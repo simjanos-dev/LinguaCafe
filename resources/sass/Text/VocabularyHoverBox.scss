@@ -1,11 +1,15 @@
 #vocab-hover-box {
     position: absolute;
-    width: 240px;
-    min-height: 100px;
+    width: 300px;
+    min-height: 40px;
     background-color: var(--v-foreground-base);
     z-index: 5;
     transform-origin: top;
     border-color: rgb(190, 190, 190);
+
+    ul li {
+        list-style: none;
+    }
 
     .reading {
         width: 100%;

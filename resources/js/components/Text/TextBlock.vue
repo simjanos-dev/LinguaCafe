@@ -189,8 +189,9 @@
                     var uniqueWordIndex = this.getUniqueWordIndex(hoveredWords[0].word.toLowerCase());
                     var uniqueWord = this.uniqueWords[uniqueWordIndex];
                     
-                    data.translation = uniqueWord.translation;
+                    data.translation = uniqueWord.translation;  
                     data.reading = uniqueWord.reading;
+                    data.hoveredWords[0].lemma = uniqueWord.base_word;
                 }
 
                 if (hoveredWords !== null && hoveredWords.length > 1) {
