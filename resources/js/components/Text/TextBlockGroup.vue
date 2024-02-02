@@ -63,6 +63,7 @@
                 :_words="textBlock.words"
                 :_phrases="textBlock.phrases"
                 :_uniqueWords="textBlock.uniqueWords"
+                :subtitle-timestamps="subtitleTimestamps"
                 :language="language"
                 :hideAllHighlights="hideAllHighlights"
                 :hideNewWordHighlights="hideNewWordHighlights"
@@ -81,7 +82,7 @@
 
         <!--Vocabulary popup box-->
         <vocabulary-hover-box
-            v-if="hoverVocabBox.active && (($props.vocabularySidebar && $props.vocabularySidebarFits) || !vocabBox.active)"
+            v-if="hoverVocabBox.active && !hoverVocabBox.disabledWhileSelecting && (($props.vocabularySidebar && $props.vocabularySidebarFits) || !vocabBox.active)"
             :key="'vocabulary-hover-box' + hoverVocabBox.key"
             :user-translation="hoverVocabBox.userTranslation"
             :dictionary-translation="hoverVocabBox.dictionaryTranslation"
@@ -164,6 +165,7 @@
                 hoverVocabBox: {
                     dictionarySearchDelay: null,
                     dictionarySearchTerm: '',
+                    disabledWhileSelecting: false,
                     active: false,
                     key: 0,
                     textBlockId: -1,
@@ -227,6 +229,10 @@
             theme: String,
             fullscreen: Boolean,
             _textBlocks: Array,
+            subtitleTimestamps: {
+                type: Array,
+                default: []
+            },
             language: String,
             hideAllHighlights: {
                 type: Boolean,
@@ -562,8 +568,9 @@
                     }
                 }
 
-                this.updateVocabBoxPosition();
                 this.vocabBox.key ++;
+                this.updateVocabBoxPositionDelay();
+                this.hoverVocabBox.disabledWhileSelecting = false;
             },
             updateHoverVocabularyBox(data) {
                 if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
@@ -668,6 +675,7 @@
                 });
             },
             startSelection() {
+                this.hoverVocabBox.disabledWhileSelecting = true;
                 if (this.$refs.vocabularyBox !== undefined) {
                     this.$refs.vocabularyBox.inputChanged();
                 }
@@ -697,6 +705,7 @@
                 
                 this.unselectAllWordsProcess();
                 this.$forceUpdate();
+                this.hoverVocabBox.disabledWhileSelecting = false;
             },
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
@@ -887,7 +896,7 @@
                 this.selectedPhrase = this.getSelectedPhraseIndex();
 
                 this.updateSelectedWordStage();
-                this.updateVocabBoxPosition();
+                this.updateVocabBoxPositionDelay();
                 this.savePhrase();
                 this.vocabBox.type = 'phrase';
             },
@@ -1250,15 +1259,16 @@
                 });
             },
             updateVocabBoxPositionDelay() {
-                setTimeout(() => {
+                this.$nextTick(() => {
                     this.updateVocabBoxPosition();
-                }, 200);
+                });
             },
             updateVocabBoxPosition() {
                 var margin = 8;
                 this.vocabBox.width = 400;
                 var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
                 var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
+                
 
                 // update sidebar
                 if (this.$props.vocabularySidebarFits && this.$props.vocabularySidebar) {
@@ -1272,6 +1282,8 @@
                 if (!this.selection.length) {
                     return;
                 }
+
+                console.log(this.selection);
 
                 if (this.selection.length == 1) {
                     var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();

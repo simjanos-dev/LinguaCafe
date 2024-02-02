@@ -4,55 +4,60 @@
         :textblock="$props.textBlockId" 
         @mousemove="removePhraseHover"
     >
-        <template v-for="(word, wordIndex) in words"><!--
-            --><div 
-                :key="wordIndex"
-                v-if="word.word !== 'NEWLINE' && /\S/.test(word.word)" 
-                :wordindex="wordIndex" 
-                :stage="word.stage" 
-                :phrasestage="word.phraseStage" 
-                :class="{
-                    'no-highlight': hideAllHighlights || (hideNewWordHighlights && word.stage == 2),
-                    'plain-text-mode': plainTextMode,
-                    'word': true,
-                    'highlighted': word.selected || word.hover,
-                    'phrase': word.phraseIndexes.length > 0, 
-                    'phrase-start': word.phraseStart, 
-                    'phrase-end': word.phraseEnd,
-                    'space-after': word.spaceAfter
-                }"
-                :style="{
-                    'font-size': fontSize + 'px', 
-                    'margin-bottom': (lineSpacing * 4) + 'px'
-                }" 
-                
-                
-                @pointerenter="hoverPhraseSelection(wordIndex);"
-                @pointerleave="updateHoveredWords(null)"
-                @touchstart="startSelectionTouch($event, word.word, wordIndex)" 
-                @mousedown.stop="startSelection($event, word.word, wordIndex)" 
-                @touchmove="updateSelectionTouch($event, wordIndex);" 
-                @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
-                @touchend.stop="finishSelection($event)"
-                @mouseup.stop="finishSelection($event)"
-                @mouseleave=";"
-            ><!--
-                --><template v-if="language == 'japanese'"><!--
-                    --><ruby class="rubyword" :wordindex="wordIndex"><!--
-                        -->{{ word.word }}<!--
-                        --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
-                            -->{{ word.reading }}<!--
-                        --></rt><!--
-                        --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
-                            -->{{ word.reading }}<!--
-                        --></rt><!--
-                    --></ruby>
-                </template><!--
-                --><template v-if="language !== 'japanese'">{{ word.word }}</template><!--
-                --><template v-if="plainTextMode && word.spaceAfter">&nbsp;</template><!--
-            --></div><!--
-            --><br v-if="word.word == 'NEWLINE'"><!--
-        --></template>
+        <template>
+            <template v-for="(word, wordIndex) in words"><!--
+                --><div class="subtitle-timestamp rounded-pill py-1 mt-12" v-if="word.subtitleIndex !== -1"><!--
+                    -->{{ subtitleTimestamps[word.subtitleIndex].start }}:{{ subtitleTimestamps[word.subtitleIndex].end }}<!--
+                --></div><!--
+                --><div 
+                    :key="wordIndex"
+                    v-if="word.word !== 'NEWLINE' && /\S/.test(word.word)" 
+                    :wordindex="wordIndex" 
+                    :stage="word.stage" 
+                    :phrasestage="word.phraseStage" 
+                    :class="{
+                        'no-highlight': hideAllHighlights || (hideNewWordHighlights && word.stage == 2),
+                        'plain-text-mode': plainTextMode,
+                        'word': true,
+                        'highlighted': word.selected || word.hover,
+                        'phrase': word.phraseIndexes.length > 0, 
+                        'phrase-start': word.phraseStart, 
+                        'phrase-end': word.phraseEnd,
+                        'space-after': word.spaceAfter
+                    }"
+                    :style="{
+                        'font-size': fontSize + 'px', 
+                        'margin-bottom': (lineSpacing * 4) + 'px'
+                    }" 
+                    
+                    
+                    @pointerenter="hoverPhraseSelection(wordIndex);"
+                    @pointerleave="updateHoveredWords(null)"
+                    @touchstart="startSelectionTouch($event, word.word, wordIndex)" 
+                    @mousedown.stop="startSelection($event, word.word, wordIndex)" 
+                    @touchmove="updateSelectionTouch($event, wordIndex);" 
+                    @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
+                    @touchend.stop="finishSelection($event)"
+                    @mouseup.stop="finishSelection($event)"
+                    @mouseleave=";"
+                ><!--
+                    --><template v-if="language == 'japanese'"><!--
+                        --><ruby class="rubyword" :wordindex="wordIndex"><!--
+                            -->{{ word.word }}<!--
+                            --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                                -->{{ word.reading }}<!--
+                            --></rt><!--
+                            --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                                -->{{ word.reading }}<!--
+                            --></rt><!--
+                        --></ruby>
+                    </template><!--
+                    --><template v-if="language !== 'japanese'">{{ word.word }}</template><!--
+                    --><template v-if="plainTextMode && word.spaceAfter">&nbsp;</template><!--
+                --></div><!--
+                --><br v-if="word.word == 'NEWLINE'"><!--
+            --></template>
+        </template>
     </div>
 </template>
 
@@ -95,6 +100,7 @@
             _words: Array,
             _phrases: Array,
             _uniqueWords: Array,
+            subtitleTimestamps: Array,
             language: String,
             hideAllHighlights: Boolean,
             hideNewWordHighlights: Boolean,

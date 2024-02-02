@@ -26,6 +26,16 @@
     overflow-y: hidden !important;
     overflow-x: visible !important;
     
+    .subtitle-timestamp {
+        background-color: var(--v-primary-base);
+        color: white;
+        border-radius: 30px;
+        width: 72px;
+        text-align: center;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
     * {
         font-family: notosans-jp !important;
     }

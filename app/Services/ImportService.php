@@ -30,7 +30,7 @@ class ImportService
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importFile' => $file,
-            'chunkSize' => 4000
+            'chunkSize' => 1500
         ]);
         
         // get text and token chunks
@@ -54,7 +54,7 @@ class ImportService
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importText' => $importText,
-            'chunkSize' => 4000
+            'chunkSize' => 1500
         ]);
         
         // get text and token chunks
@@ -78,14 +78,14 @@ class ImportService
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importSubtitles' => $importSubtitles,
-            'chunkSize' => 4000
+            'chunkSize' => 2700
         ]);
         
         // get text and token chunks
         $subtitles = json_decode($subtitles);
         $processedChunks = $subtitles->processedChunks;
         $rawChunks = $subtitles->textChunks;
-        $subtitleTimestamps = json_encode($subtitles->timestamps);
+        $subtitleTimestamps = $subtitles->timestamps;
 
         // import chunks
         $this->importChunks($processedChunks, $rawChunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName, $subtitleTimestamps);
@@ -138,7 +138,7 @@ class ImportService
                 $lesson->subtitle_timestamps = '';
             } else {
                 $lesson->type = 'subtitle';
-                $lesson->subtitle_timestamps = $timestamps;
+                $lesson->subtitle_timestamps = json_encode($timestamps[$chunkIndex]);
             }
 
             $textBlock = new TextBlock();

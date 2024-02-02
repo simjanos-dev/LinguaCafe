@@ -342,6 +342,11 @@
 
 // text block
 #app.dark .text-block-group {
+
+    .subtitle-timestamp {
+        color: var(--v-textDark-base);
+    }
+    
     #vocab-box .vocab-box-toolbar {
         background-color: var(--v-primary-base);
         

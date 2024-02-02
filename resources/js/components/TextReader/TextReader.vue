@@ -92,6 +92,7 @@
                         :theme="theme"
                         :fullscreen="fullscreenMode"
                         :_text-blocks="textBlocks"
+                        :subtitle-timestamps="subtitleTimestamps"
                         :language="language"
                         :hide-all-highlights="settings.hideAllHighlights"
                         :hide-new-word-highlights="settings.hideNewWordHighlights"
@@ -221,6 +222,9 @@
                 glossary: [],
                 nextLesson: -1,
 
+                // lesson data
+                type: 'text',
+                subtitleTimestamps: [],
                 bookName: null,
                 lessonId: null,
                 wordCount: 0,
@@ -244,13 +248,35 @@
                 'chapterId': this.$route.params.chapterId,
             }).then((response) => {
                 var data = response.data;
+                
+
+                this.type = data.type;
+                if (this.type == 'subtitle') {
+                    this.subtitleTimestamps = JSON.parse(data.subtitleTimestamps);
+
+                    // index words for timestamps
+                    for (let i = 0; i < data.words.length; i++) {
+                        data.words[i].subtitleIndex = -1;
+                    }
+                    
+                    for (let i = 0; i < this.subtitleTimestamps.length; i++) {
+                        for (let j = 0; j < data.words.length; j++) {
+                            // find the first word of timestamp
+                            if (data.words[j].sentence_index == this.subtitleTimestamps[i].sentenceIndexStart && 
+                                (j == 0 || data.words[j-1].sentence_index !== data.words[j].sentence_index)) {
+                                    data.words[j].subtitleIndex = i;
+                            }
+                        }
+                    }
+                }
+
                 this.textBlocks.push({
                     id: 0,
                     words: JSON.parse(JSON.stringify(data.words)),
                     phrases: JSON.parse(JSON.stringify(data.phrases)),
                     uniqueWords: JSON.parse(JSON.stringify(data.uniqueWords))
                 });
-
+                
                 this.bookName = data.bookName;
                 this.lessonId = data.lessonId;
                 this.wordCount = data.wordCount;

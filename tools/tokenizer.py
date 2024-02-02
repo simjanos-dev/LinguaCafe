@@ -381,19 +381,14 @@ def importSubtitles():
             processedChunks.append(list())
             chunkTimeStamps.append(list())
 
-        # print('test', file=sys.stdout)
-        # print(importSubtitles[subtitleIndex], file=sys.stdout)
-        # print(importSubtitles[subtitleIndex]['text'], file=sys.stdout)
-
+    
+        text = importSubtitles[subtitleIndex]['text'].replace('\r\n', ' NEWLINE ')
+        text = text.replace('\n', ' NEWLINE ')
 
         # add subtitle to raw chunk
-        chunks[-1] += importSubtitles[subtitleIndex]['text']
+        chunks[-1] += text
         chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
         chunks[-1] = chunks[-1].replace('\xa0', ' ')
-
-        text = importSubtitles[subtitleIndex]['text']
-        text = text.replace(' NEWLINE ', '\r\n')
-        text = text.replace('\xa0', ' ')
 
         # tokenize text
         if textProcessingMethod == 'simple':
@@ -406,8 +401,8 @@ def importSubtitles():
 
         # add timestamp to chunk array
         chunkTimeStamps[-1].append({
-            'start': importSubtitles[subtitleIndex]['start'],
-            'end': importSubtitles[subtitleIndex]['end'],
+            'start': str(int(importSubtitles[subtitleIndex]['start'] / 60)).zfill(2),
+            'end': str(int(importSubtitles[subtitleIndex]['end'] % 60)).zfill(2),
             'sentenceIndexStart': tokenizedText[0]['si'],
             'sentenceIndexEnd': tokenizedText[-1]['si']
         })

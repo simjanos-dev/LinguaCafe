@@ -94,6 +94,8 @@ class ChapterController extends Controller
         $textBlock->indexPhrases();
 
         $data = new \stdClass();
+        $data->type = $lesson->type;
+        $data->subtitleTimestamps = $lesson->subtitle_timestamps;
         $data->words = $textBlock->words;
         $data->uniqueWords = $textBlock->uniqueWords;
         $data->phrases = $textBlock->phrases;
