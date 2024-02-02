@@ -29,6 +29,7 @@
                         rounded
                         v-model="name"
                         :rules="[rules.chapterName]"
+                        :disabled="type !== 'text' || loading"
                     ></v-text-field>
                     
                     <label class="font-weight-bold mt-2">Text</label>
@@ -41,6 +42,7 @@
                         height="300px"
                         maxlength="10000"
                         counter="10000"
+                        :disabled="type !== 'text' || loading"
                     ></v-textarea>
                     
                     <!-- Save result alerts -->
@@ -61,6 +63,16 @@
                     >
                         Chapter has been saved successfully.
                     </v-alert>
+
+                    <!-- Subtitle editing is not enabled alert -->
+                    <v-alert
+                        v-if="type !== 'text'"
+                        class="my-3" 
+                        border="left"
+                        type="error"
+                    >
+                        You cannot edit subtitles yet, it will be implemented in a future update.
+                    </v-alert>
                 </v-form>
             </v-card-text>
 
@@ -74,7 +86,7 @@
                     depressed
                     color="primary" 
                     @click="save"
-                    :disabled="!isFormValid || saving || saveResult == 'success'"
+                    :disabled="!isFormValid || saving || saveResult == 'success' || type !== 'text'"
                     :loading="saving"
                 >
                     Save
@@ -110,6 +122,7 @@
                 },
                 name: '',
                 text: '',
+                type: 'text',
             }
         },
         props: {
@@ -162,6 +175,7 @@
                     axios.get('/chapter/get/edit/' + this.$props.chapterId).then((response) => {
                         this.name = response.data.name;
                         this.text = response.data.raw_text;
+                        this.type = response.data.type;
                         this.loading = false;
                         this.$nextTick(() => {
                             this.$refs.editChapterForm.validate();

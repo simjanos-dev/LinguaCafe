@@ -56,7 +56,7 @@ class ChapterController extends Controller
     }
 
     public function getChapterForEdit($chapterId) {
-        $chapter = Lesson::select(['name', 'raw_text'])->where('id', $chapterId)->where('user_id', Auth::user()->id)->first();
+        $chapter = Lesson::select(['name', 'raw_text', 'type'])->where('id', $chapterId)->where('user_id', Auth::user()->id)->first();
         $chapter->raw_text = str_replace(" NEWLINE \r\n", "\r\n", $chapter->raw_text);
         return $chapter;
     }
