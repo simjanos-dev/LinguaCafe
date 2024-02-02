@@ -2,6 +2,15 @@
 
 #import-dialog {
 
+    .jellyfin-subtitle-source {
+        #selected-jellyfin-subtitle {
+            font-size: 16px;
+            line-height: 28px;
+            background-color: var(--v-gray3-base);
+            color: var(--v-text-base);
+        }
+    }
+
     .youtube-subtitle-source {
         position: relative;
         min-height: 628px;
@@ -16,7 +25,7 @@
             font-size: 16px;
             line-height: 28px;
             background-color: var(--v-gray3-base);
-            color: var(--v-text-base)
+            color: var(--v-text-base);
         }
 
         #youtube-subtitles {

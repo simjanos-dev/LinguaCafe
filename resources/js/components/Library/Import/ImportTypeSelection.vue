@@ -16,6 +16,13 @@
                 <span>Youtube</span>
             </div>
 
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('jellyfin-subtitle')">
+                <div class="import-type-button-icon-box">
+                    <v-icon large>mdi-movie</v-icon>
+                </div>
+                <span>Jellyfin subtitle</span>
+            </div>
+
             <!--
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('plain-text')">
                 <div class="import-type-button-icon-box">
@@ -58,13 +65,6 @@
                 </div>
                 <span>Subtitle</span>
                 
-            </div>
-
-            <div class="import-type-button rounded-lg mx-2 mb-4">
-                <div class="import-type-button-icon-box">
-                    <v-icon large>mdi-movie</v-icon>
-                </div>
-                <span>Jellyfin</span>
             </div>
 
             <div class="import-type-button rounded-lg mx-2 mb-4">

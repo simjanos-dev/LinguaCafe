@@ -60,16 +60,29 @@
                         </v-stepper-content>
 
                         <!-- Import file selection -->
-                        <v-stepper-content :class="{'youtube-subtitle-source': importType == 'youtube'}" step="2">
+                        <v-stepper-content :class="{
+                            'youtube-subtitle-source': importType == 'youtube',
+                            'jellyfin-subtitle-source': importType == 'jellyfin-subtitle'
+                        }" step="2">
+                            <!-- E-book -->
                             <import-ebook-file-source
                                 v-if="stepperPage > 1 && importType == 'e-book'"
                                 @file-selected="selectImportFile" 
                             ></import-ebook-file-source>
+
+                            <!-- Youtube -->
                             <import-youtube-subtitle-source
                                 v-if="stepperPage > 1 && importType == 'youtube'"
                                 :language="$props.language"
                                 @text-selected="selectImportText" 
                             ></import-youtube-subtitle-source>
+
+                            <!-- Jellyfin subtitle -->
+                            <import-jellyfin-subtitle-source
+                                v-if="stepperPage > 1 && importType == 'jellyfin-subtitle'"
+                                :language="$props.language"
+                                @subtitle-selected="selectImportSubtitle" 
+                            ></import-jellyfin-subtitle-source>
                         </v-stepper-content>
 
                         <!-- Library import settings -->
@@ -151,6 +164,7 @@
                         (stepperPage == 1) ||
                         (stepperPage == 2 && importType === 'e-book' && (!isImportSourceValid || importFile === null)) ||
                         (stepperPage == 2 && importType === 'youtube' && (!isImportSourceValid || importText === '')) ||
+                        (stepperPage == 2 && importType === 'jellyfin-subtitle' && (!isImportSourceValid)) ||
                         (stepperPage == 3 && !isLibraryValid)
                     "
                     @click="stepForward"
@@ -185,9 +199,10 @@
                 textProcessingMethod: 'detailed',
                 importType: '',
 
-                // These come from the source step item.
+                // these come from the source step item
                 importFile: null,
                 importText: '',
+                importSubtitles: [],
                 
                 newOrExistingBook: '',
                 bookId: -1,
@@ -213,6 +228,10 @@
             },
             selectImportText(data) {
                 this.importText = data.text;
+                this.isImportSourceValid = data.isImportSourceValid;
+            },
+            selectImportSubtitle(data) {
+                this.importSubtitles = data.subtitles;
                 this.isImportSourceValid = data.isImportSourceValid;
             },
             libraryInputChanged(data) {
@@ -262,8 +281,10 @@
                 
                 if (this.importType === 'e-book') {
                     data.set('importFile', this.importFile);
-                } else {
+                } else if (this.importType === 'youtube') {
                     data.set('importText', this.importText);
+                } if (this.importType === 'jellyfin-subtitle') {
+                    data.set('importSubtitles', JSON.stringify(this.importSubtitles));
                 }
 
                 data.set('textProcessingMethod', this.textProcessingMethod);
@@ -274,6 +295,7 @@
                 this.importLoading = true;
                 this.stepperPage = 5;
                 this.importResult = '';
+
                 axios.post('/import', data).catch(() => {
                     this.importResult = 'error';
                     this.importLoading = false;

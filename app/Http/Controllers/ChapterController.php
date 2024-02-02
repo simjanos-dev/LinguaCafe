@@ -186,6 +186,8 @@ class ChapterController extends Controller
         // set lesson data from post data
         $lesson->user_id = Auth::user()->id;
         $lesson->name = $request->name;
+        $lesson->type = 'text';
+        $lesson->subtitle_timestamps = '';
         $lesson->read_count = isset($request->lesson_id) ? $lesson->read_count : 0;
         $lesson->word_count = 0;
         $lesson->book_id = $request->book;

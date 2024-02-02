@@ -513,6 +513,7 @@
 }
 
 // library import dialog
-#app.dark #import-dialog .youtube-subtitle-source #selected-youtube-subtitle {
+#app.dark #import-dialog .youtube-subtitle-source #selected-youtube-subtitle,
+#app.dark #import-dialog .jellyfin-subtitle-source #selected-jellyfin-subtitle {
     background-color: var(--v-gray-base);
 }

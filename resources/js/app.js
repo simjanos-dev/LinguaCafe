@@ -29,12 +29,14 @@ import ImportDialog from './components/Library/Import/ImportDialog.vue';
 import ImportTypeSelection from './components/Library/Import/ImportTypeSelection.vue';
 import ImportEbookFileSource from './components/Library/Import/ImportSource/ImportEbookFileSource.vue';
 import ImportYoutubeSubtitleSource from './components/Library/Import/ImportSource/ImportYoutubeSubtitleSource.vue';
+import ImportJellyfinSubtitleSource from './components/Library/Import/ImportSource/ImportJellyfinSubtitleSource.vue';
 import ImportLibraryOptions from './components/Library/Import/ImportLibraryOptions.vue';
 import ImportTextProcessingMethodSelection from './components/Library/Import/ImportTextProcessingMethodSelection.vue';
 Vue.component('import-dialog', ImportDialog);
 Vue.component('import-type-selection', ImportTypeSelection);
 Vue.component('import-ebook-file-source', ImportEbookFileSource);
 Vue.component('import-youtube-subtitle-source', ImportYoutubeSubtitleSource);
+Vue.component('import-jellyfin-subtitle-source', ImportJellyfinSubtitleSource);
 Vue.component('import-library-options', ImportLibraryOptions);
 Vue.component('import-text-processing-method-selection', ImportTextProcessingMethodSelection);
 

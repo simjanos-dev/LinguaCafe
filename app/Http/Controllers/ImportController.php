@@ -23,11 +23,12 @@ class ImportController extends Controller
         
         if ($importType == 'e-book') {
             $importFile = $request->file('importFile');
-        } else {
+        } else if ($importType == 'youtube') {
             $importText = $request->post('importText');
+        } else if ($importType == 'jellyfin-subtitle') {
+            $importSubtitles = $request->post('importSubtitles');
         }
         
-
         // move file to temp folder
         if ($importType === 'e-book') {
             $randomString = bin2hex(openssl_random_pseudo_bytes(30));
@@ -41,16 +42,19 @@ class ImportController extends Controller
             if ($importType === 'e-book') {
                 // e-book
                 (new ImportService())->importBook($textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
-            } else {
+            } else if ($importType === 'youtube') {
                 // text
                 (new ImportService())->importText($textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
+            } else if ($importType === 'jellyfin-subtitle') {
+                // text
+                (new ImportService())->importSubtitles($textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
         } catch (\Exception $exception) {
             if ($importType === 'e-book') {
                 File::delete(storage_path('app/temp') . '/' . $fileName);
             }
 
-            return $exception->getMessage();
+            return $exception;
         }
 
         // delete temp file

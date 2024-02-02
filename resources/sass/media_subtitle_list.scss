@@ -3,13 +3,13 @@
 .media-player-subtitle-info {
     display: block;
     margin: auto;
-    max-width: 800px;
+    width: 100%;
 }
 
 #subtitle-list {
     display: block;
     margin: auto;
-    width: 800px;
+    width: 100%;
 
     #refresh-button {
         position: absolute; right: 0px;
@@ -23,6 +23,14 @@
 
     .v-skeleton-loader__image {
         height: 48px;
+    }
+
+    #no-subtitle-found-label {
+        width: 100%;
+        line-height: 48px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: normal;
     }
     
     .subtitle:not(.skeleton) {

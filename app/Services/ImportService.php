@@ -68,12 +68,37 @@ class ImportService
         return 'success';
     }
 
+    public function importSubtitles($textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName) {
+        DB::disableQueryLog();
+        $userId = Auth::user()->id;
+        $selectedLanguage = Auth::user()->selected_language;
+
+        // tokenize book
+        $subtitles = Http::post($this->pythonService . ':8678/tokenizer/import-subtitles', [
+            'language' => $selectedLanguage,
+            'textProcessingMethod' => $textProcessingMethod,
+            'importSubtitles' => $importSubtitles,
+            'chunkSize' => 4000
+        ]);
+        
+        // get text and token chunks
+        $subtitles = json_decode($subtitles);
+        $processedChunks = $subtitles->processedChunks;
+        $rawChunks = $subtitles->textChunks;
+        $subtitleTimestamps = json_encode($subtitles->timestamps);
+
+        // import chunks
+        $this->importChunks($processedChunks, $rawChunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName, $subtitleTimestamps);
+
+        return 'success';
+    }
+
     /*
     
         Imports chunks fo raw and tokenized texts. This function
         is used by other import functions to avoid code dupication.
     */
-    private function importChunks($processedChunks, $rawChunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName) {
+    private function importChunks($processedChunks, $rawChunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName, $timestamps = null) {
         // retrieve or create book
         if ($bookId == -1) {
             $book = new Book();
@@ -107,6 +132,14 @@ class ImportService
             $lesson->raw_text = $rawChunks[$chunkIndex];
             $lesson->unique_words = '';
             $lesson->setProcessedText([]);
+
+            if ($timestamps == null) {
+                $lesson->type = 'text';
+                $lesson->subtitle_timestamps = '';
+            } else {
+                $lesson->type = 'subtitle';
+                $lesson->subtitle_timestamps = $timestamps;
+            }
 
             $textBlock = new TextBlock();
             $textBlock->tokenizedWords = $chunk;

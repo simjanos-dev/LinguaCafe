@@ -30,6 +30,9 @@
                     <li>
                         Vocabulary search page's edit dialog now will close on its own after saving it, and the search results will be updated automatically.
                     </li>
+                    <li>
+                        Added Jellyfin subtitle import option.
+                    </li>
                 </ul>
                 
                 <b>Bug fixes:</b>
@@ -42,6 +45,7 @@
                 <b>Other changes:</b>
                 <ul>
                     <li>
+                        Removed Media player page. It has been replaced with the Jellyfin subtitle import option on the library page.
                     </li>
                 </ul>
             </v-card-text>

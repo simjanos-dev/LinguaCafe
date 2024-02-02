@@ -1,5 +1,5 @@
 <template>
-    <v-container class="d-flex flex-column justify-center flex-nowrap">
+    <div class="d-flex flex-column justify-center flex-nowrap">
         <!-- Media player info -->
         <v-alert
             v-if="!$props.subtitleLoading"
@@ -56,8 +56,24 @@
                 ></v-skeleton-loader>
             </template>
             
+            <!-- Subtitle error message-->
+            <template v-if="subtitleListError">
+                <v-alert
+                    color="error"
+                    type="error"
+                    border="left"
+                    dark
+                >
+                    Cannot connect to Jellyfin.
+                </v-alert>
+            </template>
+
+            <div class="regular-list-height subtitle rounded-pill my-2" v-if="!subtitleListLoading && !$props.subtitleLoading && !sessions.length">
+                <div id="no-subtitle-found-label">No subtitles found</div>
+            </div>
+
             <!-- Subtitle list body -->
-            <template v-for="(session, sessionIndex) in sessions" v-if="!subtitleListLoading && !$props.subtitleLoading">
+            <template v-for="(session, sessionIndex) in sessions" v-if="!subtitleListLoading && !$props.subtitleLoading && sessions.length">
                 <div 
                     class="regular-list-height subtitle rounded-pill my-2" 
                     @click="selectSubtitle(sessionIndex, subtitleIndex)"
@@ -102,7 +118,7 @@
                 </v-alert>
             </div>
         </v-card>
-    </v-container>
+    </div>
 </template>
 
 
@@ -111,6 +127,7 @@ export default {
     data: function () {
         return {
             subtitleListLoading: false,
+            subtitleListError: false,
             sessions: []
         }
     },
@@ -124,8 +141,9 @@ export default {
     methods: {
         loadSubtitleList: function () {
             this.subtitleListLoading = true;
+            this.subtitleListError = false;
             this.sessions = [];
-            axios.get('/jellyfin/subtitles').then(async (result) => {
+            axios.get('/jellyfin/subtitles').then((result) => {
                 var sessions = result.data;
 
                 // remove unsupported and not-selected langauge subtitles
@@ -146,6 +164,9 @@ export default {
 
                 this.sessions = sessions;
                 this.subtitleListLoading = false;
+            }).catch((error) => {
+                this.subtitleListLoading = false;
+                this.subtitleListError = true;
             });
         },
         selectSubtitle: function(selectedSession, selectedSubtitle) {
