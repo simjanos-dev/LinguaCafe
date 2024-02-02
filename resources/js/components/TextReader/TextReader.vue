@@ -248,17 +248,17 @@
                 'chapterId': this.$route.params.chapterId,
             }).then((response) => {
                 var data = response.data;
-                
-
                 this.type = data.type;
+
+                // set default subtitleIndex for words
+                for (let i = 0; i < data.words.length; i++) {
+                    data.words[i].subtitleIndex = -1;
+                }
+
                 if (this.type == 'subtitle') {
                     this.subtitleTimestamps = JSON.parse(data.subtitleTimestamps);
 
                     // index words for timestamps
-                    for (let i = 0; i < data.words.length; i++) {
-                        data.words[i].subtitleIndex = -1;
-                    }
-                    
                     for (let i = 0; i < this.subtitleTimestamps.length; i++) {
                         for (let j = 0; j < data.words.length; j++) {
                             // find the first word of timestamp

@@ -6,7 +6,7 @@
     >
         <template>
             <template v-for="(word, wordIndex) in words"><!--
-                --><div class="subtitle-timestamp rounded-pill py-1 mt-12" v-if="word.subtitleIndex !== -1"><!--
+                --><div class="subtitle-timestamp rounded-pill py-1 mt-12 mb-1" v-if="word.subtitleIndex !== -1"><!--
                     -->{{ subtitleTimestamps[word.subtitleIndex].start }}:{{ subtitleTimestamps[word.subtitleIndex].end }}<!--
                 --></div><!--
                 --><div 
