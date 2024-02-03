@@ -107,12 +107,6 @@
                         icon: 'mdi-playlist-check',
                         bottomNav: false,
                     },
-                    {
-                        name: 'Media player',
-                        url: '/media-player',
-                        icon: 'mdi-movie-play',
-                        bottomNav: false,
-                    },
                     // {
                     //     name: 'Flashcards',
                     //     url: '/flashcards',
