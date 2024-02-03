@@ -498,6 +498,7 @@ class TextBlock
             $word->phraseStart = false;
             $word->phraseEnd = false;
             $word->phraseIndexes = [];
+            $word->subtitleIndex = -1;
             
             
             // Add space for word if the language has spaces in it.

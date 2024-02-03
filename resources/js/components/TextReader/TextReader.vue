@@ -26,22 +26,6 @@
                 v-show="dialogs.settings"
                 v-model="dialogs.settings"
                 ref="textReaderSettings"
-                :enabledSettings="[
-                    'hideAllHighlights', 
-                    'hideNewWordHighlights', 
-                    'plainTextMode', 
-                    'verticalText', 
-                    'fontSize', 
-                    'lineSpacing', 
-                    'maximumTextWidth', 
-                    'autoMoveWordsToKnown', 
-                    'vocabBoxScrollIntoView', 
-                    'furiganaOnHighlightedWords', 
-                    'furiganaOnNewWords', 
-                    'vocabularySidebar',
-                    'vocabularyHoverBox',
-                    'autoHighlightWords'
-                ]"
                 @changed="updateSettings"
             ></text-reader-settings>
             
@@ -87,11 +71,11 @@
                     </div>
 
                     <text-block-group
-                        v-if="textBlocks.length"
-                        ref="textBlock"
+                        v-if="text !== null"
+                        ref="interactiveText"
                         :theme="theme"
                         :fullscreen="fullscreenMode"
-                        :_text-blocks="textBlocks"
+                        :_text="text"
                         :subtitle-timestamps="subtitleTimestamps"
                         :language="language"
                         :hide-all-highlights="settings.hideAllHighlights"
@@ -103,6 +87,7 @@
                         :furigana-on-highlighted-words="settings.furiganaOnHighlightedWords"
                         :furigana-on-new-words="settings.furiganaOnNewWords"
                         :vocabulary-hover-box="settings.vocabularyHoverBox"
+                        :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
                         :vocabulary-sidebar="settings.vocabularySidebar"
                         :auto-highlight-words="settings.autoHighlightWords"
                         :vocabulary-sidebar-fits="vocabularySidebarFits"
@@ -185,7 +170,7 @@
         data: function() {
             return {
                 hotkeyDialog: false,
-                textBlocks: [],
+                text: null,
                 dialogs: {
                     settings: false,
                     glossary: false,
@@ -250,15 +235,10 @@
                 var data = response.data;
                 this.type = data.type;
 
-                // set default subtitleIndex for words
-                for (let i = 0; i < data.words.length; i++) {
-                    data.words[i].subtitleIndex = -1;
-                }
-
+                // set subtitle timestamps
                 if (this.type == 'subtitle') {
                     this.subtitleTimestamps = JSON.parse(data.subtitleTimestamps);
 
-                    // index words for timestamps
                     for (let i = 0; i < this.subtitleTimestamps.length; i++) {
                         for (let j = 0; j < data.words.length; j++) {
                             // find the first word of timestamp
@@ -270,12 +250,12 @@
                     }
                 }
 
-                this.textBlocks.push({
+                this.text = {
                     id: 0,
                     words: JSON.parse(JSON.stringify(data.words)),
                     phrases: JSON.parse(JSON.stringify(data.phrases)),
                     uniqueWords: JSON.parse(JSON.stringify(data.uniqueWords))
-                });
+                };
                 
                 this.bookName = data.bookName;
                 this.lessonId = data.lessonId;
@@ -340,7 +320,7 @@
                 this.$forceUpdate();
 
                 setTimeout(() => {
-                    this.$refs.textBlock.updateVocabBoxPosition();
+                    this.$refs.interactiveText.updateVocabBoxPosition();
                 }, 200);
             },
             toolbarSettingChanged() {
@@ -352,7 +332,7 @@
                     this.exitFullscreen();
                 }
 
-                this.$refs.textBlock.unselectAllWords();
+                this.$refs.interactiveText.unselectAllWords();
                 this.updateGlossary();
 
                 if (dialog == 'settings') {
@@ -369,31 +349,30 @@
             },
             updateGlossary: function() {
                 this.glossary = [];
-                for (let j = 0; j < this.textBlocks.length; j++) {
-                    for (let i = 0; i < this.textBlocks[j].phrases.length; i++) {
-                        if (this.textBlocks[j].phrases[i].stage < 0) {
-                            this.glossary.push({
-                                word: this.textBlocks[j].phrases[i].words.join(''),
-                                stage: this.textBlocks[j].phrases[i].stage,
-                                reading: this.textBlocks[j].phrases[i].reading,
-                                base_word: '',
-                                base_word_reading: '',
-                                translation: this.textBlocks[j].phrases[i].translation,
-                            });
-                        }
+                
+                for (let i = 0; i < this.text.phrases.length; i++) {
+                    if (this.text.phrases[i].stage < 0) {
+                        this.glossary.push({
+                            word: this.text.phrases[i].words.join(''),
+                            stage: this.text.phrases[i].stage,
+                            reading: this.text.phrases[i].reading,
+                            base_word: '',
+                            base_word_reading: '',
+                            translation: this.text.phrases[i].translation,
+                        });
                     }
+                }
 
-                    for (let i = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
-                        if (this.textBlocks[j].uniqueWords[i].stage < 0 || this.textBlocks[j].uniqueWords[i].stage == 2) {
-                            this.glossary.push({
-                                word: this.textBlocks[j].uniqueWords[i].word,
-                                stage: this.textBlocks[j].uniqueWords[i].stage,
-                                reading: this.textBlocks[j].uniqueWords[i].reading,
-                                base_word: this.textBlocks[j].uniqueWords[i].base_word,
-                                base_word_reading: this.textBlocks[j].uniqueWords[i].base_word_reading,
-                                translation: this.textBlocks[j].uniqueWords[i].translation,
-                            });
-                        }
+                for (let i = 0; i < this.text.uniqueWords.length; i++) {
+                    if (this.text.uniqueWords[i].stage < 0 || this.text.uniqueWords[i].stage == 2) {
+                        this.glossary.push({
+                            word: this.text.uniqueWords[i].word,
+                            stage: this.text.uniqueWords[i].stage,
+                            reading: this.text.uniqueWords[i].reading,
+                            base_word: this.text.uniqueWords[i].base_word,
+                            base_word_reading: this.text.uniqueWords[i].base_word_reading,
+                            translation: this.text.uniqueWords[i].translation,
+                        });
                     }
                 }
 
@@ -411,8 +390,8 @@
             },
             finish: function() {
                 axios.post('/chapter/finish', {
-                    uniqueWords: JSON.stringify(this.textBlocks[0].uniqueWords),
-                    sentences: JSON.stringify(this.textBlocks[0].sentences),
+                    uniqueWords: JSON.stringify(this.text.uniqueWords),
+                    sentences: JSON.stringify(this.text.sentences),
                     language: this.language,
                     lessonId: this.lessonId,
                     autoMoveWordsToKnown: this.settings.autoMoveWordsToKnown

@@ -40,7 +40,7 @@
         </v-snackbar>
 
         <slot
-            :textBlocks="textBlocks"
+            :text="text"
             :language="language"
             :hideAllHighlights="hideAllHighlights"
             :hideNewWordHighlights="hideNewWordHighlights"
@@ -56,13 +56,12 @@
             :updateHoveredWords="updateHoverVocabularyBox"
         >
             <text-block
-                v-for="textBlock in textBlocks"
-                :key="textBlock.id"
-                ref="textBlock"
-                :textBlockId="textBlock.id"
-                :_words="textBlock.words"
-                :_phrases="textBlock.phrases"
-                :_uniqueWords="textBlock.uniqueWords"
+                :key="'text-block' + textBlockKey"
+                ref="text"
+                :textId="text.id"
+                :_words="text.words"
+                :_phrases="text.phrases"
+                :_uniqueWords="text.uniqueWords"
                 :subtitle-timestamps="subtitleTimestamps"
                 :language="language"
                 :hideAllHighlights="hideAllHighlights"
@@ -85,7 +84,7 @@
             v-if="hoverVocabBox.active && !hoverVocabBox.disabledWhileSelecting && (($props.vocabularySidebar && $props.vocabularySidebarFits) || !vocabBox.active)"
             :key="'vocabulary-hover-box' + hoverVocabBox.key"
             :user-translation="hoverVocabBox.userTranslation"
-            :dictionary-translation="hoverVocabBox.dictionaryTranslation"
+            :dictionary-translation="hoverVocabBox.vocabularyHoverBoxSearch"
             :positionLeft="hoverVocabBox.positionLeft"
             :positionTop="hoverVocabBox.positionTop"
             :reading="hoverVocabBox.reading"
@@ -156,24 +155,24 @@
     export default {
         data: function() {
             return {
+                textBlockKey: 0,
                 snackBars: [
                 ],
                 snackbarId: 1,
                 ankiAutoAddCards: false,
                 ankiShowNotifications: false,
-                textBlocks: this.$props._textBlocks,
+                text: this.$props._text,
                 hoverVocabBox: {
                     dictionarySearchDelay: null,
                     dictionarySearchTerm: '',
                     disabledWhileSelecting: false,
                     active: false,
                     key: 0,
-                    textBlockId: -1,
                     hoveredWords: null,
                     hoveredPhrase: -1,
                     reading: '',
                     userTranslation: '',
-                    dictionaryTranslation: '',
+                    vocabularyHoverBoxSearch: '',
                     positionLeft: 0,
                     positionTop: 0,
                 },
@@ -217,7 +216,6 @@
                 },
                 selection: [],
                 selectedPhrase: -1,
-                selectedTextBlock: -1,
                 phraseCurrentlySaving: false,
             }
         },
@@ -228,10 +226,12 @@
             },
             theme: String,
             fullscreen: Boolean,
-            _textBlocks: Array,
+            _text: Object,
             subtitleTimestamps: {
                 type: Array,
-                default: []
+                default: () => {
+                    return [];
+                }
             },
             language: String,
             hideAllHighlights: {
@@ -279,14 +279,18 @@
                 type: Boolean,
                 default: false
             },
+            vocabularyHoverBoxSearch: {
+                type: Boolean,
+                default: false
+            },
             autoHighlightWords: {
                 type: Boolean,
                 default: true
             }
         },
         watch: {
-            _textBlocks: function(newVal, oldVal) {
-                this.textBlocks = newVal;
+            _text: function(newVal, oldVal) {
+                this.text = newVal;
             }
         },
         mounted() {
@@ -380,13 +384,12 @@
             },
             selectPreviousWord(newWordOnly, highlightedWordOnly) {
                 if (!this.selection.length) {
-                    var currentWordIndex = this.textBlocks[0].words.length - 1;
+                    var currentWordIndex = this.text.words.length - 1;
                 } else {
                     var currentWordIndex = this.selection[0].wordIndex;
                 }
 
                 var wordToSelect = -1;
-                var selectedTextBlock = this.selectedTextBlock === -1 ? 0 : this.selectedTextBlock;
 
                 // there are no previous words
                 if (currentWordIndex == 0) {
@@ -396,7 +399,7 @@
                 // go through the text backwards, and find a word to select 
                 for (var wordIndex = currentWordIndex - 1; wordIndex >= 0; wordIndex--) {
                     // skip not displayed whitespace words
-                    if (document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordIndex  + '"]') === null) {
+                    if (document.querySelector('.text-block .word[wordindex="' + wordIndex  + '"]') === null) {
                         continue;
                     }
 
@@ -407,13 +410,13 @@
                     }
 
                     // select the previous new word
-                    if (newWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage == 2) {
+                    if (newWordOnly && this.text.words[wordIndex].stage == 2) {
                         wordToSelect = wordIndex;
                         break;
                     }
 
                     // select the previous highlighted word
-                    if (highlightedWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage < 0) {
+                    if (highlightedWordOnly && this.text.words[wordIndex].stage < 0) {
                         wordToSelect = wordIndex;
                         break;
                     }
@@ -427,7 +430,7 @@
                 // select the new word
                 this.unselectAllWords();
                 this.$nextTick(() => {
-                    var wordElement = document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordToSelect  + '"]');
+                    var wordElement = document.querySelector('.text-block .word[wordindex="' + wordToSelect  + '"]');
                     var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
                     var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
                     wordElement.dispatchEvent(mouseDownEvent);
@@ -442,17 +445,16 @@
                 }
 
                 var wordToSelect = -1;
-                var selectedTextBlock = this.selectedTextBlock === -1 ? 0 : this.selectedTextBlock;
 
                 // there are no next words to select
-                if (currentWordIndex == this.textBlocks[selectedTextBlock].words.length - 1) {
+                if (currentWordIndex == this.text.words.length - 1) {
                     return;
                 }
 
                 // go through the text forward, and find a word to select 
-                for (var wordIndex = currentWordIndex + 1; wordIndex < this.textBlocks[selectedTextBlock].words.length; wordIndex++) {
+                for (var wordIndex = currentWordIndex + 1; wordIndex < this.text.words.length; wordIndex++) {
                     // skip not displayed whitespace words
-                    if (document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordIndex  + '"]') === null) {
+                    if (document.querySelector('.text-block .word[wordindex="' + wordIndex  + '"]') === null) {
                         continue;
                     }
 
@@ -463,13 +465,13 @@
                     }
 
                     // select the previous new word
-                    if (newWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage == 2) {
+                    if (newWordOnly && this.text.words[wordIndex].stage == 2) {
                         wordToSelect = wordIndex;
                         break;
                     }
 
                     // select the previous highlighted word
-                    if (highlightedWordOnly && this.textBlocks[selectedTextBlock].words[wordIndex].stage < 0) {
+                    if (highlightedWordOnly && this.text.words[wordIndex].stage < 0) {
                         wordToSelect = wordIndex;
                         break;
                     }
@@ -484,18 +486,17 @@
                 // select the new word
                 this.unselectAllWords();
                 this.$nextTick(() => {
-                    var wordElement = document.querySelector('.text-block[textblock="' + this.textBlocks[selectedTextBlock].id + '"] .word[wordindex="' + wordToSelect  + '"]');
+                    var wordElement = document.querySelector('.text-block .word[wordindex="' + wordToSelect  + '"]');
                     var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
                     var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
                     wordElement.dispatchEvent(mouseDownEvent);
                     wordElement.dispatchEvent(mouseUpEvent);
                 });
             },
-            updateSelection(newSelection, newSelectedPhrase, textBlockId) {
+            updateSelection(newSelection, newSelectedPhrase) {
                 this.vocabBox.tab = 0;
                 this.selection = newSelection;
                 this.selectedPhrase = newSelectedPhrase;
-                this.selectedTextBlock = textBlockId;
                 this.vocabBox.active = true;
 
                 // update vocab box data
@@ -512,7 +513,8 @@
 
                 
                 if (this.selection.length == 1) {
-                    var uniqueWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
+                    var uniqueWord = this.text.uniqueWords[this.selection[0].uniqueWordIndex];
+                    
                     this.vocabBox.type = 'word';
                     this.vocabBox.word = uniqueWord.word;
                     this.vocabBox.reading = uniqueWord.reading;
@@ -531,9 +533,10 @@
                 } else {
                     if (this.selectedPhrase !== -1) {
                         this.vocabBox.type = 'phrase';
-                        this.vocabBox.reading = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].reading;
-                        this.vocabBox.translationText = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].translation;
-                        this.vocabBox.stage = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage;
+                        this.vocabBox.reading = this.text.phrases[this.selectedPhrase].reading;
+                        this.vocabBox.translationText = this.text.phrases[this.selectedPhrase].translation;
+                        this.vocabBox.stage = this.text.phrases[this.selectedPhrase].stage;
+                        console.log('phrase selected', this.text.phrases[this.selectedPhrase]);
                     } else {
                         this.vocabBox.type = 'new-phrase';
                     }
@@ -580,20 +583,18 @@
                     this.hoverVocabBox.positionLeft = 0;
                     this.hoverVocabBox.positionTop = 0;
                     this.hoverVocabBox.userTranslation = '';
-                    this.hoverVocabBox.dictionaryTranslation = '';
+                    this.hoverVocabBox.vocabularyHoverBoxSearch = '';
                     this.hoverVocabBox.reading = '';
                     this.hoverVocabBox.hoveredPhrase = -1;
-                    this.textBlockId = -1;                    
                     return;
                 } else {
                     this.hoverVocabBox.hoveredWords = data.hoveredWords;
                     this.hoverVocabBox.key ++;
                     this.hoverVocabBox.hoveredPhrase = data.hoveredPhrase;
                     this.hoverVocabBox.userTranslation = data.translation;
-                    this.hoverVocabBox.dictionaryTranslation = 'loading';
+                    this.hoverVocabBox.vocabularyHoverBoxSearch = 'loading';
                     this.hoverVocabBox.reading = data.reading;
                     this.hoverVocabBox.active = true;
-                    this.hoverVocabBox.textBlockId = data.textBlockId;
 
                     // clear previous delay timeout 
                     if (this.hoverVocabBox.dictionarySearchDelay !== null) {
@@ -601,6 +602,10 @@
                     }
 
                     // call the hover vocabulary search function with a delay
+                    if (!this.$props.vocabularyHoverBoxSearch) {
+                        this.hoverVocabBox.vocabularyHoverBoxSearch = '';
+                    }
+
                     this.hoverVocabBox.dictionarySearchDelay = setTimeout(() => {
                         if (data.hoveredWords.length === 1) {
                             var term = data.hoveredWords[0].word;
@@ -633,12 +638,12 @@
 
 
                 if (data.hoveredWords.length == 1) {
-                    var hoveredWordPositions = document.querySelector('[textblock="' + data.textBlockId + '"] [wordindex="' + data.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                    var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + data.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
                 } else {
-                    var hoveredWordPositions = document.querySelector('[textblock="' + data.textBlockId + '"] [wordindex="' + data.hoveredWords[parseInt(data.hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                    var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + data.hoveredWords[parseInt(data.hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                var hoveredWordPositions = document.querySelector('[textblock="' + data.textBlockId + '"] [wordindex="' + data.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + data.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
                 
                 this.hoverVocabBox.positionLeft = hoveredWordPositions.right - vocabBoxArea.left - hoverVocabBoxWidth / 2 - (hoveredWordPositions.right - hoveredWordPositions.left) / 2;
                 if (this.hoverVocabBox.positionLeft < margin) {
@@ -650,6 +655,10 @@
                 this.hoverVocabBox.positionTop = hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
             },
             makeHoverVocabularyBoxSearchRequest(term) {
+                if (!this.$props.vocabularyHoverBoxSearch) {
+                    this.hoverVocabBox.vocabularyHoverBoxSearch = '';
+                }
+
                 term = term.toLowerCase();
 
                 this.hoverVocabBox.dictionarySearchTerm = term;
@@ -671,7 +680,7 @@
                     }
 
                     this.hoverVocabBox.key ++;
-                    this.hoverVocabBox.dictionaryTranslation = response.data.definitions.join(';');
+                    this.hoverVocabBox.vocabularyHoverBoxSearch = response.data.definitions.join(';');
                 });
             },
             startSelection() {
@@ -704,8 +713,8 @@
                 this.selection = [];
                 
                 this.unselectAllWordsProcess();
-                this.$forceUpdate();
                 this.hoverVocabBox.disabledWhileSelecting = false;
+                this.textBlockKey ++;
             },
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
@@ -722,38 +731,18 @@
                 this.vocabBox.baseWord = '';
                 this.vocabBox.baseWordReading = '';
                 
-                for (let j = 0; j < this.textBlocks.length; j++) {
-                    this.unselectWordInTextBlock(j);
-                    for (let i  = 0; i < this.textBlocks[j].words.length; i++) {
-                        this.textBlocks[j].words[i].selected = false;
-                        this.textBlocks[j].words[i].hover = false;
-                    }
+                for(let i = 0; i < this.text.words.length; i++) {
+                    this.text.words[i].selected = false;
                 }
-            },
-            unselectWordInTextBlock(textBlockId) {
-                for (var i = 0; i < this.$children.length; i++) {
-                    if (this.$children[i].textBlockId === undefined) {
-                        continue;
-                    }
 
-                    if (this.$children[i].textBlockId === textBlockId) {
-                        this.$children[i].unselectWord();
-                    }
-                }
+                this.$refs.text.unselectWord();
             },
             updateLookupCount(type, word, phraseId) {
-                for (var i = 0; i < this.$children.length; i++) {
-                    if (this.$children[i].textBlockId === undefined) {
-                        continue;
-                    }
-
-                    if (type === 'word') {
-                        this.$children[i].updateWordLookupCount(word);
-                    } else {
-                        this.$children[i].updatePhraseLookupCount(phraseId);
-                    }
+                if (type === 'word') {
+                    this.$refs.text.updateWordLookupCount(word);
+                } else {
+                    this.$refs.text.updatePhraseLookupCount(phraseId);
                 }
-
             },
             updateSelectedWordLookupCount(id) {
 
@@ -772,7 +761,7 @@
 
                 if (this.selection.length == 1) {
                     var data = {
-                        word: this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].word,
+                        word: this.text.uniqueWords[this.selection[0].uniqueWordIndex].word,
                         reading: this.vocabBox.reading,
                         translation: this.vocabBox.translationText,
                         exampleSentence: exampleSentenceText,
@@ -841,56 +830,54 @@
                 }
 
                 // find all instance of the new phrase in the text
-                for (let j = 0; j < this.textBlocks.length; j++) {
-                    var phraseOccurences = [];
-                    for (var i = 0; i < this.textBlocks[j].words.length; i++) {
-                        // check if the current word is the start of the phrase
-                        if (this.textBlocks[j].words[i].word.toLowerCase() == phrase.words[0]) {
-                            phraseOccurences.push([
-                                {
-                                    word: this.textBlocks[j].words[i].word.toLowerCase(),
-                                    wordIndex: i,
-                                    newLineCount: 0
-                                }
-                            ]);
-                        }
-
-                        // check if the current word is the continuation of a phrase
-                        for (let p = 0 ; p < phraseOccurences.length; p++) {
-                            if (phraseOccurences[p].length == phrase.words.length) {
-                                continue;
+                var phraseOccurences = [];
+                for (var i = 0; i < this.text.words.length; i++) {
+                    // check if the current word is the start of the phrase
+                    if (this.text.words[i].word.toLowerCase() == phrase.words[0]) {
+                        phraseOccurences.push([
+                            {
+                                word: this.text.words[i].word.toLowerCase(),
+                                wordIndex: i,
+                                newLineCount: 0
                             }
-
-                            if (phrase.words[phraseOccurences[p].length] == this.textBlocks[j].words[i].word.toLowerCase() &&
-                                (i - 1) == phraseOccurences[p][phraseOccurences[p].length - 1].wordIndex + phraseOccurences[p][phraseOccurences[p].length - 1].newLineCount) {
-                                phraseOccurences[p].push({
-                                    word: this.textBlocks[j].words[i].word.toLowerCase(),
-                                    wordIndex: i,
-                                    newLineCount: 0
-                                });
-                            }
- 
-                            // count 'NEWLINE' words for comparison
-                            if (this.textBlocks[j].words[i].word.toLowerCase() == 'newline') {
-                                phraseOccurences[p][phraseOccurences[p].length - 1].newLineCount ++;
-                            }
-                        }
-
+                        ]);
                     }
 
-                    // mark all instance of the new phrase in the text
+                    // check if the current word is the continuation of a phrase
                     for (let p = 0 ; p < phraseOccurences.length; p++) {
-                        if (phraseOccurences[p].length < phrase.words.length) {
+                        if (phraseOccurences[p].length == phrase.words.length) {
                             continue;
                         }
 
-                        for (let i = 0; i < phraseOccurences[p].length; i++) {
-                            this.textBlocks[j].words[phraseOccurences[p][i].wordIndex].phraseIndexes.push(this.textBlocks[j].phrases.length);
+                        if (phrase.words[phraseOccurences[p].length] == this.text.words[i].word.toLowerCase() &&
+                            (i - 1) == phraseOccurences[p][phraseOccurences[p].length - 1].wordIndex + phraseOccurences[p][phraseOccurences[p].length - 1].newLineCount) {
+                            phraseOccurences[p].push({
+                                word: this.text.words[i].word.toLowerCase(),
+                                wordIndex: i,
+                                newLineCount: 0
+                            });
+                        }
+
+                        // count 'NEWLINE' words for comparison
+                        if (this.text.words[i].word.toLowerCase() == 'newline') {
+                            phraseOccurences[p][phraseOccurences[p].length - 1].newLineCount ++;
                         }
                     }
 
-                    this.textBlocks[j].phrases.push(JSON.parse(JSON.stringify(phrase)));
                 }
+
+                // mark all instance of the new phrase in the text
+                for (let p = 0 ; p < phraseOccurences.length; p++) {
+                    if (phraseOccurences[p].length < phrase.words.length) {
+                        continue;
+                    }
+
+                    for (let i = 0; i < phraseOccurences[p].length; i++) {
+                        this.text.words[phraseOccurences[p][i].wordIndex].phraseIndexes.push(this.text.phrases.length);
+                    }
+                }
+
+                this.text.phrases.push(JSON.parse(JSON.stringify(phrase)));
 
                 this.updatePhraseBorders();
                 this.selectedPhrase = this.getSelectedPhraseIndex();
@@ -909,8 +896,8 @@
                 }
                 
 
-                for (let i = 0; i < this.textBlocks[this.selectedTextBlock].phrases.length; i++) {
-                    if (selectedText == this.textBlocks[this.selectedTextBlock].phrases[i].words.join('')) {
+                for (let i = 0; i < this.text.phrases.length; i++) {
+                    if (selectedText == this.text.phrases[i].words.join('')) {
                         phraseIndex = i;
                         break;
                     }
@@ -923,33 +910,28 @@
                     return;
                 }
 
-                var deletedPhraseId = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id;
-                for (var j  = 0; j < this.textBlocks.length; j++) {
-                    var deletedPhraseIndex = this.textBlocks[j].phrases.map(e => e.id).indexOf(deletedPhraseId);
-                    if (deletedPhraseIndex == -1) {
-                        continue;
-                    }
-                    
-                    for (var i  = 0; i < this.textBlocks[j].words.length; i++) {
-                        // remove phrase index from words
-                        for (var p = this.textBlocks[j].words[i].phraseIndexes.length - 1; p >= 0; p--) {
-                            if (this.textBlocks[j].words[i].phraseIndexes[p] == deletedPhraseIndex) {
-                                this.textBlocks[j].words[i].phraseIndexes.splice(p, 1);
-                                break;
-                            }
+                var deletedPhraseId = this.text.phrases[this.selectedPhrase].id;
+                var deletedPhraseIndex = this.text.phrases.map(e => e.id).indexOf(deletedPhraseId);
+                
+                for (var i  = 0; i < this.text.words.length; i++) {
+                    // remove phrase index from words
+                    for (var p = this.text.words[i].phraseIndexes.length - 1; p >= 0; p--) {
+                        if (this.text.words[i].phraseIndexes[p] == deletedPhraseIndex) {
+                            this.text.words[i].phraseIndexes.splice(p, 1);
+                            break;
                         }
+                    }
 
-                        // decrease phrase indexes larger than the deleted one
-                        for (var p = this.textBlocks[j].words[i].phraseIndexes.length - 1; p >= 0; p--) {
-                            if (this.textBlocks[j].words[i].phraseIndexes[p] > deletedPhraseIndex) {
-                                this.textBlocks[j].words[i].phraseIndexes[p] --;
-                            }
+                    // decrease phrase indexes larger than the deleted one
+                    for (var p = this.text.words[i].phraseIndexes.length - 1; p >= 0; p--) {
+                        if (this.text.words[i].phraseIndexes[p] > deletedPhraseIndex) {
+                            this.text.words[i].phraseIndexes[p] --;
                         }
                     }
-                    
-                    // delete phrase
-                    this.textBlocks[j].phrases.splice(deletedPhraseIndex, 1);
                 }
+                
+                // delete phrase
+                this.text.phrases.splice(deletedPhraseIndex, 1);
 
                 axios.post('/vocabulary/phrase/delete', {
                     id: deletedPhraseId
@@ -968,39 +950,35 @@
                 }
 
                 this.phraseCurrentlySaving = true;
-                var selectedPhraseId = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id;
-                for (var j  = 0; j < this.textBlocks.length; j++) {
-                    for (var i  = 0; i < this.textBlocks[j].phrases.length; i++) {
-                        if (this.textBlocks[j].phrases[i].id == selectedPhraseId) {
-                            this.textBlocks[j].phrases[i].translation = this.vocabBox.translationText;
-                            this.textBlocks[j].phrases[i].reading = this.vocabBox.reading;
-                        }
+                var selectedPhraseId = this.text.phrases[this.selectedPhrase].id;
+                for (var i  = 0; i < this.text.phrases.length; i++) {
+                    if (this.text.phrases[i].id == selectedPhraseId) {
+                        this.text.phrases[i].translation = this.vocabBox.translationText;
+                        this.text.phrases[i].reading = this.vocabBox.reading;
                     }
                 }
                 
                 var saveData = {
-                    words: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].words,
-                    reading: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].reading,
-                    translation: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].translation,
-                    lookup_count: this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].lookup_count,
+                    words: this.text.phrases[this.selectedPhrase].words,
+                    reading: this.text.phrases[this.selectedPhrase].reading,
+                    translation: this.text.phrases[this.selectedPhrase].translation,
+                    lookup_count: this.text.phrases[this.selectedPhrase].lookup_count,
                 };
 
-                if (this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id == -1) {
-                    saveData.stage = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage;
+                if (this.text.phrases[this.selectedPhrase].id == -1) {
+                    saveData.stage = this.text.phrases[this.selectedPhrase].stage;
                 } else {
-                    saveData.id = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id;
+                    saveData.id = this.text.phrases[this.selectedPhrase].id;
                 }
 
                 if (withStage) {
-                    saveData.stage = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage;
+                    saveData.stage = this.text.phrases[this.selectedPhrase].stage;
                 }
 
                 axios.post('/vocabulary/phrase/save', saveData).then((response) => {
-                    for (let j = 0; j < this.textBlocks.length; j++) {
-                        for (let i = 0; i < this.textBlocks[j].phrases.length; i++) {
-                            if (this.textBlocks[j].phrases[i].id == -1) {
-                                this.textBlocks[j].phrases[i].id = parseInt(response.data);
-                            }
+                    for (let i = 0; i < this.text.phrases.length; i++) {
+                        if (this.text.phrases[i].id == -1) {
+                            this.text.phrases[i].id = parseInt(response.data);
                         }
                     }
 
@@ -1016,30 +994,28 @@
                 }
             },
             updatePhraseBorders() {
-                for (var j  = 0; j < this.textBlocks.length; j++) {
-                    for (var i = 0; i < this.textBlocks[j].words.length; i++) {
-                        if (this.textBlocks[j].words[i].phraseIndexes.length) {
-                            var lowestPhraseStage = 1000;
-                            for (let p = 0; p < this.textBlocks[j].words[i].phraseIndexes.length; p++) {
-                                if (parseInt(this.textBlocks[j].phrases[this.textBlocks[j].words[i].phraseIndexes[p]].stage) < lowestPhraseStage) {
-                                    lowestPhraseStage = parseInt(this.textBlocks[j].phrases[this.textBlocks[j].words[i].phraseIndexes[p]].stage);
-                                }
+                for (var i = 0; i < this.text.words.length; i++) {
+                    if (this.text.words[i].phraseIndexes.length) {
+                        var lowestPhraseStage = 1000;
+                        for (let p = 0; p < this.text.words[i].phraseIndexes.length; p++) {
+                            if (parseInt(this.text.phrases[this.text.words[i].phraseIndexes[p]].stage) < lowestPhraseStage) {
+                                lowestPhraseStage = parseInt(this.text.phrases[this.text.words[i].phraseIndexes[p]].stage);
                             }
+                        }
 
-                            this.textBlocks[j].words[i].phraseStage = lowestPhraseStage;
-                        }
-                        
-                        // phrase start
-                        this.textBlocks[j].words[i].phraseStart = false;
-                        this.textBlocks[j].words[i].phraseEnd = false;
-                        if (this.textBlocks[j].words[i].phraseIndexes.length && (i == 0 || !this.textBlocks[j].words[i - 1].phraseIndexes.length)) {
-                            this.textBlocks[j].words[i].phraseStart = true;
-                        }
-                        
-                        // phrase end
-                        if (this.textBlocks[j].words[i].phraseIndexes.length && (i + 1 == this.textBlocks[j].words.length || !this.textBlocks[j].words[i + 1].phraseIndexes.length)) {
-                            this.textBlocks[j].words[i].phraseEnd = true;
-                        }
+                        this.text.words[i].phraseStage = lowestPhraseStage;
+                    }
+                    
+                    // phrase start
+                    this.text.words[i].phraseStart = false;
+                    this.text.words[i].phraseEnd = false;
+                    if (this.text.words[i].phraseIndexes.length && (i == 0 || !this.text.words[i - 1].phraseIndexes.length)) {
+                        this.text.words[i].phraseStart = true;
+                    }
+                    
+                    // phrase end
+                    if (this.text.words[i].phraseIndexes.length && (i + 1 == this.text.words.length || !this.text.words[i + 1].phraseIndexes.length)) {
+                        this.text.words[i].phraseEnd = true;
                     }
                 }
             },
@@ -1053,28 +1029,24 @@
                 this.$forceUpdate();
             },
             saveWord(withStage = false, exampleSentenceChanged = false) {
-                var selectedWord = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex];
+                var selectedWord = this.text.uniqueWords[this.selection[0].uniqueWordIndex];
                 
 
                 // update unique words in all blocks
-                for (var j  = 0; j < this.textBlocks.length; j++) {
-                    for (var i  = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
-                        if (this.textBlocks[j].uniqueWords[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
-                            this.textBlocks[j].uniqueWords[i].translation = this.vocabBox.translationText;
-                            this.textBlocks[j].uniqueWords[i].reading = this.vocabBox.reading;
-                            this.textBlocks[j].uniqueWords[i].base_word = this.vocabBox.baseWord;
-                            this.textBlocks[j].uniqueWords[i].base_word_reading = this.vocabBox.baseWordReading;
-                            this.textBlocks[j].uniqueWords[i].stage = selectedWord.stage;
-                        }
+                for (var i  = 0; i < this.text.uniqueWords.length; i++) {
+                    if (this.text.uniqueWords[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
+                        this.text.uniqueWords[i].translation = this.vocabBox.translationText;
+                        this.text.uniqueWords[i].reading = this.vocabBox.reading;
+                        this.text.uniqueWords[i].base_word = this.vocabBox.baseWord;
+                        this.text.uniqueWords[i].base_word_reading = this.vocabBox.baseWordReading;
+                        this.text.uniqueWords[i].stage = selectedWord.stage;
                     }
                 }
 
                 // update stages in all text
-                for (var j  = 0; j < this.textBlocks.length; j++) {
-                    for (var i  = 0; i < this.textBlocks[j].words.length; i++) {
-                        if (this.textBlocks[j].words[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
-                            this.textBlocks[j].words[i].stage = selectedWord.stage;
-                        }
+                for (var i  = 0; i < this.text.words.length; i++) {
+                    if (this.text.words[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
+                        this.text.words[i].stage = selectedWord.stage;
                     }
                 }
                 
@@ -1127,7 +1099,7 @@
                             continue;
                         }
                     
-                        var wordElement = document.querySelector('[textblock="' + this.hoverVocabBox.textBlockId + '"] [wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]');
+                        var wordElement = document.querySelector('.text-block [wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]');
                         var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
                         var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
                         wordElement.dispatchEvent(mouseDownEvent);
@@ -1142,9 +1114,9 @@
 
                 // determine if saving is needed
                 var save = 'none';
-                if (this.selection.length == 1 && this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage !== stage) {
+                if (this.selection.length == 1 && this.text.uniqueWords[this.selection[0].uniqueWordIndex].stage !== stage) {
                     save = 'word';
-                } else if (this.selection.length > 1 && this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage !== stage) {
+                } else if (this.selection.length > 1 && this.text.phrases[this.selectedPhrase].stage !== stage) {
                     save = 'phrase';
                 }
 
@@ -1154,29 +1126,23 @@
                     }
 
                     // set stage for all unique words that match the selected word
-                    for (var j  = 0; j < this.textBlocks.length; j++) {
-                        for (var i  = 0; i < this.textBlocks[j].uniqueWords.length; i++) {
-                            if (this.textBlocks[j].uniqueWords[i].word == this.selection[0].word.toLowerCase()) {
-                                this.textBlocks[j].uniqueWords[i].stage = stage;
-                            }
+                    for (var i  = 0; i < this.text.uniqueWords.length; i++) {
+                        if (this.text.uniqueWords[i].word == this.selection[0].word.toLowerCase()) {
+                            this.text.uniqueWords[i].stage = stage;
                         }
                     }
 
                     // set stage for all words that match the selected word
-                    for (var j  = 0; j < this.textBlocks.length; j++) {
-                        for (var i  = 0; i < this.textBlocks[j].words.length; i++) {
-                            if (this.textBlocks[j].words[i].word.toLowerCase() == this.selection[0].word.toLowerCase()) {
-                                this.textBlocks[j].words[i].stage = stage;
-                            }
+                    for (var i  = 0; i < this.text.words.length; i++) {
+                        if (this.text.words[i].word.toLowerCase() == this.selection[0].word.toLowerCase()) {
+                            this.text.words[i].stage = stage;
                         }
                     }
                 } else if (this.selectedPhrase !== -1) {
                     // set stage for all phrases that match the selected word
-                    for (var j  = 0; j < this.textBlocks.length; j++) {
-                        for (var i  = 0; i < this.textBlocks[j].phrases.length; i++) {
-                            if (this.textBlocks[j].phrases[i].id == this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id) {
-                                this.textBlocks[j].phrases[i].stage = stage;
-                            }
+                    for (var i  = 0; i < this.text.phrases.length; i++) {
+                        if (this.text.phrases[i].id == this.text.phrases[this.selectedPhrase].id) {
+                            this.text.phrases[i].stage = stage;
                         }
                     }
                     
@@ -1206,9 +1172,9 @@
             },
             updateSelectedWordStage() {
                 if (this.selectedPhrase == -1 && this.selection.length) {
-                    this.vocabBox.stage = parseInt(this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].stage);
+                    this.vocabBox.stage = parseInt(this.text.uniqueWords[this.selection[0].uniqueWordIndex].stage);
                 } else if (this.selectedPhrase !== -1){
-                    this.vocabBox.stage = parseInt(this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].stage);
+                    this.vocabBox.stage = parseInt(this.text.phrases[this.selectedPhrase].stage);
                 }
 
                 if (this.vocabBox.stage == 2) {
@@ -1224,18 +1190,18 @@
                 }
 
                 var exampleSentence = [];
-                for (var i = 0; i < this.textBlocks[this.selectedTextBlock].words.length; i++) {
-                    if (this.textBlocks[this.selectedTextBlock].words[i].word == 'NEWLINE' 
-                        || sentenceIndexes.indexOf(this.textBlocks[this.selectedTextBlock].words[i].sentence_index) == -1) {
+                for (var i = 0; i < this.text.words.length; i++) {
+                    if (this.text.words[i].word == 'NEWLINE' 
+                        || sentenceIndexes.indexOf(this.text.words[i].sentence_index) == -1) {
                         continue;
                     }
 
                     exampleSentence.push({
-                        word: this.textBlocks[this.selectedTextBlock].words[i].word,
+                        word: this.text.words[i].word,
                         phrase_ids: []
                     });
 
-                    if (withSpaces && this.textBlocks[this.selectedTextBlock].words[i].spaceAfter) {
+                    if (withSpaces && this.text.words[i].spaceAfter) {
                         exampleSentence[exampleSentence.length - 1].word += ' ';
                     }
                 }
@@ -1246,10 +1212,10 @@
                 var exampleSentence = this.getExampleSentence();
 
                 var targetType = this.selection.length > 1 ? 'phrase' : 'word';
-                var targetId = this.textBlocks[this.selectedTextBlock].uniqueWords[this.selection[0].uniqueWordIndex].id;
+                var targetId = this.text.uniqueWords[this.selection[0].uniqueWordIndex].id;
 
                 if (targetType == 'phrase') {
-                    targetId = this.textBlocks[this.selectedTextBlock].phrases[this.selectedPhrase].id;
+                    targetId = this.text.phrases[this.selectedPhrase].id;
                 }
 
                 axios.post('/vocabulary/save-example-sentence', {
@@ -1283,12 +1249,10 @@
                     return;
                 }
 
-                console.log(this.selection);
-
                 if (this.selection.length == 1) {
-                    var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
+                    var selectedWordPositions = document.querySelector('.text-block [wordindex="' + this.selection[0].wordIndex + '"]').getBoundingClientRect();
                 } else if (this.selection.length > 1) {
-                    var selectedWordPositions = document.querySelector('[textblock="' + this.selectedTextBlock + '"] [wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                    var selectedWordPositions = document.querySelector('.text-block [wordindex="' + this.selection[parseInt(this.selection.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
                 this.vocabBox.positionLeft = selectedWordPositions.right - vocabBoxArea.left - this.vocabBox.width / 2 - (selectedWordPositions.right - selectedWordPositions.left) / 2;

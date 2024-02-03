@@ -1,7 +1,6 @@
 <template>
     <div 
         class="text-block w-100 overflow-x-hidden" 
-        :textblock="$props.textBlockId" 
         @mousemove="removePhraseHover"
     >
         <template>
@@ -96,7 +95,6 @@
             }
         },
         props: {
-            textBlockId: Number,
             _words: Array,
             _phrases: Array,
             _uniqueWords: Array,
@@ -185,7 +183,6 @@
             },
             updateHoveredWords: function(hoveredWords, hoveredPhraseIndex) {
                 var data = {
-                    textBlockId: this.$props.textBlockId,
                     hoveredWords: JSON.parse(JSON.stringify(hoveredWords)),
                     translation: '',
                     reading: '',
@@ -420,7 +417,7 @@
                     }
                     
                     this.updatePhraseBorders();
-                    this.$emit('textSelected', this.selection, this.selectedPhrase, this.$props.textBlockId);
+                    this.$emit('textSelected', this.selection, this.selectedPhrase);
                 }
             },
             unselectWord() {
@@ -480,10 +477,6 @@
                     }
                 }
             },
-            /*
-                Emits an event to TextBlockGroup, which will run updateWordLookupCount or 
-                updatePhraseLookupCount on all TextBlocks.
-            */
             updateLookupCount(word) {
                 if (this.selection.length == 1) {
                     this.$emit('updateLookupCount', 'word', word, null);

@@ -79,7 +79,7 @@
                                     ref="textBlock"
                                     :theme="theme"
                                     :fullscreen="settings.fullscreen"
-                                    :_text-blocks="textBlocks"
+                                    :_text="exampleSentence"
                                     :language="language"
                                     :highlight-words="true"
                                     :plain-text-mode="false"
@@ -113,7 +113,7 @@
                                         ref="textBlock"
                                         :theme="theme"
                                         :fullscreen="settings.fullscreen"
-                                        :_text-blocks="textBlocks"
+                                        :_text="exampleSentence"
                                         :language="language"
                                         :font-size="settings.fontSize"
                                     ></text-block-group>
@@ -156,7 +156,7 @@
                         <template v-if="reviews[currentReviewIndex] !== undefined">
                             <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <span 
-                                    v-for="(word, wordIndex) in textBlocks[0].words" :key="wordIndex"
+                                    v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
                                     :class="{'mr-2': word.spaceAfter}"
                                 >{{ word.word }}</span>
                             </div>
@@ -209,7 +209,7 @@
             return {
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 hotkeyDialog: false,
-                textBlocks: [
+                exampleSentence: [
                     {
                         id: -1,
                         words: [],
@@ -341,8 +341,8 @@
 
                     }
                 } else {
-                    for (var i = 0; i < this.textBlocks[0].words.length; i++) {
-                        if (wordsToSkip.includes(this.textBlocks[0].words[i].word)) {
+                    for (var i = 0; i < this.exampleSentence.words.length; i++) {
+                        if (wordsToSkip.includes(this.exampleSentence.words[i].word)) {
                             continue;
                         }
 
@@ -448,8 +448,7 @@
 
                 this.finishedReviews ++;
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
-                console.log(this.reviews[this.currentReviewIndex]);
-                this.textBlocks[0] = {
+                this.exampleSentence = {
                     id: -1,
                     words: [],
                     phrases: [],
@@ -457,10 +456,10 @@
                 };
 
                 axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].id + '/' + this.reviews[this.currentReviewIndex].type).then((response) => {
-                    let firstTime = (this.textBlocks[0].id == -1);
+                    let firstTime = (this.exampleSentence.id == -1);
 
                     if (response.data !== 'no example sentence') {
-                        this.textBlocks[0] = {
+                        this.exampleSentence = {
                             id: 0,
                             words: response.data.words,
                             phrases: response.data.phrases,
