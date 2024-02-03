@@ -1,12 +1,12 @@
 <template>
     <div>
         <!-- Subtitle selection list -->
-        <subtitle-list
+        <jellyfin-subtitle-list
             v-if="!text.length"
             :language="this.$props.language"
             :subtitleLoading="false"
             @subtitle-change="subtitleSelected"
-        ></subtitle-list>
+        ></jellyfin-subtitle-list>
 
         <!-- Selected subtitle text -->
         <div 

@@ -8,12 +8,7 @@
 @import 'Dialogs/LanguageSelectionDialog';
 @import 'Login/Login';
 @import 'Home/Home';
-@import 'media_player';
-@import 'media_subtitle_list';
-@import 'subtitle_reader';
 @import 'Review/Review';
-@import 'flash_card_collections';
-@import 'edit_flash_card_collection';
 @import 'Text/TextBlockGroup';
 @import 'Text/VocabularyBox';
 @import 'Text/VocabularyHoverBox';
@@ -31,6 +26,7 @@
 @import 'Library/BookChapters';
 @import 'Library/ImportDialog';
 @import 'Library/EditBookDialog';
+@import 'Library/JellyfinSubtitleList';
 @import 'slider';
 @import 'DarkMode';
 

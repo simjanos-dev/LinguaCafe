@@ -77,10 +77,8 @@ Vue.component('text-reader-glossary', TextReaderGlossary);
 Vue.component('text-reader-chapter-list', TextReaderChapterList);
 
 // media player
-const SubtitleReader = require('./components/MediaPlayer/SubtitleReader.vue').default;
-const SubtitleList = require('./components/MediaPlayer/SubtitleList.vue').default;
-Vue.component('subtitle-reader', SubtitleReader);
-Vue.component('subtitle-list', SubtitleList);
+import JellyfinSubtitleList from './components/Library/Import/ImportSource/JellyfinSubtitleList';
+Vue.component('jellyfin-subtitle-list', JellyfinSubtitleList);
 
 // vocabulary
 import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
@@ -128,7 +126,6 @@ Vue.component('admin-review-settings', AdminReviewSettings);
 
 const LoginForm = require('./components/Login/LoginForm.vue').default;
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
-const MediaPlayer = require('./components/MediaPlayer/MediaPlayer.vue').default;
 const Home = require('./components/Home/Home.vue').default;
 const PatchNotes = require('./components/Home/PatchNotes.vue').default;
 const Attributions = require('./components/Home/Attributions.vue').default;
@@ -150,7 +147,6 @@ const router = new VueRouter({
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
         { path: '/admin', component: AdminLayout },
-        { path: '/media-player', component: MediaPlayer },
         { path: '/books/:bookId?', component: Books },
         { path: '/chapters/read/:chapterId', component: TextReader },
         { path: '/flashcards', component: FlashcardCollectionList },

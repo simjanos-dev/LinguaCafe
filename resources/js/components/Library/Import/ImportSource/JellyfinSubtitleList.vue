@@ -18,7 +18,7 @@
         <!-- Subtitle list -->
         <v-card 
             outlined 
-            id="subtitle-list" 
+            id="jellyfin-subtitle-list" 
             class="rounded-lg px-4 pb-4" 
             :loading="subtitleListLoading || $props.subtitleLoading"
         >
@@ -68,7 +68,7 @@
                 </v-alert>
             </template>
 
-            <div class="regular-list-height subtitle rounded-pill my-2" v-if="!subtitleListLoading && !$props.subtitleLoading && !sessions.length">
+            <div class="regular-list-height subtitle rounded-pill my-2" v-if="!subtitleListLoading && !$props.subtitleLoading && !sessions.length && !subtitleListError">
                 <div id="no-subtitle-found-label">No subtitles found</div>
             </div>
 

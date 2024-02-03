@@ -1,4 +1,4 @@
-@import 'variables';
+@import './../variables';
 
 .media-player-subtitle-info {
     display: block;
@@ -6,7 +6,7 @@
     width: 100%;
 }
 
-#subtitle-list {
+#jellyfin-subtitle-list {
     display: block;
     margin: auto;
     width: 100%;
@@ -82,7 +82,7 @@
 }
 
 @media (max-width: 768px) {
-    #subtitle-list {
+    #jellyfin-subtitle-list {
         .subtitle:not(.skeleton) {
             .subtitle-language {
                 width: 80px;
@@ -101,13 +101,13 @@
 }
 
 @media (max-width: 500px) {
-    #subtitle-list #subtitles-card-title:not(.processing) {
+    #jellyfin-subtitle-list #subtitles-card-title:not(.processing) {
         text-align: left;
     }
 }
 
 @media (max-width: 470px) {
-    #subtitle-list {
+    #jellyfin-subtitle-list {
         .subtitle:not(.skeleton) {
             font-size: 14px;
 
