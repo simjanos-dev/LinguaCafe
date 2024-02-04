@@ -47,6 +47,13 @@
                 }
             }
 
+            &.disabled .search-result-definition:hover {
+                &:hover {
+                    background-color: var(--v-foreground-base);
+                    cursor: default;
+                }
+            }
+
             .search-result-other-forms {
                 width: 100%;
             }

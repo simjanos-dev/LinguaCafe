@@ -408,6 +408,16 @@
         background-color: var(--v-primary-base);
     }
 
+    
+    #search-results .search-result.disabled .search-result-definition:hover,
+    #search-results .search-result.disabled .search-result-definition:hover {
+        &:hover {
+            background-color: var(--v-foreground-base);
+            color: var(--v-text-base);
+            cursor: default;
+        }
+    }
+
     // search bar result icon color transition
     #search-results .search-result .search-result-definition i {
         transition: 0s;

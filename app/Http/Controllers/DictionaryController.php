@@ -101,7 +101,7 @@ class DictionaryController extends Controller
             if ($dictionary->name == 'JMDict') {
                 $searchResultDictionary->jmdictRecords = $this->searchJmDict($term);
             } else if (explode(' ', $dictionary->name)[0] == 'DeepL' && $dictionary->database_table_name == 'API') {
-                $searchResultDictionary->records = $this->searchDeepl($language, $term);
+                continue;
             } else {
                 $searchResultDictionary->records = $this->searchImportedDictionary($dictionary->database_table_name, $term);
             }
@@ -118,7 +118,6 @@ class DictionaryController extends Controller
     public function searchDefinitionsForHoverVocabulary(Request $request) {
         $language = $request->post('language');
         $term = $request->post('term');
-        $key = $request->post('key');
         $limit = 15;
         $searchResults = [];
         
@@ -227,14 +226,29 @@ class DictionaryController extends Controller
         This function sends an API request to DeepL, and returns
         it in a format that can be returned for the client.
     */
-    private function searchDeepl($language, $term) {
+    public function searchDeepl(Request $request) {
+        $language = $request->post('language');
+        $term = $request->post('term');
+
+        $deeplDictionary = Dictionary
+            ::where('name', 'like', 'DeepL%')
+            ->where('enabled', true)
+            ->where('database_table_name','API')
+            ->where('language', $language)
+            ->first();
+
+        if (!$deeplDictionary) {
+            return response()->json([
+                'message' => 'DeepL dictionary is disabled.'
+            ], 500);
+        }
+
         // retrieve api key from database
         $apiKeySetting = Setting::where('name', 'deeplApiKey')->first();
         $apiKey = json_decode($apiKeySetting->value);
 
         $hash = md5(mb_strtolower($term, 'UTF-8'));
         $languageCodes = config('linguacafe.languages.deepl_language_codes');
-        $records = [];
 
         // check if search term is already cached
         $cache = DeeplCache
@@ -244,12 +258,12 @@ class DictionaryController extends Controller
         
         // make api call or retrieve definition from cache
         if ($cache) {
-            $definitions = [$cache->definition];
+            $definition = $cache->definition;
         } else {
             // make api call
             $deepl = new \DeepL\Translator($apiKey);
             $result = $deepl->translateText($term, $languageCodes[$language], $languageCodes['english']);
-            $definitions = [$result->text];
+            $definition = $result->text;
 
             // create cache
             $cache = new DeeplCache();
@@ -260,12 +274,11 @@ class DictionaryController extends Controller
         }
 
         // return translation
-        $record = new \stdClass();
-        $record->word = $term;
-        $record->definitions = $definitions;
-        $records[] = $record;
+        $result = new \stdClass();
+        $result->term = $term;
+        $result->definition = $definition;
 
-        return $records;
+        return json_encode($result);
     }
 
     /*

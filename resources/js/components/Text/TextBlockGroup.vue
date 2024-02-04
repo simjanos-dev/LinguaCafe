@@ -84,7 +84,8 @@
             v-if="hoverVocabBox.active && !hoverVocabBox.disabledWhileSelecting && (($props.vocabularySidebar && $props.vocabularySidebarFits) || !vocabBox.active)"
             :key="'vocabulary-hover-box' + hoverVocabBox.key"
             :user-translation="hoverVocabBox.userTranslation"
-            :dictionary-translation="hoverVocabBox.vocabularyHoverBoxSearch"
+            :dictionary-translation="hoverVocabBox.dictionaryTranslation"
+            :deepl-translation="hoverVocabBox.deeplTranslation"
             :positionLeft="hoverVocabBox.positionLeft"
             :positionTop="hoverVocabBox.positionTop"
             :reading="hoverVocabBox.reading"
@@ -172,7 +173,8 @@
                     hoveredPhrase: -1,
                     reading: '',
                     userTranslation: '',
-                    vocabularyHoverBoxSearch: '',
+                    dictionaryTranslation: '',
+                    deeplTranslation: '',
                     positionLeft: 0,
                     positionTop: 0,
                 },
@@ -343,7 +345,11 @@
                     
                         // decrease font size
                     case 73:
-                        event.preventDefault();
+                        // do not do anything if ctrl+shift+i is pressed for dev tools
+                        if (event.ctrlKey || event.shiftKey) {
+                            return;
+                        }
+
                         this.$emit('decrease-font-size');
                         break;
 
@@ -604,7 +610,9 @@
                     this.hoverVocabBox.positionLeft = 0;
                     this.hoverVocabBox.positionTop = 0;
                     this.hoverVocabBox.userTranslation = '';
-                    this.hoverVocabBox.vocabularyHoverBoxSearch = '';
+                    this.hoverVocabBox.dictionaryTranslation = '';
+                    this.hoverVocabBox.deeplTranslation = '';
+
                     this.hoverVocabBox.reading = '';
                     this.hoverVocabBox.hoveredPhrase = -1;
                     return;
@@ -613,7 +621,8 @@
                     this.hoverVocabBox.key ++;
                     this.hoverVocabBox.hoveredPhrase = data.hoveredPhrase;
                     this.hoverVocabBox.userTranslation = data.translation;
-                    this.hoverVocabBox.vocabularyHoverBoxSearch = 'loading';
+                    this.hoverVocabBox.dictionaryTranslation = 'loading';
+                    this.hoverVocabBox.deeplTranslation = 'loading';
                     this.hoverVocabBox.reading = data.reading;
                     this.hoverVocabBox.active = true;
 
@@ -624,7 +633,8 @@
 
                     // call the hover vocabulary search function with a delay
                     if (!this.$props.vocabularyHoverBoxSearch) {
-                        this.hoverVocabBox.vocabularyHoverBoxSearch = '';
+                        this.hoverVocabBox.dictionaryTranslation = '';
+                        this.hoverVocabBox.deeplTranslation = '';
                     }
 
                     this.hoverVocabBox.dictionarySearchDelay = setTimeout(() => {
@@ -677,12 +687,18 @@
             },
             makeHoverVocabularyBoxSearchRequest(term) {
                 if (!this.$props.vocabularyHoverBoxSearch) {
-                    this.hoverVocabBox.vocabularyHoverBoxSearch = '';
+                    this.hoverVocabBox.dictionaryTranslation = '';
+                    this.hoverVocabBox.deeplTranslation = '';
+                }
+
+                // do not make search request for empty string
+                if (term === '') {
+                    return;
                 }
 
                 term = term.toLowerCase();
-
                 this.hoverVocabBox.dictionarySearchTerm = term;
+
 
                 // make dictionary search
                 axios.post('/dictionary/search-for-hover-vocabulary', {
@@ -701,7 +717,30 @@
                     }
 
                     this.hoverVocabBox.key ++;
-                    this.hoverVocabBox.vocabularyHoverBoxSearch = response.data.definitions.join(';');
+                    this.hoverVocabBox.dictionaryTranslation = response.data.definitions.join(';');
+                });
+
+                // make deepl search
+                axios.post('/dictionaries/deepl/search', {
+                    language: this.$props.language,
+                    term: term
+                }).then((response) => {
+                    // return if a different word has been selected  
+                    // after the request was sent
+                    if (this.hoverVocabBox.dictionarySearchTerm !== response.data.term) {
+                        return;
+                    }
+
+                    // return if there is no word selected anymore
+                    if (this.hoverVocabBox.dictionarySearchTerm === '') {
+                        return;
+                    }
+
+                    this.hoverVocabBox.key ++;
+                    this.hoverVocabBox.deeplTranslation = response.data.definition;
+                }).catch(() => {
+                    this.hoverVocabBox.key ++;
+                    this.hoverVocabBox.deeplTranslation = 'DeepL error';
                 });
             },
             startSelection() {

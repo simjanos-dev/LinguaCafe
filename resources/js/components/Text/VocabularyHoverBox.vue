@@ -2,7 +2,7 @@
     <v-card 
         outlined 
         id="vocab-hover-box" 
-        class="d-flex flex-wrap rounded-lg pa-4"
+        class="d-flex flex-wrap rounded-lg pa-3"
         :style="{
             'position': 'absolute',
             'left': $props.positionLeft + 'px',
@@ -37,10 +37,23 @@
             <!-- No dictionary search result -->
             <template v-if="$props.dictionaryTranslation !== 'loading' && !dictionaryTranslationList.length">
                 <li>
-                    <v-icon small>mdi-list-box</v-icon> no dictionary results
+                    <v-icon small>mdi-list-box</v-icon> No dictionary results
+                </li>
+            </template>
+    
+            <!-- Deepl translations -->
+            <template v-if="$props.deeplTranslation !== 'loading' && $props.deeplTranslation.length">
+                <li key="deepl-translation">
+                    <v-icon small>mdi-translate</v-icon> {{ $props.deeplTranslation }}
                 </li>
             </template>
 
+            <!-- Deepl translations loading -->
+            <template v-if="$props.deeplTranslation === 'loading'">
+                <li>
+                    <v-progress-circular indeterminate class="mx-1" size="10" width="2" color="#92B9E2"></v-progress-circular> searching
+                </li>
+            </template>
         </ul>
     </v-card>
 </template>
@@ -56,6 +69,7 @@
         props: {
             userTranslation: String,
             dictionaryTranslation: String,
+            deeplTranslation: String,
             positionLeft: Number,
             positionTop: Number,
             reading: String

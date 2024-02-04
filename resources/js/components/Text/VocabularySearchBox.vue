@@ -13,8 +13,54 @@
             @keydown.stop=";"
         ></v-text-field>
 
+
         <!-- Search results -->
         <div id="search-results" class="border rounded-lg">
+
+            <!-- DeepL translation -->
+            <div :class="{'search-result': true, 'disabled': !deeplSearchResult.length || deeplSearchResult == 'loading'}">
+                <div class="search-result-title rounded px-2" style="background-color: #92B9E2">
+                    {{ searchField }} <div class="dictionary">DeepL</div>
+                </div>
+                
+                <!-- DeepL search result -->
+                <div 
+                    v-if="deeplSearchResult !== 'loading'"
+                    class="search-result-definition rounded"
+                    @click="addDefinitionToInput(deeplSearchResult)"
+                >
+                    {{ deeplSearchResult }} <v-icon v-if="deeplSearchResult.length">mdi-plus</v-icon>
+                </div>
+
+                <!-- DeepL loading -->
+                <div v-if="deeplSearchResult == 'loading'" class="search-result-definition rounded pr-2">
+                    loading <v-progress-circular indeterminate class="ml-1" size="20" width="3" color="#92B9E2"></v-progress-circular>
+                </div>
+            </div>
+
+            <!-- Dictionary loading -->
+            <div class="search-result disabled" v-if="dictionarySearchLoading">
+                <div class="search-result-title rounded px-2" style="background-color: #C5947D;">
+                    {{ searchField }} <div class="dictionary">Dictionary search</div>
+                </div>
+
+                <div class="search-result-definition rounded pr-2">
+                    loading <v-progress-circular indeterminate class="ml-1" size="20" width="3" color="primary"></v-progress-circular>
+                </div>
+            </div> 
+
+            <!-- Dictionary no result message -->
+            <div class="search-result disabled" v-if="!dictionarySearchLoading && !dictionarySearchResultsFound">
+                <div class="search-result-title rounded px-2" style="background-color: #C5947D;">
+                    {{ searchField }} <div class="dictionary">Dictionary search</div>
+                </div>
+
+                <div class="search-result-definition rounded pr-2">
+                    No dictionary results
+                </div>
+            </div> 
+            
+            <!-- Dictionary search results -->
             <div class="search-result jmdict" v-for="(searchResult, searchresultIndex) in searchResults" :key="searchresultIndex">
                 <!-- Regular record -->
                 <template v-if="searchResult.dictionary !== 'JMDict'">
@@ -63,7 +109,10 @@
         data: function() {
             return {
                 searchField: this.$props._searchTerm,
-                searchResults: []
+                searchResults: [],
+                dictionarySearchLoading: false,
+                dictionarySearchResultsFound: true,
+                deeplSearchResult: '',
             };
         },
         mounted: function() {
@@ -79,11 +128,26 @@
                     return;
                 }
 
+                // dictionary search
+                this.dictionarySearchLoading = true;
+                this.dictionarySearchResultsFound = false;
                 axios.post('/dictionary/search', {
                     language: this.$props.language,
                     term: this.searchField
                 }).then((response) => {
                     this.processVocabularySearchResults(response.data);
+                    this.dictionarySearchLoading = false;
+                });
+
+                // deepl search
+                this.deeplSearchResult = 'loading';
+                axios.post('/dictionaries/deepl/search', {
+                    language: this.$props.language,
+                    term: this.searchField
+                }).then((response) => {
+                    this.deeplSearchResult = response.data.definition;
+                }).catch(() => {
+                    this.deeplSearchResult = 'DeepL error';
                 });
             },
             processVocabularySearchResults(data) {
@@ -107,6 +171,10 @@
                             });                            
                         }
 
+                        if (searchResult.records.length) {
+                            this.dictionarySearchResultsFound = true;
+                        }
+
                         this.searchResults.push(searchResult);
                     } else {
                         let searchResult = {
@@ -122,6 +190,10 @@
                             });                            
                         }
 
+                        if (searchResult.records.length) {
+                            this.dictionarySearchResultsFound = true;
+                        }
+                        
                         this.searchResults.push(searchResult);
                     }
                 }

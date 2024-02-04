@@ -16,10 +16,19 @@
                         Added dynamic language model loading. Models are only going to be loaded at the first import for each language. This will significantly decrease memory use based on which and how many langauges are used on a server after its startup.
                     </li>
                     <li>
-                        Setting words' and phrases' levels is now possible while hovering over them.
+                        Setting words' and phrases' level is now possible while hovering over them.
                     </li>
                     <li>
-                        Added dictionary search for mouse hover vocabulary box. 
+                        Added dictionary search for hover vocabulary box. 
+                    </li>
+                    <li>
+                        Added DeepL search for hover vocabulary box. 
+                    </li>
+                    <li>
+                        Separated DeepL search from regular dictionary search in the vocabulary box. Users won't have to wait for DeepL server's response to see the dictionary search results which load much faster.
+                    </li>
+                    <li>
+                        Added loading indicator for vocabulary box dictionary search.
                     </li>
                     <li>
                         Added an option to automatically highlight a word when it gets a translation added to it. 
