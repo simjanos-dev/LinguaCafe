@@ -20,6 +20,7 @@ class ImportController extends Controller
         $bookId = $request->post('bookId');
         $bookName = $request->post('bookName');
         $chapterName = $request->post('chapterName');
+        $chunkSize = intval($request->post('maximumCharactersPerChapter'));
         
         if ($importType == 'e-book') {
             $importFile = $request->file('importFile');
@@ -41,13 +42,13 @@ class ImportController extends Controller
         try {
             if ($importType === 'e-book') {
                 // e-book
-                (new ImportService())->importBook($textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
+                (new ImportService())->importBook($chunkSize, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
             } else if ($importType === 'youtube') {
                 // text
-                (new ImportService())->importText($textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
+                (new ImportService())->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
             } else if ($importType === 'jellyfin-subtitle') {
                 // text
-                (new ImportService())->importSubtitles($textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
+                (new ImportService())->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
         } catch (\Exception $exception) {
             if ($importType === 'e-book') {

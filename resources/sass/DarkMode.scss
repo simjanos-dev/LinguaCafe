@@ -54,7 +54,8 @@
 // alert
 #app.dark .v-alert.primary,
 #app.dark .v-alert.success,
-#app.dark .v-alert.error {
+#app.dark .v-alert.error,
+#app.dark .v-alert.warning {
     color: var(--v-textDark-base);
     
     i.v-icon {

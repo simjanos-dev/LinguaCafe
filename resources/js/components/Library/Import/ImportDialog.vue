@@ -95,11 +95,11 @@
 
                         <!-- Library import settings -->
                         <v-stepper-content step="4">
-                            <import-text-processing-method-selection
+                            <import-options
                                 v-if="stepperPage > 3"
                                 :language="$props.language"
-                                @text-processing-method-changed="textProcessingMethodChanged"
-                            ></import-text-processing-method-selection>
+                                @import-options-changed="importOptionsChanged"
+                            ></import-options>
                         </v-stepper-content>
                         <v-stepper-content step="5">
                             <!-- Importing info -->
@@ -177,7 +177,7 @@
                     depressed
                     color="primary"
                     :loading="importLoading"
-                    :disabled="stepperPage == 5 && importResult === ''"
+                    :disabled="stepperPage == 5 && importResult === '' || !isImportOptionsValid"
                     @click="finishImport"
                 >
                     Import
@@ -195,8 +195,10 @@
                 importResult: '',
                 stepperPage: 1  ,
                 isImportSourceValid: false,
+                isImportOptionsValid: false,
                 isLibraryValid: false,
                 textProcessingMethod: 'detailed',
+                maximumCharactersPerChapter: 200,
                 importType: '',
 
                 // these come from the source step item
@@ -248,8 +250,10 @@
                 }
                 
             },
-            textProcessingMethodChanged(method) {
-                this.textProcessingMethod = method;
+            importOptionsChanged(data) {
+                this.textProcessingMethod = data.textProcessingMethod;
+                this.isImportOptionsValid = data.isValid;
+                this.maximumCharactersPerChapter = data.maximumCharactersPerChapter;
             },
             stepForward() {
                 this.stepperPage++;
@@ -291,6 +295,7 @@
                 data.set('bookId', this.bookId);
                 data.set('bookName', this.bookName);
                 data.set('chapterName', this.chapterName);
+                data.set('maximumCharactersPerChapter', this.maximumCharactersPerChapter);
 
                 this.importLoading = true;
                 this.stepperPage = 5;

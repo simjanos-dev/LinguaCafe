@@ -31,14 +31,14 @@ import ImportEbookFileSource from './components/Library/Import/ImportSource/Impo
 import ImportYoutubeSubtitleSource from './components/Library/Import/ImportSource/ImportYoutubeSubtitleSource.vue';
 import ImportJellyfinSubtitleSource from './components/Library/Import/ImportSource/ImportJellyfinSubtitleSource.vue';
 import ImportLibraryOptions from './components/Library/Import/ImportLibraryOptions.vue';
-import ImportTextProcessingMethodSelection from './components/Library/Import/ImportTextProcessingMethodSelection.vue';
+import ImportOptions from './components/Library/Import/ImportOptions.vue';
 Vue.component('import-dialog', ImportDialog);
 Vue.component('import-type-selection', ImportTypeSelection);
 Vue.component('import-ebook-file-source', ImportEbookFileSource);
 Vue.component('import-youtube-subtitle-source', ImportYoutubeSubtitleSource);
 Vue.component('import-jellyfin-subtitle-source', ImportJellyfinSubtitleSource);
 Vue.component('import-library-options', ImportLibraryOptions);
-Vue.component('import-text-processing-method-selection', ImportTextProcessingMethodSelection);
+Vue.component('import-options', ImportOptions);
 
 // home page
 import Calendar from './components/Home/Calendar.vue';

@@ -299,7 +299,7 @@ def importBook():
     chunks = list()
     processedChunks = list()
     for sentenceIndex, sentence in enumerate(sentences):
-        if (len(processedChunks) == 0 or len(processedChunks[-1]) > chunkSize):
+        if (len(processedChunks) == 0 or len(processedChunks[-1].replace(' NEWLINE ', '')) > chunkSize):
             chunks.append('')
             processedChunks.append('')
 
@@ -340,7 +340,7 @@ def importText():
     chunks = list()
     processedChunks = list()
     for sentenceIndex, sentence in enumerate(sentences):
-        if (len(processedChunks) == 0 or len(processedChunks[-1]) > chunkSize):
+        if (len(processedChunks) == 0 or len(processedChunks[-1].replace(' NEWLINE ', '')) > chunkSize):
             chunks.append('')
             processedChunks.append('')
 
@@ -411,7 +411,7 @@ def importSubtitles():
         processedChunks[-1] = processedChunks[-1] + tokenizedText
 
         # increase current chunk size
-        currentChunkSize += len(importSubtitles[subtitleIndex]['text'])
+        currentChunkSize += len(importSubtitles[subtitleIndex]['text'].replace(' NEWLINE ', ''))
 
     #tokenize each chunk
     # for chunkIndex, chunk in enumerate(processedChunks):

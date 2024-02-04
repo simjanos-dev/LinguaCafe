@@ -20,7 +20,7 @@ class ImportService
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
     
-    public function importBook($textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
+    public function importBook($chunkSize, $textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
         $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
@@ -30,7 +30,7 @@ class ImportService
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importFile' => $file,
-            'chunkSize' => 1500
+            'chunkSize' => $chunkSize
         ]);
         
         // get text and token chunks
@@ -44,7 +44,7 @@ class ImportService
         return 'success';
     }
 
-    public function importText($textProcessingMethod, $importText, $bookId, $bookName, $chapterName) {
+    public function importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
         $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
@@ -54,7 +54,7 @@ class ImportService
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importText' => $importText,
-            'chunkSize' => 1500
+            'chunkSize' => $chunkSize
         ]);
         
         // get text and token chunks
@@ -68,7 +68,7 @@ class ImportService
         return 'success';
     }
 
-    public function importSubtitles($textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName) {
+    public function importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
         $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
@@ -78,7 +78,7 @@ class ImportService
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
             'importSubtitles' => $importSubtitles,
-            'chunkSize' => 2700
+            'chunkSize' => $chunkSize
         ]);
         
         // get text and token chunks
