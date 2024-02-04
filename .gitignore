@@ -14,7 +14,6 @@ yarn-error.log
 /.vscode
 /public/css/*.css
 /public/js/*.js
-!/public/css/awesomefont.css
 !/public/css/vuetify.min.css
 /public/js/dmak/kanji/*.svg
 /docker/mysql/*

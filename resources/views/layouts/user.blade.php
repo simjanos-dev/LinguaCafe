@@ -25,7 +25,6 @@
 
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     @yield('header')
-    <link href="{{ asset('css/awesomefont.css') }}" rel="stylesheet">
 </head>
 <body><!--
 --><div id="app"><!--
