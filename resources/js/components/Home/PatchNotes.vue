@@ -56,6 +56,9 @@
                     <li>
                         Removed Media player page. It has been replaced with the Jellyfin subtitle import option on the library page.
                     </li>
+                    <li>
+                        Improved text selecting design. 
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

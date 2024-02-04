@@ -19,6 +19,8 @@
                         'plain-text-mode': plainTextMode,
                         'word': true,
                         'highlighted': word.selected || word.hover,
+                        'highlight-start': (word.selected && wordIndex > 0 && !words[wordIndex - 1].selected) || (!word.selected && word.hover),
+                        'highlight-end': (word.selected && wordIndex < words.length - 1 && !words[wordIndex + 1].selected) || (!word.selected && word.hover),
                         'phrase': word.phraseIndexes.length > 0, 
                         'phrase-start': word.phraseStart, 
                         'phrase-end': word.phraseEnd,
