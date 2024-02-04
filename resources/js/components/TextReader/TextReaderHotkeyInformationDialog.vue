@@ -1,6 +1,6 @@
 <template>
-    <v-dialog v-model="value" persistent scrollable width="460px" max-height="500px">
-        <v-card id="text-reader-hotkeys" class="rounded-lg">
+    <v-dialog v-model="value" persistent scrollable width="460px" >
+        <v-card id="text-reader-hotkeys" class="rounded-lg" height="500px">
             <!-- Title -->
             <v-card-title>
                 <v-icon class="mr-1">mdi-keyboard-outline</v-icon>Text reader hotkeys
@@ -12,6 +12,32 @@
             
             <!-- hotkey info -->
             <v-card-text class="px-8">
+                <label class="font-weight-bold mt-2 mb-0">Scrolling</label>
+                <div class="hotkey d-flex mb-2">
+                    Hold Ctrl or Shift while scrolling to increase scroll size.
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">Up arrow</span><span>Scroll up</span>
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">Down arrow</span><span>Scroll down</span>
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">w</span><span>Scroll up</span>
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">s</span><span>Scroll down</span>
+                </div>
+
+                <label class="font-weight-bold mt-4 mb-0">Text size</label>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">i</span><span>Decrease font size</span>
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">o</span><span>Increase font size</span>
+                </div>
+
+                <label class="font-weight-bold mt-4 mb-0">Set level</label>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">x</span><span>Set level to ignored</span>
                 </div>
@@ -39,23 +65,10 @@
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">7</span><span>Set level to 7</span>
                 </div>
+
+                <label class="font-weight-bold mt-4 mb-0">Word selection</label>
                 <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">Up arrow</span><span>Increase font size</span>
-                </div>
-                <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">w</span><span>Increase font size</span>
-                </div>
-                <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">Up Down</span><span>Decrease font size</span>
-                </div>
-                <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">s</span><span>Decrease font size</span>
-                </div>
-                <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">f</span><span>Send word or phrase to anki</span>
-                </div>
-                <div class="hotkey d-flex">
-                    <span class="primary--text" style="width: 170px;">Esc</span><span>Unselect word or phrase</span>
+                    <span class="primary--text" style="width: 170px;">Esc</span><span>Unselect word</span>
                 </div>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">Left arrow</span><span>Select previous word</span>
@@ -92,6 +105,11 @@
                 </div>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">Ctrl + d</span><span>Select next new word</span>
+                </div>
+
+                <label class="font-weight-bold mt-4 mb-0">Anki</label>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">f</span><span>Send word to anki</span>
                 </div>
 
             </v-card-text>

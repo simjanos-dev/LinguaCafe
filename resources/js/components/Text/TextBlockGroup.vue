@@ -340,19 +340,31 @@
                         event.preventDefault();
                         this.setStage(1);
                         break;
+                    
+                        // decrease font size
+                    case 73:
+                        event.preventDefault();
+                        this.$emit('decrease-font-size');
+                        break;
 
                     // increase font size
-                    case 38:
-                    case 87:
+                    case 79:
                         event.preventDefault();
                         this.$emit('increase-font-size');
                         break;
+
+                    // scroll up
+                    case 38:
+                    case 87:
+                        event.preventDefault();
+                        this.scrollText('up', event.ctrlKey || event.shiftKey);
+                        break;
                     
-                    // decrease font size
+                    // scroll down
                     case 40:
                     case 83:
                         event.preventDefault();
-                        this.$emit('decrease-font-size');
+                        this.scrollText('down', event.ctrlKey || event.shiftKey);
                         break;
 
                     // add selected word to anki
@@ -493,6 +505,16 @@
                     wordElement.dispatchEvent(mouseUpEvent);
                 });
             },
+            scrollText(direction, largeScroll) {
+                let scrollChange = direction == 'up' ? -40 : 40;
+
+                if (largeScroll) {
+                    scrollChange *= 8;
+                }
+
+
+                document.getElementsByClassName('vocab-box-area')[0].scrollBy(0, scrollChange);
+            },
             updateSelection(newSelection, newSelectedPhrase) {
                 this.vocabBox.tab = 0;
                 this.selection = newSelection;
@@ -536,7 +558,6 @@
                         this.vocabBox.reading = this.text.phrases[this.selectedPhrase].reading;
                         this.vocabBox.translationText = this.text.phrases[this.selectedPhrase].translation;
                         this.vocabBox.stage = this.text.phrases[this.selectedPhrase].stage;
-                        console.log('phrase selected', this.text.phrases[this.selectedPhrase]);
                     } else {
                         this.vocabBox.type = 'new-phrase';
                     }

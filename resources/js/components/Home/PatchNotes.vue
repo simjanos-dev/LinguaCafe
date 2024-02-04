@@ -28,13 +28,16 @@
                         A list of words which were not counted in the statistics now will be automatically set to ignored when imported. Also added all numbers and more symbols to the list.
                     </li>
                     <li>
-                            Vocabulary search page's edit dialog now will close on its own after saving it, and the search results will be updated automatically.
+                        Vocabulary search page's edit dialog now will close on its own after saving it, and the search results will be updated automatically.
                     </li>
                     <li>
                         Added Jellyfin subtitle import option.
                     </li>
                     <li>
                         Added chapter length option to import dialog.
+                    </li>
+                    <li>
+                        Added hotkeys for scrolling text.
                     </li>
                 </ul>
                 
