@@ -37,7 +37,7 @@
                         Added chapter length option to import dialog.
                     </li>
                     <li>
-                        Added hotkeys for scrolling text.
+                        Added hotkeys for text scrolling.
                     </li>
                 </ul>
                 
@@ -45,6 +45,9 @@
                 <ul>
                     <li>
                         Fixed a bug that caused the records on the vocabulary search page to appear in random order inside the specified order by parameter.
+                    </li>
+                    <li>
+                        Fixed an issue in the text reader glossary, where empty parentheses were visible in languages that have no readings.
                     </li>
                 </ul>
                 

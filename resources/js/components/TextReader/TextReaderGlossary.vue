@@ -23,12 +23,12 @@
                             
                             <!-- Glossary entry word-->
                             <div class="word" v-if="word.base_word == ''">
-                                {{ word.word }} &nbsp;&nbsp; ({{ word.reading }})
+                                {{ word.word }} <template v-if="word.reading.length">({{ word.reading }})</template>
                             </div>
                             <div class="word" v-if="word.base_word !== ''">
-                                {{ word.base_word }} &nbsp;&nbsp; ({{ word.base_word_reading }})
-                                <i class="fas fa-long-arrow-alt-right"></i> 
-                                {{ word.word }} &nbsp;&nbsp; ({{ word.reading }})
+                                {{ word.base_word }} <template v-if="word.base_word_reading.length">({{ word.base_word_reading }})</template>
+                                <i class="fas fa-long-arrow-alt-right mx-2"></i> 
+                                {{ word.word }} <template v-if="word.reading.length">({{ word.reading }})</template>
                             </div>
                         </div>
 
