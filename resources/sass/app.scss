@@ -368,8 +368,16 @@ body {
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    background: var(--v-background-base);;
+    background: var(--v-background-base);
     z-index: 100;
+}
+
+.v-card ::-webkit-scrollbar {
+    background: var(--v-foreground-base);
+}
+
+.v-input.v-textarea ::-webkit-scrollbar {
+    background: rgba(0, 0, 0, 0) !important;
 }
 
 ::-webkit-scrollbar-thumb {

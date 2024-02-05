@@ -58,6 +58,9 @@
                     <li>
                         Fixed an issue in the text reader glossary, where empty parentheses were visible in languages that have no readings.
                     </li>
+                    <li>
+                        Fixed a visual issue where the scrollbars' background were a different color than the area they were placed on.
+                    </li>
                 </ul>
                 
                 <b>Other changes:</b>
