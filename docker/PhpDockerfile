@@ -59,7 +59,8 @@ RUN composer install --optimize-autoloader --no-dev\
     && rm -rf /usr/local/share/.cache \
         /root/.npm \
         /tmp/* \
-        /usr/local/bin/composer
+        /usr/local/bin/composer \
+        /var/www/html/node_modules
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
 CMD ["apache2-foreground"]

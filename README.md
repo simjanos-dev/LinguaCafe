@@ -8,7 +8,7 @@ You can read about all the features of LinguaCafe in this [overview](https://sim
 
 Supported platforms:
 - x64, which includes most desktop computers made in the last decade.
-- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the `docker-compose.yml`file. To do this, you will need to split the chained install command, first clone the repository, then uncomment the line, then run the rest of the commands.
+- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the `docker-compose.yml`file. To do this, you will need to split the chained install command, first clone the repository, then uncomment the line, then run the rest of the commands. You will also need to comment it and uncomment it again for each update to avoid git conflict error.
 
 Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 
@@ -50,14 +50,26 @@ Step 1: Install docker desktop and git.
 Step 2: Run the following commands from the location where you want to store your files:
 
 ```
-git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe && chmod 777 -R ./ && docker compose up -d
+git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe
+```
+
+Step 3: If you want to change the default MySQL database and user, you can create a `.env` file and add these lines to it before starting your servers for the first time:
+
+```
+DB_DATABASE="linguacafe"
+DB_USERNAME="linguacafe"
+DB_PASSWORD="linguacafe"
+```
+
+Step 4: Run the remaining commands:
+
+```
+chmod 777 -R ./ && docker compose up -d
 ```
 
 Your server now should be running and accessible on http://localhost:9191. 
 
-Do not modify the mysql username, password and database name.
-
-Please follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
+Step 5: Follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
 If you are below v0.5.2, please use the migration guides below instead of this command.

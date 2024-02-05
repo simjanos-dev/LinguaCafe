@@ -48,6 +48,12 @@
                     <li>
                         Added hotkeys for text scrolling.
                     </li>
+                    <li>
+                        Added saving for library layout setting.
+                    </li>
+                    <li>
+                        Added option to change the default MySQL database and user.
+                    </li>
                 </ul>
                 
                 <b>Bug fixes:</b>
@@ -61,15 +67,18 @@
                     <li>
                         Fixed a visual issue where the scrollbars' background were a different color than the area they were placed on.
                     </li>
+                    <li>
+                        Fixed a visual issue where the scrollbars' background were a different color than the area they were placed on.
+                    </li>
                 </ul>
                 
                 <b>Other changes:</b>
                 <ul>
                     <li>
-                        Removed Media player page. It has been replaced with the Jellyfin subtitle import option on the library page.
+                        Improved text selecting design. 
                     </li>
                     <li>
-                        Improved text selecting design. 
+                        Removed unnecessary files from the webserver image and slightly decreased its size.
                     </li>
                 </ul>
             </v-card-text>
