@@ -18,18 +18,26 @@
         <div id="search-results" class="border rounded-lg">
 
             <!-- DeepL translation -->
-            <div :class="{'search-result': true, 'disabled': !deeplSearchResult.length || deeplSearchResult == 'loading'}">
+            <div :class="{'search-result': true, 'disabled': deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'}">
                 <div class="search-result-title rounded px-2" style="background-color: #92B9E2">
                     {{ searchField }} <div class="dictionary">DeepL</div>
                 </div>
                 
                 <!-- DeepL search result -->
                 <div 
-                    v-if="deeplSearchResult !== 'loading'"
+                    v-if="deeplSearchResult !== 'loading' && deeplSearchResult !== 'DeepL error'"
                     class="search-result-definition rounded"
                     @click="addDefinitionToInput(deeplSearchResult)"
                 >
                     {{ deeplSearchResult }} <v-icon v-if="deeplSearchResult.length">mdi-plus</v-icon>
+                </div>
+
+                <!-- DeepL search error -->
+                <div 
+                    v-if="deeplSearchResult === 'DeepL error'"
+                    class="search-result-definition rounded"
+                >
+                    {{ deeplSearchResult }}
                 </div>
 
                 <!-- DeepL loading -->

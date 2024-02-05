@@ -2,6 +2,7 @@
     <div>
         <label class="font-weight-bold">Select an import option</label>
         <div class="import-type-group flex-wrap">
+            <!--Plain text -->
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('plain-text')">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-text-box</v-icon>
@@ -9,6 +10,15 @@
                 <span>Plain text</span>
             </div>
             
+            <!-- Text file -->
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('text-file')">
+                <div class="import-type-button-icon-box">
+                    <v-icon large>mdi-file-document</v-icon>
+                </div>
+                <span>Text file</span>
+            </div>
+
+            <!-- E-book -->
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('e-book')">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-book</v-icon>
@@ -16,6 +26,7 @@
                 <span>E-book</span>
             </div>
         
+            <!-- Youtube -->
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('youtube')">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-youtube</v-icon>
@@ -23,6 +34,7 @@
                 <span>Youtube</span>
             </div>
 
+            <!-- Jellyfin subtitle -->
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('jellyfin-subtitle')">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-movie</v-icon>
@@ -33,12 +45,7 @@
             <!--
             
 
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('text-file')">
-                <div class="import-type-button-icon-box">
-                    <v-icon large>mdi-file-document</v-icon>
-                </div>
-                <span>Text file</span>
-            </div>
+            
 
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('website')">
                 <div class="import-type-button-icon-box">

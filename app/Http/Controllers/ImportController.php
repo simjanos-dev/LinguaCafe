@@ -16,6 +16,7 @@ class ImportController extends Controller
         'e-book' => 'e-book',
         'jellyfin-subtitle' => 'subtitle',
         'plain-text' => 'text',
+        'text-file' => 'text',
         'youtube' => 'text',
     ];
 

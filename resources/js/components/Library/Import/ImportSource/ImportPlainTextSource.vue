@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column align-stretch">
-        <!-- text input -->
+        <!-- Text input -->
         <label class="font-weight-bold">Text</label>
         <v-textarea
             id="plain-text-import-input"

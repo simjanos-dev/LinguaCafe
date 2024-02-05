@@ -71,6 +71,12 @@
                                 @text-selected="selectImportText" 
                             ></import-plain-text-source>
 
+                            <!-- Text file -->
+                            <import-text-file-source
+                                v-if="stepperPage == 2 && importType == 'text-file'"
+                                @text-selected="selectImportText" 
+                            ></import-text-file-source>
+
                             <!-- E-book -->
                             <import-ebook-file-source
                                 v-if="stepperPage == 2 && importType == 'e-book'"
@@ -171,6 +177,7 @@
                         (stepperPage == 1) ||
                         (stepperPage == 2 && importType === 'e-book' && (!isImportSourceValid || importFile === null)) ||
                         (stepperPage == 2 && importType === 'plain-text' && (!isImportSourceValid || importText === '')) ||
+                        (stepperPage == 2 && importType === 'text-file' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 2 && importType === 'youtube' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 2 && importType === 'jellyfin-subtitle' && (!isImportSourceValid)) ||
                         (stepperPage == 3 && !isLibraryValid)
@@ -293,7 +300,7 @@
                 
                 if (this.importType === 'e-book') {
                     data.set('importFile', this.importFile);
-                } else if (this.importType === 'youtube' || this.importType === 'plain-text') {
+                } else if (['youtube', 'plain-text', 'text-file'].includes(this.importType)) {
                     data.set('importText', this.importText);
                 } if (this.importType === 'jellyfin-subtitle') {
                     data.set('importSubtitles', JSON.stringify(this.importSubtitles));
