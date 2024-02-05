@@ -2,6 +2,14 @@
 
 #import-dialog {
 
+    .plain-text-source {
+        height: 100%;
+
+        #plain-text-import-input {
+            min-height: calc(100vh - 440px);
+        }
+    }
+
     .jellyfin-subtitle-source {
         #selected-jellyfin-subtitle {
             font-size: 16px;
@@ -13,7 +21,6 @@
 
     .youtube-subtitle-source {
         position: relative;
-        min-height: 628px;
 
         #selected-youtube-subtitle-label {
             height: 36px;

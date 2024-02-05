@@ -16,6 +16,12 @@
                         Added dynamic language model loading. Models are only going to be loaded at the first import for each language. This will significantly decrease memory use based on which and how many langauges are used on a server after its startup.
                     </li>
                     <li>
+                        Added new "Plain text" import option.
+                    </li>
+                    <li>
+                        Added new "Jellyfin subtitle" import option.
+                    </li>
+                    <li>
                         Setting words' and phrases' level is now possible while hovering over them.
                     </li>
                     <li>
@@ -38,9 +44,6 @@
                     </li>
                     <li>
                         Vocabulary search page's edit dialog now will close on its own after saving it, and the search results will be updated automatically.
-                    </li>
-                    <li>
-                        Added Jellyfin subtitle import option.
                     </li>
                     <li>
                         Added chapter length option to import dialog.
@@ -74,6 +77,9 @@
                 
                 <b>Other changes:</b>
                 <ul>
+                    <li>
+                        Removed media player page, it has been replaced with Jellyfin subtitle import option.
+                    </li>
                     <li>
                         Improved text selecting design. 
                     </li>

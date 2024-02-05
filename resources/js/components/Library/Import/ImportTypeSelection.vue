@@ -2,6 +2,13 @@
     <div>
         <label class="font-weight-bold">Select an import option</label>
         <div class="import-type-group flex-wrap">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('plain-text')">
+                <div class="import-type-button-icon-box">
+                    <v-icon large>mdi-text-box</v-icon>
+                </div>
+                <span>Plain text</span>
+            </div>
+            
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('e-book')">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-book</v-icon>
@@ -24,12 +31,7 @@
             </div>
 
             <!--
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('plain-text')">
-                <div class="import-type-button-icon-box">
-                    <v-icon large>mdi-text-box</v-icon>
-                </div>
-                <span>Plain text</span>
-            </div>
+            
 
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('text-file')">
                 <div class="import-type-button-icon-box">

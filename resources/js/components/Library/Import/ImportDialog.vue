@@ -13,7 +13,7 @@
             
             <!-- Import form -->
             <v-card-text>
-                <v-stepper id="import-stepper" v-model="stepperPage" elevation="0" class="pb-0" min-height="640px">
+                <v-stepper id="import-stepper" v-model="stepperPage" elevation="0" class="pb-0" min-height="70vh">
                     <v-stepper-header>
                         <v-stepper-step :complete="stepperPage > 1" step="1" :color="stepperPage > 1 ? 'success' : 'primary'">
                             Type
@@ -59,27 +59,34 @@
                             ></import-type-selection>
                         </v-stepper-content>
 
-                        <!-- Import file selection -->
+                        <!-- Import source selection -->
                         <v-stepper-content :class="{
+                            'plain-text-source': importType == 'plain-text',
                             'youtube-subtitle-source': importType == 'youtube',
                             'jellyfin-subtitle-source': importType == 'jellyfin-subtitle'
                         }" step="2">
+                            <!-- Plain text -->
+                            <import-plain-text-source
+                                v-if="stepperPage == 2 && importType == 'plain-text'"
+                                @text-selected="selectImportText" 
+                            ></import-plain-text-source>
+
                             <!-- E-book -->
                             <import-ebook-file-source
-                                v-if="stepperPage > 1 && importType == 'e-book'"
+                                v-if="stepperPage == 2 && importType == 'e-book'"
                                 @file-selected="selectImportFile" 
                             ></import-ebook-file-source>
 
                             <!-- Youtube -->
                             <import-youtube-subtitle-source
-                                v-if="stepperPage > 1 && importType == 'youtube'"
+                                v-if="stepperPage == 2 && importType == 'youtube'"
                                 :language="$props.language"
                                 @text-selected="selectImportText" 
                             ></import-youtube-subtitle-source>
 
                             <!-- Jellyfin subtitle -->
                             <import-jellyfin-subtitle-source
-                                v-if="stepperPage > 1 && importType == 'jellyfin-subtitle'"
+                                v-if="stepperPage == 2 && importType == 'jellyfin-subtitle'"
                                 :language="$props.language"
                                 @subtitle-selected="selectImportSubtitle" 
                             ></import-jellyfin-subtitle-source>
@@ -163,6 +170,7 @@
                     :disabled="
                         (stepperPage == 1) ||
                         (stepperPage == 2 && importType === 'e-book' && (!isImportSourceValid || importFile === null)) ||
+                        (stepperPage == 2 && importType === 'plain-text' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 2 && importType === 'youtube' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 2 && importType === 'jellyfin-subtitle' && (!isImportSourceValid)) ||
                         (stepperPage == 3 && !isLibraryValid)
@@ -285,7 +293,7 @@
                 
                 if (this.importType === 'e-book') {
                     data.set('importFile', this.importFile);
-                } else if (this.importType === 'youtube') {
+                } else if (this.importType === 'youtube' || this.importType === 'plain-text') {
                     data.set('importText', this.importText);
                 } if (this.importType === 'jellyfin-subtitle') {
                     data.set('importSubtitles', JSON.stringify(this.importSubtitles));
