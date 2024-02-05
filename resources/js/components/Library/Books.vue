@@ -65,7 +65,7 @@
                         class="menu-button justify-start" 
                         tile 
                         color="white"
-                        @click="layout = 'cover';"
+                        @click="setLayout('cover')"
                     >
                         <v-icon class="mr-1">mdi-view-module</v-icon>
                         Cover only
@@ -74,7 +74,7 @@
                         class="menu-button justify-start" 
                         tile 
                         color="white"
-                        @click="layout = 'detailed';"
+                        @click="setLayout('detailed')"
                     >
                         <v-icon class="mr-1">mdi-view-agenda</v-icon>
                         Detailed
@@ -263,6 +263,10 @@
         },
         mounted() {
             this.loadBooks();
+
+            if (this.$cookie.get('library-layout') !== null) {
+                this.layout = this.$cookie.get('library-layout');
+            }
         },
         methods: {
             loadBookWordCounts(bookId, index) {
@@ -364,6 +368,10 @@
                         });
                     } 
                 });
+            },
+            setLayout(newLayout) {
+                this.layout = newLayout;
+                this.$cookie.set('library-layout', newLayout, 3650);
             },
             formatNumber: formatNumber
         }
