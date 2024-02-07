@@ -42,6 +42,14 @@
                 <span>Jellyfin subtitle</span>
             </div>
 
+            <!-- Subtitle file -->
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('subtitle-file')">
+                <div class="import-type-button-icon-box">
+                    <v-icon large>mdi-subtitles</v-icon>
+                </div>
+                <span>Subtitle file</span>
+            </div>
+
             <!--
             
 
@@ -66,14 +74,6 @@
                     <v-icon large>mdi-file-document</v-icon>
                 </div>
                 <span>PDF</span>
-            </div>
-
-            <div class="import-type-button rounded-lg mx-2 mb-4">
-                <div class="import-type-button-icon-box">
-                    <v-icon large>mdi-subtitles</v-icon>
-                </div>
-                <span>Subtitle</span>
-                
             </div>
 
             <div class="import-type-button rounded-lg mx-2 mb-4">

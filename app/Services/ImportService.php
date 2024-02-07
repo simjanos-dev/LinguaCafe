@@ -173,4 +173,12 @@ class ImportService
         
         return $subtitleList;
     }
+
+    public function getSubtitleFileContent($fileName) {
+        $subtitleContent = Http::post($this->pythonService . ':8678/tokenizer/get-subtitle-file-content', [
+            'fileName' => $fileName,
+        ]);
+        
+        return $subtitleContent;
+    }
 }

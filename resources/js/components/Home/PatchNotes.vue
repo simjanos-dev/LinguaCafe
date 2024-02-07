@@ -19,7 +19,13 @@
                         Added new "Plain text" import option.
                     </li>
                     <li>
+                        Added new "Text file" import option.
+                    </li>
+                    <li>
                         Added new "Jellyfin subtitle" import option.
+                    </li>
+                    <li>
+                        Added new "Subtitle file" import option.
                     </li>
                     <li>
                         Setting words' and phrases' level is now possible while hovering over them.
@@ -52,7 +58,7 @@
                         Added hotkeys for text scrolling.
                     </li>
                     <li>
-                        Added saving for library layout setting.
+                        The selected library layout will now be remembered.
                     </li>
                     <li>
                         Added option to change the default MySQL database and user.
@@ -70,9 +76,6 @@
                     <li>
                         Fixed a visual issue where the scrollbars' background were a different color than the area they were placed on.
                     </li>
-                    <li>
-                        Fixed a visual issue where the scrollbars' background were a different color than the area they were placed on.
-                    </li>
                 </ul>
                 
                 <b>Other changes:</b>
@@ -84,7 +87,7 @@
                         Improved text selecting design. 
                     </li>
                     <li>
-                        Removed unnecessary files from the webserver image and slightly decreased its size.
+                        Removed unnecessary files from the webserver image and decreased its size.
                     </li>
                 </ul>
             </v-card-text>

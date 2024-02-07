@@ -15,6 +15,7 @@ class ImportController extends Controller
     private $importMethods = [
         'e-book' => 'e-book',
         'jellyfin-subtitle' => 'subtitle',
+        'subtitle-file' => 'subtitle',
         'plain-text' => 'text',
         'text-file' => 'text',
         'youtube' => 'text',
@@ -39,7 +40,7 @@ class ImportController extends Controller
         }
         
         // move file to temp folder
-        if ($importMethod === 'e-book') {
+        if (isset($importFile)) {
             $randomString = bin2hex(openssl_random_pseudo_bytes(30));
             $extension = '.' . $importFile->getClientOriginalExtension();
             $fileName = $userId . '_' . $randomString . $extension;
@@ -59,7 +60,8 @@ class ImportController extends Controller
                 (new ImportService())->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
         } catch (\Exception $exception) {
-            if ($importMethod === 'e-book') {
+            // delete temp file
+            if (isset($importFile)) {
                 File::delete(storage_path('app/temp') . '/' . $fileName);
             }
 
@@ -67,7 +69,7 @@ class ImportController extends Controller
         }
 
         // delete temp file
-        if ($importType === 'e-book') {
+        if (isset($importFile)) {
             File::delete(storage_path('app/temp') . '/' . $fileName);
         }
 
@@ -79,5 +81,24 @@ class ImportController extends Controller
         $subtitleList = (new ImportService())->getYoutubeSubtitles($url);
 
         return $subtitleList;
+    }
+
+    public function getSubtitleFileContent(Request $request) {
+        $subtitleFile = $request->file('subtitleFile');
+        $userId = Auth::user()->id;        
+
+        // move file to temp folder
+        $randomString = bin2hex(openssl_random_pseudo_bytes(30));
+        $extension = '.' . $subtitleFile->getClientOriginalExtension();
+        $fileName = $userId . '_' . $randomString . $extension;
+        $subtitleFile->move(storage_path('app/temp'), $fileName);
+
+        // get subtitle content
+        $subtitleContent = (new ImportService())->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
+
+        // delete temp file
+        File::delete(storage_path('app/temp') . '/' . $fileName);
+
+        return $subtitleContent;
     }
 }

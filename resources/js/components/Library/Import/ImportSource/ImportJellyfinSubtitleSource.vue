@@ -35,9 +35,32 @@
             subtitleSelected(selectedSubtitle) {
                 for (let i = 0; i < selectedSubtitle.subtitle.length; i++) {
                     this.text += selectedSubtitle.subtitle[i].Text + '\n    ';
+                    
+                    var startMinutes = parseInt(Math.round(selectedSubtitle.subtitle[i].StartPositionTicks / 1000 / 1000) / 10 / 60).toString();
+                    var startSeconds = parseInt((Math.round(selectedSubtitle.subtitle[i].StartPositionTicks / 1000 / 1000) / 10 ) % 60).toString();
+                    var endMinutes = parseInt(Math.round(selectedSubtitle.subtitle[i].EndPositionTicks / 1000 / 1000) / 10 / 60).toString();
+                    var endSeconds = parseInt((Math.round(selectedSubtitle.subtitle[i].EndPositionTicks / 1000 / 1000) / 10 ) % 60).toString();
+
+                    // add leading zeroes
+                    if (startMinutes.length == 1) {
+                        startMinutes = '0' + startMinutes;
+                    }
+
+                    if (startSeconds.length == 1) {
+                        startSeconds = '0' + startSeconds;
+                    }
+
+                    if (endMinutes.length == 1) {
+                        endMinutes = '0' + endMinutes;
+                    }
+
+                    if (endSeconds.length == 1) {
+                        endSeconds = '0' + endSeconds;
+                    }
+
                     this.subtitles.push({
-                        start: Math.round(selectedSubtitle.subtitle[i].StartPositionTicks / 1000 / 1000) / 10,
-                        end: Math.round(selectedSubtitle.subtitle[i].EndPositionTicks / 1000 / 1000) / 10,
+                        start: startMinutes + ':' + startSeconds,
+                        end: endMinutes + ':' + endSeconds,
                         text: selectedSubtitle.subtitle[i].Text
                     });
                 }

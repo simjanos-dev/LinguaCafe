@@ -14,6 +14,8 @@ from ebooklib import epub
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled
 from urllib import parse
+from pysubparser import parser
+from pysubparser.cleaners import formatting
 
 # create emtpy sapce models
 multi_nlp = None
@@ -401,8 +403,8 @@ def importSubtitles():
 
         # add timestamp to chunk array
         chunkTimeStamps[-1].append({
-            'start': str(int(importSubtitles[subtitleIndex]['start'] / 60)).zfill(2),
-            'end': str(int(importSubtitles[subtitleIndex]['end'] % 60)).zfill(2),
+            'start': importSubtitles[subtitleIndex]['start'],
+            'end': importSubtitles[subtitleIndex]['end'],
             'sentenceIndexStart': tokenizedText[0]['si'],
             'sentenceIndexEnd': tokenizedText[-1]['si']
         })
@@ -411,14 +413,8 @@ def importSubtitles():
         processedChunks[-1] = processedChunks[-1] + tokenizedText
 
         # increase current chunk size
-        currentChunkSize += len(importSubtitles[subtitleIndex]['text'].replace(' NEWLINE ', ''))
-
-    #tokenize each chunk
-    # for chunkIndex, chunk in enumerate(processedChunks):
-    #     if textProcessingMethod == 'simple':
-    #         processedChunks[chunkIndex].append(tokenizeTextSimple(processedChunks[chunkIndex], language))
-    #     else:
-    #         processedChunks[chunkIndex].append(tokenizeText(processedChunks[chunkIndex], language))
+        currentChunkSize += len(text.replace(' NEWLINE ', ''))
+        print(currentChunkSize, len(text.replace(' NEWLINE ', '')), text.replace(' NEWLINE ', ''), file=sys.stderr)
 
     return json.dumps({'textChunks': chunks, 'processedChunks': processedChunks, 'timestamps': chunkTimeStamps})
 
@@ -446,5 +442,29 @@ def getYoutubeSubtitles():
 
     
     return json.dumps(subtitleList)
+
+@route('/tokenizer/get-subtitle-file-content', method='POST')
+def getYoutubeSubtitles():
+    response.headers['Content-Type'] = 'application/json'
+    fileName = request.json.get('fileName')
+    subtitleContent = list()
+    
+    subtitles = parser.parse(fileName)
+    subtitles = formatting.clean(subtitles)
+    for subtitle in subtitles:
+        start = str(subtitle.start).split('.')[0]
+        end = str(subtitle.end).split('.')[0]
+        subtitleContent.append({
+            'text': str(subtitle.text),
+            'start': start,
+            'end': end
+        })
+
+    # try:
+    # except TranscriptsDisabled: 
+    #     return json.dumps(list())
+
+
+    return json.dumps(subtitleContent)
 
 run(host='0.0.0.0', port=8678, reloader=True, debug=True)

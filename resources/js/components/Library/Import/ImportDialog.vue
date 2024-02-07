@@ -77,6 +77,12 @@
                                 @text-selected="selectImportText" 
                             ></import-text-file-source>
 
+                            <!-- Subtitle file -->
+                            <import-subtitle-file-source
+                                v-if="stepperPage == 2 && importType == 'subtitle-file'"
+                                @subtitle-selected="selectImportSubtitle"
+                            ></import-subtitle-file-source>
+
                             <!-- E-book -->
                             <import-ebook-file-source
                                 v-if="stepperPage == 2 && importType == 'e-book'"
@@ -178,8 +184,9 @@
                         (stepperPage == 2 && importType === 'e-book' && (!isImportSourceValid || importFile === null)) ||
                         (stepperPage == 2 && importType === 'plain-text' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 2 && importType === 'text-file' && (!isImportSourceValid || importText === '')) ||
+                        (stepperPage == 2 && importType === 'subtitle-file' && !isImportSourceValid) ||
                         (stepperPage == 2 && importType === 'youtube' && (!isImportSourceValid || importText === '')) ||
-                        (stepperPage == 2 && importType === 'jellyfin-subtitle' && (!isImportSourceValid)) ||
+                        (stepperPage == 2 && importType === 'jellyfin-subtitle' && !isImportSourceValid) ||
                         (stepperPage == 3 && !isLibraryValid)
                     "
                     @click="stepForward"
@@ -277,10 +284,14 @@
                 this.stepperPage--;
 
                 if(this.stepperPage < 2) {
+                    this.importType = '';
+                }
+
+                if(this.stepperPage < 3) {
                     this.importFile = null;
+                    this.importSubtitles = null;
                     this.importText = '';
                     this.isImportSourceValid = false;
-                    this.importType = '';
                 }
 
                 if(this.stepperPage < 3) {
@@ -302,7 +313,7 @@
                     data.set('importFile', this.importFile);
                 } else if (['youtube', 'plain-text', 'text-file'].includes(this.importType)) {
                     data.set('importText', this.importText);
-                } if (this.importType === 'jellyfin-subtitle') {
+                } if (['jellyfin-subtitle', 'subtitle-file'].includes(this.importType)) {
                     data.set('importSubtitles', JSON.stringify(this.importSubtitles));
                 }
 
