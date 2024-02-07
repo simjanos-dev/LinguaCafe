@@ -1107,6 +1107,7 @@
                 for (var i  = 0; i < this.text.words.length; i++) {
                     if (this.text.words[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
                         this.text.words[i].stage = selectedWord.stage;
+                        this.text.words[i].furigana = this.vocabBox.reading;
                     }
                 }
                 

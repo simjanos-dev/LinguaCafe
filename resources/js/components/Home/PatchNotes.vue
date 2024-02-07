@@ -77,7 +77,10 @@
                         Fixed a visual issue where the scrollbars' background were a different color than the area they were placed on.
                     </li>
                     <li>
-                        Fixed an issue that caused long chapter titles to flow on the text on the text reader page.
+                        Fixed an issue that caused long chapter titles to hide the text.
+                    </li>
+                    <li>
+                        Furigana now displays the editable reading field. Previously it displayed the reading that was assigned to the exact word in text while importing it.
                     </li>
                 </ul>
                 

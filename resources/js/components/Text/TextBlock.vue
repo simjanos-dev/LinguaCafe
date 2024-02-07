@@ -45,11 +45,11 @@
                     --><template v-if="language == 'japanese'"><!--
                         --><ruby class="rubyword" :wordindex="wordIndex"><!--
                             -->{{ word.word }}<!--
-                            --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
-                                -->{{ word.reading }}<!--
+                            --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                                -->{{ word.furigana }}<!--
                             --></rt><!--
-                            --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.reading.length && word.word !== word.reading" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
-                                -->{{ word.reading }}<!--
+                            --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                                -->{{ word.furigana }}<!--
                             --></rt><!--
                         --></ruby>
                     </template><!--

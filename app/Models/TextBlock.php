@@ -519,6 +519,7 @@ class TextBlock
 
             $word->stage = $encounteredWords[$wordId]->stage;
             $word->lookup_count = $encounteredWords[$wordId]->lookup_count;
+            $word->furigana = $encounteredWords[$wordId]->reading;
 
             $this->words[] = $word;
         }
