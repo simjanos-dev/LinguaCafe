@@ -85,6 +85,9 @@
                     <li>
                         Fixed a visual issue where the day text was not visible in the calendar while using dark theme.
                     </li>
+                    <li>
+                        Added missing lemma to review card when using example sentence mode.
+                    </li>
                 </ul>
                 
                 <b>Other changes:</b>

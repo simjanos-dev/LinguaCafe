@@ -73,6 +73,7 @@
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Example sentence mode -->
                             <div v-show="settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}<hr>
 
                                 <text-block-group
