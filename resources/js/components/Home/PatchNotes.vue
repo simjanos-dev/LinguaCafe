@@ -82,6 +82,9 @@
                     <li>
                         Furigana now displays the editable reading field. Previously it displayed the reading that was assigned to the exact word in text while importing it.
                     </li>
+                    <li>
+                        Fixed a visual issue where the day text was not visible in the calendar while using dark theme.
+                    </li>
                 </ul>
                 
                 <b>Other changes:</b>
