@@ -44,14 +44,25 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 
 Chinese: Mandarin language with simplified Chinese characters.
 
-## Quick Start Guide (Linux and MacOs)
+## Quick Start Guide
+
 Step 1: Install docker desktop and git.
 
 Step 2: Run the following commands from the location where you want to store your files:
 
+Linux and MacOs:
 ```
 git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe && chmod 777 -R ./ && docker compose up -d
 ```
+
+Windows:
+```
+git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe 
+cd linguacafe
+docker compose up -d
+```
+
+Alternatively, for Windows, you can download [this installation script](/install_linguacafe.bat) and run it.
 
 Your server now should be running and accessible on http://localhost:9191. 
 
@@ -65,6 +76,8 @@ If you are below v0.5.2, please use the migration guides below instead of this c
 ```
 git pull && docker compose pull && docker compose up -d --force-recreate
 ```
+
+On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version.
 
 ## Migrating from v0.5 or v0.5.1 to higher
 There was an issue again with docker, this time it is an easy fix. Please create a backup of your database, and run this command instead of the one provided in the general update guide:
