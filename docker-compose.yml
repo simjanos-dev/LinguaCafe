@@ -7,7 +7,7 @@ networks:
 
 services:
     webserver:
-        image: ghcr.io/simjanos-dev/linguacafe-webserver:${VERSION:-main}
+        image: ghcr.io/simjanos-dev/linguacafe-webserver:${VERSION:-latest}
         container_name: linguacafe-webserver
         restart: unless-stopped
         depends_on:
@@ -45,7 +45,9 @@ services:
         command: /app/manage.py runserver 0.0.0.0:8678
         restart: unless-stopped
         tty: true
-        image: ghcr.io/simjanos-dev/linguacafe-python-service:${VERSION:-main}
+        image: ghcr.io/simjanos-dev/linguacafe-python-service:${VERSION:-latest}
+        environment:
+            PYTHONPATH: "${PYTHONPATH}:/var/www/html/storage/models"
         volumes:
             - ./storage:/var/www/html/storage
         networks:
