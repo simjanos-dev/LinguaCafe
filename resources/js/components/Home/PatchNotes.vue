@@ -63,6 +63,9 @@
                     <li>
                         Added option to change the default MySQL database and user.
                     </li>
+                    <li>
+                        Added windows installation guide and installation file.
+                    </li>
                 </ul>
                 
                 <b>Bug fixes:</b>
@@ -87,6 +90,9 @@
                     </li>
                     <li>
                         Added missing lemma to review card when using example sentence mode.
+                    </li>
+                    <li>
+                        Removed furigana from e-book imports.
                     </li>
                 </ul>
                 

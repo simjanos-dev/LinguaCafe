@@ -410,7 +410,6 @@ def importSubtitles():
 
         # increase current chunk size
         currentChunkSize += len(text.replace(' NEWLINE ', ''))
-        print(currentChunkSize, len(text.replace(' NEWLINE ', '')), text.replace(' NEWLINE ', ''), file=sys.stderr)
 
     return json.dumps({'textChunks': chunks, 'processedChunks': processedChunks, 'timestamps': chunkTimeStamps})
 
