@@ -1,3 +1,9 @@
 .env
 database/*
 !database/.gitkeep
+/docker
+/node_modules
+/bootstrap
+/public
+/vendor
+/package-lock.json
