@@ -9,6 +9,7 @@ services:
     webserver:
         image: ghcr.io/simjanos-dev/linguacafe-webserver:main
         container_name: linguacafe-webserver
+        restart: unless-stopped
         depends_on:
             - mysql
         volumes:
