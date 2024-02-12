@@ -16,7 +16,8 @@ from youtube_transcript_api._errors import TranscriptsDisabled
 from urllib import parse
 from pysubparser import parser
 from pysubparser.cleaners import formatting
-
+import lxml.html.clean
+import lxml.html
 # create emtpy sapce models
 multi_nlp = None
 japanese_nlp = None
@@ -243,20 +244,15 @@ def tokenizeText(words, language, sentenceIndexStart = 0):
 
 # loads n .epub file
 def loadBook(file):
-    htmlPattern = re.compile('<.*?>') 
-    
-    book = epub.read_epub(file)
+    # rp and rt tags are used in adding prononciation over words, we need to remove the content of the tags
+    cleaner = lxml.html.clean.Cleaner(allow_tags=[''], remove_unknown_tags=False, kill_tags = ['rp','rt'], page_structure=False)
     content = ''
-
-    for item in book.get_items():
+    for item in epub.read_epub(file).get_items():
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
-            # print('file: ', item.get_name())
-            epubPage = item.get_content().decode('UTF-8')
-            epubPage = html.unescape(epubPage)
-            epubPage = re.sub(htmlPattern, '', epubPage)
-
-            content = content + epubPage
-
+            epubPage = cleaner.clean_html(item.get_content()).decode('utf-8')
+            # needed to removed extra div created by cleaner...
+            epubPage = lxml.html.fromstring(epubPage).text_content()
+            content += epubPage
     return str(content)
 
 # responds to http requests from the main PHP site
@@ -467,4 +463,5 @@ def getYoutubeSubtitles():
 
     return json.dumps(subtitleContent)
 
-run(host='0.0.0.0', port=8678, reloader=True, debug=True)
+if __name__ == '__main__':
+    run(host='0.0.0.0', port=8678, reloader=True, debug=True)
