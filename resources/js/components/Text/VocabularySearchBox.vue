@@ -18,7 +18,7 @@
         <div id="search-results" class="border rounded-lg">
 
             <!-- DeepL translation -->
-            <div :class="{'search-result': true, 'disabled': deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'}">
+            <div :class="{'search-result': true, 'disabled': !deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'}">
                 <div class="search-result-title rounded px-2" style="background-color: #92B9E2">
                     {{ searchField }} <div class="dictionary">DeepL</div>
                 </div>
