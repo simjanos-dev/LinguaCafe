@@ -6,12 +6,6 @@ LinguaCafe is a free self-hosted software that helps language learners acquire v
 
 You can read about all the features of LinguaCafe in this [overview](https://simjanos-dev.github.io/LinguaCafeHome/).
 
-Supported platforms:
-- x64, which includes most desktop computers made in the last decade.
-- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the `docker-compose.yml`file. To do this, you will need to split the chained install command, first clone the repository, then uncomment the line, then run the rest of the commands. You will also need to comment it and uncomment it again for each update to avoid git conflict error.
-
-Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
-
 ![Library](/GithubImages/LibraryCover.jpg)
 
 ![Reader](/GithubImages/TextReader.jpg)
@@ -44,110 +38,63 @@ Gender tagging: extending nouns' lemma with additional information (E.g: hus -> 
 
 Chinese: Mandarin language with simplified Chinese characters.
 
-## Quick Start Guide
+## Supported platforms:
+- x64, which includes most desktop computers made in the last decade.
+- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the `docker-compose.yml`file. To do this, you will need to split the chained install command, first clone the repository, then uncomment the line, then run the rest of the commands. You will also need to comment it and uncomment it again for each update to avoid git conflict error.
+
+Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
+
+## Installation
 
 Step 1: Install docker desktop and git.
 
 Step 2: Run the following commands from the location where you want to store your files:
 
-Linux and MacOs:
+##### Linux and MacOs:
 ```
 git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe
 ```
 
-Step 3: If you want to change the default MySQL database and user, you can create a `.env` file and add these lines to it before starting your servers for the first time:
-
+If you want to change the default MySQL database and user, you can create a `.env` file and add these lines to it before starting your servers for the first time:
 ```
 DB_DATABASE="linguacafe"
 DB_USERNAME="linguacafe"
 DB_PASSWORD="linguacafe"
 ```
 
-Step 4: Run the remaining commands:
-
+Run the remaining commands:
 ```
 chmod 777 -R ./ && docker compose up -d
 ```
 
-Windows:
+##### Windows:
+Windows install commands are the same, except it does not need permission changes:
+
 ```
 git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe 
 cd linguacafe
 docker compose up -d
 ```
 
-Alternatively, for Windows, you can download [this installation script](/install_linguacafe.bat) and run it.
+Alternatively, for Windows, you can download [this installation script](/install_linguacafe.bat) and run it instead of running the commands yourself. Since this is a .bat file, Windows defender will warn you about it being potentially a malware.
 
 Your server now should be running and accessible on http://localhost:9191. 
 
-Step 5: Follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
+Step 3: Follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
-If you are below v0.5.2, please use the migration guides below instead of this command.
+If you are below v0.5.2, please use the migration guide provided [here](/migration.md) instead of this command.
 
 ```
 git pull && docker compose pull && docker compose up -d --force-recreate
 ```
 
-On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version.
-
-## Migrating from v0.5 or v0.5.1 to higher
-There was an issue again with docker, this time it is an easy fix. Please create a backup of your database, and run this command instead of the one provided in the general update guide:
+On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version, or run the commands separately:
 ```
-git restore ./database/.gitkeep && git restore ./docker-compose.yml && git restore ./storage/app/dictionaries/.gitkeep && git restore ./storage/app/images/book_images/default.jpg && git pull && docker compose pull && docker compose up -d
+git pull
+docker compose pull
+docker compose up -d --force-recreate
 ```
-## Migrating from v0.4 to v0.5
-The difference since v0.4 is only the placement of the folders. We have decided to mount the whole `/storage` folder, so users won't have to create several folders. Due to an oversight with the v0.4 folder structure, you have to recover your book cover images, and change your folder structure. 
-
-Run this command to recover your book cover images while the docker server is running:
-```
-docker cp linguacafe-webserver:/var/www/html/storage/app/images/book_images ./
-```
-
-Run this command from your old linguacafe folder to stop the servers:
-```
-docker compose down
-```
-
-The easiest way to migrate to the new structure is to clone the `deploy` branch from github, which contains all the necessary folder structure and files. Then you can copy your old database and book images there.  
-
-Run this command to download and create the new folder structure. This will create a `linguacafe` folder:
-```
-git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe
-```
-If you are an Apple silicon Mac user, uncomment the `platform: linux/amd64` line in the new `linguacafe/docker-compose.yml`.
-
-Next copy your old database and book images to the new `linguacafe` folder. Copying the database will need root permissions. I advise you also make a copy of your database in case anything goes wrong.
-```
-/your/old/database          ->      /linguacafe/database
-/your/old/book_images       ->      /linguacafe/storage/app/images/book_images
-```
-
-Run this command from the new `linguacafe` folder, to make sure all your files and folders have the necessary permission.
-```
-sudo chmod 777 -R ./
-```
-Finally, start the server with this command from the new `linguacafe` folder:
-```
-docker compose pull && docker compose up -d --force-recreate
-```
-
-Your server now should be running. Your old linguacafe folder can be deleted. 
-
-I've somehow managed to change my files' ownership, and my server did not start up. I could not replicate the issue again, but stopping the server, running this command from the `linguacafe` and starting it again fixed it.
-```
-sudo chmod 777 -R ./ && sudo chown -R $USER:$USER ./database/ 
-```
-## Migrating from versions prior to v0.4
-When editing the `docker-compose.yml` to add your storage paths, do these replacements to keep the files where they originally were created:
-
-```
-/your/linguacafe/dict/folder          ->  /path/to/this/repo/storage/app/dictionaries
-/your/linguacafe/logs/folder          ->  /path/to/this/repo/storage/logs
-/your/linguacafe/database/folder      ->  /path/to/this/repo/docker/mysql
-```
-
-It is also possible to move those three folders somewhere else with all their contents and use that path instead, in which case the cloned repo is not needed anymore and can be safely deleted after testing the migration was successful.
 
 ## Importing dictionaries
 Step 1: Download the dictionaries that you want to use from the provided links below.
@@ -240,11 +187,11 @@ Series Name - S01E01.de.ass
 Movie name.es.ass  
 ```  
 
-Language codes for subtitles filenames that Jellyfin recognizes: Chinese: `zh`, Czech: `cs`, Dutch: `nl`, Finnish: `fi`, French: `fr`, German: `de`, Italian: `it`, Japanese: `ja`, Korean: `ko`, Norwegian: `no`, Russian: `ru`, Spanish: `es`, Swedish: `sv`, Ukrainian: `uk`, Welsh: `cy`
+Language codes for subtitle filenames that Jellyfin recognizes: Chinese: `zh`, Czech: `cs`, Dutch: `nl`, Finnish: `fi`, French: `fr`, German: `de`, Italian: `it`, Japanese: `ja`, Korean: `ko`, Norwegian: `no`, Russian: `ru`, Spanish: `es`, Swedish: `sv`, Ukrainian: `uk`, Welsh: `cy`
 
 [Jellyfin external file naming](https://jellyfin.org/docs/general/server/media/external-files/)
 
-#### Possible error codes in browser console on the Media player page:
+#### Possible error codes in browser console while importing from Jellyfin:
 `unsupported language code: spa`: This means that Jellyfin recognized the language of the subtitle, but it is not supported by LinguaCafe yet. If you find one of these, please open a GitHub Issue, this should be fixed.  
 
 `unsupported language code: unrecognized by jellyfin: japaaaneseee`: This means that Jellyfin did not recognize `japaaaneseee` as a language, and it can only be fixed by renaming the file following Jellyfin's naming conventions.  
@@ -256,12 +203,11 @@ Step 1: Create an API key in Jellyfin. You can do this on the Dashboard -> API K
 
 Step 2: Set the created API key in LinguaCafe on to the Admin->API menu.
 
-Step 3: Set the Jellyfin host in LinguaCafe on to the Admin->API menu. If you used one of the pre-written configs, it should be the default http://jellyfin:8096.
+Step 3: Set the Jellyfin host in LinguaCafe on to the Admin->API menu. If you used the pre-written configs, it should be the default http://jellyfin:8096.
 
 Step 4: Save the settings.
 
-Now you should be able to read any external subtitles from any video you play in any of your Jellyfin clients on the Media player page.
-Unfortunately there is the noticable lag when you click on a timestamp to jump to a subtitle. I could only make it work without delays with the native "Jellyfin media player" client on my PC.
+Now you can import subtitles from Jellyfin.
 
 ## Anki
 Anki is supported, if your server and Anki run on the same PC (this will not be a requirement in the future) and have [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed.
