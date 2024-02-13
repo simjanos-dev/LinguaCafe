@@ -317,7 +317,7 @@
             this.loadSetting('fontSize', 'integer', 20);
             this.loadSetting('lineSpacing', 'integer', 1);
             this.loadSetting('maximumTextWidth', 'integer', 3);
-            this.loadSetting('autoMoveWordsToKnown', 'boolean', false);
+            this.loadSetting('autoMoveWordsToKnown', 'boolean', true);
             this.loadSetting('vocabBoxScrollIntoView', 'string', 'scroll-into-view');
             this.loadSetting('verticalText', 'string', false);
             this.loadSetting('furiganaOnHighlightedWords', 'boolean', false);
