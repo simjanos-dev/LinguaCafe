@@ -85,10 +85,14 @@ Step 3: Follow the instructions on this page in the `Importing dictionaries` sec
 ## Updating to the latest version 
 If you are below v0.5.2, please use the migration guide provided [here](/migration.md) instead of this command.
 
+I recommend making a copy of your linguacafe folder before updating, to make sure you will have a backup if anything goes wrong.
+
+##### Linux and MacOs:
 ```
 git pull && docker compose pull && docker compose up -d --force-recreate
 ```
 
+##### Windows
 On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version, or run the commands separately:
 ```
 git pull
