@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+use App\Http\Requests\Book\GetBookWordCountsRequest;
+
 use Carbon\Carbon;
 use App\Models\EncounteredWord;
 use App\Models\Book;
@@ -35,9 +37,9 @@ class BookController extends Controller
         return json_encode($books);
     }
 
-    public function getBookWordCounts($bookId) {
+    public function getBookWordCounts($bookId, GetBookWordCountsRequest $request) {
         $selectedLanguage = Auth::user()->selected_language;
-
+        
         // Get words for calculating word counts
         $words = EncounteredWord
             ::select(['id', 'word', 'stage'])

@@ -24,6 +24,7 @@ services:
             DB_HOST: linguacafe-database-dev
         ports:
             - "3000:3000"
+            - "81:80"
         networks:
             - linguacafedev
         extra_hosts:

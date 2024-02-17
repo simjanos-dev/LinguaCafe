@@ -273,7 +273,7 @@
                 this.books[index].wordCountLoading = true;
                 this.books[index].wordCount = null;
 
-                axios.get('/book/get-word-counts/' + bookId).then((response) => {
+                axios.get('/books/get-word-counts/' + bookId).then((response) => {
                     if (response.data !== 'error') {
                         this.books[index].wordCountLoading = false;
                         this.books[index].wordCount = response.data;

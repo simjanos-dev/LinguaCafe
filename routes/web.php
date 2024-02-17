@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/jellyfin/process-subtitles', [App\Http\Controllers\MediaPlayerController::class, 'processJellyfinSubtitle']);
 
     // vue routes
-    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'dev']);
+    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
@@ -120,7 +120,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // library
     Route::post('/books', [App\Http\Controllers\BookController::class, 'getBooks']);
-    Route::get('/book/get-word-counts/{bookId}', [App\Http\Controllers\BookController::class, 'getBookWordCounts']);
+    Route::get('/books/get-word-counts/{bookId}', [App\Http\Controllers\BookController::class, 'getBookWordCounts']);
     Route::post('/book/save', [App\Http\Controllers\BookController::class, 'saveBook']);
     Route::post('/book/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
     Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChapters']);
