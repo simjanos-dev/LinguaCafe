@@ -44,6 +44,9 @@ Chinese: Mandarin language with simplified Chinese characters.
 
 Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 
+## Memory usage
+LinguaCafe uses RAM based on how many and which languages do you use. If you use every language, the RAM usage can be over 2GB.
+
 ## Installation
 
 Step 1: Install docker desktop and git.
