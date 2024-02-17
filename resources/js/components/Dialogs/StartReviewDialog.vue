@@ -27,6 +27,9 @@
                                 Your words' and phrases' review due date will not change.
                             </li>
                             <li>
+                                Your words' and phrases' level will not change.
+                            </li>
+                            <li>
                                 Your reviews do not count in daily review goals.
                             </li>
                             <li>
