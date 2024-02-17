@@ -3,9 +3,28 @@
         <div class="subheader">
             Patch notes
         </div>
-       
+        
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.7 <v-spacer /> 2024.02.??.</v-card-title>
+            <v-card-title>v0.8 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        .
+                    </li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed a bug that caused books with long titles hide their open button.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.7 <v-spacer /> 2024.02.14.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
