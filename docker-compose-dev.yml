@@ -8,6 +8,7 @@ networks:
 services:
     webserver:
         container_name: linguacafe-webserver-dev
+        restart: unless-stopped
         build:
             context: .
             dockerfile: ./docker/PhpDockerfileDev
