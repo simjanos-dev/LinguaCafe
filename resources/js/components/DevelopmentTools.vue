@@ -99,7 +99,7 @@ import axios from 'axios';
                 axios({
                     method: this.method,
                     url: this.url,
-                    data: this.method == 'get' ? '' : JSON.stringify(this.postData)
+                    data: this.method == 'get' ? '' : JSON.parse(this.postData)
                 }).catch((error) => {
                     this.loading = false;
                     this.responseStatus = error.response.status;

@@ -305,10 +305,12 @@
                 this.deleteBookDialog.bookName = book.name;
             },
             deleteBook() {
-                axios.post('/book/delete', {
+                axios.post('/books/delete', {
                     'bookId': this.deleteBookDialog.bookId,
+                }).catch((e) => {
+                    this.errorDialog.active = true;
                 }).then((response) => {
-                    if (response.data == 'success') {
+                    if (response.status === 200) {
                         this.loadBooks();
                     } else {
                         this.errorDialog.active = true;

@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\Book;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 use App\Models\EncounteredWord;
+use App\Models\Lesson;
+use App\Models\Book;
 
 class BookService
 {
@@ -32,8 +36,7 @@ class BookService
             ::where('user_id', $userId)
             ->where('id', $bookId)
             ->first();
-        
-        
+                
         if (!$book) {
             throw new \Exception('Book does not exist, or it belongs to a different user.');
         }
@@ -49,5 +52,86 @@ class BookService
 
         // calculate word counts
         return $book->getWordCounts($userId, $words);
+    }
+
+    public function createBook($userId, $selectedLanguage, $bookName, $bookCoverFile) {
+        // create book model
+        $book = new Book();
+        $book->user_id = $userId;
+        $book->cover_image = 'default.jpg';
+        $book->language = $selectedLanguage;
+        $book->name = $bookName;
+
+        // save new book
+        $book->save();
+        
+        // update image
+        if (!is_null($bookCoverFile)) {
+            $this->saveBookImage($book, $bookCoverFile);
+        }
+
+        return true;
+    }
+
+    public function updateBook($userId, $bookId, $bookName, $bookCoverFile) {
+        $book = Book
+            ::where('user_id', $userId)
+            ->where('id', $bookId)
+            ->first();
+
+        if (!$book) {
+            throw new \Exception('Book does not exist, or it belongs to a different user.');
+        }
+
+        // update and save book
+        $book->name = $bookName;
+        $book->save();
+        
+        // update image
+        if (!is_null($bookCoverFile)) {
+            $this->saveBookImage($book, $bookCoverFile);
+        }
+
+        return true;
+    }
+
+    private function saveBookImage($book, $bookCoverFile) {
+        // delete old image
+        if ($book->cover_image !== '' && $book->cover_image !== 'default.jpg') {
+            Storage::delete('/images/book_images/' . $book->cover_image);
+        }
+
+        // save image on server
+        $timestamp = implode('_', explode(' ', Carbon::now()->toDateTimeString()));
+        $fileName = $book->id . '_' . $timestamp . '.' . ($bookCoverFile->getClientOriginalExtension());
+        $bookCoverFile->storeAs('/images/book_images/', $fileName);
+
+        // save image in database
+        $book->cover_image = $fileName;
+        $book->save();
+    }
+
+    public function deleteBook($userId, $bookId) {
+        $book = Book
+            ::where('user_id', $userId)
+            ->where('id', $bookId)
+            ->first();
+
+        if (!$book) {
+            throw new \Exception('Book does not exist, or it belongs to a different user.');
+        }
+
+        Lesson
+            ::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->delete();
+            
+        if ($book->cover_image !== '' && $book->cover_image !== 'default.jpg') {
+            Storage::delete('/images/book_images/' . $book->cover_image);
+        }
+
+        $book->delete();
+
+        return true;
     }
 }

@@ -44,7 +44,7 @@
                             rounded
                             ref="image"
                             :rules="[rules.image]"
-                            accept="image/*"
+                            accept=".jpg,.jpeg,.png"
                             placeholder="Cover image"
                             prepend-icon="mdi-image"
                             @change="validateForm"
@@ -168,16 +168,26 @@
 
                 this.saving = true;
                 
+                var url = '/books/update';
                 var form = new FormData();
-                form.set('bookId',this.$props.bookId);
                 form.set('bookName',this.name);
+                
+                if (this.$props.bookId === -1) {
+                    url = '/books/create';
+                } else {
+                    form.set('bookId', this.$props.bookId);
+                }
+                
                 if (this.editImage) {
                     form.set('bookCover', this.image);
                 }
 
-                axios.post('/book/save', form).then((response) => {
+                axios.post(url, form).catch((e) => {
+                    this.saveResult = 'error';
                     this.saving = false;
-                    if (response.data == 'success') {
+                }).then((response) => {
+                    this.saving = false;
+                    if (response.status === 200) {
                         this.saveResult = 'success';
 
                         setTimeout(() => {

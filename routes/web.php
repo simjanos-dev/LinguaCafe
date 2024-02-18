@@ -118,11 +118,14 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     // anki
     Route::post('/anki/add-card', [App\Http\Controllers\AnkiController::class, 'addCardToAnki']);
 
-    // library
+    // books
     Route::post('/books', [App\Http\Controllers\BookController::class, 'getBooks']);
-    Route::get('/books/get-word-counts/{bookId}', [App\Http\Controllers\BookController::class, 'getBookWordCounts']);
-    Route::post('/book/save', [App\Http\Controllers\BookController::class, 'saveBook']);
-    Route::post('/book/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
+    Route::get ('/books/get-word-counts/{bookId}', [App\Http\Controllers\BookController::class, 'getBookWordCounts']);
+    Route::post('/books/create', [App\Http\Controllers\BookController::class, 'createBook']);
+    Route::post('/books/update', [App\Http\Controllers\BookController::class, 'updateBook']);
+    Route::post('/books/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
+    
+    // chapters
     Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChapters']);
     Route::post('/chapter/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
     Route::post('/chapter/delete', [App\Http\Controllers\ChapterController::class, 'deleteChapter']);
