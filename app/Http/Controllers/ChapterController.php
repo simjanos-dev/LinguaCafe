@@ -23,7 +23,9 @@ class ChapterController extends Controller
     }
 
     public function getChapters(Request $request) {
+        $userId = Auth::user()->id;
         $bookId = intval($request->bookId);
+        
         $book = Book
             ::where('id', $bookId)
             ->where('user_id', Auth::user()->id)
@@ -43,7 +45,7 @@ class ChapterController extends Controller
             ->keyBy('id')
             ->toArray();
 
-        $book->wordCount = $book->getWordCounts($words);
+        $book->wordCount = $book->getWordCounts($userId, $words);
         for ($i = 0; $i < count($chapters); $i++) {
             $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
         }

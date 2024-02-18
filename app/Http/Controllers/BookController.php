@@ -6,10 +6,15 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
+// request classes
 use App\Http\Requests\Book\GetBookWordCountsRequest;
 
-use Carbon\Carbon;
+// services
+use App\Services\BookService;
+
+// models
 use App\Models\EncounteredWord;
 use App\Models\Book;
 use App\Models\Lesson;
@@ -22,48 +27,25 @@ class BookController extends Controller
     }
 
     public function getBooks() {
-        $books = new \stdClass();
-        $selectedLanguage = Auth::user()->selected_language;
-        $books = Book::
-            where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->orderBy('updated_at', 'DESC')
-            ->get();
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        
+        $books = (new BookService())->getBooks($userId, $language);
 
-        for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->wordCount = null;
-        }
-
-        return json_encode($books);
+        return response()->json($books, 200);
     }
 
     public function getBookWordCounts($bookId, GetBookWordCountsRequest $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        
-        // Get words for calculating word counts
-        $words = EncounteredWord
-            ::select(['id', 'word', 'stage'])
-            ->where('user_id', Auth::user()->id)
-            ->where('language', Auth::user()->selected_language)
-            ->get()
-            ->keyBy('id')
-            ->toArray();
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
 
-        // Get book
-        $book = Book
-            ::where('user_id', Auth::user()->id)
-            ->where('id', $bookId)
-            ->first();
-        
-        // Return error if no book found    
-        if (!$book) {
-            return 'error';
+        try {
+            $wordCounts = (new BookService())->getBookWordCounts($userId, $bookId);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
         }
-            
-        // Calculate word counts
-        $wordCounts = $book->getWordCounts($words);
 
-        return json_encode($wordCounts);
+        return response()->json($wordCounts, 200);
     }
 
     public function saveBook(Request $request) {
@@ -107,9 +89,9 @@ class BookController extends Controller
                 $book->cover_image = $fileName;
                 $book->save();
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             return 'error';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 'error';
         }
         

@@ -18,8 +18,8 @@ class Book extends Model
         'language',
     ];
 
-    function getWordCounts($words) {
-        $lessons = Lesson::where('user_id', Auth::user()->id)->where('book_id', $this->id)->get();
+    function getWordCounts($userId, $words) {
+        $lessons = Lesson::where('user_id', $userId)->where('book_id', $this->id)->get();
         $bookUniqueWordIds = [];
         
         foreach ($lessons as $lesson) {
