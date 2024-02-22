@@ -13,12 +13,10 @@ use App\Http\Requests\Book\DeleteBookRequest;
 // services
 use App\Services\BookService;
 
-class BookController extends Controller
-{
+class BookController extends Controller {
     private $bookService;
 
-    public function __construct(BookService $bookService)
-    {
+    public function __construct(BookService $bookService) {
         $this->middleware('auth');
 
         $this->bookService = $bookService;
@@ -47,12 +45,12 @@ class BookController extends Controller
 
     public function createBook(CreateBookRequest $request) {
         $userId = Auth::user()->id;
-        $selectedLanguage = Auth::user()->selected_language;
+        $language = Auth::user()->selected_language;
         $bookName = $request->post('bookName');
         $bookCoverFile = $request->file('bookCover');
         
         try {
-            $this->bookService->createBook($userId, $selectedLanguage, $bookName, $bookCoverFile);
+            $this->bookService->createBook($userId, $language, $bookName, $bookCoverFile);
         } catch (\Throwable $e) {
             abort(500, $e->getMessage());
         } catch (\Exception $e) {

@@ -315,10 +315,12 @@
                 this.deleteBookChapterDialog.chapterName = chapter.name;
             },
             deleteChapter() {
-                axios.post('/chapter/delete', {
+                axios.post('/chapters/delete', {
                     'chapterId': this.deleteBookChapterDialog.chapterId,
+                }).catch(() => {
+                    this.errorDialog.active = true;
                 }).then((response) => {
-                    if (response.data == 'success') {
+                    if (response.status === 200) {
                         this.loadChapters();
                     } else {
                         this.errorDialog.active = true;

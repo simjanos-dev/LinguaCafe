@@ -229,7 +229,7 @@
             };
 
 
-            axios.post('/chapter/get/reader', {
+            axios.post('/chapters/get/reader', {
                 'chapterId': this.$route.params.chapterId,
             }).then((response) => {
                 var data = response.data;
@@ -389,15 +389,17 @@
                 this.toolbarSettingChanged();
             },
             finish: function() {
-                axios.post('/chapter/finish', {
+                axios.post('/chapters/finish', {
                     uniqueWords: JSON.stringify(this.text.uniqueWords),
                     sentences: JSON.stringify(this.text.sentences),
                     language: this.language,
-                    lessonId: this.lessonId,
+                    chapterId: this.lessonId,
                     autoMoveWordsToKnown: this.settings.autoMoveWordsToKnown
+                }).catch((error) => {
+                    this.finishError = true;
                 }).then((response) => {
-                    if (response.data == 'success') {
-
+                    if (response.status === 200) {
+                        this.finishError = false;
                         this.finished = true;
                     } else {
                         this.finishError = true;

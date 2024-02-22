@@ -126,12 +126,13 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/books/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
     
     // chapters
-    Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChapters']);
-    Route::post('/chapter/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
-    Route::post('/chapter/delete', [App\Http\Controllers\ChapterController::class, 'deleteChapter']);
-    Route::get('/chapter/get/edit/{chapterId}', [App\Http\Controllers\ChapterController::class, 'getChapterForEdit']);
-    Route::post('/chapter/finish', [App\Http\Controllers\ChapterController::class, 'finishChapter']);
-    Route::post('/chapter/save', [App\Http\Controllers\ChapterController::class, 'saveChapter']);
+    Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChaptersForBook']);
+    Route::post('/chapters/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
+    Route::post('/chapters/get/editor', [App\Http\Controllers\ChapterController::class, 'getChapterForEditor']);
+    Route::post('/chapters/delete', [App\Http\Controllers\ChapterController::class, 'deleteChapter']);
+    Route::post('/chapters/finish', [App\Http\Controllers\ChapterController::class, 'finishChapter']);
+    Route::post('/chapters/update', [App\Http\Controllers\ChapterController::class, 'updateChapter']);
+    Route::post('/chapters/create', [App\Http\Controllers\ChapterController::class, 'createChapter']);
 
     // library import
     Route::post('/import', [App\Http\Controllers\ImportController::class, 'import']);

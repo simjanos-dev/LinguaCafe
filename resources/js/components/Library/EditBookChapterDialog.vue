@@ -142,18 +142,22 @@
                 }
 
                 this.saving = true;
+                var url = '/chapters/update';
                 var data = {
-                    'name': this.name,
-                    'raw_text': this.text,
-                    'book': this.$props.bookId
+                    'chapterName': this.name,
+                    'chapterText': this.text,
                 };
 
                 if (this.$props.chapterId !== -1) {
-                    data.lesson_id = this.$props.chapterId;
+                    data.chapterId = this.$props.chapterId;
+                } else {
+                    data.bookId = this.$props.bookId;
+                    url = '/chapters/create';
                 }
                 
-                axios.post('/chapter/save', data).then((response) => {
-                    if (response.data == 'success') {
+                axios.post(url, data).then((response) => {
+                    this.saving = false;
+                    if (response.status === 200) {
                         this.saveResult = 'success';
 
                         setTimeout(() => {
@@ -166,13 +170,13 @@
                 }).catch((error) => {
                     this.saving = false;
                     this.saveResult = 'error';
-                }).then(() =>{
-                    this.saving = false;
                 });
             },
             loadChapter() {
                 if (this.$props.chapterId !== -1) {
-                    axios.get('/chapter/get/edit/' + this.$props.chapterId).then((response) => {
+                    axios.post('/chapters/get/editor', {
+                        chapterId: this.$props.chapterId,
+                    }).then((response) => {
                         this.name = response.data.name;
                         this.text = response.data.raw_text;
                         this.type = response.data.type;
