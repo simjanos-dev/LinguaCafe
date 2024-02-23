@@ -19,17 +19,32 @@ use App\Models\ExampleSentence;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 
+// services
+use App\Services\VocabularyService;
+
+// request classes
+use App\Http\Requests\Vocabulary\GetUniqueWordRequest;
+
 class VocabularyController extends Controller
 {
-    private $limit = 30;
+    private $itemsPerPage = 30;
+    private $vocabularyService;
 
-    public function getWord($wordId) {
-        $word = EncounteredWord
-            ::where('user_id', Auth::user()->id)
-            ->where('id', $wordId)
-            ->first();
-        
-        return json_encode($word);
+    public function __construct(VocabularyService $vocabularyService) {
+        $this->vocabularyService = $vocabularyService;
+    }
+
+
+    public function getUniqueWord($wordId, GetUniqueWordRequest $request) {
+        $userId = Auth::user()->id;
+
+        try {
+            $word = $this->vocabularyService->getUniqueWord($userId, $wordId);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json($word, 200);
     }
 
     public function saveWord(Request $request) {
@@ -459,10 +474,10 @@ class VocabularyController extends Controller
 
         $data = new \stdClass();
         $data->wordCount = $search->count();
-        $data->words = $search->skip(($page - 1) * $this->limit)->take($this->limit)->get();
+        $data->words = $search->skip(($page - 1) * $this->itemsPerPage)->take($this->itemsPerPage)->get();
         $data->books = $books;
         $data->bookIndex = $bookIndex;
-        $data->pageCount = ceil($data->wordCount / $this->limit);
+        $data->pageCount = ceil($data->wordCount / $this->itemsPerPage);
         $data->currentPage = $page;
 
         return json_encode($data);

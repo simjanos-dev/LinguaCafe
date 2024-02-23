@@ -17,8 +17,6 @@ class BookController extends Controller {
     private $bookService;
 
     public function __construct(BookService $bookService) {
-        $this->middleware('auth');
-
         $this->bookService = $bookService;
     }
 
