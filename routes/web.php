@@ -66,6 +66,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/goal/update', [App\Http\Controllers\GoalController::class, 'updateGoal']);
     Route::post('/goals/get-calendar-data', [App\Http\Controllers\GoalController::class, 'getCalendarData']);
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
+    Route::get ('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
 
     // dictionaries
     Route::get('/jmdict/xml-to-text', [App\Http\Controllers\JmdictController::class, 'jmdictXmlToText']);
@@ -94,7 +95,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // vocabulary
     Route::get ('/vocabulary/word/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getUniqueWord']);
-    Route::post('/vocabulary/word/save', [App\Http\Controllers\VocabularyController::class, 'saveWord']);
+    Route::post('/vocabulary/word/update', [App\Http\Controllers\VocabularyController::class, 'updateWord']);
     Route::get ('/vocabulary/phrase/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getPhrase']);
     Route::post('/vocabulary/phrase/save', [App\Http\Controllers\VocabularyController::class, 'savePhrase']);
     Route::post('/vocabulary/phrase/delete', [App\Http\Controllers\VocabularyController::class, 'deletePhrase']);

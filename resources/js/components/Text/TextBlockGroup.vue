@@ -1125,11 +1125,8 @@
                     saveData.stage = selectedWord.stage;
                 }
 
-                axios.post('/vocabulary/word/save', saveData).then((response) => {
-                }).catch(function (error) {
+                axios.post('/vocabulary/word/update', saveData).catch(function (error) {
                     console.log(error);
-                }).then(() => {
-
                 });
 
                 if (exampleSentenceChanged) {

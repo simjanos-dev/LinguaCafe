@@ -24,6 +24,7 @@ use App\Services\VocabularyService;
 
 // request classes
 use App\Http\Requests\Vocabulary\GetUniqueWordRequest;
+use App\Http\Requests\Vocabulary\UpdateWordRequest;
 
 class VocabularyController extends Controller
 {
@@ -47,77 +48,51 @@ class VocabularyController extends Controller
         return response()->json($word, 200);
     }
 
-    public function saveWord(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        $word = EncounteredWord::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
-        
-        // if the reviewed item got leveled up or relearning state got removed
-        // while being reviewed, then increase the daily review goal
-        if (!is_null($request->changedWhileReviewing) && $request->changedWhileReviewing) {
-            if (($request->stage <= 0 && $request->stage > $word->stage) || 
-                (isset($request->relearning) && $request->relearning === false && boolval($word->relearning))) {
-                
-                $goal = Goal::where('user_id', Auth::user()->id)
-                    ->where('language', $selectedLanguage)
-                    ->where('type', 'review')
-                    ->first();
-
-                $achievement = GoalAchievement::where('user_id', Auth::user()->id)
-                ->where('language', $selectedLanguage)
-                ->where('goal_id', $goal->id)
-                ->where('day', Carbon::now()->toDateString())
-                ->first();
-        
-                if (!$achievement) {
-                    $achievement = new GoalAchievement();
-                    $achievement->language = $selectedLanguage;
-                    $achievement->user_id = Auth::user()->id;
-                    $achievement->goal_id = $goal->id;
-                    $achievement->achieved_quantity = 0;
-                    $achievement->goal_quantity = $goal->quantity;
-                    $achievement->day = Carbon::now()->toDateString();
-                }
-        
-                $achievement->achieved_quantity ++;
-                $achievement->save();
-            }
-        }
+    public function updateWord(UpdateWordRequest $request) {
+        $userId = Auth::user()->id;
+        $wordId = $request->post('id');
+        $wordData = [];
+        $wordStage = null;
 
         if ($request->has('translation')) {
-            $word->translation = $request->translation === NULL ? '' : $request->translation;
+            $wordData['translation'] = $request->translation === NULL ? '' : $request->translation;
         }
 
         if ($request->has('reading')) {
-            $word->reading = $request->reading === NULL ? '' : $request->reading;
+            $wordData['reading'] = $request->reading === NULL ? '' : $request->reading;
         }
 
         if ($request->has('base_word')) {
-            $word->base_word = $request->base_word === NULL ? '' : $request->base_word;
+            $wordData['base_word'] = $request->base_word === NULL ? '' : $request->base_word;
         }
 
         if ($request->has('base_word_reading')) {
-            $word->base_word_reading = $request->base_word_reading === NULL ? '' : $request->base_word_reading;
+            $wordData['base_word_reading'] = $request->base_word_reading === NULL ? '' : $request->base_word_reading;
         }
 
         if (isset($request->lookup_count)) {
-            $word->lookup_count = $request->lookup_count;
+            $wordData['lookup_count'] = $request->lookup_count;
         }
 
         if (isset($request->read_count)) {
-            $word->read_count = $request->read_count;
-        }
-
-        if (isset($request->stage)) {
-            $word->setStage($request->stage);
+            $wordData['read_count'] = $request->read_count;
         }
 
         if (isset($request->relearning)) {
-            $word->relearning = boolval($request->relearning);
+            $wordData['relearning'] = boolval($request->relearning);
         }
-        
-        $word->save();
 
-        return $request->id . ' vocabulary updated<br>';
+        if (isset($request->stage)) {
+            $wordStage = $request->stage;
+        }
+
+        try {
+            $this->vocabularyService->updateWord($userId, $wordId, $wordData, $wordStage);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json('Word has been successfully updated.', 200);
     }
 
     public function getPhrase($phraseId) {
@@ -148,7 +123,7 @@ class VocabularyController extends Controller
 
         // if the reviewed item got leveled up or relearning state got removed
         // while being reviewed, then increase the daily review goal
-        if (!is_null($request->changedWhileReviewing) && $request->changedWhileReviewing) {
+        if (!is_null($request->savedDuringReview) && $request->savedDuringReview) {
             if (($request->stage <= 0 && $request->stage > $phrase->stage) || 
                 (isset($request->relearning) && $request->relearning === false && boolval($phrase->relearning))) {
                 

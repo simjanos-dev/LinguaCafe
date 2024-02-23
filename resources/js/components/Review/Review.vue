@@ -362,24 +362,32 @@
                 this.countReadWords();
 
                 // update word or phrase in database
-                var url = '/vocabulary/word/save';
+                var url = '/vocabulary/word/update';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
                     url = '/vocabulary/phrase/save';
                 }
 
                 var saveData = {
-                    id: this.reviews[this.currentReviewIndex].id,
-                    changedWhileReviewing: true
+                    id: this.reviews[this.currentReviewIndex].id
                 };
 
+                var increaseReviewAchievement = false;
                 if (this.reviews[this.currentReviewIndex].relearning) {
                     saveData.relearning = false;
                     this.reviews[this.currentReviewIndex].relearning = false;
+                    increaseReviewAchievement = true;
                 } else {
                     saveData.stage = this.reviews[this.currentReviewIndex].stage + 1;
+                    if (saveData.stage <= 0 && saveData.stage > this.reviews[this.currentReviewIndex].stage) {
+                        increaseReviewAchievement = true;
+                    }
                 }
 
                 if (!this.practiceMode) {
+                    if (increaseReviewAchievement) {
+                        axios.get('/goals/achievement/review/update');
+                    }
+
                     axios.post(url, saveData).then(() => {
                         if (this.reviews.length == 1) {
                             this.finish();
@@ -406,14 +414,14 @@
                 this.countReadWords();
 
                 // update word or phrase in database
-                var url = '/vocabulary/word/save';
+                var url = '/vocabulary/word/update';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
                     url = '/vocabulary/phrase/save';
                 }
 
                 var saveData = {
                     id: this.reviews[this.currentReviewIndex].id,
-                    changedWhileReviewing: true
+                    savedDuringReview: true
                 };
                 
                 if (!this.reviews[this.currentReviewIndex].relearning && !this.practiceMode) {

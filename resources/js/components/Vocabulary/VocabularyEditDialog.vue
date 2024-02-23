@@ -259,7 +259,7 @@
                     stage: this.item.stage,
                 };
 
-                axios.post('/vocabulary/word/save', saveData).then(() => {
+                axios.post('/vocabulary/word/update', saveData).then(() => {
                     this.saved = true;
                     this.saving = false;
                     this.updateVocabularySearch();

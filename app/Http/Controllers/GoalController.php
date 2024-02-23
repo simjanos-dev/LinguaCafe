@@ -10,6 +10,8 @@ use App\Models\Goal;
 use App\Models\GoalAchievement;
 use App\Models\EncounteredWord;
 
+use App\Services\GoalService;
+
 class GoalController extends Controller
 {
     /*
@@ -178,5 +180,12 @@ class GoalController extends Controller
                 ->update(['achieved_quantity' => $newValue]);
         }
         return 'success';
+    }
+
+    public function updateReviewGoalAchievement() {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+
+        (new GoalService())->updateGoalAchievement($userId, $language, 'review', 1);
     }
 }

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Goal;
 use App\Models\Setting;
@@ -21,30 +20,34 @@ class EncounteredWord extends Model
         'word',
         'kanji',
         'reading',
+        'base_word',
+        'base_word_reading',
         'translation',
         'example_sentence',
+        'lookup_count',
+        'read_count',
+        'relearning'
     ];
 
     public function setStage($stage) {
-        $selectedLanguage = Auth::user()->selected_language;
-        
+       
         // if it's a newly saved word, update today's achievement
         if ($this->stage >= 0 && $stage < 0) {
-            $goal = Goal::where('user_id', Auth::user()->id)
-                ->where('language', $selectedLanguage)
+            $goal = Goal::where('user_id', $this->user_id)
+                ->where('language', $this->language)
                 ->where('type', 'learn_words')
                 ->first();
             
-            $achievement = GoalAchievement::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
+            $achievement = GoalAchievement::where('user_id', $this->user_id)
+            ->where('language', $this->language)
             ->where('goal_id', $goal->id)
             ->where('day', Carbon::now()->toDateString())
             ->first();
 
             if (!$achievement) {
                 $achievement = new GoalAchievement();
-                $achievement->language = $selectedLanguage;
-                $achievement->user_id = Auth::user()->id;
+                $achievement->language = $this->language;
+                $achievement->user_id = $this->user_id;
                 $achievement->goal_id = $goal->id;
                 $achievement->achieved_quantity = 0;
                 $achievement->goal_quantity = $goal->quantity;
@@ -76,7 +79,7 @@ class EncounteredWord extends Model
             for ($i = 0; $i < count($possibleDates); $i++) {
                 $data = new \stdClass();
                 $data->date = Carbon::now()->addDays($possibleDates[$i])->toDateString();
-                $data->count = EncounteredWord::where('user_id', Auth::user()->id)->where('next_review', $data->date)->count();
+                $data->count = EncounteredWord::where('user_id', $this->user_id)->where('next_review', $data->date)->count();
                 $possibleDates[$i] = $data;
 
                 if ($possibleDates[$i]->count < $possibleDates[$nextReviewIndex]->count) {
