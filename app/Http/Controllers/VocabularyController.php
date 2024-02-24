@@ -25,6 +25,7 @@ use App\Services\VocabularyService;
 // request classes
 use App\Http\Requests\Vocabulary\GetUniqueWordRequest;
 use App\Http\Requests\Vocabulary\UpdateWordRequest;
+use App\Http\Requests\Vocabulary\CreatePhraseRequest;
 
 class VocabularyController extends Controller
 {
@@ -104,61 +105,37 @@ class VocabularyController extends Controller
         return json_encode($phrase);
     }
 
+    public function createPhrase(CreatePhraseRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $words = json_decode($request->words);
+        $stage = $request->stage;
+        $reading = is_null($request->reading) ? '' : $request->reading;
+        $translation = is_null($request->translation) ? '' : $request->translation;
+
+        try {
+            $this->vocabularyService->createPhrase($userId, $language, $words, $stage, $reading, $translation);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json('Phrase has been successfully created.', 200);
+    }
+
     public function savePhrase(Request $request) {
         $selectedLanguage = Auth::user()->selected_language;
         $isNewPhrase = false;
 
 
         if (is_null($request->id)) {
-            $phrase = new Phrase();
-            $phrase->reading = '';
-            $isNewPhrase = true;
-
-            // it's required here because empty 
-            // post parameter string passes as null
-            $phrase->translation = '';
+            
         } else {
             $phrase = Phrase::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
         }
 
-        // if the reviewed item got leveled up or relearning state got removed
-        // while being reviewed, then increase the daily review goal
-        if (!is_null($request->savedDuringReview) && $request->savedDuringReview) {
-            if (($request->stage <= 0 && $request->stage > $phrase->stage) || 
-                (isset($request->relearning) && $request->relearning === false && boolval($phrase->relearning))) {
-                
-                $goal = Goal::where('user_id', Auth::user()->id)
-                    ->where('language', $selectedLanguage)
-                    ->where('type', 'review')
-                    ->first();
 
-                $achievement = GoalAchievement::where('user_id', Auth::user()->id)
-                ->where('language', $selectedLanguage)
-                ->where('goal_id', $goal->id)
-                ->where('day', Carbon::now()->toDateString())
-                ->first();
         
-                if (!$achievement) {
-                    $achievement = new GoalAchievement();
-                    $achievement->language = $selectedLanguage;
-                    $achievement->user_id = Auth::user()->id;
-                    $achievement->goal_id = $goal->id;
-                    $achievement->achieved_quantity = 0;
-                    $achievement->goal_quantity = $goal->quantity;
-                    $achievement->day = Carbon::now()->toDateString();
-                }
         
-                $achievement->achieved_quantity ++;
-                $achievement->save();
-            }
-        }
-
-        $phrase->user_id = Auth::user()->id;
-        $phrase->language = $selectedLanguage;
-        if (isset($request->words)) {
-            $phrase->words = json_encode($request->words);
-            $phrase->words_searchable = implode('', $request->words);
-        }
 
         if ($request->has('reading')) {
             $phrase->reading = $request->reading === NULL ? '' : $request->reading;
@@ -182,62 +159,7 @@ class VocabularyController extends Controller
         
         $phrase->save();
 
-        // update phrase ids in lesson texts
-        if ($isNewPhrase) {
-            $phraseWords = array_unique($request->words);
-            $lessons = Lesson
-                ::where('user_id', Auth::user()->id)
-                ->where('language', $selectedLanguage)
-                ->get();
-
-            foreach ($lessons as $lesson) {
-                $uniqueWords = json_decode($lesson->unique_words);
-                if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
-                    continue;
-                }
-
-                $words = $lesson->getProcessedText();
-
-                $textBlock = new TextBlock();
-                $textBlock->setProcessedWords($words);
-                $textBlock->collectUniqueWords();
-                $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
-
-                // save lesson words
-                if ($phraseIdsChanged) {
-                    $lesson->setProcessedText($textBlock->processedWords);
-                    $lesson->save();
-                }
-            }
-        }
-
-        // update phrase ids in example sentences
-        if ($isNewPhrase) {
-            $exampleSentences = ExampleSentence
-                ::where('user_id', Auth::user()->id)
-                ->where('language', $selectedLanguage)
-                ->get();
-
-            DB::beginTransaction();
-            foreach ($exampleSentences as $exampleSentence) {
-                $uniqueWords = json_decode($exampleSentence->unique_words);
-                if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
-                    continue;
-                }
-
-                $textBlock = new TextBlock();
-                $textBlock->setProcessedWords(json_decode($exampleSentence->words));
-                $textBlock->collectUniqueWords();
-                $textBlock->updatePhraseIds($phrase);
-                $textBlock->createNewEncounteredWords();
-                
-                $exampleSentence->words = json_encode($textBlock->processedWords);
-                $exampleSentence->unique_words = json_encode($textBlock->uniqueWords);
-                $exampleSentence->save();
-            }
-
-            DB::commit();
-        }
+        
 
         return $phrase->id;
     }

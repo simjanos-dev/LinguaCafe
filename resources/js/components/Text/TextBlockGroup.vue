@@ -1018,15 +1018,17 @@
                     }
                 }
                 
+                var url = '/vocabulary/phrases/save';
                 var saveData = {
-                    words: this.text.phrases[this.selectedPhrase].words,
+                    words: JSON.stringify(this.text.phrases[this.selectedPhrase].words),
                     reading: this.text.phrases[this.selectedPhrase].reading,
                     translation: this.text.phrases[this.selectedPhrase].translation,
                     lookup_count: this.text.phrases[this.selectedPhrase].lookup_count,
                 };
 
-                if (this.text.phrases[this.selectedPhrase].id == -1) {
+                if (this.text.phrases[this.selectedPhrase].id === -1) {
                     saveData.stage = this.text.phrases[this.selectedPhrase].stage;
+                    url = '/vocabulary/phrases/create';
                 } else {
                     saveData.id = this.text.phrases[this.selectedPhrase].id;
                 }
@@ -1035,7 +1037,7 @@
                     saveData.stage = this.text.phrases[this.selectedPhrase].stage;
                 }
 
-                axios.post('/vocabulary/phrase/save', saveData).then((response) => {
+                axios.post(url, saveData).then((response) => {
                     for (let i = 0; i < this.text.phrases.length; i++) {
                         if (this.text.phrases[i].id == -1) {
                             this.text.phrases[i].id = parseInt(response.data);
@@ -1045,8 +1047,6 @@
                     this.phraseCurrentlySaving = false;
                 }).catch((error) => {
                     console.log(error);
-                }).then(() => {
-                    
                 });
 
                 if (exampleSentenceChanged) {
