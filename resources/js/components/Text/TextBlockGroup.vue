@@ -1018,7 +1018,7 @@
                     }
                 }
                 
-                var url = '/vocabulary/phrases/save';
+                var url = '/vocabulary/phrases/update';
                 var saveData = {
                     words: JSON.stringify(this.text.phrases[this.selectedPhrase].words),
                     reading: this.text.phrases[this.selectedPhrase].reading,

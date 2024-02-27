@@ -98,7 +98,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/vocabulary/word/update', [App\Http\Controllers\VocabularyController::class, 'updateWord']);
     Route::get ('/vocabulary/phrase/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getPhrase']);
     Route::post('/vocabulary/phrases/create', [App\Http\Controllers\VocabularyController::class, 'createPhrase']);
-    Route::post('/vocabulary/phrase/save', [App\Http\Controllers\VocabularyController::class, 'savePhrase']);
+    Route::post('/vocabulary/phrases/update', [App\Http\Controllers\VocabularyController::class, 'updatePhrase']);
     Route::post('/vocabulary/phrase/delete', [App\Http\Controllers\VocabularyController::class, 'deletePhrase']);
     Route::post('/vocabulary/save-example-sentence', [App\Http\Controllers\VocabularyController::class, 'saveExampleSentence']);
     Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'search']);

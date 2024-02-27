@@ -26,6 +26,7 @@ use App\Services\VocabularyService;
 use App\Http\Requests\Vocabulary\GetUniqueWordRequest;
 use App\Http\Requests\Vocabulary\UpdateWordRequest;
 use App\Http\Requests\Vocabulary\CreatePhraseRequest;
+use App\Http\Requests\Vocabulary\UpdatePhraseRequest;
 
 class VocabularyController extends Controller
 {
@@ -122,46 +123,39 @@ class VocabularyController extends Controller
         return response()->json('Phrase has been successfully created.', 200);
     }
 
-    public function savePhrase(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        $isNewPhrase = false;
-
-
-        if (is_null($request->id)) {
-            
-        } else {
-            $phrase = Phrase::where('user_id', Auth::user()->id)->where('id', $request->id)->first();
-        }
-
-
-        
-        
-
-        if ($request->has('reading')) {
-            $phrase->reading = $request->reading === NULL ? '' : $request->reading;
-        }
+    public function updatePhrase(UpdatePhraseRequest $request) {
+        $userId = Auth::user()->id;
+        $phraseId = $request->post('id');
+        $phraseData = [];
+        $phraseStage = null;
 
         if ($request->has('translation')) {
-            $phrase->translation = $request->translation === NULL ? '' : $request->translation;
+            $phraseData['translation'] = $request->translation === NULL ? '' : $request->translation;
         }
 
-        if (isset($request->stage)) {
-            $phrase->setStage($request->stage);
-        }
-
-        if (isset($request->relearning)) {
-            $phrase->relearning = boolval($request->relearning);
+        if ($request->has('reading')) {
+            $phraseData['reading'] = $request->reading === NULL ? '' : $request->reading;
         }
 
         if (isset($request->lookup_count)) {
-            $phrase->lookup_count = $request->lookup_count;
+            $phraseData['lookup_count'] = $request->lookup_count;
         }
-        
-        $phrase->save();
 
-        
+        if (isset($request->relearning)) {
+            $phraseData['relearning'] = boolval($request->relearning);
+        }
 
-        return $phrase->id;
+        if (isset($request->stage)) {
+            $phraseStage = $request->stage;
+        }
+
+        try {
+            $this->vocabularyService->updatePhrase($userId, $phraseId, $phraseData, $phraseStage);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json('Phrase has been successfully updated.', 200);
     }
 
     public function deletePhrase(Request $request) {

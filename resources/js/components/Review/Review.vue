@@ -364,7 +364,7 @@
                 // update word or phrase in database
                 var url = '/vocabulary/word/update';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    url = '/vocabulary/phrase/save';
+                    url = '/vocabulary/phrases/update';
                 }
 
                 var saveData = {
@@ -416,7 +416,7 @@
                 // update word or phrase in database
                 var url = '/vocabulary/word/update';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    url = '/vocabulary/phrase/save';
+                    url = '/vocabulary/phrases/update';
                 }
 
                 var saveData = {

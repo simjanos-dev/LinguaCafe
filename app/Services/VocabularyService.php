@@ -116,7 +116,23 @@ class VocabularyService
         return true;
     }
 
-    public function updatePhrase() {
+    public function updatePhrase($userId, $phraseId, $phraseData, $phraseStage = null) {
+        $phrase = Phrase
+            ::where('user_id', $userId)
+            ->where('id', $phraseId)
+            ->first();
         
+        if (!$phrase) {
+            throw new \Exception('Phrase does not exist, or it belongs to a different user.');
+        }
+        
+        if ($phraseStage !== null) {
+            $phrase->setStage($phraseStage);
+        }
+
+        $phrase->update($phraseData);
+        $phrase->save();
+
+        return true;
     }
 }
