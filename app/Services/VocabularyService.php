@@ -113,7 +113,7 @@ class VocabularyService
 
         DB::commit();
 
-        return true;
+        return $phrase->id;
     }
 
     public function updatePhrase($userId, $phraseId, $phraseData, $phraseStage = null) {
@@ -147,5 +147,73 @@ class VocabularyService
         }
 
         return $phrase;
+    }
+
+    public function deletePhrase($userId, $language, $phraseId) {
+
+        $phrase = Phrase
+            ::where('user_id', $userId)
+            ->where('language', $language)
+            ->where('id', $phraseId)
+            ->first();
+
+        if (!$phrase) {
+            throw new \Exception('Phrase does not exist, or it belongs to a different user.');
+        }
+
+        // remove phrase ids from text words
+        $chapters = Lesson
+            ::where('user_id', $userId)
+            ->where('language', $language)
+            ->get();
+
+        foreach($chapters as $chapter) {
+            $words = $chapter->getProcessedText();
+            $chapterChanged = false;
+
+            // delete phrase id from lesson words
+            foreach ($words as $word) {
+                $index = array_search($phraseId, $word->phrase_ids);
+                if ($index !== false) {
+                    $modifiedPhraseIds = $word->phrase_ids;
+                    array_splice($modifiedPhraseIds, $index, 1);
+                    $word->phrase_ids = $modifiedPhraseIds;
+                    $chapterChanged = true;
+                }
+            }
+
+            // save lesson if changed
+            if ($chapterChanged) {
+                $chapter->setProcessedText($words);
+                $chapter->save();
+            }
+        }
+
+        // remove phrase ids from example sentence words
+        $exampleSentences = ExampleSentence
+            ::where('user_id', $userId)
+            ->where('language', $language)
+            ->get();
+
+        DB::beginTransaction();
+        foreach ($exampleSentences as $exampleSentence) {
+            $exampleSentence->deletePhraseId($phraseId);
+        }
+
+        DB::commit();
+        
+        ExampleSentence
+            ::where('user_id', $userId)
+            ->where('target_type', 'phrase')
+            ->where('target_id', $phraseId)
+            ->delete();
+
+        Phrase
+            ::where('user_id', $userId)
+            ->where('language', $language)
+            ->where('id', $phraseId)
+            ->delete();
+
+        return true;
     }
 }

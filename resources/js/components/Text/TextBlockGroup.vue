@@ -993,8 +993,8 @@
                 // delete phrase
                 this.text.phrases.splice(deletedPhraseIndex, 1);
 
-                axios.post('/vocabulary/phrase/delete', {
-                    id: deletedPhraseId
+                axios.post('/vocabulary/phrases/delete', {
+                    phraseId: deletedPhraseId
                 }).then(function (response) {
                 });
 

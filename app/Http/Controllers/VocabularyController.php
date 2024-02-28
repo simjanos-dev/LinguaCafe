@@ -28,6 +28,7 @@ use App\Http\Requests\Vocabulary\UpdateWordRequest;
 use App\Http\Requests\Vocabulary\CreatePhraseRequest;
 use App\Http\Requests\Vocabulary\UpdatePhraseRequest;
 use App\Http\Requests\Vocabulary\GetPhraseRequest;
+use App\Http\Requests\Vocabulary\DeletePhraseRequest;
 
 class VocabularyController extends Controller
 {
@@ -119,12 +120,12 @@ class VocabularyController extends Controller
         $translation = is_null($request->translation) ? '' : $request->translation;
 
         try {
-            $this->vocabularyService->createPhrase($userId, $language, $words, $stage, $reading, $translation);
+            $phraseId = $this->vocabularyService->createPhrase($userId, $language, $words, $stage, $reading, $translation);
         } catch (\Exception $e) {
             abort(404, $e->getMessage());
         }
 
-        return response()->json('Phrase has been successfully created.', 200);
+        return response()->json($phraseId, 200);
     }
 
     public function updatePhrase(UpdatePhraseRequest $request) {
@@ -162,61 +163,18 @@ class VocabularyController extends Controller
         return response()->json('Phrase has been successfully updated.', 200);
     }
 
-    public function deletePhrase(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        $phraseId = $request->id;
+    public function deletePhrase(DeletePhraseRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $phraseId = $request->post('phraseId');
         
-        $lessons = Lesson
-            ::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->get();
-
-        foreach($lessons as $lesson) {
-            $words = $lesson->getProcessedText();
-            $lessonChanged = false;
-
-            // delete phrase id from lesson words
-            foreach ($words as $word) {
-                $index = array_search($phraseId, $word->phrase_ids);
-                if ($index !== false) {
-                    $modifiedPhraseIds = $word->phrase_ids;
-                    array_splice($modifiedPhraseIds, $index, 1);
-                    $word->phrase_ids = $modifiedPhraseIds;
-                    $lessonChanged = true;
-                }
-            }
-
-            // save lesson if changed
-            if ($lessonChanged) {
-                $lesson->setProcessedText($words);
-                $lesson->save();
-            }
+        try {
+            $this->vocabularyService->deletePhrase($userId, $language, $phraseId);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
         }
 
-        // delete phrase id from example sentences
-        $exampleSentences = ExampleSentence
-            ::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->get();
-
-        DB::beginTransaction();
-        foreach ($exampleSentences as $exampleSentence) {
-            $exampleSentence->deletePhraseId($phraseId);
-        }
-
-        DB::commit();
-        
-        ExampleSentence
-            ::where('user_id', Auth::user()->id)
-            ->where('target_type', 'phrase')
-            ->where('target_id', $request->id)
-            ->delete();
-
-        Phrase
-            ::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->where('id', $request->id)
-            ->delete();
+        return response()->json('Phrase has been successfully deleted.', 200);
     }
 
     public function getExampleSentence($targetId, $targetType) {
