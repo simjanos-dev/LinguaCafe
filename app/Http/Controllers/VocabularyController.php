@@ -27,6 +27,7 @@ use App\Http\Requests\Vocabulary\GetUniqueWordRequest;
 use App\Http\Requests\Vocabulary\UpdateWordRequest;
 use App\Http\Requests\Vocabulary\CreatePhraseRequest;
 use App\Http\Requests\Vocabulary\UpdatePhraseRequest;
+use App\Http\Requests\Vocabulary\GetPhraseRequest;
 
 class VocabularyController extends Controller
 {
@@ -97,13 +98,16 @@ class VocabularyController extends Controller
         return response()->json('Word has been successfully updated.', 200);
     }
 
-    public function getPhrase($phraseId) {
-        $phrase = Phrase
-            ::where('user_id', Auth::user()->id)
-            ->where('id', $phraseId)
-            ->first();
-        
-        return json_encode($phrase);
+    public function getPhrase($phraseId, GetPhraseRequest $request) {
+        $userId = Auth::user()->id;
+
+        try {
+            $phrase = $this->vocabularyService->getPhrase($userId, $phraseId);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json($phrase, 200);
     }
 
     public function createPhrase(CreatePhraseRequest $request) {

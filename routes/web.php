@@ -94,9 +94,9 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/dictionary/delete/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
 
     // vocabulary
-    Route::get ('/vocabulary/word/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getUniqueWord']);
+    Route::get ('/vocabulary/words/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getUniqueWord']);
     Route::post('/vocabulary/word/update', [App\Http\Controllers\VocabularyController::class, 'updateWord']);
-    Route::get ('/vocabulary/phrase/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getPhrase']);
+    Route::get ('/vocabulary/phrases/get/{phraseId}', [App\Http\Controllers\VocabularyController::class, 'getPhrase']);
     Route::post('/vocabulary/phrases/create', [App\Http\Controllers\VocabularyController::class, 'createPhrase']);
     Route::post('/vocabulary/phrases/update', [App\Http\Controllers\VocabularyController::class, 'updatePhrase']);
     Route::post('/vocabulary/phrase/delete', [App\Http\Controllers\VocabularyController::class, 'deletePhrase']);

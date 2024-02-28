@@ -135,4 +135,17 @@ class VocabularyService
 
         return true;
     }
+
+    public function getPhrase($userId, $phraseId) {
+        $phrase = Phrase
+            ::where('user_id', $userId)
+            ->where('id', $phraseId)
+            ->first();
+
+        if (!$phrase) {
+            throw new \Exception('Phrase does not exist, or it belongs to a different user.');
+        }
+
+        return $phrase;
+    }
 }

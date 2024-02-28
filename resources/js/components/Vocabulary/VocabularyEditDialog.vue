@@ -219,7 +219,7 @@
             };
         },
         mounted: function() {
-            axios.get('/vocabulary/' + this.$props.itemType.toLowerCase() + '/get/' + this.$props.itemId).then((response) => {
+            axios.get('/vocabulary/' + this.$props.itemType.toLowerCase() + 's/get/' + this.$props.itemId).then((response) => {
                 this.loading = false;
                 this.item = response.data;
                 
