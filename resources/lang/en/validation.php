@@ -139,6 +139,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'targetType' => [
+            'in' => 'The selected target type must be either word or phrase.',
+        ]
     ],
 
     /*

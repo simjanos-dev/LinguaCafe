@@ -29,6 +29,7 @@ use App\Http\Requests\Vocabulary\CreatePhraseRequest;
 use App\Http\Requests\Vocabulary\UpdatePhraseRequest;
 use App\Http\Requests\Vocabulary\GetPhraseRequest;
 use App\Http\Requests\Vocabulary\DeletePhraseRequest;
+use App\Http\Requests\Vocabulary\GetExampleSentenceRequest;
 
 class VocabularyController extends Controller
 {
@@ -177,25 +178,16 @@ class VocabularyController extends Controller
         return response()->json('Phrase has been successfully deleted.', 200);
     }
 
-    public function getExampleSentence($targetId, $targetType) {
-        $exampleSentence = ExampleSentence
-            ::where('user_id', Auth::user()->id)
-            ->where('target_type', $targetType)
-            ->where('target_id', $targetId)
-            ->first();
+    public function getExampleSentence($targetId, $targetType, GetExampleSentenceRequest $request) {
+        $userId = Auth::user()->id;
         
-        if ($exampleSentence) {
-            $textBlock = new TextBlock();
-            $textBlock->setProcessedWords(json_decode($exampleSentence->words));
-            $textBlock->uniqueWords = json_decode($exampleSentence->unique_words);
-            $textBlock->prepareTextForReader();
-            $textBlock->indexPhrases();
-
-            return $textBlock->getReaderData();
-        } else {
-            return 'no example sentence';
+        try {
+            $exampleSentence = $this->vocabularyService->getExampleSentence($userId, $targetId, $targetType);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
         }
-        
+
+        return response()->json($exampleSentence, 200);
     }
 
     public function saveExampleSentence(Request $request) {

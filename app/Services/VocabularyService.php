@@ -150,7 +150,6 @@ class VocabularyService
     }
 
     public function deletePhrase($userId, $language, $phraseId) {
-
         $phrase = Phrase
             ::where('user_id', $userId)
             ->where('language', $language)
@@ -215,5 +214,25 @@ class VocabularyService
             ->delete();
 
         return true;
+    }
+
+    public function getExampleSentence($userId, $targetId, $targetType) {
+        $exampleSentence = ExampleSentence
+            ::where('user_id', $userId)
+            ->where('target_type', $targetType)
+            ->where('target_id', $targetId)
+            ->first();
+        
+        if (!$exampleSentence) {
+            throw new \Exception('Example sentence does not exist, or it belongs to a different user.');
+        }
+        
+        $textBlock = new TextBlock();
+        $textBlock->setProcessedWords(json_decode($exampleSentence->words));
+        $textBlock->uniqueWords = json_decode($exampleSentence->unique_words);
+        $textBlock->prepareTextForReader();
+        $textBlock->indexPhrases();
+
+        return $textBlock->getReaderData();
     }
 }
