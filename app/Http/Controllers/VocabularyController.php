@@ -30,6 +30,7 @@ use App\Http\Requests\Vocabulary\UpdatePhraseRequest;
 use App\Http\Requests\Vocabulary\GetPhraseRequest;
 use App\Http\Requests\Vocabulary\DeletePhraseRequest;
 use App\Http\Requests\Vocabulary\GetExampleSentenceRequest;
+use App\Http\Requests\Vocabulary\CreateOrUpdateExampleSentenceRequest;
 
 class VocabularyController extends Controller
 {
@@ -178,11 +179,11 @@ class VocabularyController extends Controller
         return response()->json('Phrase has been successfully deleted.', 200);
     }
 
-    public function getExampleSentence($targetId, $targetType, GetExampleSentenceRequest $request) {
+    public function getExampleSentence($targetType, $targetId, GetExampleSentenceRequest $request) {
         $userId = Auth::user()->id;
         
         try {
-            $exampleSentence = $this->vocabularyService->getExampleSentence($userId, $targetId, $targetType);
+            $exampleSentence = $this->vocabularyService->getExampleSentence($userId, $targetType, $targetId);
         } catch (\Exception $e) {
             abort(404, $e->getMessage());
         }
@@ -190,50 +191,20 @@ class VocabularyController extends Controller
         return response()->json($exampleSentence, 200);
     }
 
-    public function saveExampleSentence(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
+    public function createOrUpdateExampleSentence(CreateOrUpdateExampleSentenceRequest $request) {
+        $language = Auth::user()->selected_language;
         $userId = Auth::user()->id;
         $targetType = $request->targetType;
         $targetId = $request->targetId;
-        $exampleSentenceWords = $request->exampleSentenceWords;
+        $exampleSentenceWords = json_decode($request->exampleSentenceWords);
 
-        // Retrieve example sentence.
-        $exampleSentence = ExampleSentence
-            ::where('user_id', $userId)
-            ->where('target_type', $targetType)
-            ->where('target_id', $targetId)
-            ->first();
-
-
-        // Create new example sentence record if it didn't exist, and update words.
-        $exampleSentenceWords = json_decode($exampleSentenceWords);
-        if (!$exampleSentence) {
-            $exampleSentence = new ExampleSentence();
-            $exampleSentence->user_id = $userId;
-            $exampleSentence->language = $selectedLanguage;
-            $exampleSentence->target_type = $targetType;
-            $exampleSentence->target_id = $targetId;
-            $exampleSentence->unique_words = [];
+        try {
+            $this->vocabularyService->createOrUpdateExampleSentence($userId, $language, $targetType, $targetId, $exampleSentenceWords);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
         }
 
-        // Update unique words.
-        $uniqueWords = [];
-        foreach ($exampleSentenceWords as $word) {
-            $lowerCaseWord = mb_strtolower($word->word, 'UTF-8');
-            if (!in_array($lowerCaseWord, $uniqueWords, true)) {
-                array_push($uniqueWords, $lowerCaseWord);
-            }
-        }
-        
-        $textBlock = new TextBlock();
-        $textBlock->setProcessedWords($exampleSentenceWords);
-        $textBlock->collectUniqueWords();
-        $textBlock->updateAllPhraseIds();
-
-        // Save example sentence.
-        $exampleSentence->words = json_encode($textBlock->processedWords);
-        $exampleSentence->unique_words = json_encode($textBlock->uniqueWords);
-        $exampleSentence->save();
+        return response()->json('Example sentence has been successfully saved.', 200);
     }
 
 

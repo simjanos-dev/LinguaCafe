@@ -464,7 +464,7 @@
                     uniqueWords: [],
                 };
 
-                axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].id + '/' + this.reviews[this.currentReviewIndex].type).then((response) => {
+                axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].type + '/' + this.reviews[this.currentReviewIndex].id).then((response) => {
                     let firstTime = (this.exampleSentence.id == -1);
 
                     if (response.data !== 'no example sentence') {

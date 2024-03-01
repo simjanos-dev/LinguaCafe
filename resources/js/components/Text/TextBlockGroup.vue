@@ -1276,7 +1276,7 @@
                     targetId = this.text.phrases[this.selectedPhrase].id;
                 }
 
-                axios.post('/vocabulary/save-example-sentence', {
+                axios.post('/vocabulary/example-sentence/create-or-update', {
                     targetType: targetType,
                     targetId: targetId,
                     exampleSentenceWords: JSON.stringify(exampleSentence),

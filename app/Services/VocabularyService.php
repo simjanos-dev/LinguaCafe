@@ -216,7 +216,7 @@ class VocabularyService
         return true;
     }
 
-    public function getExampleSentence($userId, $targetId, $targetType) {
+    public function getExampleSentence($userId, $targetType, $targetId) {
         $exampleSentence = ExampleSentence
             ::where('user_id', $userId)
             ->where('target_type', $targetType)
@@ -234,5 +234,45 @@ class VocabularyService
         $textBlock->indexPhrases();
 
         return $textBlock->getReaderData();
+    }
+
+    public function createOrUpdateExampleSentence($userId, $language, $targetType, $targetId, $exampleSentenceWords) {
+        // Retrieve example sentence.
+        $exampleSentence = ExampleSentence
+            ::where('user_id', $userId)
+            ->where('target_type', $targetType)
+            ->where('target_id', $targetId)
+            ->first();
+
+        // Create new example sentence record if it didn't exist, and update words.
+        if (!$exampleSentence) {
+            $exampleSentence = new ExampleSentence();
+            $exampleSentence->user_id = $userId;
+            $exampleSentence->language = $language;
+            $exampleSentence->target_type = $targetType;
+            $exampleSentence->target_id = $targetId;
+            $exampleSentence->unique_words = [];
+        }
+
+        // Update unique words.
+        $uniqueWords = [];
+        foreach ($exampleSentenceWords as $word) {
+            $lowerCaseWord = mb_strtolower($word->word, 'UTF-8');
+            if (!in_array($lowerCaseWord, $uniqueWords, true)) {
+                array_push($uniqueWords, $lowerCaseWord);
+            }
+        }
+        
+        $textBlock = new TextBlock();
+        $textBlock->setProcessedWords($exampleSentenceWords);
+        $textBlock->collectUniqueWords();
+        $textBlock->updateAllPhraseIds();
+
+        // Save example sentence.
+        $exampleSentence->words = json_encode($textBlock->processedWords);
+        $exampleSentence->unique_words = json_encode($textBlock->uniqueWords);
+        $exampleSentence->save();
+
+        return true;
     }
 }
