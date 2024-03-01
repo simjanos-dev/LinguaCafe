@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use League\Csv\Writer;
 use \Exception;
 use Carbon\Carbon;
 use App\Models\TextBlock;
@@ -31,10 +30,11 @@ use App\Http\Requests\Vocabulary\GetPhraseRequest;
 use App\Http\Requests\Vocabulary\DeletePhraseRequest;
 use App\Http\Requests\Vocabulary\GetExampleSentenceRequest;
 use App\Http\Requests\Vocabulary\CreateOrUpdateExampleSentenceRequest;
+use App\Http\Requests\Vocabulary\SearchVocabularyRequest;
+use App\Http\Requests\Vocabulary\ExportToCsvRequest;
 
 class VocabularyController extends Controller
 {
-    private $itemsPerPage = 30;
     private $vocabularyService;
 
     public function __construct(VocabularyService $vocabularyService) {
@@ -207,9 +207,30 @@ class VocabularyController extends Controller
         return response()->json('Example sentence has been successfully saved.', 200);
     }
 
+    public function searchVocabulary(SearchVocabularyRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $text = $request->text;
+        $bookId = $request->book;
+        $chapterId = $request->chapter;
+        $stage = $request->stage;
+        $phrases = $request->phrases;
+        $orderBy = $request->orderBy;
+        $translation = $request->translation;
+        $page = $request->page; 
 
-    public function exportToCsv(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
+        try {
+            $searchResults = $this->vocabularyService->searchVocabulary($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $page);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json($searchResults, 200);
+    }
+
+    public function exportToCsv(ExportToCsvRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
         $text = $request->post('text');
         $bookId = $request->post('book');
         $chapterId = $request->post('chapter');
@@ -219,215 +240,14 @@ class VocabularyController extends Controller
         $translation = $request->post('translation');
         $fields = $request->post('fields');
 
-        // get books and chapters
-        $books = Book::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-        $bookIndex = -1;
-        for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
-            
-            if (isset($bookId) && $books[$i]->id == $bookId) {
-                $bookIndex = $i;
-            }
-        }
-
-        $words = $this->buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation)->get();
-
-        // create csv file
-        $csv = Writer::createFromFileObject(new \SplTempFileObject());
-        $csv->setDelimiter('|');
-
-
-        // insert headers to csv
-        $csvArray = [];
-        foreach ($fields as $field) {
-            if ($field['export']) {
-                $csvArray[] = $field['headerName'];
-            }
-        }
-        
-        $csv->insertOne($csvArray);
-
-        // insert data to csv
-        foreach($words as $word) {
-            $csvArray = [];
-            foreach ($fields as $field) {
-                if ($field['export']) {
-                    $searchObjectProperty = $field['searchObjectProperty'];
-                    $csvArray[] = $word->$searchObjectProperty;
-                }
-            }
-            
-            $csv->insertOne($csvArray);
+        try {
+            $csv = $this->vocabularyService->exportToCsv($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $fields);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
         }
 
         $csv->output('vocabulary.csv');
-        return;
-    }
-
-    public function search(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        $text = $request->text;
-        $bookId = $request->book;
-        $chapterId = $request->chapter;
-        $stage = $request->stage;
-        $phrases = $request->phrases;
-        $orderBy = $request->orderBy;
-        $translation = $request->translation;
-        $page = $request->page;
-
-        // get books and chapters
-        $books = Book::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-        $bookIndex = -1;
-        for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('book_id', $books[$i]->id)->get();
-            
-            if (isset($bookId) && $books[$i]->id == $bookId) {
-                $bookIndex = $i;
-            }
-        }
-
-        $search = $this->buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation);
-
-        $data = new \stdClass();
-        $data->wordCount = $search->count();
-        $data->words = $search->skip(($page - 1) * $this->itemsPerPage)->take($this->itemsPerPage)->get();
-        $data->books = $books;
-        $data->bookIndex = $bookIndex;
-        $data->pageCount = ceil($data->wordCount / $this->itemsPerPage);
-        $data->currentPage = $page;
-
-        return json_encode($data);
-    }
-
-    /*
-        Builds a search request. It's used for both searching and exporting vocabulary.
-    */
-    private function buildSearchRequest($text, $books, $bookIndex, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation) {
-        $wordsToSkip = config('linguacafe.words_to_skip');
-        $selectedLanguage = Auth::user()->selected_language;
-        $results = [];
-
-        // get words and phrases
-        // from filtered chapters
-        $filteredChapters = Lesson::where('user_id', Auth::user()->id)->where('language', $selectedLanguage);
-        $filteredWords = [];
-        $filteredPhraseIds = [];
-        if ($bookId !== 'any') {
-            $filteredChapters = $filteredChapters->where('book_id', $bookId);
-        }
-
-        if ($chapterId !== 'any') {
-            $filteredChapters = $filteredChapters->where('id', $chapterId);
-        }
-        
-        $filteredChapters = $filteredChapters->get();
-
-        if ($bookId !== 'any') {
-            foreach ($filteredChapters as $filteredChapter) {
-                $lesson = Lesson
-                    ::where('user_id', Auth::user()->id)
-                    ->where('id', $filteredChapter->id)
-                    ->first();
-
-                // add filtered phrase ids
-                $filteredChapterWords = $lesson->getProcessedText();
-
-                foreach ($filteredChapterWords as $filteredChapterWord) {
-                    $filteredChapterWord->phrase_ids = $filteredChapterWord->phrase_ids;
-                    foreach ($filteredChapterWord->phrase_ids as $phraseId) {
-                        if (!in_array($phraseId, $filteredPhraseIds, true)) {
-                            array_push($filteredPhraseIds, $phraseId);
-                        }
-                    }
-                }
-
-                // add filtered words
-                $filteredChapterUniqueWords = json_decode($filteredChapter->unique_words);
-                foreach ($filteredChapterUniqueWords as $filteredChapterUniqueWord) {
-                    if (!in_array($filteredChapterUniqueWord, $filteredWords, true)) {
-                        array_push($filteredWords, $filteredChapterUniqueWord);
-                    }
-                }
-            }
-        }
-
-        // search for words and apply filters
-        $wordSearch = EncounteredWord
-            ::select('id', 'base_word', 'word', DB::raw("'' AS words_searchable"), 'reading', 'base_word_reading', 'stage', 'translation', 'read_count', 'lookup_count', 'added_to_srs', DB::raw("'word' AS type"))->where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->whereNotIn('word', $wordsToSkip);
-
-        if ($text !== 'anytext') {
-            $wordSearch = $wordSearch->where(function($query) use ($text) {
-                $query->orWhere('word', 'like', '%' . $text . '%')
-                    ->orWhere('reading', 'like', '%' . $text . '%');
-            });
-        }
-
-        if ($bookId !== 'any') {
-            $wordSearch->whereIn('word', $filteredWords);
-        }
-
-        if ($stage !== 'any') {
-            $wordSearch = $wordSearch->where('stage', $stage);
-        }
-
-        if ($translation == 'not empty') {
-            $wordSearch = $wordSearch->where('translation', '<>', '');
-        }
-        
-        // search for phrases and apply filters
-        $phraseSearch = Phrase
-            ::select('id', DB::raw("'' AS base_word"), 'words as word', 'words_searchable', 'reading', DB::raw("'' AS base_word_reading"), 'stage', 'translation', DB::raw("-1 AS read_count"), DB::raw("-1 AS lookup_count"), 'added_to_srs', DB::raw("'phrase' AS type"))
-            ->where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage);
-
-        if ($text !== 'anytext') {
-            $phraseSearch = $phraseSearch->where(function($query) use ($text) {
-                $query->orWhere('words_searchable', 'like', '%' . $text . '%')
-                    ->orWhere('reading', 'like', '%' . $text . '%');
-            });
-        }
-
-        if ($bookId !== 'any') {
-            $phraseSearch->whereIn('id', $filteredPhraseIds);
-        }
-
-        if ($stage !== 'any') {
-            $phraseSearch = $phraseSearch->where('stage', $stage);
-        }
-
-        if ($translation == 'not empty') {
-            $phraseSearch = $phraseSearch->where('translation', '<>', '');
-        }
-
-        if ($phrases == 'only words') {
-            $search = $wordSearch;
-        } else if ($phrases == 'only phrases') {
-            $search = $phraseSearch;
-        } else {  
-            $search = $wordSearch->union($phraseSearch);
-        }
-
-        if ($orderBy == 'words') {
-            $search = $search->orderBy('word');
-        }
-
-        if ($orderBy == 'words desc') {
-            $search = $search->orderBy('word', 'desc');
-        }
-
-        if ($orderBy == 'stage') {
-            $search = $search->orderBy('stage');
-        }
-
-        if ($orderBy == 'stage desc') {
-            $search = $search->orderBy('stage', 'desc');
-        }
-
-        $search = $search->orderBy('id')->orderBy('type');
-
-        return $search;
+        return response('', 200);
     }
 
     public function searchKanji(Request $request) {
