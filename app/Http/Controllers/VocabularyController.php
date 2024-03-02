@@ -2,21 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use \Exception;
-use Carbon\Carbon;
-use App\Models\TextBlock;
-use App\Models\EncounteredWord;
-use App\Models\Phrase;
-use App\Models\Kanji;
-use App\Models\Radical;
-use App\Models\Book;
-use App\Models\Lesson;
-use App\Models\ExampleSentence;
-use App\Models\Goal;
-use App\Models\GoalAchievement;
 
 // services
 use App\Services\VocabularyService;
@@ -33,6 +19,7 @@ use App\Http\Requests\Vocabulary\CreateOrUpdateExampleSentenceRequest;
 use App\Http\Requests\Vocabulary\SearchVocabularyRequest;
 use App\Http\Requests\Vocabulary\ExportToCsvRequest;
 use App\Http\Requests\Vocabulary\SearchKanjiRequest;
+use App\Http\Requests\Vocabulary\GetKanjiDetailsRequest;
 
 class VocabularyController extends Controller
 {
@@ -266,16 +253,16 @@ class VocabularyController extends Controller
         return response()->json($kanji, 200);
     }
 
-    public function getKanjiDetails(Request $request) {
-        $kanji = Kanji::where('kanji', $request->kanji)->first();
-        $words = EncounteredWord::where('word', 'like', '%' . $request->kanji . '%')->limit(12)->get();
-        $radicals = Radical::select('radicals')->where('kanji', $request->kanji)->first();
-        
-        $data = new \stdClass();
-        $data->kanji = $kanji;
-        $data->radicals = $radicals->radicals;
-        $data->words = $words;
+    public function getKanjiDetails(GetKanjiDetailsRequest $request) {
+        $userId = Auth::user()->id;
+        $kanjiCharacter = $request->post('kanji');
 
-        return json_encode($data);
+        try {
+            $kanjiData = $this->vocabularyService->getkanjiDetails($userId, $kanjiCharacter);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+
+        return response()->json($kanjiData, 200);
     }
 }

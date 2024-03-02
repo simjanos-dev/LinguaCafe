@@ -12,6 +12,7 @@ use App\Models\Lesson;
 use App\Models\ExampleSentence;
 use App\Models\TextBlock;
 use App\Models\Kanji;
+use App\Models\Radical;
 
 class VocabularyService
 {
@@ -559,5 +560,33 @@ class VocabularyService
         $searchResults->known = $knownCount;
 
         return $searchResults;
+    }
+
+    public function getKanjiDetails($userId, $kanjiCharacter) {
+        $kanjiData = Kanji
+            ::where('kanji', $kanjiCharacter)
+            ->first();
+        
+        if (!$kanjiData) {
+            throw new \Exception('Kanji not found in database.');
+        }
+
+        $words = EncounteredWord
+            ::where('word', 'like', '%' . $kanjiCharacter . '%')
+            ->where('user_id', $userId)
+            ->limit(12)
+            ->get();
+
+        $radicals = Radical
+            ::select('radicals')
+            ->where('kanji', $kanjiCharacter)
+            ->first();
+        
+        $kanjiDetails = new \stdClass();
+        $kanjiDetails->kanji = $kanjiData;
+        $kanjiDetails->radicals = $radicals->radicals;
+        $kanjiDetails->words = $words;
+
+        return $kanjiDetails;
     }
 }
