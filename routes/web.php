@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get ('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
 
     // dictionaries
-    Route::get('/jmdict/xml-to-text', [App\Http\Controllers\JmdictController::class, 'jmdictXmlToText']);
+    
 
     // settings
     Route::post('/settings/get-by-name', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
@@ -92,6 +92,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/dictionary/test-csv-file', [App\Http\Controllers\DictionaryController::class, 'testDictionaryCsvFile']);
     Route::post('/dictionary/import-csv-file', [App\Http\Controllers\DictionaryController::class, 'importDictionaryCsvFile']);
     Route::get('/dictionary/delete/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
+    Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
 
     // vocabulary
     Route::get ('/vocabulary/words/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getUniqueWord']);
