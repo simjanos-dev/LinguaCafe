@@ -11,6 +11,7 @@ use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\ExampleSentence;
 use App\Models\TextBlock;
+use App\Models\Kanji;
 
 class VocabularyService
 {
@@ -474,5 +475,89 @@ class VocabularyService
         $search = $search->orderBy('id')->orderBy('type');
 
         return $search;
+    }
+
+    public function searchKanji($userId, $language, $groupBy, $showUnknown) {
+        $words = EncounteredWord
+            ::where('user_id', $userId)
+            ->where('stage', 0)
+            ->where('language', $language)
+            ->where('kanji', '<>', '')
+            ->get();
+        
+        // get knwon kanji
+        $knownKanji = [];
+        foreach ($words as $word) {
+            $wordKanji = preg_split("//u", $word->kanji, -1, PREG_SPLIT_NO_EMPTY);
+            foreach($wordKanji as $currentKanji) {
+                if(!in_array($currentKanji, $knownKanji, true)) {
+                    array_push($knownKanji, $currentKanji);
+                }
+            }
+        }
+
+        // get kanji list
+        if ($groupBy == 'grade') {
+            $kanji = Kanji::where(function($query) use($knownKanji) {
+                $query->where('grade', '>', 0)->orWhereIn('kanji', $knownKanji);
+            });
+        } else {
+            $kanji = Kanji::where(function($query) use($knownKanji) {
+                $query->where('jlpt', '>', 0)->orWhereIn('kanji', $knownKanji);
+            });
+        }
+
+        if (!$showUnknown) {
+            $kanji = $kanji->whereIn('kanji', $knownKanji);
+        }
+        
+        $kanji = $kanji->get();
+
+        // label kanji list
+        foreach ($kanji as $currentKanji) {
+            $currentKanji->known = in_array($currentKanji->kanji, $knownKanji);
+        }
+
+        // group kanji list
+        if ($groupBy == 'grade') {
+            $kanji = $kanji->groupBy('grade');
+        } else {
+            $kanji = $kanji->groupBy('jlpt');
+        }
+        
+
+        // get count for statistics
+        if ($groupBy == 'grade') {
+            $totalCount = Kanji
+                ::select('grade', DB::raw('count(id) as total'))
+                ->groupBy('grade')
+                ->get()
+                ->keyBy('grade');
+
+            $knownCount = Kanji
+                ::select('grade', DB::raw('count(id) as total'))
+                ->whereIn('kanji', $knownKanji)->groupBy('grade')
+                ->get()
+                ->keyBy('grade');
+        } else {
+            $totalCount = Kanji
+                ::select('jlpt', DB::raw('count(id) as total'))
+                ->groupBy('jlpt')
+                ->get()
+                ->keyBy('jlpt');
+
+            $knownCount = Kanji
+                ::select('jlpt', DB::raw('count(id) as total'))
+                ->whereIn('kanji', $knownKanji)->groupBy('jlpt')
+                ->get()
+                ->keyBy('jlpt');
+        }
+        
+        $searchResults = new \stdClass();
+        $searchResults->kanji = $kanji;
+        $searchResults->total = $totalCount;
+        $searchResults->known = $knownCount;
+
+        return $searchResults;
     }
 }
