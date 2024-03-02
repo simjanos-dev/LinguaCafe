@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Services\AnkiApiService;
-use \Exception;
+
+
+// request classes
+use App\Http\Requests\Anki\AddCardToAnkiRequest;
 
 class AnkiController extends Controller
 {
@@ -15,16 +17,19 @@ class AnkiController extends Controller
         $this->ankiApiService = new AnkiApiService();    
     }
 
-    public function addCardToAnki(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        $word = $request->post('word') ? $request->post('word') : 'empty word error';
-        $word = mb_strtolower($word);
+    public function addCardToAnki(AddCardToAnkiRequest $request) {
+        $language = Auth::user()->selected_language;
+        $word = mb_strtolower($request->post('word'));
         $reading = $request->post('reading') ? $request->post('reading') : '';
         $translation = $request->post('translation') ? $request->post('translation') : '';
         $exampleSentence = $request->post('exampleSentence') ? $request->post('exampleSentence') : '';
 
-        $testResult = $this->ankiApiService->addWord($selectedLanguage, $word, $reading, $translation, $exampleSentence);
+        try {
+            $testResult = $this->ankiApiService->addWord($language, $word, $reading, $translation, $exampleSentence);
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
         
-        return $testResult;
+        return response()->json($testResult, 200);
     }
 }

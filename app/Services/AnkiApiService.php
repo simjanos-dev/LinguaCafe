@@ -30,15 +30,21 @@ class AnkiApiService
         if ($firstInsertResult == 'Missing model or deck.') {
             $createDeckResult = $this->createAnkiDeckAndModel($language);
             if ($createDeckResult !== 'success') {
-                return $createDeckResult;
+                throw new \Exception($createDeckResult);
             }
             
             $secondInsertResult = $this->insertNote($language, $word, $reading, $translation, $exampleSentence);
             
-            // can be success
+            if ($secondInsertResult !== 'success' && $secondInsertResult !== 'update success') {
+                throw new \Exception($secondInsertResult);
+            }
+
             return $secondInsertResult;
         } else {
-            // can be 'success' as well
+            if ($firstInsertResult !== 'success' && $firstInsertResult !== 'update success') {
+                throw new \Exception($firstInsertResult);
+            }
+
             return $firstInsertResult;
         }
     }
@@ -46,7 +52,7 @@ class AnkiApiService
     /*
         Sends an api call to anki to create new model and deck.
     */
-    public function createAnkiDeckAndModel($language) {
+    private function createAnkiDeckAndModel($language) {
         $createModelData = '{
             "action": "createModel",
             "version": 6,
