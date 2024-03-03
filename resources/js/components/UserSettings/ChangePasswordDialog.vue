@@ -54,7 +54,7 @@
                     border="left"
                     dark
                 >
-                    {{ saveResult }}
+                    <div v-html="saveResult"></div>
                 </v-alert>
 
                 <v-alert
@@ -127,17 +127,34 @@
                 }
 
                 this.saving = true;
-                axios.post('/user/change-password', {
+                axios.post('/users/update-password', {
                     password: this.password,
-                    passwordConfirmation: this.passwordConfirmation
+                    password_confirmation: this.passwordConfirmation
                 }).then((response) => {
+                    if (response.status !== 200) {
+                        return;
+                    }
+
                     this.saving = false;
-                    this.saveResult = response.data;
+                    this.saveResult = 'success';
                     
-                    if (response.data == 'success') {
-                        setTimeout(() => {
-                            this.$emit('password-changed');
-                        }, 1000);
+                    setTimeout(() => {
+                        this.$emit('password-changed');
+                    }, 1000);
+                }).catch((error) => {
+                    this.saving = false;
+                    this.saveResult = '';
+
+                    // add all error messages to the save result
+                    var index = 0;
+                    for (const [key, value] of Object.entries(error.response.data.errors)) {
+                        if (index) {
+                            this.saveResult += '<br>';
+                        }
+
+                        this.saveResult += value.join('<br>');
+
+                        index ++;
                     }
                 });
             },

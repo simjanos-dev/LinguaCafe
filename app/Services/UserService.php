@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Hash;
+
 use Carbon\Carbon;
 use App\Models\User;
 
@@ -20,5 +22,11 @@ class UserService {
         }
 
         return $users;
+    }
+
+    public function updatePassword($user, $password) {
+        $user->password = Hash::make($password);
+        $user->password_changed = true;
+        $user->save();
     }
 }

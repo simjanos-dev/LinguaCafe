@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Services\GoalService;
 use App\Services\UserService;
 
+// request classes
+use App\Http\Requests\User\UpdatePasswordRequest;
+
 class UserController extends Controller {
     private $userService;
 
@@ -32,32 +35,17 @@ class UserController extends Controller {
         return response()->json($users, 200);
     }
 
-    public function changePassword(Request $request) {
-        // check for missing post data
-        if (!$request->has('password') || !$request->has('passwordConfirmation')) {
-            return 'Missing parameter.';
-        }
-
+    public function updatePassword(UpdatePasswordRequest $request) {
         $user = Auth::user();
         $password = $request->post('password');
-        $passwordConfirmation = $request->post('passwordConfirmation');
-
-        // validate password
-        if (mb_strlen($password) < 8 || mb_strlen($password) > 32) {
-            return 'Password must be between 8 and 32 characters.';
-        }
-
-        if ($password !== $passwordConfirmation) {
-            return 'Password confirmation does not match the password.';
-        }
         
-
-        // set new password
-        $user->password = Hash::make($password);
-        $user->password_changed = true;
-        $user->save();
-        
-        return 'success';
+        try {
+            $this->userService->updatePassword($user, $password);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+                
+        return response()->json('Password has been updated successfully.', 200);
     }
 
     // updates user info, or creates a new user
