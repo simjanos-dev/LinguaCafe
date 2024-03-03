@@ -19,15 +19,20 @@ Auth::routes([
     'verify' => false
 ]);
 
+/*
+    This function's authentication is inside the controller, because
+    the first user can be created without being logged in.
+*/
 Route::group(['middleware' => 'web'], function () {
-    Route::post('/user/save', [App\Http\Controllers\UserController::class, 'updateOrCreateUser']);
+    Route::post('/users/create', [App\Http\Controllers\UserController::class, 'createUser']);
 });
 
 Route::group(['middleware' => ['auth', 'web']], function () {
     // users
-    Route::get ('/user/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
-    Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
     Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+    Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
+    Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
+    Route::get ('/users/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
 
     // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);

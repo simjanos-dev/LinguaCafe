@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Services\GoalService;
 
 class UserService {
     
@@ -28,5 +29,58 @@ class UserService {
         $user->password = Hash::make($password);
         $user->password_changed = true;
         $user->save();
+    }
+
+    public function createUser($name, $email, $password, $isAdmin, $passwordChanged) {
+        // check for duplicated e-email address
+        $user = User
+            ::where('email', $email)
+            ->first();
+
+        if ($user) {
+            throw new \Exception('An other already exists with this email address.');
+        }
+
+        // create user
+        $user = new User();
+        $user->name = $name;
+        $user->email = $email;
+        $user->is_admin = $isAdmin;
+        $user->password_changed = $passwordChanged;
+        $user->password = Hash::make($password);
+        $user->save();
+
+        (new GoalService())->createGoalsForLanguage($user->id, 'japanese');
+
+        return true;
+    }
+
+    public function updateUser($userId, $name, $email, $isAdmin) {
+        // check for duplicated e-email address
+        $user = User
+            ::where('email', $email)
+            ->where('id', '<>', $userId)
+            ->first();
+
+        if ($user) {
+            throw new \Exception('An other user already exists with this email address.');
+        }
+
+        // retrieve user
+        $user = User
+            ::where('id', $userId)
+            ->first();
+
+        if (!$user) {
+            throw new \Exception('This user does not exist.');
+        }
+        
+        // update user
+        $user->name = $name;
+        $user->email = $email;
+        $user->is_admin = $isAdmin;
+        $user->save();
+
+        return true;
     }
 }
