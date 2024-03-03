@@ -25,9 +25,9 @@ Route::group(['middleware' => 'web'], function () {
 
 Route::group(['middleware' => ['auth', 'web']], function () {
     // users
-    Route::get('/user/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
+    Route::get ('/user/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
     Route::post('/user/change-password', [App\Http\Controllers\UserController::class, 'changePassword']);
-    Route::get('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+    Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
 
     // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);

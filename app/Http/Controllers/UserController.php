@@ -5,26 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Models\User;
 use App\Services\GoalService;
+use App\Services\UserService;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
+    private $userService;
+
+    public function __construct(UserService $userService) {
+        $this->userService = $userService;
+
+    }
+
     public function isUserPasswordChanged() {
-        return Auth::user()->password_changed;
+        $passwordChanged = Auth::user()->password_changed;
+        return $passwordChanged;
     }
 
     public function getUsers() {
-        $users = User
-            ::select(['id', 'name', 'email', 'is_admin', 'password_changed', 'created_at'])
-            ->get();
-
-        foreach ($users as $user) {
-            $user->created_at_text = Carbon::parse($user->created_at)->format('Y-m-d');
+        try {
+            $users = $this->userService->getUsers();
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        return json_encode($users);
+        return response()->json($users, 200);
     }
 
     public function changePassword(Request $request) {
