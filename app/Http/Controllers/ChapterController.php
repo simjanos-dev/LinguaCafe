@@ -30,7 +30,7 @@ class ChapterController extends Controller {
         try {
             $chapters = $this->chapterService->getChaptersForBook($userId, $bookId);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($chapters, 200);
@@ -43,7 +43,7 @@ class ChapterController extends Controller {
         try {
             $chapter = $this->chapterService->getChapterForEditor($userId, $chapterId);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($chapter, 200);
@@ -56,7 +56,7 @@ class ChapterController extends Controller {
         try {
             $chapter = $this->chapterService->getChapterForReader($userId, $chapterId);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($chapter, 200);
@@ -72,7 +72,7 @@ class ChapterController extends Controller {
         try {
             $this->chapterService->finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $language);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Tasks have been completed successfully.', 200);
@@ -87,7 +87,7 @@ class ChapterController extends Controller {
         try {
             $this->chapterService->createChapter($userId, $bookId, $chapterName, $chapterText);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Chapter has been created successfully.', 200);
@@ -102,7 +102,7 @@ class ChapterController extends Controller {
         try {
             $this->chapterService->updateChapter($userId, $chapterId, $chapterName, $chapterText);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Chapter has been updated successfully.', 200);
@@ -115,7 +115,7 @@ class ChapterController extends Controller {
         try {
             $this->chapterService->deleteChapter($userId, $chapterId);
         } catch (\Exemption $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Chapter has been deleted successfully.', 200);

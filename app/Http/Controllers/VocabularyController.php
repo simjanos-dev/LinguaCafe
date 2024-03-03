@@ -36,7 +36,7 @@ class VocabularyController extends Controller
         try {
             $word = $this->vocabularyService->getUniqueWord($userId, $wordId);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($word, 200);
@@ -83,7 +83,7 @@ class VocabularyController extends Controller
         try {
             $this->vocabularyService->updateWord($userId, $wordId, $wordData, $wordStage);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Word has been successfully updated.', 200);
@@ -95,7 +95,7 @@ class VocabularyController extends Controller
         try {
             $phrase = $this->vocabularyService->getPhrase($userId, $phraseId);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($phrase, 200);
@@ -112,7 +112,7 @@ class VocabularyController extends Controller
         try {
             $phraseId = $this->vocabularyService->createPhrase($userId, $language, $words, $stage, $reading, $translation);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($phraseId, 200);
@@ -147,7 +147,7 @@ class VocabularyController extends Controller
         try {
             $this->vocabularyService->updatePhrase($userId, $phraseId, $phraseData, $phraseStage);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Phrase has been successfully updated.', 200);
@@ -161,7 +161,7 @@ class VocabularyController extends Controller
         try {
             $this->vocabularyService->deletePhrase($userId, $language, $phraseId);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Phrase has been successfully deleted.', 200);
@@ -173,7 +173,7 @@ class VocabularyController extends Controller
         try {
             $exampleSentence = $this->vocabularyService->getExampleSentence($userId, $targetType, $targetId);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($exampleSentence, 200);
@@ -189,7 +189,7 @@ class VocabularyController extends Controller
         try {
             $this->vocabularyService->createOrUpdateExampleSentence($userId, $language, $targetType, $targetId, $exampleSentenceWords);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json('Example sentence has been successfully saved.', 200);
@@ -210,7 +210,7 @@ class VocabularyController extends Controller
         try {
             $searchResults = $this->vocabularyService->searchVocabulary($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $page);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($searchResults, 200);
@@ -231,7 +231,7 @@ class VocabularyController extends Controller
         try {
             $csv = $this->vocabularyService->exportToCsv($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $fields);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         $csv->output('vocabulary.csv');
@@ -247,7 +247,7 @@ class VocabularyController extends Controller
         try {
             $kanji = $this->vocabularyService->searchKanji($userId, $language, $groupBy, $showUnknown);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($kanji, 200);
@@ -260,7 +260,7 @@ class VocabularyController extends Controller
         try {
             $kanjiData = $this->vocabularyService->getkanjiDetails($userId, $kanjiCharacter);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($kanjiData, 200);

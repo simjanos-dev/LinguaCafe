@@ -76,7 +76,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/settings/save', [App\Http\Controllers\SettingsController::class, 'saveSettings']);
     
     // images 
-    Route::get('/images/book_images/{name}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
+    Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
     // dictionary
     Route::get('/dictionaries/scan', [App\Http\Controllers\DictionaryController::class, 'getImportableDictionaryList']);

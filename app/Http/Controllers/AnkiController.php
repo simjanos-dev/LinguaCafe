@@ -11,10 +11,10 @@ use App\Http\Requests\Anki\AddCardToAnkiRequest;
 
 class AnkiController extends Controller
 {
-    protected $ankiApiService = '';
+    private $ankiApiService;
     
-    public function __construct() {
-        $this->ankiApiService = new AnkiApiService();    
+    public function __construct(AnkiApiService $ankiApiService) {
+        $this->ankiApiService = $ankiApiService;
     }
 
     public function addCardToAnki(AddCardToAnkiRequest $request) {
@@ -27,7 +27,7 @@ class AnkiController extends Controller
         try {
             $testResult = $this->ankiApiService->addWord($language, $word, $reading, $translation, $exampleSentence);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
         
         return response()->json($testResult, 200);

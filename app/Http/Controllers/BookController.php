@@ -35,7 +35,7 @@ class BookController extends Controller {
         try {
             $wordCounts = $this->bookService->getBookWordCounts($userId, $bookId);
         } catch (\Exception $e) {
-            abort(404, $e->getMessage());
+            abort(500, $e->getMessage());
         }
 
         return response()->json($wordCounts, 200);
