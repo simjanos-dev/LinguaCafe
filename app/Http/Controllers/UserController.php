@@ -24,7 +24,7 @@ class UserController extends Controller {
 
     public function isUserPasswordChanged() {
         $passwordChanged = Auth::user()->password_changed;
-        return $passwordChanged;
+        return response($passwordChanged, 200);
     }
 
     public function getUsers() {
