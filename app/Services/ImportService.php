@@ -9,14 +9,12 @@ use App\Models\TextBlock;
 use App\Models\Lesson;
 use App\Models\Book;
 
-class ImportService
-{
+class ImportService {
 
     // stores the python service container's name
     private $pythonService = '';
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
     

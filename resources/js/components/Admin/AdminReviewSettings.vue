@@ -111,7 +111,7 @@
                     reviewIntervalsArray[key] = reviewIntervalsArray[key].map(Number);
                 }
                 
-                axios.post('/settings/save', {
+                axios.post('/settings/update', {
                     'settings': {
                         'reviewIntervals': reviewIntervalsArray,
                     }
@@ -121,7 +121,7 @@
                 });
             },
             loadSettings() {
-                axios.post('/settings/get-by-name', {
+                axios.post('/settings/get', {
                     'settingNames': ['reviewIntervals']
                 }).then((result) => {
                     Object.keys(result.data.reviewIntervals).forEach((key, index) => {

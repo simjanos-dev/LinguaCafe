@@ -5,13 +5,11 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use App\Models\Setting;
 
-class AnkiApiService
-{
+class AnkiApiService {
     protected $ankiHost = '';
     protected $updateCards = false;
 
-    public function __construct()
-    {
+    public function __construct() {
         $ankiHostSetting = Setting::where('name', 'ankiConnectHost')->first();
         $ankiUpdateCardsSetting = Setting::where('name', 'ankiUpdateCards')->first();
         $this->ankiHost = json_decode($ankiHostSetting->value);

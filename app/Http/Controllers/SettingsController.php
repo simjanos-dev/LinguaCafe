@@ -2,41 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Setting;
+// services
+use App\Services\SettingsService;
+
+// request classes
+use App\Http\Requests\Settings\GetSettingsByNameRequest;
+use App\Http\Requests\Settings\UpdateSettingsRequest;
 
 class SettingsController extends Controller
 {
-    // Returns an array of settings.
-    public function getSettingsByName(Request $request) {
-        $settingNames = $request->post('settingNames');
+    private $settingsService;
 
-        $settings = Setting
-            ::select('value', 'name')
-            ->whereIn('name', $settingNames)
-            ->get()
-            ->keyBy('name')
-            ->map(function ($item, $key) {
-                return json_decode($item->value);
-            });
-
-        return json_encode($settings);
+    public function __construct(SettingsService $settingsService) {
+        $this->middleware('auth');
+        $this->settingsService = $settingsService;
     }
 
-    public function saveSettings(Request $request) {
+    // returns an array of settings
+    public function getSettingsByName(GetSettingsByNameRequest $request) {
+        $settingNames = $request->post('settingNames');
+
+        try {
+            $settings = $this->settingsService->getSettingsByName($settingNames);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+        
+        return response()->json($settings, 200);
+    }
+
+    // saves an array of settings
+    public function updateSettings(UpdateSettingsRequest $request) {
         $settings = $request->post('settings');
 
-        foreach ($settings as $settingName => $settingValue) {
-            $setting = Setting
-                ::where('name', $settingName)
-                ->first();
-
-            if ($setting) {
-                $setting->value = json_encode($settingValue);
-                $setting->save();
-            }
+        try {
+            $settings = $this->settingsService->updateSettings($settings);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
-
-        return 'success';
+        
+        return response()->json('Settings have been updated successfully.', 200);
     }
 }

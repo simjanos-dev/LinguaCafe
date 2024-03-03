@@ -5,10 +5,9 @@ namespace App\Services;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Book;
 
-class ImageService
-{
-    public function __construct()
-    {
+class ImageService {
+    
+    public function __construct() {
     }
 
     /*

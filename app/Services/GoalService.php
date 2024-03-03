@@ -8,10 +8,9 @@ use Carbon\Carbon;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
 
-class GoalService
-{
-    public function __construct()
-    {
+class GoalService {
+    
+    public function __construct() {
     }
     
     public function createGoalsForLanguage($userId, $language) {

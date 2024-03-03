@@ -14,12 +14,10 @@ use App\Models\TextBlock;
 use App\Models\Kanji;
 use App\Models\Radical;
 
-class VocabularyService
-{
+class VocabularyService {
     private $itemsPerPage;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->itemsPerPage = 30;
     }
 

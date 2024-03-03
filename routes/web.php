@@ -72,8 +72,8 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     
 
     // settings
-    Route::post('/settings/get-by-name', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
-    Route::post('/settings/save', [App\Http\Controllers\SettingsController::class, 'saveSettings']);
+    Route::post('/settings/get', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
+    Route::post('/settings/update', [App\Http\Controllers\SettingsController::class, 'updateSettings']);
     
     // images 
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
