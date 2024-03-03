@@ -3,30 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\ExampleSentence;
-use App\Models\EncounteredWord;
-use App\Models\Goal;
-use App\Models\GoalAchievement;
-use App\Models\Phrase;
-use App\Models\Lesson;
-use App\Models\TextBlock;
 use App\Services\GoalService;
+use App\Services\StatisticsService;
 
-class HomeController extends Controller
-{
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+class HomeController extends Controller {
+    
+    private $statisticsService;
+    private $goalService;
 
-    public function __construct()
-    {
+    public function __construct(StatisticsService $statisticsService, GoalService $goalService) {
         $this->middleware('auth');
+
+        $this->statisticsService = $statisticsService;
+        $this->goalService = $goalService;
     }
 
     public function index() {
@@ -42,65 +32,21 @@ class HomeController extends Controller
     }
 
     public function getStatistics() {
-        // language statistics
-        $today = date('Y-m-d');
-        $selectedLanguage = Auth::user()->selected_language;
-        $languageStatistics = new \stdClass();
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
 
-        $readingGoal = Goal::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->where('type', 'read_words')
-            ->first();
-
-        $languageStatistics->days = new \stdClass();
-        $languageStatistics->days->name = 'Days of activity';
-        $languageStatistics->days->value = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('achieved_quantity', '<>', 0)->distinct('day')->count('day');
-        $languageStatistics->days->color = 'statisticsDays';
-        $languageStatistics->days->icon = 'mdi-calendar-check';
-
-        $languageStatistics->readWordCount = new \stdClass();
-        $languageStatistics->readWordCount->name = 'Read words';
-        $languageStatistics->readWordCount->value = GoalAchievement::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('goal_id', $readingGoal->id)->sum('achieved_quantity');
-        $languageStatistics->readWordCount->color = 'statisticsReadWords';
-        $languageStatistics->readWordCount->icon = 'mdi-book-open-variant';
-
-        if ($selectedLanguage == 'japanese') {
-            // get unique kanji
-            $uniqueKanji = [];
-            $words = EncounteredWord::where('stage', '<=', 0)->where('language', 'japanese')->where('user_id', Auth::user()->id)->get();
-            foreach ($words as $word) {
-                $kanji = preg_split("//u", $word->kanji, -1, PREG_SPLIT_NO_EMPTY);
-                foreach($kanji as $currentKanji) {
-                    if(!in_array($currentKanji, $uniqueKanji, true)) {
-                        array_push($uniqueKanji, $currentKanji);
-                    }
-                }
-            }
-            
-            $languageStatistics->kanji = new \stdClass();
-            $languageStatistics->kanji->name = 'Kanji';
-            $languageStatistics->kanji->value = count($uniqueKanji);
-            $languageStatistics->kanji->color = 'statisticsKanji';
-            $languageStatistics->kanji->icon = 'mdi-ideogram-cjk';
+        try {
+            $statistics = $this->statisticsService->getStatistics($userId, $language);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
-        
-        $languageStatistics->known = new \stdClass();
-        $languageStatistics->known->name = 'Known words';
-        $languageStatistics->known->value = EncounteredWord::select('id')->where('stage', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
-        $languageStatistics->known->color = 'statisticsKnownWords';
-        $languageStatistics->known->icon = 'mdi-credit-card-check';
 
-        $languageStatistics->learning = new \stdClass();
-        $languageStatistics->learning->name = 'Words currently studied';
-        $languageStatistics->learning->value = EncounteredWord::select('id')->where('stage', '<', 0)->where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->count('id');
-        $languageStatistics->learning->color = 'statisticsLearningWords';
-        $languageStatistics->learning->icon = 'mdi-school';
-        
-        return json_encode($languageStatistics);
+        return response()->json($statistics, 200);
     }
 
     public function getLanguage() {
-        return Auth::user()->selected_language;
+        $language = Auth::user()->selected_language;
+        return response()->json($language, 200);
     }
 
     public function changeLanguage($language) {
@@ -108,12 +54,17 @@ class HomeController extends Controller
         $user->selected_language = strtolower($language);
         $user->save();
 
-        (new GoalService())->createGoalsForLanguage($user->id, $language);
+        $this->goalService->createGoalsForLanguage($user->id, $language);
+
+        return response()->json('Language has been changed successfully.', 200);
     }
 
     public function getConfig($configPath) {
-        $config = config($configPath);
+        if (!config()->has($configPath)) {
+            abort(500, 'Requested config value does not exist.');
+        }
 
-        return json_encode($config);
+        $config = config($configPath);
+        return response()->json($config, 200);
     }
 }
