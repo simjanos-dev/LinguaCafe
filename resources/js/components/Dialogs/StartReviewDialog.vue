@@ -9,8 +9,15 @@
                 </v-btn>
             </v-card-title>
             <v-card-text>
+                <!-- Book name -->
                 <span v-if="bookName !== ''">Book: {{ bookName }}</span><br>
+                <!-- Chapter name -->
                 <span v-if="chapterName !== ''">Chapter: {{ chapterName }}</span>
+
+                <!-- Reviewing all words info -->
+                <span v-if="bookName === '' && chapterName === ''">
+                    Review words from all of your books.
+                </span>
             </v-card-text>
             <v-card-actions class="mt-8">
                 
@@ -41,7 +48,7 @@
 
                 <v-spacer></v-spacer>
                 <v-btn rounded text @click="close">Cancel</v-btn>
-                <v-btn rounded text :to="'/review/' + practiceMode + '/' + bookId + '/' + chapterId ">Start</v-btn>
+                <v-btn rounded text @click="startReview">Start</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -68,6 +75,14 @@
                 default: ''
             }
         },
+        watch: { 
+            // reset practice mode when dialog opens
+            value: function(newValue) {
+                if (newValue) {
+                    this.practiceMode = false;
+                }
+            }
+        },
         emits: ['input'],
         data: function() {
             return {
@@ -78,7 +93,11 @@
             console.log(this.bookName);
         },
         methods: {
-            close: function() {
+            startReview() {
+                window.location.href = '/review/' + this.practiceMode + '/' + this.$props.bookId + '/' + this.$props.chapterId;
+                this.$emit('input', false);
+            },
+            close() {
                 this.$emit('input', false);
             }
         }

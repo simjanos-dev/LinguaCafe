@@ -10,7 +10,7 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        .
+                        Added start review dialog for the Review button in the navigation drawer.
                     </li>
                 </ul>
 

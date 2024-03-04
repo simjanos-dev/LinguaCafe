@@ -1,24 +1,32 @@
 <template>
    <v-app :class="{'eink': theme == 'eink', 'dark': theme == 'dark'}">
+        <start-review-dialog
+            v-model="startReviewDialog"
+        ></start-review-dialog>
+
         <template v-if="$router.currentRoute.path !== '/login'">
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
             <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
             <v-navigation-drawer id="navigation-drawer" :class="{'eink': theme == 'eink'}" :mini-variant="$vuetify.breakpoint.md" app :permanent="$vuetify.breakpoint.mdAndUp" v-model="drawer" color="navigation">
                 <div id="logo" class="my-8"><span v-if="$vuetify.breakpoint.lgAndUp">Lingua Cafe</span></div>
                 <v-list nav shaped class="pl-0">
-                    <v-list-item-group>
-                        <!-- Navigation buttons -->
-                        <v-list-item class="navigation-button" v-for="(item, index) in navigation" :key="index"  :to="item.url">
-                            <v-icon> {{ item.icon }} </v-icon>
-                            <span class="pl-6"> {{ item.name }} </span>
-                        </v-list-item>
-                        
-                        <!-- Logout button -->
-                        <v-list-item class="navigation-button" @click="logout">
-                            <v-icon class="ml-2"> mdi-logout </v-icon>
-                            <span class="pl-6"> Logout </span>
-                        </v-list-item>
-                    </v-list-item-group>
+                    <!-- Navigation buttons -->
+                    <v-list-item 
+                        class="navigation-button" 
+                        v-for="(item, index) in navigation" 
+                        :key="index" 
+                        :to="item.url"
+                        @click="navigationClick(item.name, $event)"
+                    >
+                        <v-icon> {{ item.icon }} </v-icon>
+                        <span class="pl-6"> {{ item.name }} </span>
+                    </v-list-item>
+                    
+                    <!-- Logout button -->
+                    <v-list-item class="navigation-button" @click="logout">
+                        <v-icon> mdi-logout </v-icon>
+                        <span class="pl-6"> Logout </span>
+                    </v-list-item>
                 </v-list>
                 <template v-slot:append>
                     <!-- Large navigation drawer -->
@@ -72,7 +80,7 @@
 </template>
 
 <script>
-    import themes from './../themes';
+import themes from './../themes';
     export default {
         data: function() {
             return {
@@ -80,6 +88,7 @@
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 themeSelectionDialog: false,
                 languageSelectionDialog: false,
+                startReviewDialog: false,
                 drawer: false,
                 navbarVisible: true,
                 navigation: [
@@ -103,7 +112,8 @@
                     },
                     {
                         name: 'Review',
-                        url: '/review/false/-1/-1',
+                        url: '',
+                        click: this.openStartReviewDialog,
                         icon: 'mdi-playlist-check',
                         bottomNav: false,
                     },
@@ -143,10 +153,16 @@
             this.$vuetify.theme.dark = (themeName == 'dark');
         },
         methods: {
-            updateTheme: function() {
+            navigationClick(itemName, event) {
+                if (itemName === 'Review') {
+                    this.startReviewDialog = true;
+                    event.preventDefault();
+                }
+            },
+            updateTheme() {
                 this.theme = (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme');
             },
-            logout: function() {
+            logout() {
                 axios.post('/logout').then((response) => {
                     window.location.href = "/";
                 })
