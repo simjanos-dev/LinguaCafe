@@ -17,7 +17,10 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Fixed a bug that caused books with long titles hide their open button.
+                        Books with long titles hid their open button.
+                    </li>
+                    <li>
+                        Daily read words goal was not updating while reviewing phrases if the sentence mode was not selected.
                     </li>
                 </ul>
             </v-card-text>

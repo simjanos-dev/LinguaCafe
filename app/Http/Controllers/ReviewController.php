@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Goal;
-use App\Models\GoalAchievement;
+
+// services
 use App\Services\ReviewService;
+use App\Services\GoalService;
 
 // request classes
 use App\Http\Requests\Review\GetReviewItemsRequest;
+use App\Http\Requests\Review\UpdateReviewGoalRequest;
 
 class ReviewController extends Controller {
 
     private $reviewService;
+    private $goalService;
 
-    public function __construct(ReviewService $reviewService) {
+    public function __construct(ReviewService $reviewService, GoalService $goalService) {
         $this->middleware('auth');
 
         $this->reviewService = $reviewService;
+        $this->goalService = $goalService;
     }
     
     public function getReviewItems(GetReviewItemsRequest $request) {
@@ -42,37 +44,17 @@ class ReviewController extends Controller {
         return response()->json($reviewData, 200);
     }
 
-    public function updateReviewCounts(Request $request) {
-        $selectedLanguage = Auth::user()->selected_language;
-        
-        // updage today's reading achievement
-        $goal = Goal::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->where('type', 'read_words')
-            ->first();
-        
-        $achievement = GoalAchievement::where('user_id', Auth::user()->id)
-        ->where('language', $selectedLanguage)
-        ->where('goal_id', $goal->id)
-        ->where('day', Carbon::now()->toDateString())
-        ->first();
+    public function updateReadWordsGoal(UpdateReviewGoalRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $readWords = $request->post('readWords');
 
-        if (!$achievement) {
-            $achievement = new GoalAchievement();
-            $achievement->language = $selectedLanguage;
-            $achievement->user_id = Auth::user()->id;
-            $achievement->goal_id = $goal->id;
-            $achievement->achieved_quantity = 0;
-            $achievement->goal_quantity = $goal->quantity;
-            $achievement->day = Carbon::now()->toDateString();
+        try {
+            $this->goalService->updateGoalAchievement($userId, $language, 'read_words', $readWords);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
-        
 
-        $achievement->achieved_quantity += $request->readWords;
-        $achievement->save();
-
-        //$request->readWords
-
-        return 'success';
+        return response()->json('Review goal has been updated successfully.', 200);
     }
 }

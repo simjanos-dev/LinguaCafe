@@ -114,8 +114,8 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);
     
     // review
-    Route::post('/review', [App\Http\Controllers\ReviewController::class, 'getReviewItems']);
-    Route::post('/review/update', [App\Http\Controllers\ReviewController::class, 'updateReviewCounts']);
+    Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'getReviewItems']);
+    Route::post('/reviews/update', [App\Http\Controllers\ReviewController::class, 'updateReadWordsGoal']);
 
     // flash cards
     Route::post('/flashcards', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollections']);

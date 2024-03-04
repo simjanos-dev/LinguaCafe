@@ -264,7 +264,7 @@
             }
 
 
-            axios.post('/review', data).then((response) => {
+            axios.post('/reviews', data).then((response) => {
                 var data = response.data;
                 this.reviews = data.reviews;
                 this.totalReviews = data.reviews.length;
@@ -345,7 +345,7 @@
                     if (this.reviews[this.currentReviewIndex].type == 'word') {
                         this.readWords ++;
                     } else {
-
+                        this.readWords += JSON.parse(this.reviews[this.currentReviewIndex].words).length;
                     }
                 } else {
                     for (var i = 0; i < this.exampleSentence.words.length; i++) {
@@ -488,12 +488,10 @@
                 });
 
                 // update reviewed and read words data
-                axios.post('/review/update', {
+                axios.post('/reviews/update', {
                     readWords: this.readWords,
-                    reviewCount: this.finishedReviews,
                 }).then(() => {
                     this.readWords = 0;
-                    this.finishedReviews = 0;
                 });
             },
             saveSettings() {
