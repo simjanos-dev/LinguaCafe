@@ -121,6 +121,11 @@
                                 </div>
                             </div>
                         </template>
+
+                        <!-- Reveal button -->
+                        <div class="review-button-box">
+                            <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+                        </div>
                     </div>
 
                     <!-- Review card back -->
@@ -168,14 +173,14 @@
                         <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
                             {{ reviews[currentReviewIndex].translation }}
                         </div>
+
+                        <!-- Answer buttons -->
+                        <div class="review-button-box">
+                            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+                            <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="text-center">
-                <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
-                <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
-                <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
             </div>
         </div>
         <div id="finished-box" v-if="finished">
