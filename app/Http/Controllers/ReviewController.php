@@ -2,122 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExampleSentence;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Lesson;
-use App\Models\Phrase;
-use App\Models\EncounteredWord;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Goal;
 use App\Models\GoalAchievement;
+use App\Services\ReviewService;
 
-class ReviewController extends Controller
-{
-    public function __construct()
-    {
+// request classes
+use App\Http\Requests\Review\GetReviewItemsRequest;
+
+class ReviewController extends Controller {
+
+    private $reviewService;
+
+    public function __construct(ReviewService $reviewService) {
         $this->middleware('auth');
+
+        $this->reviewService = $reviewService;
     }
     
-    public function review(Request $request) {
-        $practiceMode = false;
-        $lessonId = -1;
-        $bookId = -1;
+    public function getReviewItems(GetReviewItemsRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $practiceMode = $request->post('practiceMode') === 'true';
+        $chapterId = $request->post('chapterId');
+        $bookId = $request->post('bookId');
         
-        if (isset($request->practiceMode)) {
-            $practiceMode = $request->practiceMode === 'true';
-        }
-        
-        if (isset($request->lessonId)) {
-            $lessonId = intval($request->lessonId);
+        try {
+            $reviews = $this->reviewService->getReviewItems($userId, $language, $bookId, $chapterId, $practiceMode);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        if (isset($request->bookId)) {
-            $bookId = intval($request->bookId);
-        }
+        $reviewData = new \stdClass();
+        $reviewData->reviews = $reviews;
+        $reviewData->language = $language;
 
-        $selectedLanguage = Auth::user()->selected_language;
-
-        // base query
-        $reviewWords = EncounteredWord::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0');
-        $reviewPhrases = Phrase::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->where('stage', '<', '0');
-
-        // practice mode
-        if (!$practiceMode) {
-            $reviewWords = $reviewWords->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            });
-
-            $reviewPhrases = $reviewPhrases->where(function($query) {
-                $query->whereDate('next_review', '<=', Carbon::today()->toDateString());
-                $query->orWhere('relearning', true);
-            });
-        }
-        
-        // Retrieve lesson words and phrases by lesson id.
-        $uniqueWords = [];
-        $uniquePhraseIds = [];
-        if ($lessonId !== -1 || $bookId !== -1) {
-            if ($lessonId !== -1) {
-                $lessonIds = Lesson
-                    ::where('id', $lessonId)
-                    ->where('user_id', Auth::user()->id)
-                    ->pluck('id')
-                    ->toArray();
-            } else {
-                $lessonIds = Lesson
-                    ::where('book_id', $bookId)
-                    ->where('user_id', Auth::user()->id)
-                    ->pluck('id')
-                    ->toArray();
-            }
-
-            foreach ($lessonIds as $lessonId) {
-                $lesson = Lesson
-                    ::where('user_id', Auth::user()->id)
-                    ->where('id', $lessonId)
-                    ->first();
-
-                $words = $lesson->getProcessedText();
-                
-                foreach ($words as $word) {
-                    if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {
-                        array_push($uniqueWords, mb_strtolower($word->word, 'UTF-8'));
-                    }
-
-                    foreach ($word->phrase_ids as $phraseId) {
-                        if (!in_array($phraseId, $uniquePhraseIds, true)) {
-                            array_push($uniquePhraseIds, $phraseId);
-                        }
-                    }
-                }
-            }
-
-            $reviewWords = $reviewWords->whereIn('word', $uniqueWords);
-            $reviewPhrases = $reviewPhrases->whereIn('id', $uniquePhraseIds);
-        }
-
-        $reviewWords = $reviewWords->inRandomOrder()->get();
-        $reviewPhrases = $reviewPhrases->inRandomOrder()->get();
-
-        $reviews = [];
-        foreach ($reviewWords as $word) {
-            $word->type = 'word';
-            array_push($reviews, $word);
-        }
-
-        foreach ($reviewPhrases as $phrase) {
-            $phrase->type = 'phrase';
-            array_push($reviews, $phrase);
-        }
-
-        $data = new \stdClass();
-        $data->reviews = $reviews;
-        $data->language = $selectedLanguage;
-
-        return json_encode($data);
+        return response()->json($reviewData, 200);
     }
 
     public function updateReviewCounts(Request $request) {

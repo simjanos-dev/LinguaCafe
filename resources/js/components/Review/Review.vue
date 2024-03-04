@@ -244,19 +244,25 @@
         props: {
         },
         mounted: function() {
-            var data = {};
+            var data = {
+                bookId: -1,
+                chapterId: -1,
+                practiceMode: this.practiceMode,
+            };
+            
             if (this.$route.params.bookId !== undefined) {
-                data.bookId = this.$route.params.bookId;
-            }
-
-            if (this.$route.params.practiceMode !== undefined) {
-                data.practiceMode = this.$route.params.practiceMode;
-                this.practiceMode = this.$route.params.practiceMode === 'true';
+                data.bookId = parseInt(this.$route.params.bookId);
             }
 
             if (this.$route.params.chapterId !== undefined) {
-                data.lessonId = this.$route.params.chapterId;
+                data.chapterId = parseInt(this.$route.params.chapterId);
             }
+
+            if (this.$route.params.practiceMode !== undefined) {
+                data.practiceMode = this.$route.params.practiceMode === 'true';
+                this.practiceMode = this.$route.params.practiceMode === 'true';
+            }
+
 
             axios.post('/review', data).then((response) => {
                 var data = response.data;

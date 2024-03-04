@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Services\GoalService;
 use App\Services\StatisticsService;
 
+// request classes
+use App\Http\Requests\Home\ChangeLanguageRequest;
+use App\Http\Requests\Home\GetConfigRequest;
+
 class HomeController extends Controller {
     
     private $statisticsService;
@@ -49,7 +53,7 @@ class HomeController extends Controller {
         return response()->json($language, 200);
     }
 
-    public function changeLanguage($language) {
+    public function changeLanguage($language, ChangeLanguageRequest $request) {
         $user = Auth::user();
         $user->selected_language = strtolower($language);
         $user->save();
@@ -59,7 +63,7 @@ class HomeController extends Controller {
         return response()->json('Language has been changed successfully.', 200);
     }
 
-    public function getConfig($configPath) {
+    public function getConfig($configPath, GetConfigRequest $request) {
         if (!config()->has($configPath)) {
             abort(500, 'Requested config value does not exist.');
         }
