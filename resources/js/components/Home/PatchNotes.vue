@@ -31,6 +31,9 @@
                     <li>
                         Vocabulary sidebar had a minor visual problem with its edges.
                     </li>
+                    <li>
+                        Text reader had an error if the opened chapter had no text.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>
