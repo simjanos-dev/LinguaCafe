@@ -91,7 +91,6 @@
             };
         },
         mounted: function() {
-            console.log(this.bookName);
         },
         methods: {
             startReview() {

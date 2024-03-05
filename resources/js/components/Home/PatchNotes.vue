@@ -10,10 +10,13 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        Added start review dialog for the review button in the navigation drawer.
+                        Added start review dialog for the review button in the navigation sidebar.
                     </li>
                     <li>
-                        Added finish review information cards instead of redirecting the user to the homepage.
+                        Added review finished information cards, instead of redirecting the user to the homepage.
+                    </li>
+                    <li>
+                        Word counts now load automatically when you open a book.
                     </li>
                 </ul>
 
