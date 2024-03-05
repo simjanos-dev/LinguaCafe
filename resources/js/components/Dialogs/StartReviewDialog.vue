@@ -11,12 +11,13 @@
             <v-card-text>
                 <!-- Book name -->
                 <span v-if="bookName !== ''">Book: {{ bookName }}</span><br>
+                
                 <!-- Chapter name -->
                 <span v-if="chapterName !== ''">Chapter: {{ chapterName }}</span>
 
                 <!-- Reviewing all words info -->
                 <span v-if="bookName === '' && chapterName === ''">
-                    Review words from all of your books.
+                    Review cards from all of your books.
                 </span>
             </v-card-text>
             <v-card-actions class="mt-8">

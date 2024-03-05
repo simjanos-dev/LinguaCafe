@@ -10,12 +10,18 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        Added start review dialog for the Review button in the navigation drawer.
+                        Added start review dialog for the review button in the navigation drawer.
+                    </li>
+                    <li>
+                        Added finish review information cards instead of redirecting the user to the homepage.
                     </li>
                 </ul>
 
                 <b>Bug fixes:</b>
                 <ul>
+                    <li>
+                        Review cards' content overflowed the buttons.
+                    </li>
                     <li>
                         Books with long titles hid their open button.
                     </li>

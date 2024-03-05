@@ -12,11 +12,11 @@
     margin: auto;
     background-color: var(--v-background-base);
 
-    * {
+    #review * {
         font-family: notosans-jp !important;
     }
 
-    &.chinese-font * {
+    &.chinese-font #review * {
         font-family: notosans-sc !important;
     }
 
@@ -45,11 +45,11 @@
             top: 28px;
             width: 150px;
             left: 50%;
-            transform: translate(1%, 0%);
+            transform: translate(-101%, 0%);
         }
 
         #review-correct-button {
-            transform: translate(-101%, 0%);
+            transform: translate(1%, 0%);
         }
     }
 

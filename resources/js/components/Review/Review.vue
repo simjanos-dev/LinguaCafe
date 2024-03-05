@@ -1,6 +1,6 @@
 <template>
     <v-container 
-        v-if="currentReviewIndex !== -1" 
+        v-if="currentReviewIndex !== -1 || finished" 
         id="review-box" 
         :class="{
             'pa-0': $vuetify.breakpoint.smAndDown, 
@@ -8,9 +8,57 @@
         }"
     >
 
+        <!-- Review hotkeys dialog -->
         <review-hotkey-information-dialog
             v-model="hotkeyDialog"
         ></review-hotkey-information-dialog>
+        
+        <!-- Review finished box -->
+        <v-card 
+            v-if="finished"
+            outlined 
+            id="finish-review-box"
+            class="mt-4 mx-auto rounded-lg" 
+            width="500px"
+        >
+            <!-- There were no cards at all -->
+            <template v-if="totalReviews === 0">
+                <!-- Card title -->
+                <v-card-title>
+                    <v-icon large color="error" class="mr-1">mdi-cards</v-icon>No cards to be reviewed.
+                </v-card-title>
+                
+                <!-- Card content -->
+                <v-card-text>
+                    There are no words or phrases to be reviewed.
+                </v-card-text>
+            </template>
+
+            <!-- Review finished -->
+            <template v-if="totalReviews > 1">
+                <!-- Card title -->
+                <v-card-title>
+                    <v-icon large color="success" class="mr-1">mdi-bookmark-check</v-icon>Congratulations!
+                </v-card-title>
+                
+                <!-- Card content -->
+                <v-card-text>
+                    You have finished reviewing{{ formatNumber(totalReviews) }} cards. Keep up the good work, and your 
+                    <span class="text-capitalize">{{ language }}</span> skills will improve steadily. Consistency is key!
+                </v-card-text>
+            </template>
+
+            <!-- Card buttons -->
+            <v-card-actions>
+                <v-spacer />
+                <v-btn rounded depressed color="primary" to="/">
+                    <v-icon class="mr-1">mdi-home</v-icon>
+                    Home
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+
+        <!-- Review -->
         <div id="review" v-if="!finished">
             <!-- Progress bar -->
             <div id="review-progress-line" class="d-flex align-center">
@@ -176,40 +224,19 @@
 
                         <!-- Answer buttons -->
                         <div class="review-button-box">
-                            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
                             <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+                            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="finished-box" v-if="finished">
-            <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ finishedReviews }} sentences!</div>
-            <table id="finished-stats" class="table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">Word type</th>
-                        <th scope="col">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Read words:</td>
-                        <td> {{ readWords }} </td>
-                    </tr>
-                    <tr>
-                        <td>Reviewed sentences:</td>
-                        <td> {{ finishedReviews }} </td>
-                    </tr>
-                </tbody>
-            </table>
-            <v-btn color="primary" @click="finish()">Close</v-btn>
         </div>
     </v-container>
 </template>
 
 <script>
     const moment = require('moment');
+    import {formatNumber} from './../../helper.js';
     export default {
         data: function() {
             return {
@@ -296,7 +323,7 @@
                         });
                     });
                 } else {
-                    window.location.href = '/';
+                    this.finish();
                 }
 
                 window.addEventListener('keyup', this.hotkey);
@@ -512,8 +539,9 @@
                 this.$cookie.set('sentence-mode', this.settings.sentenceMode, 3650);
             },
             finish() {
-                this.$router.push('/');
-            }
+                this.finished = true;
+            },
+            formatNumber: formatNumber
         },
     }
 </script>
