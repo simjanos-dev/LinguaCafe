@@ -28,6 +28,9 @@
                     <li>
                         Daily read words goal was not updating while reviewing phrases if the sentence mode was not selected.
                     </li>
+                    <li>
+                        Vocabulary sidebar had a minor visual problem with its edges.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>
