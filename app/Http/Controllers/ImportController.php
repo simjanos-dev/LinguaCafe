@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
 use App\Services\ImportService;
 use Illuminate\Http\Request;
 
 // request classes
 use App\Http\Requests\Import\GetWebsiteTextRequest;
+use App\Http\Requests\Import\ImportRequest;
 
 class ImportController extends Controller {
     private $importMethods = [
@@ -29,7 +28,7 @@ class ImportController extends Controller {
         $this->importService = $importService;
     }
 
-    public function import(Request $request) {
+    public function import(ImportRequest $request) {
         $userId = Auth::user()->id;
         $importType = $request->post('importType');
         $textProcessingMethod = $request->post('textProcessingMethod');
@@ -49,10 +48,11 @@ class ImportController extends Controller {
         
         // move file to temp folder
         if (isset($importFile)) {
-            $randomString = bin2hex(openssl_random_pseudo_bytes(30));
-            $extension = '.' . $importFile->getClientOriginalExtension();
-            $fileName = $userId . '_' . $randomString . $extension;
-            $importFile->move(storage_path('app/temp'), $fileName);
+            try {
+                $fileName = $this->importService->moveFileToTempFolder($userId, $importFile);
+            } catch (\Exception $e) {
+                abort(500, $e->getMessage());
+            }
         }
 
         // import
@@ -67,21 +67,21 @@ class ImportController extends Controller {
                 // text
                 $this->importService->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
-        } catch (\Exception $exception) {
+        } catch (\Exception $e) {
             // delete temp file
             if (isset($importFile)) {
-                File::delete(storage_path('app/temp') . '/' . $fileName);
+                $this->importService->deleteTempFile($fileName);
             }
 
-            return $exception;
+            abort(500, $e->getMessage());
         }
 
         // delete temp file
         if (isset($importFile)) {
-            File::delete(storage_path('app/temp') . '/' . $fileName);
+            $this->importService->deleteTempFile($fileName);
         }
 
-        return 'success';
+        return response()->json('The text has been imported successfully.', 200);
     }
 
     public function getYoutubeSubtitles(Request $request) {

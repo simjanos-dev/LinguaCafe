@@ -340,16 +340,16 @@
                     this.importResult = 'error';
                     this.importLoading = false;
                 }).then((response) => {
-                    if (response.data == 'success') {
+                    if (response.status == 200) {
                         this.importResult = 'success';
                         this.importLoading = false;
                         setTimeout(() => {
                             this.$emit('import-finished', false);
                         }, 1000);
-                    } else {
-                        this.importResult = 'error';
-                        this.importLoading = false;
                     }
+                }).catch((error) => {
+                    this.importResult = 'error';
+                    this.importLoading = false;
                 });
             },
             close() {
