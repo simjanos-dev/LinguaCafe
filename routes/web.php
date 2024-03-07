@@ -146,4 +146,5 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/import', [App\Http\Controllers\ImportController::class, 'import']);
     Route::post('/youtube/get-subtitle-list', [App\Http\Controllers\ImportController::class, 'getYoutubeSubtitles']);
     Route::post('/youtube/get-subtitle-file-content', [App\Http\Controllers\ImportController::class, 'getSubtitleFileContent']);
+    Route::post('/website/get-text', [App\Http\Controllers\ImportController::class, 'getWebsiteText']);
 });

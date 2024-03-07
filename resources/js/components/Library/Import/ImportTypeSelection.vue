@@ -50,18 +50,38 @@
                 <span>Subtitle file</span>
             </div>
 
-            <!--
-            
-
-            
-
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('website')">
+            <!-- Website -->
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('website')" v-if="websiteImportSupported">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-web</v-icon>
                 </div>
                 <span>Website</span>
             </div>
 
+            <!-- Website not supported or loading data -->
+            <div class="import-type-button rounded-lg mx-2 mb-4" v-if="!websiteImportSupported">
+                <div class="import-type-button-icon-box">
+                    <v-icon large v-if="loading">mdi-web</v-icon>
+                    <div class="pt-4" v-if="!loading">Language not supported</div>
+                </div>
+                <span>
+                    <!-- Loading -->
+                    <v-progress-circular
+                        v-if="loading"
+                        indeterminate
+                        color="primary"
+                        size="16"
+                        width="2"
+                    ></v-progress-circular>
+
+                    <!-- Not supported label -->
+                    <template v-if="!loading">
+                        Website
+                    </template>
+                </span>
+            </div>
+
+            <!--
             <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('rss')">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-rss-box</v-icon>
@@ -98,11 +118,18 @@
     export default {
         data: function() {
             return {
+                loading: true,
+                websiteImportSupported: false,
             }
         },
         props: {
+            language: String
         },
         mounted() {
+            axios.get('/config/get/linguacafe.languages.website_import_supported_languages').then((response) => {
+                this.websiteImportSupported = response.data.includes(this.$props.language);
+                this.loading = false;
+            });
         },
         methods: {
             selectImportType(type) {

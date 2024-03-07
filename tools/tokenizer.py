@@ -18,6 +18,8 @@ from pysubparser import parser
 from pysubparser.cleaners import formatting
 import lxml.html.clean
 import lxml.html
+from newspaper import Article
+
 # create emtpy sapce models
 multi_nlp = None
 japanese_nlp = None
@@ -461,5 +463,14 @@ def getYoutubeSubtitles():
 
 
     return json.dumps(subtitleContent)
+
+@route('/tokenizer/get-website-text', method='POST')
+def getWebsiteText():
+    url = request.json.get('url')
+    article = Article(url)
+    article.download()
+    article.parse()
+
+    return json.dumps(article.text);
 
 run(host='0.0.0.0', port=8678, reloader=True, debug=True)

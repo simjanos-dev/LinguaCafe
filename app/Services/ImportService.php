@@ -179,4 +179,12 @@ class ImportService {
         
         return $subtitleContent;
     }
+
+    public function getWebsiteText($url) {
+        $websiteText = Http::post($this->pythonService . ':8678/tokenizer/get-website-text', [
+            'url' => $url,
+        ]);
+
+        return $websiteText;
+    }
 }

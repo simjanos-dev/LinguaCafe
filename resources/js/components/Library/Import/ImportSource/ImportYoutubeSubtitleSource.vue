@@ -20,6 +20,7 @@
             <!-- Subtitle list label -->
             <label class="font-weight-bold mt-2">Retrieved subtitles</label>
 
+            <!-- Subtitles loading -->
             <div class="d-flex justify-center">
                 <v-progress-circular
                     v-if="loading"

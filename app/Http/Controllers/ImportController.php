@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\DB;
 use App\Services\ImportService;
 use Illuminate\Http\Request;
 
+// request classes
+use App\Http\Requests\Import\GetWebsiteTextRequest;
 
-class ImportController extends Controller
-{
+class ImportController extends Controller {
     private $importMethods = [
         'e-book' => 'e-book',
         'jellyfin-subtitle' => 'subtitle',
@@ -19,7 +20,14 @@ class ImportController extends Controller
         'plain-text' => 'text',
         'text-file' => 'text',
         'youtube' => 'text',
+        'website' => 'text',
     ];
+
+    private $importService;
+
+    public function __construct(ImportService $importService) {
+        $this->importService = $importService;
+    }
 
     public function import(Request $request) {
         $userId = Auth::user()->id;
@@ -51,13 +59,13 @@ class ImportController extends Controller
         try {
             if ($importMethod === 'e-book') {
                 // e-book
-                (new ImportService())->importBook($chunkSize, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
+                $this->importService->importBook($chunkSize, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'text') {
                 // text
-                (new ImportService())->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
+                $this->importService->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'subtitle') {
                 // text
-                (new ImportService())->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
+                $this->importService->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
         } catch (\Exception $exception) {
             // delete temp file
@@ -78,7 +86,7 @@ class ImportController extends Controller
 
     public function getYoutubeSubtitles(Request $request) {
         $url = $request->post('url');
-        $subtitleList = (new ImportService())->getYoutubeSubtitles($url);
+        $subtitleList = $this->importService->getYoutubeSubtitles($url);
 
         return $subtitleList;
     }
@@ -94,11 +102,22 @@ class ImportController extends Controller
         $subtitleFile->move(storage_path('app/temp'), $fileName);
 
         // get subtitle content
-        $subtitleContent = (new ImportService())->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
+        $subtitleContent = $this->importService->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
 
         // delete temp file
         File::delete(storage_path('app/temp') . '/' . $fileName);
 
         return $subtitleContent;
+    }
+
+    public function getWebsiteText(GetWebsiteTextRequest $request) {
+        $url = $request->post('url');
+        
+        try {
+            $websiteText = $this->importService->getWebsiteText($url);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+        return $websiteText;
     }
 }
