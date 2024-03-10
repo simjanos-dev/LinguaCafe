@@ -52,6 +52,8 @@ services:
         command: "python3 /app/tokenizer.py"
         restart: unless-stopped
         tty: true
+        ports: 
+            - "8678:8678"
         build:
             dockerfile: ./docker/PythonDockerfileDev
         volumes:
