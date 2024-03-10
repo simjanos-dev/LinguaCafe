@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 // request classes
 use App\Http\Requests\Import\GetWebsiteTextRequest;
 use App\Http\Requests\Import\ImportRequest;
+use App\Http\Requests\Import\GetYoutubeSubtitlesRequest;
+use App\Http\Requests\Import\GetSubtitleFileContentRequest;
 
 class ImportController extends Controller {
     private $importMethods = [
@@ -84,30 +86,37 @@ class ImportController extends Controller {
         return response()->json('The text has been imported successfully.', 200);
     }
 
-    public function getYoutubeSubtitles(Request $request) {
+    public function getYoutubeSubtitles(GetYoutubeSubtitlesRequest $request) {
         $url = $request->post('url');
-        $subtitleList = $this->importService->getYoutubeSubtitles($url);
 
-        return $subtitleList;
+        try {
+            $subtitleList = $this->importService->getYoutubeSubtitles($url);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+
+        return response()->json($subtitleList, 200);
     }
 
-    public function getSubtitleFileContent(Request $request) {
+    public function getSubtitleFileContent(GetSubtitleFileContentRequest $request) {
         $subtitleFile = $request->file('subtitleFile');
-        $userId = Auth::user()->id;        
+        $userId = Auth::user()->id;
 
         // move file to temp folder
-        $randomString = bin2hex(openssl_random_pseudo_bytes(30));
-        $extension = '.' . $subtitleFile->getClientOriginalExtension();
-        $fileName = $userId . '_' . $randomString . $extension;
-        $subtitleFile->move(storage_path('app/temp'), $fileName);
-
-        // get subtitle content
-        $subtitleContent = $this->importService->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
+        try {
+            $fileName = $this->importService->moveFileToTempFolder($userId, $subtitleFile);
+            
+            // get subtitle content
+            $subtitleContent = $this->importService->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
+        } catch (\Exception $e) {
+            $this->importService->deleteTempFile($fileName);
+            abort(500, $e->getMessage());
+        }
 
         // delete temp file
-        File::delete(storage_path('app/temp') . '/' . $fileName);
+        $this->importService->deleteTempFile($fileName);
 
-        return $subtitleContent;
+        return response()->json($subtitleContent, 200);
     }
 
     public function getWebsiteText(GetWebsiteTextRequest $request) {
@@ -118,6 +127,7 @@ class ImportController extends Controller {
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }
-        return $websiteText;
+
+        return response()->json($websiteText, 200);
     }
 }

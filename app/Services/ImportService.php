@@ -185,7 +185,7 @@ class ImportService {
             'url' => $url,
         ]);
         
-        return $subtitleList;
+        return json_decode($subtitleList);
     }
 
     public function getSubtitleFileContent($fileName) {
@@ -193,7 +193,7 @@ class ImportService {
             'fileName' => $fileName,
         ]);
         
-        return $subtitleContent;
+        return json_decode($subtitleContent);
     }
 
     public function getWebsiteText($url) {
@@ -201,6 +201,6 @@ class ImportService {
             'url' => $url,
         ]);
 
-        return $websiteText;
+        return json_decode($websiteText);
     }
 }
