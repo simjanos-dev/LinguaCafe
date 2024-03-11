@@ -10,14 +10,32 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        .
+                        Added start review dialog for the review button in the navigation sidebar.
+                    </li>
+                    <li>
+                        Added review finished information cards, instead of redirecting the user to the homepage.
+                    </li>
+                    <li>
+                        Word counts now load automatically when you open a book.
                     </li>
                 </ul>
 
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Fixed a bug that caused books with long titles hide their open button.
+                        Review cards' content overflowed the buttons.
+                    </li>
+                    <li>
+                        Books with long titles hid their open button.
+                    </li>
+                    <li>
+                        Daily read words goal was not updating while reviewing phrases if the sentence mode was not selected.
+                    </li>
+                    <li>
+                        Vocabulary sidebar had a minor visual problem with its edges.
+                    </li>
+                    <li>
+                        Text reader had an error if the opened chapter had no text.
                     </li>
                 </ul>
             </v-card-text>

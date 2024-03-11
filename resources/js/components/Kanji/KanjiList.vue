@@ -136,7 +136,7 @@
             updateKanjiList: function() {
                 this.loading = true;
                 axios.post('/kanji/search', {
-                    groupBy: this.groupBy == 0 ? 'grade' : 'jlpt',
+                    kanjiGroupBy: this.groupBy == 0 ? 'grade' : 'jlpt',
                     showUnknown: this.showUnknown,
                 }).then((response) => {
                     this.kanji = response.data.kanji;

@@ -2,18 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Image\GetBookImageRequest;
+
+// services
+use App\Services\ImageService;
 
 class ImageController extends Controller
 {
-    public function __construct()
-    {
+    private $imageService;
+
+    public function __construct(ImageService $imageService) {
         $this->middleware('auth');
+        $this->imageService = $imageService;
     }
     
-    public function getBookImage($name)
-    {
-        return Storage::get('/images/book_images/' . $name);
+    public function getBookImage($fileName, GetBookImageRequest $request) {
+        $userId = Auth::user()->id;
+
+        try {
+            $imagePath = $this->imageService->getBookImage($userId, $fileName);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+        
+        return response()->file($imagePath);
     }
 }

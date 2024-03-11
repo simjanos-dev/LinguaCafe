@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
 use App\Services\ImportService;
 use Illuminate\Http\Request;
 
+// request classes
+use App\Http\Requests\Import\GetWebsiteTextRequest;
+use App\Http\Requests\Import\ImportRequest;
+use App\Http\Requests\Import\GetYoutubeSubtitlesRequest;
+use App\Http\Requests\Import\GetSubtitleFileContentRequest;
 
-class ImportController extends Controller
-{
+class ImportController extends Controller {
     private $importMethods = [
         'e-book' => 'e-book',
         'jellyfin-subtitle' => 'subtitle',
@@ -19,9 +21,16 @@ class ImportController extends Controller
         'plain-text' => 'text',
         'text-file' => 'text',
         'youtube' => 'text',
+        'website' => 'text',
     ];
 
-    public function import(Request $request) {
+    private $importService;
+
+    public function __construct(ImportService $importService) {
+        $this->importService = $importService;
+    }
+
+    public function import(ImportRequest $request) {
         $userId = Auth::user()->id;
         $importType = $request->post('importType');
         $textProcessingMethod = $request->post('textProcessingMethod');
@@ -41,64 +50,84 @@ class ImportController extends Controller
         
         // move file to temp folder
         if (isset($importFile)) {
-            $randomString = bin2hex(openssl_random_pseudo_bytes(30));
-            $extension = '.' . $importFile->getClientOriginalExtension();
-            $fileName = $userId . '_' . $randomString . $extension;
-            $importFile->move(storage_path('app/temp'), $fileName);
+            try {
+                $fileName = $this->importService->moveFileToTempFolder($userId, $importFile);
+            } catch (\Exception $e) {
+                abort(500, $e->getMessage());
+            }
         }
 
         // import
         try {
             if ($importMethod === 'e-book') {
                 // e-book
-                (new ImportService())->importBook($chunkSize, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
+                $this->importService->importBook($chunkSize, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'text') {
                 // text
-                (new ImportService())->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
+                $this->importService->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'subtitle') {
                 // text
-                (new ImportService())->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
+                $this->importService->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
-        } catch (\Exception $exception) {
+        } catch (\Exception $e) {
             // delete temp file
             if (isset($importFile)) {
-                File::delete(storage_path('app/temp') . '/' . $fileName);
+                $this->importService->deleteTempFile($fileName);
             }
 
-            return $exception;
+            abort(500, $e->getMessage());
         }
 
         // delete temp file
         if (isset($importFile)) {
-            File::delete(storage_path('app/temp') . '/' . $fileName);
+            $this->importService->deleteTempFile($fileName);
         }
 
-        return 'success';
+        return response()->json('The text has been imported successfully.', 200);
     }
 
-    public function getYoutubeSubtitles(Request $request) {
+    public function getYoutubeSubtitles(GetYoutubeSubtitlesRequest $request) {
         $url = $request->post('url');
-        $subtitleList = (new ImportService())->getYoutubeSubtitles($url);
 
-        return $subtitleList;
+        try {
+            $subtitleList = $this->importService->getYoutubeSubtitles($url);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+
+        return response()->json($subtitleList, 200);
     }
 
-    public function getSubtitleFileContent(Request $request) {
+    public function getSubtitleFileContent(GetSubtitleFileContentRequest $request) {
         $subtitleFile = $request->file('subtitleFile');
-        $userId = Auth::user()->id;        
+        $userId = Auth::user()->id;
 
         // move file to temp folder
-        $randomString = bin2hex(openssl_random_pseudo_bytes(30));
-        $extension = '.' . $subtitleFile->getClientOriginalExtension();
-        $fileName = $userId . '_' . $randomString . $extension;
-        $subtitleFile->move(storage_path('app/temp'), $fileName);
-
-        // get subtitle content
-        $subtitleContent = (new ImportService())->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
+        try {
+            $fileName = $this->importService->moveFileToTempFolder($userId, $subtitleFile);
+            
+            // get subtitle content
+            $subtitleContent = $this->importService->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
+        } catch (\Exception $e) {
+            $this->importService->deleteTempFile($fileName);
+            abort(500, $e->getMessage());
+        }
 
         // delete temp file
-        File::delete(storage_path('app/temp') . '/' . $fileName);
+        $this->importService->deleteTempFile($fileName);
 
-        return $subtitleContent;
+        return response()->json($subtitleContent, 200);
+    }
+
+    public function getWebsiteText(GetWebsiteTextRequest $request) {
+        $url = $request->post('url');
+        
+        try {
+            $websiteText = $this->importService->getWebsiteText($url);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json($websiteText, 200);
     }
 }

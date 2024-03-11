@@ -19,28 +19,28 @@ class Phrase extends Model
         'words',
         'reading',
         'translation',
+        'lookup_count',
+        'relearning'
     ];
 
-    public function setStage($stage) {
-        $selectedLanguage = Auth::user()->selected_language;
-        
+    public function setStage($stage) {       
         // if it's a newly saved phrase, update today's achievement
         if ($this->stage >= 0 && $stage < 0) {
-            $goal = Goal::where('user_id', Auth::user()->id)
-                ->where('language', $selectedLanguage)
+            $goal = Goal::where('user_id', $this->user_id)
+                ->where('language', $this->language)
                 ->where('type', 'learn_words')
                 ->first();
             
-            $achievement = GoalAchievement::where('user_id', Auth::user()->id)
-            ->where('language', $selectedLanguage)
-            ->where('goal_id', $goal->id)
-            ->where('day', Carbon::now()->toDateString())
-            ->first();
+            $achievement = GoalAchievement::where('user_id', $this->user_id)
+                ->where('language', $this->language)
+                ->where('goal_id', $goal->id)
+                ->where('day', Carbon::now()->toDateString())
+                ->first();
 
             if (!$achievement) {
                 $achievement = new GoalAchievement();
-                $achievement->language = $selectedLanguage;
-                $achievement->user_id = Auth::user()->id;
+                $achievement->language = $this->language;
+                $achievement->user_id = $this->user_id;
                 $achievement->goal_id = $goal->id;
                 $achievement->achieved_quantity = 0;
                 $achievement->goal_quantity = $goal->quantity;
@@ -72,7 +72,7 @@ class Phrase extends Model
             for ($i = 0; $i < count($possibleDates); $i++) {
                 $data = new \stdClass();
                 $data->date = Carbon::now()->addDays($possibleDates[$i])->toDateString();
-                $data->count = Phrase::where('user_id', Auth::user()->id)->where('next_review', $data->date)->count();
+                $data->count = Phrase::where('user_id', $this->user_id)->where('next_review', $data->date)->count();
                 $possibleDates[$i] = $data;
 
                 if ($possibleDates[$i]->count < $possibleDates[$nextReviewIndex]->count) {

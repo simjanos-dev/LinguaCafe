@@ -119,7 +119,7 @@
         props: {
         },
         mounted() {
-            axios.get('/user/is-password-changed').then((response) => {
+            axios.get('/users/is-password-changed').then((response) => {
                 this.passwordChanged = Boolean(response.data);
             });
         },

@@ -7,7 +7,9 @@
             'word-selected': $props.type === 'word',
             'phrase-selected': $props.type === 'phrase',
             'new-phrase-selected': $props.type === 'new-phrase',
-            'pa-4': true
+            'pa-4': true,
+            'rounded-l-0': true,
+            'rounded-r-lg': true
         }" 
         :style="{
             'width': '400px',

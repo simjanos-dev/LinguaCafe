@@ -33,6 +33,7 @@ import ImportSubtitleFileSource from './components/Library/Import/ImportSource/I
 import ImportEbookFileSource from './components/Library/Import/ImportSource/ImportEbookFileSource.vue';
 import ImportYoutubeSubtitleSource from './components/Library/Import/ImportSource/ImportYoutubeSubtitleSource.vue';
 import ImportJellyfinSubtitleSource from './components/Library/Import/ImportSource/ImportJellyfinSubtitleSource.vue';
+import ImportWebsiteSource from './components/Library/Import/ImportSource/ImportWebsiteSource.vue';
 import ImportLibraryOptions from './components/Library/Import/ImportLibraryOptions.vue';
 import ImportOptions from './components/Library/Import/ImportOptions.vue';
 Vue.component('import-dialog', ImportDialog);
@@ -43,6 +44,7 @@ Vue.component('import-subtitle-file-source', ImportSubtitleFileSource);
 Vue.component('import-ebook-file-source', ImportEbookFileSource);
 Vue.component('import-youtube-subtitle-source', ImportYoutubeSubtitleSource);
 Vue.component('import-jellyfin-subtitle-source', ImportJellyfinSubtitleSource);
+Vue.component('import-website-source', ImportWebsiteSource);
 Vue.component('import-library-options', ImportLibraryOptions);
 Vue.component('import-options', ImportOptions);
 

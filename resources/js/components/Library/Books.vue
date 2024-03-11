@@ -166,7 +166,7 @@
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
                                 </template>
-                                <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts(book.id, index)">Load word counts</v-btn>
+                                <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts(index)">Load word counts</v-btn>
                                 <v-btn class="menu-button" tile color="white" @click="showEditBookDialog(book)">Edit</v-btn>
                                 <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(book.id, book.name)">Review</v-btn>
                                 <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog(book)">Delete</v-btn>
@@ -269,11 +269,11 @@
             }
         },
         methods: {
-            loadBookWordCounts(bookId, index) {
+            loadBookWordCounts(index) {
                 this.books[index].wordCountLoading = true;
                 this.books[index].wordCount = null;
 
-                axios.get('/books/get-word-counts/' + bookId).then((response) => {
+                axios.get('/books/get-word-counts/' + this.books[index].id).then((response) => {
                     if (response.data !== 'error') {
                         this.books[index].wordCountLoading = false;
                         this.books[index].wordCount = response.data;
@@ -326,10 +326,13 @@
                 for (let bookIndex = 0; bookIndex < this.books.length; bookIndex ++) {
                     if (bookId !== this.books[bookIndex].id) {
                         this.books[bookIndex].chaptersVisible = false;
-                        
                     } else {
                         this.anyChapterVisible = !this.books[bookIndex].chaptersVisible;
                         this.books[bookIndex].chaptersVisible = !this.books[bookIndex].chaptersVisible;
+
+                        if (this.books[bookIndex].chaptersVisible) {
+                            this.loadBookWordCounts(bookIndex);
+                        }
 
                         setTimeout(() => {
                             document.getElementById('book-' + bookId).scrollIntoView();

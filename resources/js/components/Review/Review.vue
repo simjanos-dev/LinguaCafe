@@ -1,6 +1,6 @@
 <template>
     <v-container 
-        v-if="currentReviewIndex !== -1" 
+        v-if="currentReviewIndex !== -1 || finished" 
         id="review-box" 
         :class="{
             'pa-0': $vuetify.breakpoint.smAndDown, 
@@ -8,9 +8,57 @@
         }"
     >
 
+        <!-- Review hotkeys dialog -->
         <review-hotkey-information-dialog
             v-model="hotkeyDialog"
         ></review-hotkey-information-dialog>
+        
+        <!-- Review finished box -->
+        <v-card 
+            v-if="finished"
+            outlined 
+            id="finish-review-box"
+            class="mt-4 mx-auto rounded-lg" 
+            width="500px"
+        >
+            <!-- There were no cards at all -->
+            <template v-if="totalReviews === 0">
+                <!-- Card title -->
+                <v-card-title>
+                    <v-icon large color="error" class="mr-1">mdi-cards</v-icon>No cards to be reviewed.
+                </v-card-title>
+                
+                <!-- Card content -->
+                <v-card-text>
+                    There are no words or phrases to be reviewed.
+                </v-card-text>
+            </template>
+
+            <!-- Review finished -->
+            <template v-if="totalReviews > 1">
+                <!-- Card title -->
+                <v-card-title>
+                    <v-icon large color="success" class="mr-1">mdi-bookmark-check</v-icon>Congratulations!
+                </v-card-title>
+                
+                <!-- Card content -->
+                <v-card-text>
+                    You have finished reviewing{{ formatNumber(totalReviews) }} cards. Keep up the good work, and your 
+                    <span class="text-capitalize">{{ language }}</span> skills will improve steadily. Consistency is key!
+                </v-card-text>
+            </template>
+
+            <!-- Card buttons -->
+            <v-card-actions>
+                <v-spacer />
+                <v-btn rounded depressed color="primary" to="/">
+                    <v-icon class="mr-1">mdi-home</v-icon>
+                    Home
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+
+        <!-- Review -->
         <div id="review" v-if="!finished">
             <!-- Progress bar -->
             <div id="review-progress-line" class="d-flex align-center">
@@ -121,6 +169,11 @@
                                 </div>
                             </div>
                         </template>
+
+                        <!-- Reveal button -->
+                        <div class="review-button-box">
+                            <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+                        </div>
                     </div>
 
                     <!-- Review card back -->
@@ -168,43 +221,22 @@
                         <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
                             {{ reviews[currentReviewIndex].translation }}
                         </div>
+
+                        <!-- Answer buttons -->
+                        <div class="review-button-box">
+                            <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+                            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="text-center">
-                <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
-                <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
-                <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
-            </div>
-        </div>
-        <div id="finished-box" v-if="finished">
-            <div id="vocabulary-practice-finished-text">Congratulations! You have reviewed {{ finishedReviews }} sentences!</div>
-            <table id="finished-stats" class="table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">Word type</th>
-                        <th scope="col">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Read words:</td>
-                        <td> {{ readWords }} </td>
-                    </tr>
-                    <tr>
-                        <td>Reviewed sentences:</td>
-                        <td> {{ finishedReviews }} </td>
-                    </tr>
-                </tbody>
-            </table>
-            <v-btn color="primary" @click="finish()">Close</v-btn>
         </div>
     </v-container>
 </template>
 
 <script>
     const moment = require('moment');
+    import {formatNumber} from './../../helper.js';
     export default {
         data: function() {
             return {
@@ -244,21 +276,27 @@
         props: {
         },
         mounted: function() {
-            var data = {};
+            var data = {
+                bookId: -1,
+                chapterId: -1,
+                practiceMode: this.practiceMode,
+            };
+            
             if (this.$route.params.bookId !== undefined) {
-                data.bookId = this.$route.params.bookId;
-            }
-
-            if (this.$route.params.practiceMode !== undefined) {
-                data.practiceMode = this.$route.params.practiceMode;
-                this.practiceMode = this.$route.params.practiceMode === 'true';
+                data.bookId = parseInt(this.$route.params.bookId);
             }
 
             if (this.$route.params.chapterId !== undefined) {
-                data.lessonId = this.$route.params.chapterId;
+                data.chapterId = parseInt(this.$route.params.chapterId);
             }
 
-            axios.post('/review', data).then((response) => {
+            if (this.$route.params.practiceMode !== undefined) {
+                data.practiceMode = this.$route.params.practiceMode === 'true';
+                this.practiceMode = this.$route.params.practiceMode === 'true';
+            }
+
+
+            axios.post('/reviews', data).then((response) => {
                 var data = response.data;
                 this.reviews = data.reviews;
                 this.totalReviews = data.reviews.length;
@@ -285,7 +323,7 @@
                         });
                     });
                 } else {
-                    window.location.href = '/';
+                    this.finish();
                 }
 
                 window.addEventListener('keyup', this.hotkey);
@@ -339,7 +377,7 @@
                     if (this.reviews[this.currentReviewIndex].type == 'word') {
                         this.readWords ++;
                     } else {
-
+                        this.readWords += JSON.parse(this.reviews[this.currentReviewIndex].words).length;
                     }
                 } else {
                     for (var i = 0; i < this.exampleSentence.words.length; i++) {
@@ -364,7 +402,7 @@
                 // update word or phrase in database
                 var url = '/vocabulary/word/update';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    url = '/vocabulary/phrase/save';
+                    url = '/vocabulary/phrases/update';
                 }
 
                 var saveData = {
@@ -416,7 +454,7 @@
                 // update word or phrase in database
                 var url = '/vocabulary/word/update';
                 if (this.reviews[this.currentReviewIndex].type == 'phrase') {
-                    url = '/vocabulary/phrase/save';
+                    url = '/vocabulary/phrases/update';
                 }
 
                 var saveData = {
@@ -464,7 +502,7 @@
                     uniqueWords: [],
                 };
 
-                axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].id + '/' + this.reviews[this.currentReviewIndex].type).then((response) => {
+                axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].type + '/' + this.reviews[this.currentReviewIndex].id).then((response) => {
                     let firstTime = (this.exampleSentence.id == -1);
 
                     if (response.data !== 'no example sentence') {
@@ -482,12 +520,10 @@
                 });
 
                 // update reviewed and read words data
-                axios.post('/review/update', {
+                axios.post('/reviews/update', {
                     readWords: this.readWords,
-                    reviewCount: this.finishedReviews,
                 }).then(() => {
                     this.readWords = 0;
-                    this.finishedReviews = 0;
                 });
             },
             saveSettings() {
@@ -503,8 +539,9 @@
                 this.$cookie.set('sentence-mode', this.settings.sentenceMode, 3650);
             },
             finish() {
-                this.$router.push('/');
-            }
+                this.finished = true;
+            },
+            formatNumber: formatNumber
         },
     }
 </script>

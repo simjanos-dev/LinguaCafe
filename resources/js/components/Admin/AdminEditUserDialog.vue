@@ -31,7 +31,7 @@
                         dense
                         rounded
                         placeholder="Name"
-                        maxlength="32"
+                        maxlength="64"
                         :rules="[rules.nameLength]"
                         :disabled="saving"
                     ></v-text-field>
@@ -99,7 +99,7 @@
                         border="left"
                         dark
                     >
-                        {{ errorMessage }}
+                        <div v-html="errorMessage"></div>
                     </v-alert>
                 </v-form>
             </v-card-text>
@@ -165,8 +165,8 @@
 
                 rules: {
                     nameLength: value => {
-                        if (value.length < 5 || value.length > 24) {
-                            return 'Name must be between 5 and 24 characters.';
+                        if (value.length < 2 || value.length > 64) {
+                            return 'Name must be between 2 and 64 characters.';
                         }
 
                         return true;
@@ -205,17 +205,39 @@
                     isAdmin: this.isAdmin
                 };
 
-                if (this.userId == -1) {
+                var url = '/users/update';
+                if (this.userId === -1) {
                     data.password = this.password;
-                    data.passwordConfirmation = this.passwordConfirmation;
+                    data.password_confirmation = this.passwordConfirmation;
+                    url = '/users/create';
                 }
 
-                axios.post('/user/save', data).then((response) => {
+                axios.post(url, data).then((response) => {
+                    if (response.status !== 200) {
+                        return;
+                    }
+
                     this.saving = false;
-                    this.errorMessage = response.data;
-                    
-                    if (this.errorMessage == 'success') {
-                        this.$emit('user-saved');
+                    this.errorMessage = 'success';
+                    this.$emit('user-saved');
+                }).catch((error) => {
+                    this.saving = false;
+                    this.errorMessage = '';
+
+                    // add all error messages to the save result
+                    if (error.response.data.errors === undefined) {
+                        this.errorMessage = error.response.data.message;
+                    } else {
+                        var index = 0;
+                        for (const [key, value] of Object.entries(error.response.data.errors)) {
+                            if (index) {
+                                this.errorMessage += '<br>';
+                            }
+
+                            this.errorMessage += value.join('<br>');
+
+                            index ++;
+                        }
                     }
                 });
             },

@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 
-class DictionaryImportService
-{
+class DictionaryImportService {
+
+    public function __construct() {
+    }
+
     /*
         Scans the /storage/app/dictionaries folder, 
         and returns a list of importable dictionaries.

@@ -9,10 +9,9 @@ use App\Models\EncounteredWord;
 use App\Models\Lesson;
 use App\Models\Book;
 
-class BookService
-{
-    public function __construct()
-    {
+class BookService {
+    
+    public function __construct() {
     }
     
     public function getBooks($userId, $language) {

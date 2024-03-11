@@ -20,6 +20,7 @@
             <!-- Subtitle list label -->
             <label class="font-weight-bold mt-2">Retrieved subtitles</label>
 
+            <!-- Subtitles loading -->
             <div class="d-flex justify-center">
                 <v-progress-circular
                     v-if="loading"
@@ -55,7 +56,7 @@
                 </div>
 
                 <div 
-                    v-if="!subtitles.length"
+                    v-if="!subtitles.length && !error"
                     class="d-flex youtube-subtitle regular-list-height rounded-pill my-2 pl-10"
                 >
                     No subtitles found
@@ -63,6 +64,16 @@
             </div>
         </div>
 
+        <!-- Request error -->
+        <v-alert
+            v-if="error"
+            class="mt-4"
+            border="left"
+            type="error"
+        >
+            An error has occurred while retrieving youtube subtitles.
+        </v-alert>
+        
         <!-- Selected subtitle text -->
         <div class="d-flex w-full mt-2" v-if="selectedSubtitle !== -1">
             <label 
@@ -107,6 +118,7 @@
                 loading: false,
                 subtitles: null,
                 subtitlesLoaded: false,
+                error: false,
                 selectedSubtitle: -1,
                 url: ''
             }
@@ -141,6 +153,8 @@
             urlChanged() {
                 this.selectedSubtitle = -1;
                 this.loading = true;
+                this.error = false;
+
                 axios.post('/youtube/get-subtitle-list', {url: this.url}).then((response) => {
                     this.subtitles = response.data;
 
@@ -152,7 +166,10 @@
                     
                     this.subtitlesLoaded = true;
                     this.loading = false;
-                })
+                }).catch((error) => {
+                    this.error = true;
+                    this.loading = false;
+                });
             }
         }
     }

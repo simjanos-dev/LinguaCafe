@@ -55,6 +55,7 @@
                         <!-- Import type selection -->
                         <v-stepper-content step="1">
                             <import-type-selection 
+                                :language="$props.language"
                                 @import-type-selected="selectImportType"
                             ></import-type-selection>
                         </v-stepper-content>
@@ -102,6 +103,13 @@
                                 :language="$props.language"
                                 @subtitle-selected="selectImportSubtitle" 
                             ></import-jellyfin-subtitle-source>
+
+                            <!-- Website -->
+                            <import-website-source
+                                v-if="stepperPage == 2 && importType == 'website'"
+                                :language="$props.language"
+                                @text-selected="selectImportText"
+                            ></import-website-source>
                         </v-stepper-content>
 
                         <!-- Library import settings -->
@@ -187,6 +195,7 @@
                         (stepperPage == 2 && importType === 'subtitle-file' && !isImportSourceValid) ||
                         (stepperPage == 2 && importType === 'youtube' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 2 && importType === 'jellyfin-subtitle' && !isImportSourceValid) ||
+                        (stepperPage == 2 && importType === 'website' && (!isImportSourceValid || importText === '')) ||
                         (stepperPage == 3 && !isLibraryValid)
                     "
                     @click="stepForward"
@@ -311,7 +320,7 @@
                 
                 if (this.importType === 'e-book') {
                     data.set('importFile', this.importFile);
-                } else if (['youtube', 'plain-text', 'text-file'].includes(this.importType)) {
+                } else if (['youtube', 'plain-text', 'text-file', 'website'].includes(this.importType)) {
                     data.set('importText', this.importText);
                 } if (['jellyfin-subtitle', 'subtitle-file'].includes(this.importType)) {
                     data.set('importSubtitles', JSON.stringify(this.importSubtitles));
@@ -331,16 +340,16 @@
                     this.importResult = 'error';
                     this.importLoading = false;
                 }).then((response) => {
-                    if (response.data == 'success') {
+                    if (response.status == 200) {
                         this.importResult = 'success';
                         this.importLoading = false;
                         setTimeout(() => {
                             this.$emit('import-finished', false);
                         }, 1000);
-                    } else {
-                        this.importResult = 'error';
-                        this.importLoading = false;
                     }
+                }).catch((error) => {
+                    this.importResult = 'error';
+                    this.importLoading = false;
                 });
             },
             close() {

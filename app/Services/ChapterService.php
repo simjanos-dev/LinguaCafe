@@ -14,6 +14,7 @@ use App\Models\TextBlock;
 
 
 class ChapterService {
+    
     public function __construct() {
 
     }

@@ -22,11 +22,11 @@
             :key="'snackbar-' + snackBarIndex"
         >
             <div class="pl-3 pr-2 pt-1 d-flex font-weight-bold snackbar-title">
-                <v-icon v-if="snackBar.type !== 'insert success' && snackBar.type !== 'update success'" color="error" class="mr-2">mdi-alert</v-icon>
+                <v-icon v-if="snackBar.type !== 'success' && snackBar.type !== 'update success'" color="error" class="mr-2">mdi-alert</v-icon>
                 <v-icon v-else color="success" class="mr-2">mdi-cards</v-icon>
 
                 <template v-if="snackBar.type =='error'">Anki error</template>
-                <template v-if="snackBar.type =='insert success'">Added to anki</template>
+                <template v-if="snackBar.type =='success'">Added to anki</template>
                 <template v-if="snackBar.type =='update success'">Updated in anki</template>
 
                 <v-spacer />
@@ -300,7 +300,7 @@
             window.addEventListener('resize', this.updateVocabBoxPositionDelay);
             window.addEventListener('mouseup', this.unselectAllWords);
 
-            axios.post('/settings/get-by-name', {
+            axios.post('/settings/get', {
                 'settingNames': [
                     'ankiAutoAddCards',
                     'ankiShowNotifications'
@@ -843,19 +843,23 @@
                     };
                 }
 
-                axios.post('/anki/add-card', data).catch(() => {
+                axios.post('/anki/add-card', data).catch((error) => {
+                        this.snackBars.push({id: this.snackbarId, content: data.word + ': ' + error.response.data.message, type: 'error'});
+                        var snackbarToRemove = this.snackbarId;
+                        this.snackbarId ++;
+                        setTimeout(() => {
+                            this.removeSnackbar(snackbarToRemove);
+                        }, 5000);
                 }).then((response) => {
+                    if (response.status !== 200) {
+                         return;
+                    }
+
                     if (!this.ankiShowNotifications) {
                         return;
                     }
 
-                    if (response.data == 'success') {
-                        this.snackBars.push({id: this.snackbarId, content: data.word, type: 'insert success'});
-                    } else if (response.data == 'update success') {
-                        this.snackBars.push({id: this.snackbarId, content: data.word, type: 'update success'});
-                    } else {
-                        this.snackBars.push({id: this.snackbarId, content: data.word + ': ' + response.data, type: 'error'});
-                    }
+                    this.snackBars.push({id: this.snackbarId, content: data.word, type: response.data});
                     
                     var snackbarToRemove = this.snackbarId;
                     this.snackbarId ++;
@@ -993,8 +997,8 @@
                 // delete phrase
                 this.text.phrases.splice(deletedPhraseIndex, 1);
 
-                axios.post('/vocabulary/phrase/delete', {
-                    id: deletedPhraseId
+                axios.post('/vocabulary/phrases/delete', {
+                    phraseId: deletedPhraseId
                 }).then(function (response) {
                 });
 
@@ -1018,7 +1022,7 @@
                     }
                 }
                 
-                var url = '/vocabulary/phrases/save';
+                var url = '/vocabulary/phrases/update';
                 var saveData = {
                     words: JSON.stringify(this.text.phrases[this.selectedPhrase].words),
                     reading: this.text.phrases[this.selectedPhrase].reading,
@@ -1276,7 +1280,7 @@
                     targetId = this.text.phrases[this.selectedPhrase].id;
                 }
 
-                axios.post('/vocabulary/save-example-sentence', {
+                axios.post('/vocabulary/example-sentence/create-or-update', {
                     targetType: targetType,
                     targetId: targetId,
                     exampleSentenceWords: JSON.stringify(exampleSentence),

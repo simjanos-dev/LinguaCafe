@@ -139,6 +139,12 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'targetType' => [
+            'in' => 'The selected target type must be either word or phrase.',
+        ],
+        'kanjiGroupBy' => [
+            'in' => 'The selected group by must be either grade or jlpt.',
+        ]
     ],
 
     /*

@@ -219,7 +219,7 @@
             };
         },
         mounted: function() {
-            axios.get('/vocabulary/' + this.$props.itemType.toLowerCase() + '/get/' + this.$props.itemId).then((response) => {
+            axios.get('/vocabulary/' + this.$props.itemType.toLowerCase() + 's/get/' + this.$props.itemId).then((response) => {
                 this.loading = false;
                 this.item = response.data;
                 
@@ -273,7 +273,7 @@
                     stage: this.item.stage
                 };
 
-                axios.post('/vocabulary/phrase/save', saveData).then(() => {
+                axios.post('/vocabulary/phrases/update', saveData).then(() => {
                     this.saved = true;
                     this.saving = false;
                     this.updateVocabularySearch();

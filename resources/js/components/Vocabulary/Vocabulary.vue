@@ -46,7 +46,7 @@
                         </template>
                         <v-list class="filter-popup pa-0" dense>
                             <v-list-item-group color="primary">
-                                <v-list-item :class="{'v-list-item--active': filters.stage == 'any'}" @click="applyFilter('stage', 'any')">Any</v-list-item>
+                                <v-list-item :class="{'v-list-item--active': filters.stage == -999}" @click="applyFilter('stage', -999)">Any</v-list-item>
                                 <v-list-item :class="{'v-list-item--active': filters.stage == 2}" @click="applyFilter('stage', 2)">New</v-list-item>
                                 <v-list-item :class="{'v-list-item--active': filters.stage == 1}" @click="applyFilter('stage', 1)">Ignored</v-list-item>
                                 <v-list-item :class="{'v-list-item--active': filters.stage == 0}" @click="applyFilter('stage', 0)">Learned</v-list-item>
@@ -72,7 +72,7 @@
                         </template>
                         <v-list class="filter-popup pa-0" dense>
                             <v-list-item-group color="primary">
-                                <v-list-item :class="{'v-list-item--active': filters.book == 'any'}" @click="applyFilter('book', 'any', -1)">Any</v-list-item>
+                                <v-list-item :class="{'v-list-item--active': filters.book == -1}" @click="applyFilter('book', -1, -1)">Any</v-list-item>
                                 <v-list-item 
                                     v-for="(book, index) in books" :key="index"
                                     :class="{'v-list-item--active': filters.book == book.id}"
@@ -93,7 +93,7 @@
                         </template>
                         <v-list class="filter-popup pa-0" dense>
                             <v-list-item-group color="primary">
-                                <v-list-item :class="{'v-list-item--active': filters.chapter == 'any'}" @click="applyFilter('chapter', 'any')">Any</v-list-item>
+                                <v-list-item :class="{'v-list-item--active': filters.chapter == -1}" @click="applyFilter('chapter', -1)">Any</v-list-item>
                                 <v-list-item 
                                     v-for="(chapter, index) in books[filters.bookIndex].chapters" :key="index"
                                     :class="{'v-list-item--active': filters.chapter == chapter.id}"
@@ -311,9 +311,9 @@
                 },
                 filters: {
                     bookIndex: -1,
-                    stage: 'any',
-                    book: 'any',
-                    chapter: 'any',
+                    stage: -999,
+                    book: -1,
+                    chapter: -1,
                     translation: 'any',
                     phrases: 'both',
                     orderBy: 'words',
@@ -346,9 +346,9 @@
             loadVocabularySearchPage() {
                 axios.post('/vocabulary/search', {
                     text: (this.filters.text == '') ? 'anytext' : this.filters.text,
-                    book: this.filters.book,
-                    chapter: this.filters.chapter,
-                    stage: this.filters.stage,
+                    book: parseInt(this.filters.book),
+                    chapter: parseInt(this.filters.chapter),
+                    stage: parseInt(this.filters.stage),
                     translation: this.filters.translation,
                     phrases: this.filters.phrases,
                     orderBy: this.filters.orderBy,
@@ -388,9 +388,9 @@
                 axios.post('/vocabulary/export-to-csv', {
                     fields: fields,
                     text: text,
-                    stage: this.filters.stage,
-                    book: this.filters.book,
-                    chapter: this.filters.chapter,
+                    stage: parseInt(this.filters.stage),
+                    book: parseInt(this.filters.book),
+                    chapter: parseInt(this.filters.chapter),
                     translation: this.filters.translation,
                     phrases: this.filters.phrases,
                     orderBy: this.filters.orderBy
@@ -424,7 +424,7 @@
                 }
 
                 if (filter == 'book') {
-                    this.filters.chapter = 'any';
+                    this.filters.chapter = -1;
                     this.filters.bookIndex = newBookIndex;
                 }
                 

@@ -290,7 +290,7 @@
                 });
             },
             loadSettings() {
-                axios.post('/settings/get-by-name', {
+                axios.post('/settings/get', {
                     'settingNames': [
                         'deeplApiKey',
                         'jellyfinHost',
@@ -313,7 +313,7 @@
                 this.characterLimit = 0;
                 this.characterLimitStatus = '';
 
-                axios.post('/settings/save', {
+                axios.post('/settings/update', {
                     'settings': {
                         'deeplApiKey': this.settings.deeplApiKey,
                         'jellyfinHost': this.settings.jellyfinHost,
@@ -323,9 +323,17 @@
                         'ankiUpdateCards': this.settings.ankiUpdateCards,
                         'ankiShowNotifications': this.settings.ankiShowNotifications
                     }
-                }).then((result) => {
+                }).catch((error) => {
                     this.saving = false;
-                    this.saveStatus = result.data;
+                    this.saveStatus = 'error';
+                    this.loadDeeplCharacterLimits();
+                }).then((response) => {
+                    if (response.status !== 200) {
+                        return;
+                    }
+
+                    this.saving = false;
+                    this.saveStatus = 'success';
                     this.loadDeeplCharacterLimits();
                 });
             },

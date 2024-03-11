@@ -5,21 +5,35 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use App\Models\TextBlock;
 use App\Models\Lesson;
 use App\Models\Book;
 
-class ImportService
-{
+class ImportService {
 
     // stores the python service container's name
     private $pythonService = '';
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
+
+    // moves the uploaded file to the temp folder, and returns the filename
+    public function moveFileToTempFolder($userId, $importFile) {
+        $randomString = bin2hex(openssl_random_pseudo_bytes(30));
+        $extension = '.' . $importFile->getClientOriginalExtension();
+        $fileName = $userId . '_' . $randomString . $extension;
+        $importFile->move(storage_path('app/temp'), $fileName);
+
+        return $fileName;
+    }
     
+    public function deleteTempFile($fileName) {
+        File::delete(storage_path('app/temp') . '/' . $fileName);
+        return true;
+    }
+
     public function importBook($chunkSize, $textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
         $userId = Auth::user()->id;
@@ -171,7 +185,7 @@ class ImportService
             'url' => $url,
         ]);
         
-        return $subtitleList;
+        return json_decode($subtitleList);
     }
 
     public function getSubtitleFileContent($fileName) {
@@ -179,6 +193,14 @@ class ImportService
             'fileName' => $fileName,
         ]);
         
-        return $subtitleContent;
+        return json_decode($subtitleContent);
+    }
+
+    public function getWebsiteText($url) {
+        $websiteText = Http::post($this->pythonService . ':8678/tokenizer/get-website-text', [
+            'url' => $url,
+        ]);
+
+        return json_decode($websiteText);
     }
 }

@@ -80,7 +80,7 @@ class TextBlock
     public function setProcessedWords($processedWords) {
         $this->processedWords = $processedWords;
 
-        if (gettype($processedWords[0]->phrase_ids) == 'string') {
+        if (count($processedWords) > 0 && gettype($processedWords[0]->phrase_ids) == 'string') {
             foreach ($this->processedWords as $word) {
                 $word->phrase_ids = json_decode($word->phrase_ids);
             }
