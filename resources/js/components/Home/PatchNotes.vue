@@ -10,6 +10,12 @@
                 <b>New features:</b>
                 <ul>
                     <li>
+                        Added "website" import option.
+                    </li>
+                    <li>
+                        Added vocabulary word import from .csv.
+                    </li>
+                    <li>
                         Added start review dialog for the review button in the navigation sidebar.
                     </li>
                     <li>
@@ -17,6 +23,9 @@
                     </li>
                     <li>
                         Word counts now load automatically when you open a book.
+                    </li>
+                    <li>
+                        Added user manual. Will be extended and updated regularly.
                     </li>
                 </ul>
 

@@ -7,8 +7,26 @@
         <template v-if="$router.currentRoute.path !== '/login'">
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
             <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
-            <v-navigation-drawer id="navigation-drawer" :class="{'eink': theme == 'eink'}" :mini-variant="$vuetify.breakpoint.md" app :permanent="$vuetify.breakpoint.mdAndUp" v-model="drawer" color="navigation">
-                <div id="logo" class="my-8"><span v-if="$vuetify.breakpoint.lgAndUp">Lingua Cafe</span></div>
+            <v-navigation-drawer
+                id="navigation-drawer" 
+                app 
+                dense
+                :class="{'eink': theme == 'eink'}" 
+                :mini-variant="$vuetify.breakpoint.md || navbarCollapsed" 
+                :permanent="$vuetify.breakpoint.mdAndUp" 
+                v-model="drawer" 
+                color="navigation"
+            >
+                <!-- Logo -->
+                <div 
+                    id="logo" 
+                    class="my-8"
+                >
+                    <span v-if="$vuetify.breakpoint.lgAndUp && !navbarCollapsed">
+                            Lingua Cafe
+                    </span>
+                </div>
+
                 <v-list nav shaped class="pl-0">
                     <!-- Navigation buttons -->
                     <v-list-item 
@@ -28,9 +46,18 @@
                         <span class="pl-6"> Logout </span>
                     </v-list-item>
                 </v-list>
+
                 <template v-slot:append>
                     <!-- Large navigation drawer -->
-                    <template v-if="!$vuetify.breakpoint.md">
+                    <template v-if="!$vuetify.breakpoint.md && !navbarCollapsed">
+                        <v-btn id="collapse" rounded text class="ma-2" @click="collapseNavbar">
+                            <v-icon>mdi-arrow-collapse-left</v-icon>
+                            <span class="pl-6">Hide</span>
+                        </v-btn>
+                        <v-btn id="user-manual" rounded text class="ma-2" @click="navigationClick('User manual', $event)">
+                            <v-icon>mdi-account-question</v-icon>
+                            <span class="pl-6">User manual</span>
+                        </v-btn>
                         <v-btn id="theme" rounded text class="ma-2" @click="themeSelectionDialog = true">
                             <v-icon>mdi-palette</v-icon>
                             <span class="pl-6">Theme</span>
@@ -39,10 +66,17 @@
                             <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="43" height="28"></v-img> 
                             <span class="pl-6 text-capitalize">{{ selectedLanguage }}</span>
                         </v-btn>
+
                     </template>
 
                     <!-- Mini navigation drawer -->
                     <template v-else>
+                        <v-btn id="collapse" rounded text class="mini-drawer-button" @click="expandNavbar">
+                            <v-icon>mdi-arrow-collapse-right</v-icon>
+                        </v-btn>
+                        <v-btn id="user-manual" rounded text class="mini-drawer-button" @click="navigationClick('User manual', $event)">
+                            <v-icon>mdi-account-question</v-icon>
+                        </v-btn>
                         <v-btn id="theme" rounded text class="mini-drawer-button" @click="themeSelectionDialog = true">
                             <v-icon>mdi-palette</v-icon>
                         </v-btn>
@@ -53,7 +87,7 @@
                 </template>
             </v-navigation-drawer>
 
-            
+            <!-- Bottom navigation -->
             <v-bottom-navigation dense grow shift class="d-flex d-sm-flex d-md-none" dark background-color="primary">
                 <v-btn class="text-decoration-none" width="60" style="float: left;" @click="drawer = true;">
                     <span>More</span>
@@ -91,6 +125,7 @@ import themes from './../themes';
                 startReviewDialog: false,
                 drawer: false,
                 navbarVisible: true,
+                navbarCollapsed: false,
                 navigation: [
                     {
                         name: 'Home',
@@ -151,13 +186,32 @@ import themes from './../themes';
             this.$vuetify.theme.themes['light'] = this.$cookie.get('theme') === null ? themes.light : themes[this.$cookie.get('theme')];
             this.$vuetify.theme.themes['dark'] = themes.dark;
             this.$vuetify.theme.dark = (themeName == 'dark');
+
+            // load navbar status
+            if (this.$cookie.get('navbar-collapsed') !== null) {
+                this.navbarCollapsed = this.$cookie.get('navbar-collapsed') === 'true';
+            }
         },
         methods: {
+            collapseNavbar() {
+                this.navbarCollapsed = true;
+                this.$cookie.set('navbar-collapsed', this.navbarCollapsed, 3650);
+            },
+            expandNavbar() {
+                this.navbarCollapsed = false;
+                this.$cookie.set('navbar-collapsed', this.navbarCollapsed, 3650);
+            },
             navigationClick(itemName, event) {
                 if (itemName === 'Review') {
                     this.startReviewDialog = true;
                     event.preventDefault();
                 }
+
+                // clicked on user manual
+                if (itemName === 'User manual' && this.$router.currentRoute.path !== '/user-manual') {
+                    this.$router.push({ path: '/user-manual', replace: true });
+                }
+
             },
             updateTheme() {
                 this.theme = (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme');
@@ -166,7 +220,7 @@ import themes from './../themes';
                 axios.post('/logout').then((response) => {
                     window.location.href = "/";
                 })
-            }
+            },
         }
     }
 </script>

@@ -135,6 +135,7 @@ Vue.component('admin-edit-user-dialog', AdminEditUserDialog);
 Vue.component('admin-review-settings', AdminReviewSettings);
 
 const DevelopmentTools = require('./components/DevelopmentTools.vue').default;
+const UserManual = require('./components/UserManual.vue').default;
 const LoginForm = require('./components/Login/LoginForm.vue').default;
 const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
 const Home = require('./components/Home/Home.vue').default;
@@ -155,6 +156,7 @@ const router = new VueRouter({
     routes: [
         { path: '/dev', component: DevelopmentTools },
         { path: '/', component: Home },
+        { path: '/user-manual', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
