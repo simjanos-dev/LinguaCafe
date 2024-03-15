@@ -4,6 +4,9 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use League\Csv\Writer;
+use League\Csv\Reader;
+use League\Csv\Statement;
+
 
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
@@ -345,6 +348,143 @@ class VocabularyService {
         }
 
         return $csv;
+    }
+
+    public function importFromCsv($userId, $language, $fileName, $delimiter, $onlyUpdate, $skipHeader) {
+        $stageMapping = [
+            'new' => 2,
+            'ignored' => 1,
+            'learned' => 0,
+            '1' => -1,
+            '2' => -2,
+            '3' => -3,
+            '4' => -4,
+            '5' => -5,
+            '6' => -6,
+            '7' => -7,
+        ];
+
+        DB::disableQueryLog();
+        $reader = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
+        $reader->setDelimiter($delimiter);
+        $records = $reader->getRecords();
+        $createdWords = 0;
+        $updatedWords = 0;
+        $rejectedWords = 0;
+
+        // collect data from csv file
+        DB::beginTransaction();
+        foreach($records as $index => $record) {
+            $lowerCaseWord = mb_strtolower($record[0]); 
+            
+            // skip header if option is enabled
+            if ($index === 0 && $skipHeader) {
+                continue;
+            }
+
+            // reject word if contains space character
+            if (str_contains($lowerCaseWord, ' ')) {
+                $rejectedWords ++;
+                continue;
+            }
+
+            // reject word if it's too long
+            if (mb_strlen($lowerCaseWord) >= 255) {
+                $rejectedWords ++;
+                continue;
+            }
+
+            // reject word if word field is missing
+            if (mb_strlen($lowerCaseWord) === 0) {
+                $rejectedWords ++;
+                continue;
+            }
+
+            // reject word if translation field is missing
+            if (!isset($record[1])) {
+                $rejectedWords ++;
+                continue;
+            }
+
+            // reject word if it's stage is stage is an incorrect value
+            $stage = isset($record[5]) ? $record[5] : 'learned';
+            if (isset($record[5]) && !isset($stageMapping[$stage])) {
+                $rejectedWords ++;
+                continue;
+            }
+
+            // try to retrieve word
+            $encounteredWord = EncounteredWord
+                ::where('user_id', $userId)
+                ->where('language', $language)
+                ->where('word', $lowerCaseWord)
+                ->first();
+
+            // if does not exist, create it
+            if (!$encounteredWord) {
+
+                // reject word if does not exist and only update option is used
+                if ($onlyUpdate) {
+                    $rejectedWords ++;
+                    continue;
+                }
+
+                $encounteredWord = new EncounteredWord();
+                $encounteredWord->user_id = $userId;
+                $encounteredWord->language = $language;
+                $encounteredWord->word = $lowerCaseWord;
+                $encounteredWord->translation = '';
+                $encounteredWord->lemma = '';
+                $encounteredWord->base_word = '';
+                $encounteredWord->reading = '';
+                $encounteredWord->base_word_reading = '';
+                $encounteredWord->stage = 0;
+                $encounteredWord->kanji = '';
+                $encounteredWord->example_sentence = '';
+
+                $createdWords ++;
+            } else {
+                $updatedWords ++;
+            }
+
+            // set translation
+            $encounteredWord->translation = $record[1];
+            
+            // set lemma
+            if (isset($record[2])) {
+                $encounteredWord->base_word = $record[2];
+            }
+            
+            // set reading
+            if (isset($record[3])) {
+                $encounteredWord->reading = $record[3];
+            }
+            
+            // set lemma reading
+            if (isset($record[4])) {
+                $encounteredWord->base_word_reading = $record[4];
+            }
+
+            // set stage
+            if (isset($record[5])) {
+                $encounteredWord->stage = $stageMapping[$stage];
+            }
+
+            // save word with new data
+            $encounteredWord->save();
+
+            // add word to accepted words list
+            $acceptedWords[] = $lowerCaseWord;
+        }
+
+        DB::commit();
+
+        $responseData = new \StdClass();
+        $responseData->createdWords = $createdWords;
+        $responseData->updatedWords = $updatedWords;
+        $responseData->rejectedWords = $rejectedWords;
+        
+        return $responseData;
     }
 
     /*

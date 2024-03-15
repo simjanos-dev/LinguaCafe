@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
+
+// services
 use App\Services\ImportService;
-use Illuminate\Http\Request;
+use App\Services\TempFileService;
 
 // request classes
 use App\Http\Requests\Import\GetWebsiteTextRequest;
@@ -25,9 +26,11 @@ class ImportController extends Controller {
     ];
 
     private $importService;
+    private $tempFileService;
 
-    public function __construct(ImportService $importService) {
+    public function __construct(ImportService $importService, TempFileService $tempFileService) {
         $this->importService = $importService;
+        $this->tempFileService = $tempFileService;
     }
 
     public function import(ImportRequest $request) {
@@ -51,7 +54,7 @@ class ImportController extends Controller {
         // move file to temp folder
         if (isset($importFile)) {
             try {
-                $fileName = $this->importService->moveFileToTempFolder($userId, $importFile);
+                $fileName = $this->tempFileService->moveFileToTempFolder($userId, $importFile);
             } catch (\Exception $e) {
                 abort(500, $e->getMessage());
             }
@@ -72,7 +75,7 @@ class ImportController extends Controller {
         } catch (\Exception $e) {
             // delete temp file
             if (isset($importFile)) {
-                $this->importService->deleteTempFile($fileName);
+                $this->tempFileService->deleteTempFile($fileName);
             }
 
             abort(500, $e->getMessage());
@@ -80,7 +83,7 @@ class ImportController extends Controller {
 
         // delete temp file
         if (isset($importFile)) {
-            $this->importService->deleteTempFile($fileName);
+            $this->tempFileService->deleteTempFile($fileName);
         }
 
         return response()->json('The text has been imported successfully.', 200);
@@ -104,17 +107,17 @@ class ImportController extends Controller {
 
         // move file to temp folder
         try {
-            $fileName = $this->importService->moveFileToTempFolder($userId, $subtitleFile);
+            $fileName = $this->tempFileService->moveFileToTempFolder($userId, $subtitleFile);
             
             // get subtitle content
             $subtitleContent = $this->importService->getSubtitleFileContent(storage_path('app/temp') . '/' . $fileName);
         } catch (\Exception $e) {
-            $this->importService->deleteTempFile($fileName);
+            $this->tempFileService->deleteTempFile($fileName);
             abort(500, $e->getMessage());
         }
 
         // delete temp file
-        $this->importService->deleteTempFile($fileName);
+        $this->tempFileService->deleteTempFile($fileName);
 
         return response()->json($subtitleContent, 200);
     }

@@ -91,8 +91,10 @@ Vue.component('jellyfin-subtitle-list', JellyfinSubtitleList);
 // vocabulary
 import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
 import VocabularyExportDialog from './components/Vocabulary/VocabularyExportDialog';
+import VocabularyImportDialog from './components/Vocabulary/VocabularyImportDialog';
 Vue.component('vocabulary-edit-dialog', VocabularyEditDialog);
 Vue.component('vocabulary-export-dialog', VocabularyExportDialog);
+Vue.component('vocabulary-import-dialog', VocabularyImportDialog);
 
 // review
 import ReviewHotkeyInformationDialog from './components/Review/ReviewHotkeyInformationDialog';

@@ -18,6 +18,12 @@
             @export-to-csv="exportToCsv"
         ></vocabulary-export-dialog>
 
+        <!-- Vocabulary import dialog -->
+        <vocabulary-import-dialog 
+            v-if="vocabularyImportDialog.active"
+            v-model="vocabularyImportDialog.active"
+        ></vocabulary-import-dialog>
+
         <!-- Search header -->
         <v-card outlined class="rounded-lg px-4 pb-4 my-4" :loading="loading">
             <div class="subheader my-4 d-flex">
@@ -192,7 +198,10 @@
                         </template>
                         <v-list class="filter-popup pa-0" dense>
                             <v-list-item @click="openExportDialog" :disabled="loading">
-                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Export to csv
+                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Export
+                            </v-list-item>
+                            <v-list-item @click="openImportDialog" :disabled="loading">
+                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Import
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -200,7 +209,7 @@
             </v-container>
         </v-card>
 
-        <!-- vocabulary list -->
+        <!-- Vocabulary list -->
         <v-simple-table id="vocabulary-list" class="py-0 no-hover border rounded-lg" dense>
             <thead>
                 <tr>
@@ -303,7 +312,10 @@
                 currentPage: 1,
                 vocabularyExportDialog: {
                     active: false,
-                    },
+                },
+                vocabularyImportDialog: {
+                    active: false,
+                },
                 vocabularyEditDialog: {
                     active: false,
                     wordId: -1,
@@ -378,6 +390,9 @@
             },
             openExportDialog() {
                 this.vocabularyExportDialog.active = true;
+            },
+            openImportDialog() {
+                this.vocabularyImportDialog.active = true;
             },
             exportToCsv(fields) {
                 var text = 'anytext';
