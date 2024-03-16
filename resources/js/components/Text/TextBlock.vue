@@ -40,7 +40,7 @@
                     @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
                     @touchend.stop="finishSelection($event)"
                     @mouseup.stop="finishSelection($event)"
-                    @mouseleave=";"
+                    @mouseleave="stopHoverTimeout"
                 ><!--
                     --><template v-if="language == 'japanese'"><!--
                         --><ruby class="rubyword" :wordindex="wordIndex"><!--
@@ -136,6 +136,9 @@
             this.updatePhraseBorders();
         },
         methods: {
+            stopHoverTimeout() {
+                this.$emit('stopHoverTimeout');
+            },
             hoverPhraseSelection: function(wordIndex) {
                 // collection for hover vocabulary box
                 var hoveredWords = [];

@@ -54,6 +54,7 @@
             :updateLookupCount="updateLookupCount"
             :startSelection="startSelection"
             :updateHoveredWords="updateHoverVocabularyBox"
+            :stopHoverTimeout="clearHoverVocabularyBoxTimeout"
         >
             <text-block
                 :key="'text-block' + textBlockKey"
@@ -76,6 +77,7 @@
                 @updateLookupCount="updateLookupCount"
                 @startSelection="startSelection"
                 @updateHoveredWords="updateHoverVocabularyBox"
+                @stopHoverTimeout="clearHoverVocabularyBoxTimeout"
             ></text-block>
         </slot>
 
@@ -288,6 +290,10 @@
                 type: Boolean,
                 default: false
             },
+            vocabularyHoverBoxDelay: {
+                type: Number,
+                default: 300
+            },
             autoHighlightWords: {
                 type: Boolean,
                 default: true
@@ -326,7 +332,6 @@
         },
         methods: {
             hotkeyHandle(event) {
-                console.log(event.which);
                 if (!this.$props.hotkeysEnabled) {
                     return;
                 }
@@ -624,7 +629,6 @@
                 this.hoverVocabBox.disabledWhileSelecting = false;
             },
             updateHoverVocabularyBox(data) {
-                var hoverDelay = 300;
                 if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
                     this.hoverVocabBox.dictionarySearchTerm = '';
                     this.hoverVocabBox.hoveredWords = null;
@@ -649,7 +653,7 @@
 
                     // clear previous delay timeout 
                     if (this.hoverVocabBox.hoverVocabularyDelayTimeout !== null) {
-                        clearTimeout(this.hoverVocabBox.hoverVocabularyDelayTimeout);
+                        this.clearHoverVocabularyBoxTimeout();
                     }
 
                     // check if dictionary search option is enabled
@@ -659,7 +663,7 @@
                             this.hoverVocabBox.deeplTranslation = '';
                             this.hoverVocabBox.active = true;
                             this.updateHoverVocabularyBoxPosition(data.hoveredWords);    
-                        }, hoverDelay);
+                        }, this.$props.vocabularyHoverBoxDelay);
                         return;
                     }
 
@@ -689,8 +693,11 @@
                         }
                         
                         this.makeHoverVocabularyBoxSearchRequest(term);
-                    }, hoverDelay);
+                    }, this.$props.vocabularyHoverBoxDelay);
                 }
+            },
+            clearHoverVocabularyBoxTimeout() {
+                clearTimeout(this.hoverVocabBox.hoverVocabularyDelayTimeout);
             },
             updateHoverVocabularyBoxPosition(hoveredWords) {
                 var margin = 8;
