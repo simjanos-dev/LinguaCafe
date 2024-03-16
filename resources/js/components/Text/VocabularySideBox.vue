@@ -205,6 +205,7 @@
         <!-- Search box -->
         <vocabulary-search-box
             v-if="$props.type !== 'empty'"
+            :deeplEnabled="$props.deeplEnabled"
             :language="$props.language"
             :_searchTerm="searchField"
             @addDefinitionToInput="addDefinitionToInput"
@@ -241,6 +242,7 @@
             phrase: Array,
             kanjiList: Array,
             stage: Number,
+            deeplEnabled: Boolean,
             _reading: String,
             _baseWord: String,
             _baseWordReading: String,

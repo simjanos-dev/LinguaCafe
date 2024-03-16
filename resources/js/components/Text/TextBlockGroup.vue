@@ -106,6 +106,7 @@
             :phrase="vocabBox.phrase"
             :stage="vocabBox.stage"
             :auto-highlight-words="$props.autoHighlightWords"
+            :deepl-enabled="this.deeplEnabled"
             :_reading="vocabBox.reading"
             :_baseWord="vocabBox.baseWord"
             :_baseWordReading="vocabBox.baseWordReading"
@@ -136,6 +137,7 @@
             :phrase="vocabBox.phrase"
             :stage="vocabBox.stage"
             :auto-highlight-words="$props.autoHighlightWords"
+            :deepl-enabled="this.deeplEnabled"
             :_reading="vocabBox.reading"
             :_baseWord="vocabBox.baseWord"
             :_baseWordReading="vocabBox.baseWordReading"
@@ -163,6 +165,7 @@
                 ankiAutoAddCards: false,
                 ankiShowNotifications: false,
                 text: this.$props._text,
+                deeplEnabled: false,
                 hoverVocabBox: {
                     dictionarySearchDelay: null,
                     dictionarySearchTerm: '',
@@ -308,6 +311,10 @@
             }).then((response) => {
                 this.ankiAutoAddCards = response.data.ankiAutoAddCards;
                 this.ankiShowNotifications = response.data.ankiShowNotifications;
+            });
+
+            axios.get('/dictionaries/deepl/is-enabled').then((response) => {
+                this.deeplEnabled = response.data;
             });
 
             this.updateVocabBoxPositionDelay();
@@ -622,7 +629,7 @@
                     this.hoverVocabBox.hoveredPhrase = data.hoveredPhrase;
                     this.hoverVocabBox.userTranslation = data.translation;
                     this.hoverVocabBox.dictionaryTranslation = 'loading';
-                    this.hoverVocabBox.deeplTranslation = 'loading';
+                    this.hoverVocabBox.deeplTranslation = this.deeplEnabled ? 'loading' : 'deepl-disabled';
                     this.hoverVocabBox.reading = data.reading;
                     this.hoverVocabBox.active = true;
 
@@ -721,27 +728,29 @@
                 });
 
                 // make deepl search
-                axios.post('/dictionaries/deepl/search', {
-                    language: this.$props.language,
-                    term: term
-                }).then((response) => {
-                    // return if a different word has been selected  
-                    // after the request was sent
-                    if (this.hoverVocabBox.dictionarySearchTerm !== response.data.term) {
-                        return;
-                    }
+                if (this.deeplEnabled) {
+                    axios.post('/dictionaries/deepl/search', {
+                        language: this.$props.language,
+                        term: term
+                    }).then((response) => {
+                        // return if a different word has been selected  
+                        // after the request was sent
+                        if (this.hoverVocabBox.dictionarySearchTerm !== response.data.term) {
+                            return;
+                        }
 
-                    // return if there is no word selected anymore
-                    if (this.hoverVocabBox.dictionarySearchTerm === '') {
-                        return;
-                    }
+                        // return if there is no word selected anymore
+                        if (this.hoverVocabBox.dictionarySearchTerm === '') {
+                            return;
+                        }
 
-                    this.hoverVocabBox.key ++;
-                    this.hoverVocabBox.deeplTranslation = response.data.definition;
-                }).catch(() => {
-                    this.hoverVocabBox.key ++;
-                    this.hoverVocabBox.deeplTranslation = 'DeepL error';
-                });
+                        this.hoverVocabBox.key ++;
+                        this.hoverVocabBox.deeplTranslation = response.data.definition;
+                    }).catch(() => {
+                        this.hoverVocabBox.key ++;
+                        this.hoverVocabBox.deeplTranslation = 'DeepL error';
+                    });
+                }
             },
             startSelection() {
                 this.hoverVocabBox.disabledWhileSelecting = true;

@@ -47,6 +47,14 @@
                         Text reader had an error if the opened chapter had no text.
                     </li>
                 </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        If DeepL is disabled for a language, the dictionaries will not show a DeepL error message anymore, 
+                        and they also won't make a request to retrieve the DeepL translations.
+                    </li>
+                </ul>
             </v-card-text>
         </v-card>
 

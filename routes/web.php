@@ -84,12 +84,13 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     // images 
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
-    // dictionary
+    // dictionaries
     Route::get('/dictionaries/scan', [App\Http\Controllers\DictionaryController::class, 'getImportableDictionaryList']);
     Route::post('/dictionaries/import', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
     Route::get('/dictionaries/get-record-count/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'getDictionaryRecordCount']);
     Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
     Route::post('/dictionaries/deepl/search', [App\Http\Controllers\DictionaryController::class, 'searchDeepl']);
+    Route::get('/dictionaries/deepl/is-enabled', [App\Http\Controllers\DictionaryController::class, 'isDeeplEnabled']);
     Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
     Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);

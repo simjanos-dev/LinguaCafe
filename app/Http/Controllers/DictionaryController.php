@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
-use \Exception;
 use \DeepL\Translator;
 use App\Models\Dictionary;
 use App\Models\ImportedDictionary;
@@ -17,6 +16,7 @@ use App\Models\VocabularyJmdict;
 use App\Models\DeeplCache;
 use App\Models\Setting;
 use App\Services\DictionaryImportService;
+
 
 class DictionaryController extends Controller
 {
@@ -53,6 +53,27 @@ class DictionaryController extends Controller
         $dictionary->save();
 
         return 'success';
+    }
+
+    /*
+        Returns if any DeepL dictionary is enabled for the current user and selected language.
+    */
+    public function isDeeplEnabled() {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+
+        $deeplDictionary = Dictionary
+            ::where('name', 'like', 'DeepL%')
+            ->where('enabled', true)
+            ->where('database_table_name','API')
+            ->where('language', $language)
+            ->first();
+
+        if (!$deeplDictionary) {
+            return response()->json(false, 200);
+        }
+        
+        return response()->json(true, 200);
     }
 
     /*

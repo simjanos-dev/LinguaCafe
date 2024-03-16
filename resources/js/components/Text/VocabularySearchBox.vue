@@ -18,7 +18,13 @@
         <div id="search-results" class="border rounded-lg">
 
             <!-- DeepL translation -->
-            <div :class="{'search-result': true, 'disabled': !deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'}">
+            <div 
+                v-if="$props.deeplEnabled"
+                :class="{
+                    'search-result': true, 
+                    'disabled': !deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'
+                }"
+            >
                 <div class="search-result-title rounded px-2" style="background-color: #92B9E2">
                     {{ searchField }} <div class="dictionary">DeepL</div>
                 </div>
@@ -112,6 +118,7 @@
     export default {
         props: {
             language: String,
+            deeplEnabled: Boolean,
             _searchTerm: String
         },
         data: function() {
@@ -124,6 +131,7 @@
             };
         },
         mounted: function() {
+            console.log(this.$props.deeplEnabled);
             this.makeSearchRequest();
         },
         methods: {
@@ -148,15 +156,17 @@
                 });
 
                 // deepl search
-                this.deeplSearchResult = 'loading';
-                axios.post('/dictionaries/deepl/search', {
-                    language: this.$props.language,
-                    term: this.searchField
-                }).then((response) => {
-                    this.deeplSearchResult = response.data.definition;
-                }).catch(() => {
-                    this.deeplSearchResult = 'DeepL error';
-                });
+                if (this.$props.deeplEnabled) {
+                    this.deeplSearchResult = 'loading';
+                    axios.post('/dictionaries/deepl/search', {
+                        language: this.$props.language,
+                        term: this.searchField
+                    }).then((response) => {
+                        this.deeplSearchResult = response.data.definition;
+                    }).catch(() => {
+                        this.deeplSearchResult = 'DeepL error';
+                    });
+                }
             },
             processVocabularySearchResults(data) {
                 this.searchResults = [];
