@@ -645,7 +645,6 @@
                     this.hoverVocabBox.dictionaryTranslation = 'loading';
                     this.hoverVocabBox.deeplTranslation = this.deeplEnabled ? 'loading' : 'deepl-disabled';
                     this.hoverVocabBox.reading = data.reading;
-                    this.hoverVocabBox.active = true;
 
                     // clear previous delay timeout 
                     if (this.hoverVocabBox.dictionarySearchDelay !== null) {
@@ -659,6 +658,9 @@
                     }
 
                     this.hoverVocabBox.dictionarySearchDelay = setTimeout(() => {
+                    this.hoverVocabBox.active = true;
+                    this.updateHoverVocabularyBoxPosition(data.hoveredWords);
+
                         if (data.hoveredWords.length === 1) {
                             var term = data.hoveredWords[0].word;
                             if (data.hoveredWords[0].lemma.length) {
@@ -682,20 +684,21 @@
                         this.makeHoverVocabularyBoxSearchRequest(term);
                     }, 300);
                 }
-
+            },
+            updateHoverVocabularyBoxPosition(hoveredWords) {
                 var margin = 8;
                 var hoverVocabBoxWidth = 300;
                 var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
                 var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
 
 
-                if (data.hoveredWords.length == 1) {
-                    var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + data.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                if (hoveredWords.length == 1) {
+                    var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
                 } else {
-                    var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + data.hoveredWords[parseInt(data.hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                    var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + hoveredWords[parseInt(hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + data.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                var hoveredWordPositions = document.querySelector('.text-block [wordindex="' + hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
                 
                 this.hoverVocabBox.positionLeft = hoveredWordPositions.right - vocabBoxArea.left - hoverVocabBoxWidth / 2 - (hoveredWordPositions.right - hoveredWordPositions.left) / 2;
                 if (this.hoverVocabBox.positionLeft < margin) {

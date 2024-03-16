@@ -72,6 +72,11 @@
                         If DeepL is disabled for a language, the dictionaries will not show a DeepL error message anymore, 
                         and they also won't make a request to retrieve the DeepL translations.
                     </li>
+                    <li>
+                        For better performance and to avoid accidentaly opening hover vocabulary on words, a slight delay was added before 
+                        the hover vocabulary box becomes visible. The dictionary and DeepL searches already had this delay, it just has 
+                        been applied to the visibility of the hover vocabulary box as well.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>
