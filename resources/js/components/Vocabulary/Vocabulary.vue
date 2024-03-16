@@ -45,7 +45,7 @@
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
-                                Stage
+                                Level
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
                             </v-btn>

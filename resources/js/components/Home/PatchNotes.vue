@@ -46,6 +46,9 @@
                     <li>
                         Text reader had an error if the opened chapter had no text.
                     </li>
+                    <li>
+                        Renamed label "stage" to "level" on vocabulary page to make it consistent.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>

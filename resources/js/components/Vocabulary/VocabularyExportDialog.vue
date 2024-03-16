@@ -73,7 +73,7 @@
                             hide-details
                             class="vocabulary-export-switch my-1"
                             color="primary"
-                            label="Stage"
+                            label="Level"
                             @change="fieldSwitchChange"
                         ></v-switch>
 
@@ -118,7 +118,7 @@
                             <th v-if="fields.lemmaReading">Lemma reading</th>
                             <th v-if="fields.reading">Reading</th>
                             <th v-if="fields.translation">Translation</th>
-                            <th v-if="fields.stage">Stage</th>
+                            <th v-if="fields.stage">Level</th>
                             <th v-if="fields.addedToSrs">Added to srs</th>
                             <th v-if="fields.readCount">Read count</th>
                             <th v-if="fields.lookupCount">Lookup count</th>
