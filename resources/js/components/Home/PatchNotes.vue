@@ -50,7 +50,13 @@
                         Renamed label "stage" to "level" on vocabulary page to make it consistent.
                     </li>
                     <li>
-                        Non Japanese and Chinese phrases were only searchable on the vocabulary page without spaces. This fix only applies to phrases created after this update.
+                        Non Chinese and Japanese phrases were only searchable on the vocabulary page without spaces. This fix only applies to phrases created after this update.
+                    </li>
+                    <li>
+                        Non Chinese and Japanese phrases were displayed incorrectly on the vocabulary sidebar.
+                    </li>
+                    <li>
+                        Phrases were displayed incorrectly on the vocabulary export dialog.
                     </li>
                 </ul>
 

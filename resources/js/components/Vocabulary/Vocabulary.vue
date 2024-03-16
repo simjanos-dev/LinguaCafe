@@ -15,6 +15,7 @@
             v-if="vocabularyExportDialog.active"
             v-model="vocabularyExportDialog.active" 
             :sample-words="words"
+            :language="$props.language"
             @export-to-csv="exportToCsv"
         ></vocabulary-export-dialog>
 

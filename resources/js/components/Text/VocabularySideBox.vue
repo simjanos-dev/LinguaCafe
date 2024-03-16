@@ -284,7 +284,7 @@
                 
                 this.phraseText += this.$props.phrase[wordIndex].word;
 
-                if (this.$props.phrase.spaceAfter) {
+                if (this.$props.phrase[wordIndex].spaceAfter) {
                     this.phraseText += ' ';
                 }
             }
