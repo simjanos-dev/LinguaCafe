@@ -25,6 +25,9 @@
                         Word counts now load automatically when you open a book.
                     </li>
                     <li>
+                        Added a setting for hover vocabulary's delay.
+                    </li>
+                    <li>
                         Added user manual. Will be extended and updated regularly.
                     </li>
                 </ul>
@@ -65,7 +68,10 @@
                         Numpad hotkeys were not working.
                     </li>
                     <li>
-                        Hover vocabulary's search dictionary setting could not be turned off.
+                        Hover vocabulary's search dictionary setting was not working when it was turned off.
+                    </li>
+                    <li>
+                        Hover vocabulary sent a request to the server even if you took the mouse off from the hovered word before the delay ended.
                     </li>
                 </ul>
 
