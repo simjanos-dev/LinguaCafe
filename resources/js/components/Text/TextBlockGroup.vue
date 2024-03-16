@@ -326,6 +326,7 @@
         },
         methods: {
             hotkeyHandle(event) {
+                console.log(event.which);
                 if (!this.$props.hotkeysEnabled) {
                     return;
                 }
@@ -342,6 +343,19 @@
                     case 55:
                         event.preventDefault();
                         this.setStage(48 - event.which);
+                        break;
+                    
+                    // set stage 0-7 numpad
+                    case 96:
+                    case 97:
+                    case 98:
+                    case 99:
+                    case 100:
+                    case 101:
+                    case 102:
+                    case 103:
+                        event.preventDefault();
+                        this.setStage(96 - event.which);
                         break;
 
                     // set stage to ignore

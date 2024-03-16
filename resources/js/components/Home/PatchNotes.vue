@@ -61,6 +61,9 @@
                     <li>
                         Reading fields were visible on vocabulary search page's edit dialog for languages that had no readings.
                     </li>
+                    <li>
+                        Numpad hotkeys were not working.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
