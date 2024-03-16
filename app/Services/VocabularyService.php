@@ -65,7 +65,13 @@ class VocabularyService {
         $phrase->reading = $reading;
         $phrase->translation = $translation;
         $phrase->words = json_encode($words);
-        $phrase->words_searchable = implode('', $words);
+
+        if ($language === 'japanese' || $language === 'chinese') {
+            $phrase->words_searchable = implode('', $words);
+        } else {
+            $phrase->words_searchable = implode(' ', $words);
+        }
+        
         $phrase->save();
 
         // update phrase ids in lesson texts

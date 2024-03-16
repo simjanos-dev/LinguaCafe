@@ -49,6 +49,9 @@
                     <li>
                         Renamed label "stage" to "level" on vocabulary page to make it consistent.
                     </li>
+                    <li>
+                        Non Japanese and Chinese phrases were only searchable on the vocabulary page without spaces. This fix only applies to phrases created after this update.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
