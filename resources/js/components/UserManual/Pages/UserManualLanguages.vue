@@ -1,22 +1,20 @@
 <template>
-    <div id="user-manual-languages" class="ma-4">
+    <div id="user-manual-languages" class="ma-4 mb-16">
         <!-- Language info -->
         <div class="subheader d-flex">Languages</div>
-        <v-card outlined class="rounded-lg">
-            <v-card-text class="pa-4">
-                In LinguaCafe all the data are separated by the selected language. This means that any action you take in one language will not affect
-                the data in other languages, so the first thing you should do in LinguaCafe is select your target language. You can change your selected
-                language by clicking on it in the bottom right corner.
+        <v-card outlined class="rounded-lg pa-4">
+            In LinguaCafe all the data are separated by the selected language. This means that any action you take in one language will not affect
+            the data in other languages, so the first thing you should do in LinguaCafe is select your target language. You can change your selected
+            language by clicking on it in the bottom left corner.
 
-                <div class="mt-5">
-                    <b>Lemma generation:</b> When you import a text into LinguaCafe, the text processor will automatically 
-                    assign dictionary form to words for supported languages.
-                </div>
-                
-                <div class="mt-2">
-                    <b>Gender tagging:</b> In gendered and supported languages, LinguaCafe will prepend nouns with additional information based on the words' gender.
-                </div>
-            </v-card-text>
+            <div class="mt-5">
+                <b>Lemma generation:</b> When you import a text into LinguaCafe, the text processor will automatically 
+                assign dictionary form to words for supported languages.
+            </div>
+            
+            <div class="mt-2">
+                <b>Gender tagging:</b> In gendered and supported languages, LinguaCafe will prepend nouns with additional information based on the words' gender.
+            </div>
         </v-card>
 
         <!-- Supported language list -->

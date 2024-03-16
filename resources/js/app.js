@@ -138,7 +138,9 @@ Vue.component('admin-review-settings', AdminReviewSettings);
 // user manual
 const UserManual = require('./components/UserManual/UserManual.vue').default;
 import UserManualLanguages from './components/UserManual/Pages/UserManualLanguages';
+import UserManualVocabularyImport from './components/UserManual/Pages/UserManualVocabularyImport';
 Vue.component('user-manual-languages', UserManualLanguages);
+Vue.component('user-manual-vocabulary-import', UserManualVocabularyImport);
 
 const DevelopmentTools = require('./components/DevelopmentTools.vue').default;
 const LoginForm = require('./components/Login/LoginForm.vue').default;

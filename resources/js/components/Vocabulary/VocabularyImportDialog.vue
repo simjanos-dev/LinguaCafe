@@ -23,7 +23,7 @@
                 <template v-if="importResult === null || importResult.error">
                     <!-- Import information -->
                     <v-alert dark border="left" type="info" color="primary" v-if="!loading">
-                        Please read the user manual before importing.
+                        Please read the <a href="/user-manual/vocabulary-import"><v-icon small class="mr-0.5">mdi-file</v-icon>user manual</a> before importing.
                     </v-alert>
 
                     <!-- Csv file -->
@@ -113,12 +113,12 @@
 
                 <!-- Import and cancel buttons -->
                 <template v-if="importResult === null || importResult.error">
-                    <v-btn rounded text @click="close">Cancel</v-btn>
+                    <v-btn rounded text :disabled="loading" @click="close">Cancel</v-btn>
                     <v-btn 
                         rounded 
                         depressed
                         color="primary"
-                        :disabled="!importFileValid"
+                        :disabled="!importFileValid || loading"
                         @click="importFromCsv"
                     >Import</v-btn>
                 </template>

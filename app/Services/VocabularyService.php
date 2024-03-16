@@ -400,12 +400,6 @@ class VocabularyService {
                 continue;
             }
 
-            // reject word if translation field is missing
-            if (!isset($record[1])) {
-                $rejectedWords ++;
-                continue;
-            }
-
             // reject word if it's stage is stage is an incorrect value
             $stage = isset($record[5]) ? $record[5] : 'learned';
             if (isset($record[5]) && !isset($stageMapping[$stage])) {
@@ -448,7 +442,9 @@ class VocabularyService {
             }
 
             // set translation
-            $encounteredWord->translation = $record[1];
+            if (isset($record[1])) {
+                $encounteredWord->translation = $record[1];
+            }
             
             // set lemma
             if (isset($record[2])) {

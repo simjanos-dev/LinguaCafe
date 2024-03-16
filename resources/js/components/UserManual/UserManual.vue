@@ -22,7 +22,8 @@
 
         <!-- Pages -->
         <div id="user-manual-content">
-            <user-manual-languages v-if="selectedPage === 6"/>
+            <user-manual-languages v-if="selectedPage === 'languages'"/>
+            <user-manual-vocabulary-import v-if="selectedPage === 'vocabulary-import'"/>
         </div>
 
     </div>
@@ -73,8 +74,8 @@
                 selectedPage: 1,
                 pages: [
                     {
-                        id: 1,
                         name: 'Introduction',
+                        id: 'introduction',
                     },
                     // {
                     //     id: 2,
@@ -95,8 +96,8 @@
                     //     ]
                     // },
                     {
-                        id: 6,
                         name: 'Languages',
+                        id: 'languages',
                     },
                     // {
                     //     id: 7,
@@ -122,26 +123,26 @@
                     //     id: 12,
                     //     name: 'Reviewing',
                     // },
-                    // {
-                    //     id: 13,
-                    //     name: 'Vocabulary',
-                    //     children: [
-                    //         {
-                    //             id: 14,
-                    //             name: 'Importing',
-                    //         },
-                    //         {
-                    //             id: 15,
-                    //             name: 'Exporting',
-                    //         }
-                    //     ]
-                    // }
+                    {
+                        name: 'Vocabulary',
+                        id: 'vocabulary',
+                        children: [
+                            {
+                                name: 'Importing',
+                                id: 'vocabulary-import',
+                            },
+                            // {
+                            //     id: 15,
+                            //     name: 'Exporting',
+                            // }
+                        ]
+                    }
                 ],
             }
         },
         mounted() {
             if (this.$route.params.currentPage !== undefined) {
-                this.selectedPage = parseInt(this.$route.params.currentPage);
+                this.selectedPage = this.$route.params.currentPage;
             }
         },
         props: {
