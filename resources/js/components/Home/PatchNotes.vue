@@ -64,6 +64,9 @@
                     <li>
                         Numpad hotkeys were not working.
                     </li>
+                    <li>
+                        Hover vocabulary's search dictionary setting could not be turned off.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>

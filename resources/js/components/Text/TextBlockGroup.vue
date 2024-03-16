@@ -167,7 +167,7 @@
                 text: this.$props._text,
                 deeplEnabled: false,
                 hoverVocabBox: {
-                    dictionarySearchDelay: null,
+                    hoverVocabularyDelayTimeout: null,
                     dictionarySearchTerm: '',
                     disabledWhileSelecting: false,
                     active: false,
@@ -624,6 +624,7 @@
                 this.hoverVocabBox.disabledWhileSelecting = false;
             },
             updateHoverVocabularyBox(data) {
+                var hoverDelay = 300;
                 if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
                     this.hoverVocabBox.dictionarySearchTerm = '';
                     this.hoverVocabBox.hoveredWords = null;
@@ -647,19 +648,25 @@
                     this.hoverVocabBox.reading = data.reading;
 
                     // clear previous delay timeout 
-                    if (this.hoverVocabBox.dictionarySearchDelay !== null) {
-                        clearTimeout(this.hoverVocabBox.dictionarySearchDelay);
+                    if (this.hoverVocabBox.hoverVocabularyDelayTimeout !== null) {
+                        clearTimeout(this.hoverVocabBox.hoverVocabularyDelayTimeout);
+                    }
+
+                    // check if dictionary search option is enabled
+                    if (!this.$props.vocabularyHoverBoxSearch) {
+                        this.hoverVocabBox.hoverVocabularyDelayTimeout = setTimeout(() => {
+                            this.hoverVocabBox.dictionaryTranslation = 'dictionary-search-disabled';
+                            this.hoverVocabBox.deeplTranslation = '';
+                            this.hoverVocabBox.active = true;
+                            this.updateHoverVocabularyBoxPosition(data.hoveredWords);    
+                        }, hoverDelay);
+                        return;
                     }
 
                     // call the hover vocabulary search function with a delay
-                    if (!this.$props.vocabularyHoverBoxSearch) {
-                        this.hoverVocabBox.dictionaryTranslation = '';
-                        this.hoverVocabBox.deeplTranslation = '';
-                    }
-
-                    this.hoverVocabBox.dictionarySearchDelay = setTimeout(() => {
-                    this.hoverVocabBox.active = true;
-                    this.updateHoverVocabularyBoxPosition(data.hoveredWords);
+                    this.hoverVocabBox.hoverVocabularyDelayTimeout = setTimeout(() => {
+                        this.hoverVocabBox.active = true;
+                        this.updateHoverVocabularyBoxPosition(data.hoveredWords);
 
                         if (data.hoveredWords.length === 1) {
                             var term = data.hoveredWords[0].word;
@@ -682,7 +689,7 @@
                         }
                         
                         this.makeHoverVocabularyBoxSearchRequest(term);
-                    }, 300);
+                    }, hoverDelay);
                 }
             },
             updateHoverVocabularyBoxPosition(hoveredWords) {
