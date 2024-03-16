@@ -58,6 +58,9 @@
                     <li>
                         Phrases were displayed incorrectly on the vocabulary export dialog.
                     </li>
+                    <li>
+                        Reading fields were visible on vocabulary search page's edit dialog for languages that had no readings.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
