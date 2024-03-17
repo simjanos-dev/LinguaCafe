@@ -22,8 +22,9 @@
 
         <!-- Pages -->
         <div id="user-manual-content">
-            <user-manual-languages v-if="selectedPage === 'languages'"/>
-            <user-manual-vocabulary-import v-if="selectedPage === 'vocabulary-import'"/>
+            <user-manual-languages v-if="selectedPage === 'languages'" />
+            <user-manual-vocabulary-import v-if="selectedPage === 'vocabulary-import'" />
+            <user-manual-reading v-if="selectedPage === 'reading'" />
         </div>
 
     </div>
@@ -115,10 +116,10 @@
                     //     id: 10,
                     //     name: 'Library',
                     // },
-                    // {
-                    //     id: 11,
-                    //     name: 'Reading',
-                    // },
+                    {
+                        id: 'reading',
+                        name: 'Reading',
+                    },
                     // {
                     //     id: 12,
                     //     name: 'Reviewing',
