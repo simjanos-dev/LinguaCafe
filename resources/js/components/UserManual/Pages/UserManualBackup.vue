@@ -19,7 +19,7 @@
             <div class="mt-5">
                 Run this command while your LinguaCafe server is running to export your database. If your database setup was changed manually, change names accordingly:<br>
                 <code>
-                    docker exec -ti linguacafe-database mysqldump -ulinguacafe -plinguacafe linguacafe > ./linguacafe-backup.sql
+                    docker exec linguacafe-database mysqldump --no-tablespaces -ulinguacafe -plinguacafe linguacafe > ./linguacafe-backup.sql
                 </code>
             </div>
 
