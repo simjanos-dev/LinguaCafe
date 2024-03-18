@@ -9,6 +9,11 @@
     }
 }
 
+#app.dark kbd {
+    background-color: var(--v-primary-base);
+    color: var(--v-textDark-base);
+}
+
 // select text color
 #app.dark .theme--dark.v-select .v-select__selections {
     color: var(--v-text-base);

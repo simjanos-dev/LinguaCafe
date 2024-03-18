@@ -137,12 +137,17 @@ Vue.component('admin-review-settings', AdminReviewSettings);
 
 // user manual
 const UserManual = require('./components/UserManual/UserManual.vue').default;
+import UserManualIntroduction from './components/UserManual/Pages/UserManualIntroduction';
+import UserManualBackup from './components/UserManual/Pages/UserManualBackup';
 import UserManualLanguages from './components/UserManual/Pages/UserManualLanguages';
-import UserManualVocabularyImport from './components/UserManual/Pages/UserManualVocabularyImport';
 import UserManualReading from './components/UserManual/Pages/UserManualReading';
+import UserManualVocabularyImport from './components/UserManual/Pages/UserManualVocabularyImport';
+
+Vue.component('user-manual-introduction', UserManualIntroduction);
+Vue.component('user-manual-backup', UserManualBackup);
 Vue.component('user-manual-languages', UserManualLanguages);
-Vue.component('user-manual-vocabulary-import', UserManualVocabularyImport);
 Vue.component('user-manual-reading', UserManualReading);
+Vue.component('user-manual-vocabulary-import', UserManualVocabularyImport);
 
 const DevelopmentTools = require('./components/DevelopmentTools.vue').default;
 const LoginForm = require('./components/Login/LoginForm.vue').default;

@@ -22,9 +22,11 @@
 
         <!-- Pages -->
         <div id="user-manual-content">
+            <user-manual-introduction v-if="selectedPage === 'introduction'" />
             <user-manual-languages v-if="selectedPage === 'languages'" />
             <user-manual-vocabulary-import v-if="selectedPage === 'vocabulary-import'" />
             <user-manual-reading v-if="selectedPage === 'reading'" />
+            <user-manual-backup v-if="selectedPage === 'backup'" />
         </div>
 
     </div>
@@ -72,11 +74,15 @@
     export default {
         data: function() {
             return {
-                selectedPage: 1,
+                selectedPage: 'introduction',
                 pages: [
                     {
                         name: 'Introduction',
                         id: 'introduction',
+                    },
+                    {
+                        name: 'Backup',
+                        id: 'backup',
                     },
                     // {
                     //     id: 2,
