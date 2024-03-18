@@ -18,6 +18,7 @@ from pysubparser import parser
 from pysubparser.cleaners import formatting
 import lxml.html.clean
 import lxml.html
+import importlib
 import shutil
 import subprocess
 from newspaper import Article
@@ -509,6 +510,7 @@ def model_install():
                 model_url[lang],
             ]
         )
+        importlib.invalidate_caches()
         return HTTPResponse(status=200, body="Language and dependencies installed correctly")
     except subprocess.CalledProcessError as e:
         return HTTPResponse(status=500, body=f"Error: {e}")
