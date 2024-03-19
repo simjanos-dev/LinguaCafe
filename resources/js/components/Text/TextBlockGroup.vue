@@ -697,7 +697,12 @@
                 }
             },
             clearHoverVocabularyBoxTimeout() {
+                if (this.hoverVocabBox.hoverVocabularyDelayTimeout === null) {
+                    return;
+                }
+                
                 clearTimeout(this.hoverVocabBox.hoverVocabularyDelayTimeout);
+                this.hoverVocabBox.hoverVocabularyDelayTimeout = null;
             },
             updateHoverVocabularyBoxPosition(hoveredWords) {
                 var margin = 8;

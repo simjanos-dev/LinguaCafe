@@ -1,7 +1,7 @@
 <template>
     <div 
         class="text-block w-100 overflow-x-hidden" 
-        @mousemove="removePhraseHover"
+        @mousemove="removePhraseHover(); stopHoverTimeout();"
     >
         <template>
             <template v-for="(word, wordIndex) in words"><!--
@@ -40,7 +40,6 @@
                     @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
                     @touchend.stop="finishSelection($event)"
                     @mouseup.stop="finishSelection($event)"
-                    @mouseleave="stopHoverTimeout"
                 ><!--
                     --><template v-if="language == 'japanese'"><!--
                         --><ruby class="rubyword" :wordindex="wordIndex"><!--
