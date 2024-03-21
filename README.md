@@ -67,7 +67,7 @@ DB_PASSWORD="linguacafe"
 
 Run the remaining commands:
 ```
-chmod 777 -R ./ && docker compose up -d
+chmod -R 777 ./ && docker compose up -d
 ```
 
 ##### Windows:
