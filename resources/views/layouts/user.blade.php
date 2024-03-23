@@ -2,7 +2,6 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <link href="/css/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     @if ($theme === 'dark')
@@ -16,14 +15,14 @@
 
     <title>LinguaCafe</title>
 
-    <script src="{{ mix('js/app.js') }}" defer></script>
+    <script src="{{ mix('vue3/app.js') }}" defer></script>
     <script src="/js/dmak/raphael.js"></script>
     <script src="/js/dmak/dmak.js"></script>
     <script src="/js/dmak/dmakLoader.js"></script>
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     
 
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="vue3/app.css" rel="stylesheet">
     @yield('header')
 </head>
 <body><!--

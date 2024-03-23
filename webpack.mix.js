@@ -11,9 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js('resources/vue3/app.js', 'public/vue3')
     .vue()
-    .sass('resources/sass/app.scss', 'public/css')
+    .css('resources/vue3/app.css', 'public/vue3')
     .browserSync({
         proxy: 'lingua.cafe',
         host: 'lingua.cafe',

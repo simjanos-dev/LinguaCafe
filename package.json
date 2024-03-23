@@ -10,6 +10,7 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "autoprefixer": "^10.4.19",
         "axios": "^0.21.1",
         "bootstrap": "^4.6.0",
         "browser-sync": "^2.27.10",
@@ -20,20 +21,19 @@
         "lodash": "^4.17.19",
         "moment": "2.29.1",
         "popper.js": "^1.16.1",
-        "postcss": "^8.1.14",
+        "postcss": "^8.4.38",
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.55.0",
         "sass-loader": "^11.1.1",
-        "vue": "^2.6.12",
-        "vue-loader": "^15.9.8",
+        "tailwindcss": "^3.4.1",
+        "vue-loader": "^16.8.3",
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@mdi/font": "^7.4.47",
         "@popperjs/core": "^2.11.6",
-        "vue-cookie": "^1.1.4",
-        "vue-router": "3.6.5",
-        "vue2-circle-progress": "1.2.3",
-        "vuetify": "^2.6.12",
-        "@mdi/font": "^7.4.47"
+        "primevue": "^3.50.0",
+        "vue": "^3.2.37",
+        "vue-cookie": "^1.1.4"
     }
 }
