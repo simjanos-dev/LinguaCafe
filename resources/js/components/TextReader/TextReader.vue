@@ -197,6 +197,7 @@
                     mediaControlsVisible: true,
                     vocabularySidebar: true,
                     vocabularyHoverBox: true,
+                    vocabularyHoverBoxSearch: true,
                     vocabularyHoverBoxDelay: 300,
                     autoHighlightWords: true
                 },

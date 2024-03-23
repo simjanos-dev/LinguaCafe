@@ -98,7 +98,9 @@ Vue.component('vocabulary-import-dialog', VocabularyImportDialog);
 
 // review
 import ReviewHotkeyInformationDialog from './components/Review/ReviewHotkeyInformationDialog';
+import ReviewSettings from './components/Review/ReviewSettings';
 Vue.component('review-hotkey-information-dialog', ReviewHotkeyInformationDialog);
+Vue.component('review-settings', ReviewSettings);
 
 // dialogs
 import ErrorDialog from './components/Dialogs/ErrorDialog';

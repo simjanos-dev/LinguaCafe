@@ -12,6 +12,14 @@
         <review-hotkey-information-dialog
             v-model="hotkeyDialog"
         ></review-hotkey-information-dialog>
+
+        <!-- Settings -->
+        <review-settings
+            v-show="settingsDialog"
+            v-model="settingsDialog"
+            ref="reviewSettings"
+            @changed="updateSettings"
+        ></review-settings>
         
         <!-- Review finished box -->
         <v-card 
@@ -98,11 +106,12 @@
             
             <!-- Toolbar -->
             <div id="toolbar">
-                <v-btn title="Fullscreen" icon class="my-2" @click="fullscreen" v-if="!settings.fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
-                <v-btn title="Exit fullscreen" icon class="my-2" @click="exitFullscreen" v-if="settings.fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
-                <v-btn title="Toggle example sentence mode" icon class="my-2" @click="settings.sentenceMode = !settings.sentenceMode; saveSettings();"><v-icon :color="settings.sentenceMode ? 'primary' : ''">mdi-card-text</v-icon></v-btn>
-                <v-btn title="Increase font size" icon class="my-2" @click="settings.fontSize ++; saveSettings();"><v-icon>mdi-magnify-plus</v-icon></v-btn>
-                <v-btn title="Decrease font size" icon class="my-2" @click="settings.fontSize --; saveSettings();"><v-icon>mdi-magnify-minus</v-icon></v-btn>
+                <v-btn title="Fullscreen" icon class="my-2" @click="openFullscreen" v-if="!fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
+                <v-btn title="Exit fullscreen" icon class="my-2" @click="exitFullscreen" v-if="fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
+                <v-btn title="Review settings" icon @click="settingsDialog = true;"><v-icon>mdi-cog</v-icon></v-btn>
+                <v-btn title="Toggle example sentence mode" icon class="my-2" @click="settings.reviewSentenceMode = !settings.reviewSentenceMode; saveSettings();"><v-icon :color="settings.reviewSentenceMode ? 'primary' : ''">mdi-card-text</v-icon></v-btn>
+                <v-btn title="Increase font size" icon class="my-2" @click="increaseFontSize"><v-icon>mdi-magnify-plus</v-icon></v-btn>
+                <v-btn title="Decrease font size" icon class="my-2" @click="decreaseFontSize"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                 <v-btn title="Show hotkey information" icon class="my-2" @click="hotkeyDialog = !hotkeyDialog;"><v-icon>mdi-keyboard-outline</v-icon></v-btn>
             </div>
 
@@ -120,25 +129,28 @@
                         <!-- Word review -->
                         <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                             <!-- Example sentence mode -->
-                            <div v-show="settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <div v-show="settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}<hr>
 
                                 <text-block-group
                                     ref="textBlock"
                                     :theme="theme"
-                                    :fullscreen="settings.fullscreen"
+                                    :fullscreen="fullscreen"
                                     :_text="exampleSentence"
                                     :language="language"
                                     :highlight-words="true"
                                     :plain-text-mode="false"
-                                    :font-size="settings.fontSize"
                                     :line-spacing="0"
+                                    :font-size="settings.fontSize"
+                                    :vocabulary-hover-box="settings.vocabularyHoverBox"
+                                    :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
+                                    :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
                                 ></text-block-group>
                             </div>
                             
                             <!-- Single word  mode -->
-                            <div class="single-word" v-if="!settings.sentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <div class="single-word" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].word }}
                             </div>
@@ -156,12 +168,12 @@
                                 </template>
 
                                 <!-- Example sentence mode -->
-                                <hr v-if="settings.sentenceMode">
-                                <div v-show="settings.sentenceMode">
+                                <hr v-if="settings.reviewSentenceMode">
+                                <div v-show="settings.reviewSentenceMode">
                                     <text-block-group
                                         ref="textBlock"
                                         :theme="theme"
-                                        :fullscreen="settings.fullscreen"
+                                        :fullscreen="fullscreen"
                                         :_text="exampleSentence"
                                         :language="language"
                                         :font-size="settings.fontSize"
@@ -256,12 +268,16 @@
                 intoTheCorrectDeckAnimation: false,
                 backgroundColor: this.$vuetify.theme.currentTheme.foreground,
                 newCardAnimation: false,
+                settingsDialog: false,
                 settings: {
                     fontSize: 20,
-                    sentenceMode: false,
-                    transitionDuration: this.$cookie.get('theme') === 'eink' ? 0 : 400,
-                    fullscreen: false,
+                    reviewSentenceMode: false,
+                    vocabularyHoverBox: true,
+                    vocabularyHoverBoxSearch: true,
+                    vocabularyHoverBoxDelay: 300,
                 },
+                transitionDuration: this.$cookie.get('theme') === 'eink' ? 0 : 400,
+                fullscreen: false,
                 currentReviewIndex: -1,
                 reviews: [],
                 totalReviews: [],
@@ -302,19 +318,6 @@
                 this.totalReviews = data.reviews.length;
                 this.language = data.language;
 
-                this.settings.fontSize =  parseInt(this.$cookie.get('review-font-size'));
-                this.settings.sentenceMode =  this.$cookie.get('sentence-mode') == 'true';
-
-                if (this.$cookie.get('review-font-size') === null) {
-                    this.settings.fontSize =  20;
-                }
-
-                if (this.settings.sentenceMode === null) {
-                    this.settings.sentenceMode =  false;
-                }
-
-                this.saveSettings();
-
                 if (this.reviews.length) {
                     this.$nextTick(() => {
                         this.next();
@@ -346,18 +349,34 @@
                     this.missed();
                 }
             },
-            fullscreen() {
+            openFullscreen() {
                 if (document.fullscreenEnabled) {
                     document.getElementById('review-box').requestFullscreen();
-                    this.settings.fullscreen = true;
+                    this.fullscreen = true;
                 }
             },
             exitFullscreen() {
                 document.exitFullscreen();
-                this.settings.fullscreen = false;
+                this.fullscreen = false;
             },
             updateFullscreen: function() {
-                this.settings.fullscreen = document.fullscreenElement !== null;
+                this.fullscreen = document.fullscreenElement !== null;
+            },
+            updateSettings(settings) {
+                this.settings = settings;
+                this.$forceUpdate();
+            },
+            saveSettings() {
+                this.$refs.reviewSettings.changeSetting('fontSize', this.settings.fontSize);
+                this.$refs.reviewSettings.changeSetting('reviewSentenceMode', this.settings.reviewSentenceMode, true);
+            },
+            increaseFontSize() {
+                this.settings.fontSize ++; 
+                this.saveSettings();
+            },
+            decreaseFontSize() {
+                this.settings.fontSize --; 
+                this.saveSettings();
             },
             reveal() {
                 if (this.intoTheCorrectDeckAnimation || this.backToDeckAnimation || this.newCardAnimation) {
@@ -373,7 +392,7 @@
                         '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
                         '«', '»', "'", '’', '–', 'NEWLINE'];
 
-                if (!this.settings.sentenceMode) {
+                if (!this.settings.reviewSentenceMode) {
                     if (this.reviews[this.currentReviewIndex].type == 'word') {
                         this.readWords ++;
                     } else {
@@ -431,7 +450,7 @@
                             this.finish();
                         } else {
                             this.reviews.splice(this.currentReviewIndex, 1)[0];
-                            setTimeout(this.next, this.settings.transitionDuration);
+                            setTimeout(this.next, this.transitionDuration);
                         }
                     });
                 } else {
@@ -439,7 +458,7 @@
                         this.finish();
                     } else {
                         this.reviews.splice(this.currentReviewIndex, 1)[0];
-                        setTimeout(this.next, this.settings.transitionDuration);
+                        setTimeout(this.next, this.transitionDuration);
                     }
                 }
             },
@@ -476,10 +495,10 @@
 
                 if (!this.practiceMode) {
                     axios.post(url, saveData).then(() => {
-                        setTimeout(this.next, this.settings.transitionDuration);
+                        setTimeout(this.next, this.transitionDuration);
                     });
                 } else {
-                    setTimeout(this.next, this.settings.transitionDuration);
+                    setTimeout(this.next, this.transitionDuration);
                 }
             },
             next() {
@@ -491,7 +510,7 @@
                 setTimeout(() => {
                     this.$refs.textBlock.unselectAllWords(true);
                     this.newCardAnimation = false;
-                }, this.settings.transitionDuration);
+                }, this.transitionDuration);
 
                 this.finishedReviews ++;
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
@@ -525,18 +544,6 @@
                 }).then(() => {
                     this.readWords = 0;
                 });
-            },
-            saveSettings() {
-                if (this.settings.fontSize < 12) {
-                    this.settings.fontSize = 12;
-                }
-
-                if (this.settings.fontSize > 30) {
-                    this.settings.fontSize = 30;
-                }
-
-                this.$cookie.set('review-font-size', this.settings.fontSize, 3650);
-                this.$cookie.set('sentence-mode', this.settings.sentenceMode, 3650);
             },
             finish() {
                 this.finished = true;

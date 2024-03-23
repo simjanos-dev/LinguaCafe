@@ -218,7 +218,7 @@
                     </v-col>
                 </v-row>
                 
-                <!-- Vocabulary box section-->
+                <!-- Vocabulary hover box section-->
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Vocabulary hover box
                 </div>
