@@ -7,6 +7,10 @@
         color: var(--v-text-base);
     }
 
+    #website-import-input {
+        min-height: calc(100vh - 500px);
+    }
+
     .plain-text-source {
         height: 100%;
 

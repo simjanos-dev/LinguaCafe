@@ -15,13 +15,20 @@
         ></v-text-field>
 
         <!-- Website text -->
-        <label class="font-weight-bold" v-if="text.length || loading">Website text</label>
-        <div 
-            v-if="text.length"
-            id="website-text"
-            class="rounded-xl pa-6"
-            v-html="displayedText"
-        ></div>
+        <v-textarea
+            v-if="websiteRequestStatus == 'success'"
+            id="website-import-input"
+            v-model="text"
+            filled
+            dense
+            rounded
+            persistent-hint
+            placeholder="Website text"
+            maxlength="250000"
+            counter="250000"
+            no-resize
+            @keyup="textChanged"
+        ></v-textarea>
 
         <!-- Website text loading -->
         <div class="d-flex justify-center">
@@ -50,7 +57,6 @@
                 loading: false,
                 websiteRequestStatus: '',
                 text: '',
-                displayedText: '',
                 url: '',
                 rules: {
                     url: (value) => {
@@ -81,7 +87,6 @@
                         url: this.url,
                     }).then((response) => {
                         this.text = response.data;
-                        this.displayedText = this.text.replace(/(?:\r\n|\r|\n)/g, '<br>');
                         this.textChanged();
                         this.loading = false;
                         this.websiteRequestStatus = 'success';
@@ -91,12 +96,11 @@
                     });;
                 } else {
                     this.text = '';
-                    this.displayedText = '',
                     this.textChanged();
                 }
             },
             textChanged() {
-                if (!this.$refs.url.validate()) {
+                if (!this.$refs.url.validate() || !this.text.length) {
                     this.$emit('text-selected', {
                         text: '',
                         isImportSourceValid: false

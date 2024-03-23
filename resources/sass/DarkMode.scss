@@ -14,6 +14,12 @@
     color: var(--v-textDark-base);
 }
 
+
+// text area
+#app.dark textarea {
+    color: var(--v-text-base);
+}
+
 // select text color
 #app.dark .theme--dark.v-select .v-select__selections {
     color: var(--v-text-base);
