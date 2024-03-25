@@ -254,6 +254,24 @@ License: License: GNU General Public License 3
 
 [Pykakasi license](https://www.gnu.org/licenses/gpl-3.0.html)
 
+**Pinyin**
+
+License: MIT license
+
+[Pinyin website](https://pinyin.lxyu.net/)
+
+[Pinyin github](https://github.com/lxyu/pinyin)
+
+[Pinyin license](https://github.com/lxyu/pinyin?tab=MIT-1-ov-file#readme)
+
+**Newspaper3k**
+
+License: MIT, Apache-2.0
+
+[Newspaper3k github](https://github.com/codelucas/newspaper)
+
+[Newspaper3k license](https://github.com/codelucas/newspaper/blob/master/LICENSE)
+
 **EbookLib**
 
 License: GNU Affero General Public License v3.0
