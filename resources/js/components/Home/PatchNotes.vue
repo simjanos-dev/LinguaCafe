@@ -16,7 +16,16 @@
                         Added settings for the review page.
                     </li>
                     <li>
-                        Added option for hover vocabulary on the review page.
+                        Added option for the hover vocabulary on the review page.
+                    </li>
+                    <li>
+                        Added dictionary edit dialog for the admin page.
+                    </li>
+                    <li>
+                        DeepL translator's target language now can be changed.
+                    </li>
+                    <li>
+                        Added support for every dict cc dictionary. Now you can import multiple of them for the same language.
                     </li>
                 </ul>
 

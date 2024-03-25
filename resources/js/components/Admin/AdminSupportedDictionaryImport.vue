@@ -195,7 +195,8 @@
                 }, this.dictionary.firstUpdateInterval);
 
                 axios.post('/dictionaries/import', {
-                    'dictionaryLanguage': this.$props.dictionary.source_language,
+                    'dictionarySourceLanguage': this.$props.dictionary.source_language,
+                    'dictionaryTargetLanguage': this.$props.dictionary.target_language,
                     'dictionaryName': this.$props.dictionary.name,
                     'dictionaryDatabaseName': this.$props.dictionary.databaseName,
                     'dictionaryExpectedRecordCount': this.$props.dictionary.expectedRecordCount,

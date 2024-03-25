@@ -23,29 +23,42 @@ return [
         ],
 
         /*
-            List of languages that can be selected for target language. These should also have flag images.
+            List of languages that can be selected for target language. These should also have flag images. 
+            
+            Currently this list contain these languages:
+            - dict cc supported languages
+            - deepl supported languages
+            - linguacafe supported languages
+
+            Any additional language can, and should be added to this list, together with it's flag.
         */
         'supported_target_languages' => [
-            'Chinese',
+            'Albanian',
             'Arabic',
+            'Bosnian',
             'Brazilian portuguese',
             'Bulgarian',
             'Chinese',
+            'Chinese',
+            'Croatian',
             'Czech',
             'Czech',
             'Danish',
             'Dutch',
             'English',
+            'Esperanto',
             'Estonian',
             'Finnish',
             'French',
             'German',
             'Greek',
             'Hungarian',
+            'Icelandic',
             'Indonesian',
             'Italian',
             'Japanese',
             'Korean',
+            'Latin',
             'Latvian',
             'Lithuanian',
             'Norwegian',
@@ -53,6 +66,7 @@ return [
             'Portuguese',
             'Romanian',
             'Russian',
+            'Serbian',
             'Slovak',
             'Slovenian',
             'Spanish',
@@ -101,7 +115,7 @@ return [
 
         /*
             A list of supported languages by Newspaper3k python library. This library 
-            is used for importing websites, and also RSS feed.
+            is used for importing websites, and also RSS feed. This should not be modified.
         */
         'website_import_supported_languages' => [
             'Arabic',
@@ -186,7 +200,7 @@ return [
 
         /*
             These are language codes that Jellyfin uses for subtitles. You can find out what
-            a jellyfin language code is by going to the media player, and starting a video
+            a jellyfin language code is by going to the jellyfin subtitle import, and starting a video
             with a new language subtitle. If that new language is not added here, you will see
             a javascript log about the unsupported languages code.
         */
@@ -214,37 +228,70 @@ return [
             database tables for dictionaries.
         */
         'database_name_language_codes' => [
-            'japanese' => 'jp',
-            'norwegian' => 'no',
-            'german' => 'de',
-            'spanish' => 'es',
+            'albanian' => 'sq',
+            'bosnian' => 'bs',
+            'bulgarian' => 'bg',
             'chinese' => 'zh',
+            'croatian' => 'hr',
+            'czech' => 'cs',
+            'danish' => 'da',
             'dutch' => 'nl',
+            'english' => 'en',
+            'esperanto' => 'eo',
             'finnish' => 'fi',
             'french' => 'fr',
+            'german' => 'de',
+            'greek' => 'el',
+            'hungarian' => 'hu',
+            'icelandic' => 'is',
             'italian' => 'it',
+            'japanese' => 'jp',
             'korean' => 'ko',
-            'swedish' => 'sv',
-            'ukrainian' => 'ua',
+            'latin' => 'la',
+            'norwegian' => 'no',
+            'polish' => 'pl',
+            'portuguese' => 'pt',
+            'romanian' => 'ro',
             'russian' => 'ru',
+            'serbian' => 'sr',
+            'slovak' => 'sk',
+            'spanish' => 'es',
+            'swedish' => 'sv',
+            'turkish' => 'tr',
+            'ukrainian' => 'ua',
             'welsh' => 'cy',
-            'czech' => 'cs',
 
-            'Japanese' => 'jp',
-            'Norwegian' => 'no',
-            'German' => 'de',
-            'Spanish' => 'es',
+            'Albanian' => 'sq',
+            'Bosnian' => 'bs',
             'Chinese' => 'zh',
+            'Croatian' => 'hr',
+            'Czech' => 'cs',
+            'Danish' => 'da',
             'Dutch' => 'nl',
+            'English' => 'en',
+            'Esperanto' => 'eo',
             'Finnish' => 'fi',
             'French' => 'fr',
+            'German' => 'de',
+            'Greek' => 'el',
+            'Hungarian' => 'hu',
+            'Icelandic' => 'is',
             'Italian' => 'it',
+            'Japanese' => 'jp',
             'Korean' => 'ko',
-            'Swedish' => 'sv',
-            'Ukrainian' => 'ua',
+            'Latin' => 'la',
+            'Norwegian' => 'no',
+            'Polish' => 'pl',
+            'Portuguese' => 'pt',
+            'Romanian' => 'ro',
             'Russian' => 'ru',
+            'Serbian' => 'sr',
+            'Slovak' => 'sk',
+            'Spanish' => 'es',
+            'Swedish' => 'sv',
+            'turkish' => 'tr',
+            'Ukrainian' => 'ua',
             'Welsh' => 'cy',
-            'Czech' => 'cs',
         ],
 
         /*
@@ -254,16 +301,34 @@ return [
             dict cc dictionary files.
         */
         'dict_cc_language_codes' => [
-            'NO' => 'norwegian',
+            'BG' => 'bulgarian',
+            'BS' => 'bosnian',
             'CS' => 'czech',
+            'DA' => 'danish',
             'DE' => 'german',
-            'NL' => 'dutch',
+            'EL' => 'greek',
+            'EN' => 'english',
+            'EO' => 'esperanto',
             'ES' => 'spanish',
             'FI' => 'finnish',
             'FR' => 'french',
+            'HR' => 'croatian',
+            'HU' => 'hungarian',
+            'IS' => 'icelandic',
             'IT' => 'italian',
-            'SV' => 'swedish',
+            'LA' => 'latin',
+            'NL' => 'dutch',
+            'NO' => 'norwegian',
+            'PL' => 'polish',
+            'PT' => 'portuguese',
+            'RO' => 'romanian',
             'RU' => 'russian',
+            'RU' => 'russian',
+            'SK' => 'slovak',
+            'SQ' => 'albanian',
+            'SR' => 'serbian',
+            'SV' => 'swedish',
+            'TR' => 'turkish',
         ],
 
         // ISO_639-1 codes, with a few exceptions (en-GB)

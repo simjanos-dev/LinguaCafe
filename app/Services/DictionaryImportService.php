@@ -25,7 +25,7 @@ class DictionaryImportService {
         Scans the /storage/app/dictionaries folder, 
         and returns a list of importable dictionaries.
     */
-    public function getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes) {
+    public function getImportableDictionaryList($supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes) {
         $dictionariesFound = [];
         $files = Storage::files('dictionaries');
 
@@ -171,9 +171,13 @@ class DictionaryImportService {
                     if (count($words) > 1) {
                         $fileLanguage = explode('-', $words[1]);
 
-                        // if language code does not exist in config file, 
-                        // skip this file
-                        if (!isset($dictCcLanguageCodes[$fileLanguage[0]])) {
+                        // skip not supported languages
+                        if (
+                            !isset($dictCcLanguageCodes[$fileLanguage[0]]) || 
+                            !isset($dictCcLanguageCodes[$fileLanguage[1]]) || 
+                            !in_array(ucfirst($dictCcLanguageCodes[$fileLanguage[0]]), $supportedSourceLanguages, true)
+                            
+                        ) {
                             continue;
                         }
                     }
@@ -185,10 +189,10 @@ class DictionaryImportService {
 
             // add the found dictionary to the list
             $dictionary = new \stdClass();
-            $dictionary->name = 'dict cc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]];
-            $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_dict_cc';
+            $dictionary->name = 'dictcc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '-'. $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[1]]];
+            $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[1]]] . '_dict_cc';
             $dictionary->source_language = $dictCcLanguageCodes[$fileLanguage[0]];
-            $dictionary->target_language = 'english';
+            $dictionary->target_language = $dictCcLanguageCodes[$fileLanguage[1]];
             $dictionary->color = '#FF981B'; 
             $dictionary->expectedRecordCount = count(file(Storage::path($file)));
             $dictionary->firstUpdateInterval = 3000;
@@ -467,7 +471,7 @@ class DictionaryImportService {
     /*
         Imports a dict cc dictionary file into the database.
     */
-    public function importDictCc($name, $language, $fileName, $databaseName) {
+    public function importDictCc($name, $sourceLanguage, $targetLanguage, $fileName, $databaseName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -483,8 +487,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'source_language' => $language,
-                'target_language' => 'english',
+                'source_language' => $sourceLanguage,
+                'target_language' => $targetLanguage,
                 'color' => '#FF981B',
                 'imported' => true,
                 'enabled' => true

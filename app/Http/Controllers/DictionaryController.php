@@ -607,9 +607,10 @@ class DictionaryController extends Controller
         
         $dictCcLanguageCodes = config('linguacafe.languages.dict_cc_language_codes');
         $databaseLanguageCodes = config('linguacafe.languages.database_name_language_codes');
+        $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
         
         $dictionaryImportService = new DictionaryImportService();
-        $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes);
+        $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
         
         return json_encode($dictionariesFound);
     }
@@ -618,7 +619,8 @@ class DictionaryController extends Controller
         set_time_limit(2400);
         $dictionaryName = $request->post('dictionaryName');
         $dictionaryFileName = $request->post('dictionaryFileName');
-        $dictionaryLanguage = $request->post('dictionaryLanguage');
+        $dictionarySourceLanguage = $request->post('dictionarySourceLanguage');
+        $dictionaryTargetLanguage = $request->post('dictionaryTargetLanguage');
         $dictionaryDatabaseName = $request->post('dictionaryDatabaseName');
 
         // import jmdict files
@@ -683,12 +685,13 @@ class DictionaryController extends Controller
         
 
         // import dict cc files
-        if (str_contains($dictionaryName, 'dict cc')) {
+        if (str_contains($dictionaryName, 'dictcc')) {
             try {
                 $dictionaryImportService = new DictionaryImportService();
                 $dictionaryImportService->importDictCc(
                     $dictionaryName, 
-                    $dictionaryLanguage, 
+                    $dictionarySourceLanguage, 
+                    $dictionaryTargetLanguage,
                     $dictionaryFileName, 
                     $dictionaryDatabaseName
                 );
