@@ -76,7 +76,7 @@
                             <div class="language d-flex align-center">
                                 <v-img 
                                     class="border" 
-                                    :src="'/images/flags/' + dictionary.language + '.png'" 
+                                    :src="'/images/flags/' + dictionary.source_language + '.png'" 
                                     max-width="43" 
                                     height="28"
                                 ></v-img> 

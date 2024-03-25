@@ -38,7 +38,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'JMDict';
             $dictionary->databaseName = 'dict_jp_jmdict';
-            $dictionary->language = 'japanese';
+            $dictionary->source_language = 'japanese';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#74E39A'; 
             $dictionary->expectedRecordCount = 207690;
             $dictionary->firstUpdateInterval = 25000;
@@ -66,7 +67,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'cc-cedict';
             $dictionary->databaseName = 'dict_zh_cedict';
-            $dictionary->language = 'chinese';
+            $dictionary->source_language = 'chinese';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#EF4556'; 
             $dictionary->expectedRecordCount = 0;
             $dictionary->firstUpdateInterval = 25000;
@@ -102,7 +104,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'kengdic';
             $dictionary->databaseName = 'dict_ko_kengdic';
-            $dictionary->language = 'korean';
+            $dictionary->source_language = 'korean';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#DDBFE4'; 
             $dictionary->expectedRecordCount =  117509;
             $dictionary->firstUpdateInterval = 25000;
@@ -124,7 +127,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'eurfa';
             $dictionary->databaseName = 'dict_cy_eurfa';
-            $dictionary->language = 'welsh';
+            $dictionary->source_language = 'welsh';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#32DB4D'; 
             $dictionary->expectedRecordCount =  210579 * 2;
             $dictionary->firstUpdateInterval = 25000;
@@ -183,7 +187,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'dict cc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]];
             $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_dict_cc';
-            $dictionary->language = $dictCcLanguageCodes[$fileLanguage[0]];
+            $dictionary->source_language = $dictCcLanguageCodes[$fileLanguage[0]];
+            $dictionary->target_language = 'english';
             $dictionary->color = '#FF981B'; 
             $dictionary->expectedRecordCount = count(file(Storage::path($file)));
             $dictionary->firstUpdateInterval = 3000;
@@ -227,7 +232,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'wiktionary ' . $databaseLanguageCodes[$language];
             $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$language] . '_wiktionary';
-            $dictionary->language = $language;
+            $dictionary->source_language = $language;
+            $dictionary->target_language = 'english';
             $dictionary->color = '#E9CDA0'; 
             $dictionary->expectedRecordCount = count(file(Storage::path($file)));
             $dictionary->firstUpdateInterval = 5000;
@@ -265,7 +271,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => 'chinese',
+                'source_language' => 'chinese',
+                'target_language' => 'english',
                 'color' => '#EF4556',
                 'imported' => true,
                 'enabled' => true
@@ -339,7 +346,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => 'korean',
+                'source_language' => 'korean',
+                'target_language' => 'english',
                 'color' => '#DDBFE4',
                 'imported' => true,
                 'enabled' => true
@@ -411,7 +419,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => 'welsh',
+                'source_language' => 'welsh',
+                'target_language' => 'english',
                 'color' => '#32DB4D',
                 'imported' => true,
                 'enabled' => true
@@ -474,7 +483,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => $language,
+                'source_language' => $language,
+                'target_language' => 'english',
                 'color' => '#FF981B',
                 'imported' => true,
                 'enabled' => true
@@ -540,7 +550,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => $language,
+                'source_language' => $language,
+                'target_language' => 'english',
                 'color' => '#E9CDA0',
                 'imported' => true,
                 'enabled' => true
