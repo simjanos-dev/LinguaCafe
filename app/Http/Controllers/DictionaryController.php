@@ -639,11 +639,11 @@ class DictionaryController extends Controller
             return 'success';
         }
 
-        // import cc cedict file
-        if ($dictionaryName == 'cc-cedict') {
+        // import cc cedict or HanDeDict file
+        if ($dictionaryName == 'cc-cedict' || $dictionaryName == 'HanDeDict') {
             try {
                 $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importCeDict($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+                $dictionaryImportService->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
             } catch (\Throwable $t) {
                 return 'error';
             } catch (\Exception $e) {

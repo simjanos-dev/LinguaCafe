@@ -18,23 +18,23 @@ You can read about all the features of LinguaCafe in this [overview](https://sim
 Lemma: a dictionary form of a word (E.g: worked -> to work).  
 Gender tagging: extending nouns' lemma with additional information (E.g: hus -> et hus).
 
-| Flag                                                          | Language  | DeepL   | Lemma generation | Gender tagging | Dictionaries          |
-|:-------------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|-----------------------|
-| <img src='public/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict |
-| <img src='public/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc               |
-| <img src='public/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc   |
-| <img src='public/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary    |
-| <img src='public/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic   |
-| <img src='public/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc   |
-| <img src='public/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc               |
-| <img src='public/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary            |
-| <img src='public/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa     |
+| Flag                                                          | Language  | DeepL   | Lemma generation | Gender tagging | Dictionaries                    |
+|:-------------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|----------------------------|
+| <img src='public/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict           |
+| <img src='public/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc                         |
+| <img src='public/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc, handedict  |
+| <img src='public/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary              |
+| <img src='public/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic             |
+| <img src='public/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc             |
+| <img src='public/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc                         |
+| <img src='public/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary                      |
+| <img src='public/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa               |
 
 Chinese: Mandarin language with simplified Chinese characters.
 
@@ -128,6 +128,11 @@ All these 4 files are required to import JMDict:
 This dictionary contains kanji and radicals for the Japanese language. Some Japanese features do not work without importing this dictionary.
 
 #### CC-CEDICT
+Languages: Chinese
+
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
+
+#### HanDeDict
 Languages: Chinese
 
 Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
@@ -306,6 +311,13 @@ License: Creative Commons Attribution-Share Alike 3.0 License
 
 [CC-CEDICT website](https://cc-cedict.org/wiki/)
 [CC-CEDICT license](https://creativecommons.org/licenses/by-sa/3.0/)
+&nbsp;
+
+**HanDeDict dictionary file**  
+License: Creative Commons Attribution-ShareAlike 2.0 Germany License
+
+[HanDeDict website](http://www.handedict.de/)
+[HanDeDict license](https://creativecommons.org/licenses/by-sa/2.0/de/)
 &nbsp;
 
 **Kengdic dictionary file**  

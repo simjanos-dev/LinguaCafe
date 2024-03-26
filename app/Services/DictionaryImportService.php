@@ -99,6 +99,32 @@ class DictionaryImportService {
             $dictionariesFound[] = $dictionary;
         }
 
+        // HanDeDict dictionary
+        if (Storage::exists('dictionaries/handedict.u8')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'HanDeDict';
+            $dictionary->databaseName = 'dict_zh_handedict';
+            $dictionary->source_language = 'chinese';
+            $dictionary->target_language = 'german';
+            $dictionary->color = '#EF4556'; 
+            $dictionary->expectedRecordCount = 0;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'handedict.u8';
+            $dictionary->imported = false;
+
+            // check if cc cedict is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // check record count
+            $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path('dictionaries/handedict.u8'));
+            
+            // add cc cedict to the list
+            $dictionariesFound[] = $dictionary;
+        }
+
         // kengdic dictionary
         if (Storage::exists('dictionaries/kengdic.tsv')) {
             $dictionary = new \stdClass();
@@ -194,7 +220,7 @@ class DictionaryImportService {
             $dictionary->source_language = $dictCcLanguageCodes[$fileLanguage[0]];
             $dictionary->target_language = $dictCcLanguageCodes[$fileLanguage[1]];
             $dictionary->color = '#FF981B'; 
-            $dictionary->expectedRecordCount = count(file(Storage::path($file)));
+            $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path($file));
             $dictionary->firstUpdateInterval = 3000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = pathinfo($file, PATHINFO_BASENAME);
@@ -256,10 +282,31 @@ class DictionaryImportService {
         return $dictionariesFound;
     }
 
+    private function getFileLineCount($fileName) {
+        $lineCount =0;
+        $file = fopen($fileName, 'r');
+        
+        if ($file) {
+            while(!feof($file)){
+                $content = fgets($file);
+                if($content) {
+                    $lineCount ++;
+                }
+            }
+        } else {
+            return -1;
+        }
+
+        fclose($file);
+
+        return $lineCount;
+    }
+
     /*
-        Imports a cc-cedict dictionary file into the database.
+        Imports a cc-cedict or HanDeDict dictionary file into the database.
+        They are in the same format, HanDeDict is just translated to German.
     */
-    public function importCeDict($name, $databaseName, $fileName) {
+    public function importCeDictOrHanDeDict($name, $targetLanguage, $databaseName, $fileName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -276,7 +323,7 @@ class DictionaryImportService {
                 'name' => $name,
                 'database_table_name' => $databaseName,
                 'source_language' => 'chinese',
-                'target_language' => 'english',
+                'target_language' => $targetLanguage,
                 'color' => '#EF4556',
                 'imported' => true,
                 'enabled' => true

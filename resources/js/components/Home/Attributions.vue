@@ -94,6 +94,15 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">HanDeDict</v-card-title>
+            <v-card-text>
+                License: Creative Commons Attribution-ShareAlike 2.0 Germany License<br><br>
+                <a href="http://www.handedict.de/">HanDeDict website.</a><br>
+                <a href="https://creativecommons.org/licenses/by-sa/2.0/de/">HanDeDict license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
             <v-card-title class="pb-0">Kengdic dictionary file</v-card-title>
             <v-card-text>
                 License: GNU Library General Public License, version 2.0<br><br>

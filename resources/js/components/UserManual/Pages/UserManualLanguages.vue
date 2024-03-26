@@ -40,7 +40,7 @@
                     <td>&check;</td>
                     <td></td>
                     <td></td>
-                    <td>wiktionary, cc-cedict</td>
+                    <td>wiktionary, cc-cedict, handedict</td>
                 </tr>
 
                 <!-- Czech -->

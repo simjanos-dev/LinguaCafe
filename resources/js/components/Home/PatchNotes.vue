@@ -16,6 +16,9 @@
                         Added settings for the review page.
                     </li>
                     <li>
+                        Added support for HanDeDict dictionary.
+                    </li>
+                    <li>
                         Added option for the hover vocabulary on the review page.
                     </li>
                     <li>
