@@ -39,13 +39,19 @@
 
                 <!-- Sentence mode -->
                 <v-row>
-                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Sentence mode:</v-col>
-                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
-                        <v-switch
-                            color="primary"
+                    <v-col cols="4" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Sentence mode:</v-col>
+                    <v-col cols="8" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
                             v-model="settings.reviewSentenceMode"
+                            :items="sentenceModes"
+                            item-text="name"
+                            item-value="value"
+                            dense
+                            rounded
+                            filled
+                            hide-details
                             @change="saveSettings"
-                        ></v-switch>
+                        ></v-select>
                     </v-col>
                 </v-row>
 
@@ -129,6 +135,20 @@
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
                     reviewSentenceMode: 'review-sentence-mode',
                 },
+                sentenceModes: [
+                    {
+                        name: 'Disabled',
+                        value: 'disabled',
+                    },
+                    {
+                        name: 'Plain text',
+                        value: 'plain-text',
+                    },
+                    {
+                        name: 'Interactive text',
+                        value: 'interactive-text',
+                    },
+                ],
                 settings: {},
             }
         },
@@ -140,7 +160,8 @@
             this.loadSetting('vocabularyHoverBox', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
-            this.loadSetting('reviewSentenceMode', 'boolean', true);
+            this.loadSetting('reviewSentenceMode', 'string', 'plain-text');
+            
             this.settingsLoaded = true;
             this.saveSettings();
         },

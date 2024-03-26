@@ -13,19 +13,22 @@
                         Made text editable when importing a website.
                     </li>
                     <li>
-                        Added settings for the review page.
+                        Added settings dialog for the review page.
                     </li>
                     <li>
-                        Added support for HanDeDict dictionary.
+                        Expanded example sentence mode on the review page. Now it has 3 options: disabled, plain text and interactive text.
                     </li>
                     <li>
-                        Added option for the hover vocabulary on the review page.
+                        Added hover vocabulary on the review page.
                     </li>
                     <li>
                         Added dictionary edit dialog for the admin page.
                     </li>
                     <li>
                         DeepL translator's target language now can be changed.
+                    </li>
+                    <li>
+                        Added support for HanDeDict dictionary.
                     </li>
                     <li>
                         Added support for every dict cc dictionary. Now you can import multiple of them for the same language.

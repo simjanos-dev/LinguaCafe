@@ -109,7 +109,50 @@
                 <v-btn title="Fullscreen" icon class="my-2" @click="openFullscreen" v-if="!fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
                 <v-btn title="Exit fullscreen" icon class="my-2" @click="exitFullscreen" v-if="fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
                 <v-btn title="Review settings" icon @click="settingsDialog = true;"><v-icon>mdi-cog</v-icon></v-btn>
-                <v-btn title="Toggle example sentence mode" icon class="my-2" @click="settings.reviewSentenceMode = !settings.reviewSentenceMode; saveSettings();"><v-icon :color="settings.reviewSentenceMode ? 'primary' : ''">mdi-card-text</v-icon></v-btn>
+                
+                
+                <v-menu offset-y left class="rounded-lg">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            icon
+                            title="Example sentence mode"
+                            class="my-2"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            <v-icon>mdi-text-long</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-btn 
+                        class="menu-button justify-start" 
+                        tile 
+                        color="white"
+                        @click="settings.reviewSentenceMode = 'disabled'; saveSettings();"
+                    >
+                        <v-icon class="mr-1">mdi-close</v-icon>
+                        Disabled
+                        
+                    </v-btn>
+                    <v-btn 
+                        class="menu-button justify-start" 
+                        tile 
+                        color="white"
+                        @click="settings.reviewSentenceMode = 'plain-text'; saveSettings();"
+                    >
+                        <v-icon class="mr-1">mdi-text-long</v-icon>
+                        Plain text
+                    </v-btn>
+                    <v-btn 
+                        class="menu-button justify-start" 
+                        tile 
+                        color="white"
+                        @click="settings.reviewSentenceMode = 'interactive-text'; saveSettings();"
+                    >
+                        <v-icon class="mr-1">mdi-comment-text-outline</v-icon>
+                        Interactive text
+                    </v-btn>
+                </v-menu>
+                
                 <v-btn title="Increase font size" icon class="my-2" @click="increaseFontSize"><v-icon>mdi-magnify-plus</v-icon></v-btn>
                 <v-btn title="Decrease font size" icon class="my-2" @click="decreaseFontSize"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                 <v-btn title="Show hotkey information" icon class="my-2" @click="hotkeyDialog = !hotkeyDialog;"><v-icon>mdi-keyboard-outline</v-icon></v-btn>
@@ -123,121 +166,167 @@
                     'into-the-correct-deck-animation': intoTheCorrectDeckAnimation, 
                     'draw-new-card-animation': newCardAnimation
                 }">
-                <div id="review-card-content" class="vocab-box-area">
-                    <!-- Review card front -->
-                    <div id="review-card-front" class="rounded-lg border">
-                        <!-- Word review -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
-                            <!-- Example sentence mode -->
-                            <div v-show="settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
-                                {{ reviews[currentReviewIndex].word }}<hr>
-
-                                <text-block-group
-                                    ref="textBlock"
-                                    :theme="theme"
-                                    :fullscreen="fullscreen"
-                                    :_text="exampleSentence"
-                                    :language="language"
-                                    :highlight-words="true"
-                                    :plain-text-mode="false"
-                                    :line-spacing="0"
-                                    :font-size="settings.fontSize"
-                                    :vocabulary-hover-box="settings.vocabularyHoverBox"
-                                    :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
-                                    :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
-                                ></text-block-group>
-                            </div>
-                            
-                            <!-- Single word  mode -->
-                            <div class="single-word" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
-                                {{ reviews[currentReviewIndex].word }}
-                            </div>
-                        </template>
-
-                        <!-- Phrase review -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
-                            <!-- Phrase only mode -->
-                            <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="language == 'japanese' || language == 'chinese'">
-                                    {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
-                                </template>
-                                <template v-else>
-                                    {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
-                                </template>
-
+                <div class="vocab-box-area">
+                    <div id="review-card-content">
+                        <!-- Review card front -->
+                        <div id="review-card-front" class="rounded-lg border">
+                            <!-- Word review -->
+                            <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                                 <!-- Example sentence mode -->
-                                <hr v-if="settings.reviewSentenceMode">
-                                <div v-show="settings.reviewSentenceMode">
+                                <div :style="{'font-size': (settings.fontSize) + 'px'}">
+                                    <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                    {{ reviews[currentReviewIndex].word }}<hr>
+
+                                    <!-- Example sentence interactive text mode -->
                                     <text-block-group
+                                        v-if="!revealed && settings.reviewSentenceMode === 'interactive-text'"
                                         ref="textBlock"
                                         :theme="theme"
                                         :fullscreen="fullscreen"
                                         :_text="exampleSentence"
                                         :language="language"
+                                        :highlight-words="true"
+                                        :plain-text-mode="false"
+                                        :line-spacing="0"
                                         :font-size="settings.fontSize"
-                                    ></text-block-group>
+                                        :vocabulary-hover-box="settings.vocabularyHoverBox"
+                                        :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
+                                        :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                                    />
+
+                                    <!-- Example sentence plain text mode -->
+                                    <template v-if="settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
+                                        <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                            <span 
+                                                v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
+                                                :class="{'mr-2': word.spaceAfter}"
+                                            >{{ word.word }}</span>
+                                        </div>
+                                    </template>
                                 </div>
-                            </div>
-                        </template>
+                                
+                                <!-- Single word  mode -->
+                                <div class="single-word" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                    <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                    {{ reviews[currentReviewIndex].word }}
+                                </div>
+                            </template>
 
-                        <!-- Reveal button -->
-                        <div class="review-button-box">
-                            <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+                            <!-- Phrase review -->
+                            <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
+                                <!-- Phrase only mode -->
+                                <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                    <template v-if="language == 'japanese' || language == 'chinese'">
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                                    </template>
+                                    <template v-else>
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
+                                    </template>
+
+                                    <!-- Example sentence interactive text mode -->
+                                    <hr v-if="settings.reviewSentenceMode !== 'disabled'">
+                                    <text-block-group
+                                        v-if="!revealed && settings.reviewSentenceMode === 'interactive-text'"
+                                        ref="textBlock"
+                                        :theme="theme"
+                                        :fullscreen="fullscreen"
+                                        :_text="exampleSentence"
+                                        :language="language"
+                                        :highlight-words="true"
+                                        :plain-text-mode="false"
+                                        :line-spacing="0"
+                                        :font-size="settings.fontSize"
+                                        :vocabulary-hover-box="settings.vocabularyHoverBox"
+                                        :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
+                                        :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                                    />
+
+                                    <!-- Example sentence plain text mode -->
+                                    <template v-if="settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
+                                        <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                            <span 
+                                                v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
+                                                :class="{'mr-2': word.spaceAfter}"
+                                            >{{ word.word }}</span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- Reveal button -->
+                            <div class="review-button-box">
+                                <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Review card back -->
-                    <div id="review-card-back" class="rounded-lg border" :style="{'background-color': backgroundColor}">
-                        <!-- Word review -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
-                            <!-- Single word  mode -->
-                            <div class="word" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
-                                {{ reviews[currentReviewIndex].word }}
+                        <!-- Review card back -->
+                        <div id="review-card-back" class="rounded-lg border" :style="{'background-color': backgroundColor}">
+                            <!-- Word review -->
+                            <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
+                                <!-- Single word  mode -->
+                                <div class="word" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                    <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                    {{ reviews[currentReviewIndex].word }}
+                                </div>
+                            </template>
+
+                            <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
+                                <div :style="{'font-size': (settings.fontSize) + 'px'}">
+                                    <template v-if="language == 'japanese' || language == 'chinese'">
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                                    </template>
+                                    <template v-else>
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- Reading -->
+                            <div class="reading" v-if="reviews[currentReviewIndex] !== undefined && (language == 'japanese' || language == 'chinese')" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <hr>
+                                <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                {{ reviews[currentReviewIndex].reading }}
                             </div>
-                        </template>
+                            
+                            <!-- Example sentence interactive text mode -->
+                            <hr v-if="settings.reviewSentenceMode !== 'disabled'">
+                            <text-block-group
+                                v-if="revealed && settings.reviewSentenceMode === 'interactive-text'"
+                                ref="textBlock"
+                                :theme="theme"
+                                :fullscreen="fullscreen"
+                                :_text="exampleSentence"
+                                :language="language"
+                                :highlight-words="true"
+                                :plain-text-mode="false"
+                                :line-spacing="0"
+                                :font-size="settings.fontSize"
+                                :vocabulary-hover-box="settings.vocabularyHoverBox"
+                                :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
+                                :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                            />
 
-                        <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
-                            <div :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <template v-if="language == 'japanese' || language == 'chinese'">
-                                    {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
-                                </template>
-                                <template v-else>
-                                    {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
-                                </template>
-                            </div>
-                        </template>
+                            <!-- Example sentence plain text mode -->
+                            <template v-if="settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
+                                <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                    <span 
+                                        v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
+                                        :class="{'mr-2': word.spaceAfter}"
+                                    >{{ word.word }}</span>
+                                </div>
+                            </template>
 
-                        <!-- Reading -->
-                        <div class="reading" v-if="reviews[currentReviewIndex] !== undefined && (language == 'japanese' || language == 'chinese')" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <!-- Translation -->
                             <hr>
-                            <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
-                            {{ reviews[currentReviewIndex].reading }}
-                        </div>
-                        <hr>
-                        
-                        <!-- Phrase -->
-                        <template v-if="reviews[currentReviewIndex] !== undefined">
-                            <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                <span 
-                                    v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
-                                    :class="{'mr-2': word.spaceAfter}"
-                                >{{ word.word }}</span>
+                            <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                {{ reviews[currentReviewIndex].translation }}
                             </div>
-                        </template>
 
-                        <!-- Translation -->
-                        <hr>
-                        <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
-                            {{ reviews[currentReviewIndex].translation }}
-                        </div>
-
-                        <!-- Answer buttons -->
-                        <div class="review-button-box">
-                            <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
-                            <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+                            <!-- Answer buttons -->
+                            <div class="review-button-box">
+                                <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
+                                <v-btn rounded id="review-wrong-button" color="error" @click="missed" v-if="revealed">Again</v-btn>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -271,7 +360,7 @@
                 settingsDialog: false,
                 settings: {
                     fontSize: 20,
-                    reviewSentenceMode: false,
+                    reviewSentenceMode: 'plain-text',
                     vocabularyHoverBox: true,
                     vocabularyHoverBoxSearch: true,
                     vocabularyHoverBoxDelay: 300,
@@ -383,7 +472,10 @@
                     return;
                 }
                 
-                this.$refs.textBlock.unselectAllWords(true);
+                if (this.settings.reviewSentenceMode === 'interactive-text') {
+                    this.$refs.textBlock.unselectAllWords(true);
+                }
+                
                 this.revealed = true;
                 this.newCardAnimation = false;
             },
@@ -508,7 +600,10 @@
                 this.backgroundColor = this.$vuetify.theme.currentTheme.foreground;
 
                 setTimeout(() => {
-                    this.$refs.textBlock.unselectAllWords(true);
+                    if (this.settings.reviewSentenceMode === 'interactive-text') {
+                        this.$refs.textBlock.unselectAllWords(true);
+                    }
+
                     this.newCardAnimation = false;
                 }, this.transitionDuration);
 
@@ -533,7 +628,7 @@
                         };
                     }
 
-                    if (firstTime) {
+                    if (this.settings.reviewSentenceMode === 'interactive-text' && firstTime) {
                         this.$refs.textBlock.$forceUpdate();
                     }
                 });
