@@ -324,7 +324,15 @@ class DictionaryController extends Controller
         } else {
             // make api call
             $deepl = new \DeepL\Translator($apiKey);
-            $result = $deepl->translateText($term, $languageCodes[$language], $languageCodes[$deeplDictionary->target_language]);
+
+            // DeepL does not support 'EN-US' for source language, so
+            // I replace it to 'EN'
+            $sourceLanguage = $languageCodes[$language];
+            if ($sourceLanguage === 'EN-US') {
+                $sourceLanguage = 'EN';
+            }
+
+            $result = $deepl->translateText($term, $sourceLanguage, $languageCodes[$deeplDictionary->target_language]);
             $definition = $result->text;
 
             // create cache
@@ -716,13 +724,13 @@ class DictionaryController extends Controller
             return 'success';
         }
 
-        // import dict cc files
+        // import wiktionary files
         if (str_contains($dictionaryName, 'wiktionary')) {
             try {
                 $dictionaryImportService = new DictionaryImportService();
                 $dictionaryImportService->importWiktionary(
                     $dictionaryName, 
-                    $dictionaryLanguage, 
+                    $dictionarySourceLanguage, 
                     $dictionaryFileName, 
                     $dictionaryDatabaseName
                 );

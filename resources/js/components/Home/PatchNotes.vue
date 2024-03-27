@@ -5,10 +5,13 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.9 <v-spacer /> 2024.04.??.</v-card-title>
+            <v-card-title>v0.9 <v-spacer /> 2024.04.29.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
+                    <li>
+                        Added new supported languages: English, Greek and Latin.
+                    </li>
                     <li>
                         Made text editable when importing a website.
                     </li>
@@ -35,14 +38,11 @@
                     </li>
                 </ul>
 
-                <b>Bug fixes:</b>
-                <ul>
-                    <li></li>
-                </ul>
-
                 <b>Other changes:</b>
                 <ul>
-                    <li></li>
+                    <li>
+                        MacOS users have a new, simpler install and update process.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

@@ -46,12 +46,6 @@
                     class="d-flex youtube-subtitle regular-list-height rounded-pill mb-2 pl-10"
                     @click="selectSubtitle(subtitleIndex)"
                 >
-                    <v-img 
-                        :src="'/images/flags/' + subtitle.languageLowerCase.replace(' (auto-generated)', '') + '.png'"
-                        class="border mr-4"
-                        max-width="43" 
-                        height="28"
-                    />
                     {{ subtitle.language }}
                 </div>
 

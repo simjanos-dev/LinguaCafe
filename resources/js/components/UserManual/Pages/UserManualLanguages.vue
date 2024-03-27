@@ -67,6 +67,18 @@
                     <td>dict cc</td>
                 </tr>
 
+                <!-- English -->
+                <tr>
+                    <td>
+                        <img src="/images/flags/english.png" width='25' />
+                    </td>
+                    <td>English</td>
+                    <td>&check;</td>
+                    <td>&check;</td>
+                    <td></td>
+                    <td>dict cc</td>
+                </tr>
+
                 <!-- Finnish -->
                 <tr>
                     <td>
@@ -100,6 +112,18 @@
                     <td>&check;</td>
                     <td>&check;</td>
                     <td>&check;</td>
+                    <td>wiktionary, dict cc</td>
+                </tr>
+
+                <!-- Greek -->
+                <tr>
+                    <td>
+                        <img src="/images/flags/greek.png" width='25' />
+                    </td>
+                    <td>Greek</td>
+                    <td>&check;</td>
+                    <td>&check;</td>
+                    <td></td>
                     <td>wiktionary, dict cc</td>
                 </tr>
 
@@ -138,6 +162,19 @@
                     <td></td>
                     <td>wiktionary, kengdic</td>
                 </tr>
+
+                <!-- Latin -->
+                <tr>
+                    <td>
+                        <img src="/images/flags/latin.png" width='25' />
+                    </td>
+                    <td>Latin</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>wiktionary</td>
+                </tr>
+
                 <!-- Norwegian -->
                 <tr>
                     <td>

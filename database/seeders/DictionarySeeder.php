@@ -20,7 +20,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'JMDict',
                 'database_table_name' => 'dict_jp_jmdict',
-                'language' => 'japanese',
+                'source_language' => 'japanese',
+                'target_language' => 'english',
                 'color' => '#74E39A',
                 'imported' => false,
                 'enabled' => false
@@ -32,7 +33,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL JP',
                 'database_table_name' => 'API',
-                'language' => 'japanese',
+                'source_language' => 'japanese',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -44,7 +46,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL NO',
                 'database_table_name' => 'API',
-                'language' => 'norwegian',
+                'source_language' => 'norwegian',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -56,7 +59,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL DE',
                 'database_table_name' => 'API',
-                'language' => 'german',
+                'source_language' => 'german',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -68,7 +72,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL ES',
                 'database_table_name' => 'API',
-                'language' => 'spanish',
+                'source_language' => 'spanish',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -80,7 +85,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL ZH',
                 'database_table_name' => 'API',
-                'language' => 'chinese',
+                'source_language' => 'chinese',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -92,7 +98,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL NL',
                 'database_table_name' => 'API',
-                'language' => 'dutch',
+                'source_language' => 'dutch',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -104,7 +111,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL FI',
                 'database_table_name' => 'API',
-                'language' => 'finnish',
+                'source_language' => 'finnish',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -116,7 +124,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL FR',
                 'database_table_name' => 'API',
-                'language' => 'french',
+                'source_language' => 'french',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -128,7 +137,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL IT',
                 'database_table_name' => 'API',
-                'language' => 'italian',
+                'source_language' => 'italian',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -140,7 +150,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL KO',
                 'database_table_name' => 'API',
-                'language' => 'korean',
+                'source_language' => 'korean',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -152,7 +163,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL RU',
                 'database_table_name' => 'API',
-                'language' => 'russian',
+                'source_language' => 'russian',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -164,7 +176,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL SV',
                 'database_table_name' => 'API',
-                'language' => 'swedish',
+                'source_language' => 'swedish',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -176,7 +189,8 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL UA',
                 'database_table_name' => 'API',
-                'language' => 'ukrainian',
+                'source_language' => 'ukrainian',
+                'target_language' => 'english',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
@@ -188,7 +202,47 @@ class DictionarySeeder extends Seeder
             DB::table('dictionaries')->insert([
                 'name' => 'DeepL CS',
                 'database_table_name' => 'API',
-                'language' => 'czech',
+                'source_language' => 'czech',
+                'target_language' => 'english',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL CS')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL CS',
+                'database_table_name' => 'API',
+                'source_language' => 'czech',
+                'target_language' => 'english',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL EL')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL EL',
+                'database_table_name' => 'API',
+                'source_language' => 'greek',
+                'target_language' => 'english',
+                'color' => '#92B9E2',
+                'imported' => false,
+                'enabled' => false
+            ]);
+        }
+
+        $dictionary = DB::table('dictionaries')->where('name', 'DeepL EN')->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => 'DeepL EN',
+                'database_table_name' => 'API',
+                'source_language' => 'english',
+                'target_language' => 'spanish',
                 'color' => '#92B9E2',
                 'imported' => false,
                 'enabled' => false
