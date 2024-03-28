@@ -47,9 +47,9 @@ services:
         tty: true
         image: ghcr.io/simjanos-dev/linguacafe-python-service:${VERSION:-latest}
         environment:
-            PYTHONPATH: "${PYTHONPATH}:/var/www/html/storage/models"
+            PYTHONPATH: "/var/www/html/storage/app/model"
         volumes:
             - ./storage:/var/www/html/storage
         networks:
             - linguacafe
-        # platform: linux/amd64
+        platform: ${PLATFORM:-}
