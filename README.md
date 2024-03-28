@@ -43,7 +43,7 @@ Chinese: Mandarin language with simplified Chinese characters.
 
 ## Supported platforms:
 - x64, which includes most desktop computers made in the last decade.
-- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the `docker-compose.yml`file. To do this, you will need to split the chained install command, first clone the repository, then uncomment the line, then run the rest of the commands. You will also need to comment it and uncomment it again for each update to avoid git conflict error.
+- Macs with Apple silicon are supported, but need to create a `.env` file, and add an environmental variable.
 
 Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 
@@ -68,6 +68,11 @@ DB_USERNAME="linguacafe"
 DB_PASSWORD="linguacafe"
 ```
 
+MacOs users with Apple silicon must also create a `.env` file, and add the following variable:
+```
+PLATFORM="linux/amd64"
+```
+
 Run the remaining commands:
 ```
 chmod -R 777 ./ && docker compose up -d
@@ -89,9 +94,33 @@ Your server now should be running and accessible on http://localhost:9191.
 Step 3: Follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
+
+Always check this section and the update's release notes before updating, any important changes will be here.
+
+Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://simjanos-dev.github.io/LinguaCafeHome/#user-manual)
+
 If you are below v0.5.2, please use the migration guide provided [here](/migration.md) instead of this command.
 
-I recommend making a copy of your linguacafe folder before updating, to make sure you will have a backup if anything goes wrong.
+#### v0.9 Mac changes
+
+If you are a Mac user with Apple silicon, and you had to uncomment a line in the `docker-compose.yml` file before, please follow these instructions before you update:
+
+Step 1: Comment the the line again at the end of the `docker-compose.yml` file :
+```
+volumes:
+    - ./storage:/var/www/html/storage
+networks:
+    - linguacafe
+# platform: linux/amd64
+```
+
+Step 2: Create a `.env` file in the linguacafe, and add the this line to it:
+
+```
+PLATFORM="linux/amd64"
+```
+
+This change will will simplify the update process, and prevent any possible conflict errors with the git pull command in the future.
 
 ##### Linux and MacOs:
 ```
