@@ -43,7 +43,7 @@ Chinese: Mandarin language with simplified Chinese characters.
 
 ## Supported platforms:
 - x64, which includes most desktop computers made in the last decade.
-- Macs with Apple silicon are supported, but need to create a `.env` file, and add an environmental variable.
+- Mac users with Apple silicon must perform an additional step, see the 'Installation' section for details
 
 Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 
@@ -51,6 +51,8 @@ Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 LinguaCafe uses RAM based on how many and which languages do you use. If you use every language, the RAM usage can be over 2GB.
 
 ## Installation
+
+The installation process may seem a bit strange to some people. It is just a simple docker compose file, except that the git pull command pulls some empty folder structure, and some default files. You might understand it better, if you take a look at the `deploy` branch.
 
 Step 1: Install docker desktop and git.
 
@@ -68,7 +70,7 @@ DB_USERNAME="linguacafe"
 DB_PASSWORD="linguacafe"
 ```
 
-MacOs users with Apple silicon must also create a `.env` file, and add the following variable:
+MacOs users with Apple silicon must also create a `.env` file, and add the following line:
 ```
 PLATFORM="linux/amd64"
 ```
