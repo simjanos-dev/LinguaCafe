@@ -484,7 +484,7 @@
                         '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
                         '«', '»', "'", '’', '–', 'NEWLINE'];
 
-                if (!this.settings.reviewSentenceMode) {
+                if (this.settings.reviewSentenceMode === 'disabled') {
                     if (this.reviews[this.currentReviewIndex].type == 'word') {
                         this.readWords ++;
                     } else {
