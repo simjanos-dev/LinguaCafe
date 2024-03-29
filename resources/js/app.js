@@ -8,6 +8,21 @@ var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
 window.Vue.use(VueRouter);
 
+// vue showdown
+import VueShowdown from 'vue-showdown'
+import MarkdownTest from './components/MarkdownTest.vue';
+
+Vue.use(VueShowdown, {
+    // set default flavor of showdown
+    flavor: 'github',
+    // set default options of showdown (will override the flavor options)
+    options: {
+      emoji: false,
+    },
+  })
+  
+Vue.component('markdown-test', MarkdownTest);
+
 // layout
 import Layout from './components/Layout.vue';
 Vue.component('layout', Layout);
@@ -174,6 +189,7 @@ const router = new VueRouter({
     routes: [
         { path: '/dev', component: DevelopmentTools },
         { path: '/', component: Home },
+        { path: '/markdown-test', component: MarkdownTest },
         { path: '/user-manual/:currentPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
