@@ -62,11 +62,11 @@ If there are other branches, they are not used anymore. Dev branch will be merge
 
 #### Developer environment
 Follow these steps to setup your developer environment:
-1. Pull the dev branch.
-2. Run this command to set up the developer docker container: `docker compose -f ./docker-compose-dev.yml up -d `
+1. Run this command to clone linguacafe into a dev folder: `git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev && cd linguacafe-dev`
+2. Run this command to set up the developer docker container: `chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d `
 3. Run this command to start the localhost server: `docker exec -ti linguacafe-webserver-dev npm run watch-poll`
 
-You must use a different folder for your dev environment than your production version's directory.
+You must not use the same folder for both the production and development versions of linguacafe.
 
 You can now reach your dev server on localhost:3000, it will auto reload when you save a .vue or .php file. 
 
