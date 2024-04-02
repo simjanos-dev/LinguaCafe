@@ -66,6 +66,8 @@ Follow these steps to setup your developer environment:
 2. Run this command to set up the developer docker container: `docker compose -f ./docker-compose-dev.yml up -d `
 3. Run this command to start the localhost server: `docker exec -ti linguacafe-webserver-dev npm run watch-poll`
 
+You must use a different folder for your dev environment than your production version's directory.
+
 You can now reach your dev server on localhost:3000, it will auto reload when you save a .vue or .php file. 
 
 The developer environment does not copy the contents of the linguacafe folder into the docker image, instead it mounts the whole folder, so it is accessible for both the docker container and the developer.
