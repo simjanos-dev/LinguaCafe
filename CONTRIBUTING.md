@@ -62,9 +62,20 @@ If there are other branches, they are not used anymore. Dev branch will be merge
 
 #### Developer environment
 Follow these steps to setup your developer environment:
-1. Run this command to clone linguacafe into a dev folder: `git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev && cd linguacafe-dev`
-2. Run this command to set up the developer docker container: `chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d `
-3. Run this command to start the localhost server: `docker exec -ti linguacafe-webserver-dev npm run watch-poll`
+1. Run this command to clone linguacafe into a dev folder: 
+```
+git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev && cd linguacafe-dev
+```
+
+2. Run this command to set up the developer docker container: 
+```
+chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d
+```
+
+3. Run this command to start the localhost server: 
+```
+docker exec -ti linguacafe-webserver-dev npm run watch-poll
+```
 
 You must not use the same folder for both the production and development versions of linguacafe.
 
