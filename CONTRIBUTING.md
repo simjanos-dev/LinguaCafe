@@ -68,8 +68,15 @@ git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev &
 ```
 
 2. Run this command to set up the developer docker container: 
+
 ```
-chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d
+chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d --force-recreate
+```
+
+MacOs users with Apple silicon must use this line instead:
+
+```
+chmod -R 777 ./ && docker compose -f ./docker-compose-dev-macos.yml up -d --force-recreate
 ```
 
 3. Run this command to start the localhost server: 
