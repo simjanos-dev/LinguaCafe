@@ -28,6 +28,8 @@ Route::group(['middleware' => 'web'], function () {
 });
 
 Route::group(['middleware' => ['auth', 'web']], function () {
+    Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+
     // users
     Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
     Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
@@ -40,6 +42,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/jellyfin/process-subtitles', [App\Http\Controllers\MediaPlayerController::class, 'processJellyfinSubtitle']);
 
     // vue routes
+    Route::get('/markdown-test', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
