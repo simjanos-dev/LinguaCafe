@@ -15,8 +15,8 @@ mix.js('resources/js/app.js', 'public/js')
     .vue()
     .sass('resources/sass/app.scss', 'public/css')
     .browserSync({
-        proxy: 'lingua.cafe',
-        host: 'lingua.cafe',
+        proxy: 'localhost',
+        host: 'localhost',
         open: 'external'
     })
     .version();
