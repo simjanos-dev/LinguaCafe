@@ -61,25 +61,34 @@ Contributions to the manual are highly appreciated. My english is not my native 
 If there are other branches, they are not used anymore. Dev branch will be merged into main when a new version update is ready.
 
 #### Developer environment
-Follow these steps to setup your developer environment:
-1. Run this command to clone linguacafe into a dev folder: 
+Follow these steps to setup your developer environment.
+
+**Step 1:** Run these commands to clone linguacafe into a dev folder: 
 ```
-git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev && cd linguacafe-dev
+git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev
+
+cd linguacafe-dev
 ```
 
-2. Run this command to set up the developer docker container: 
+**Step 2:** Run this command to set up the developer docker container: 
 
+Linux and regular MacOs:
 ```
 chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d --force-recreate
 ```
 
-MacOs users with Apple silicon must use this line instead:
+MacOs with Apple silicon processors
 
 ```
 chmod -R 777 ./ && docker compose -f ./docker-compose-dev-macos.yml up -d --force-recreate
 ```
 
-3. Run this command to start the localhost server: 
+Windows:
+```
+docker compose -f ./docker-compose-dev.yml up -d --force-recreate
+```
+
+**Step 3:** Run this command to start the localhost server: 
 ```
 docker exec -ti linguacafe-webserver-dev npm run watch-poll
 ```
