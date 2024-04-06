@@ -10,9 +10,10 @@ class SettingsService {
     public function __construct() {
     }
 
-    public function getSettingsByName($settingNames) {
+    public function getGlobalSettingsByName($settingNames) {
         $settings = Setting
             ::select('value', 'name')
+            ->where('user_id', -1)
             ->whereIn('name', $settingNames)
             ->get()
             ->keyBy('name')
@@ -27,10 +28,11 @@ class SettingsService {
         return $settings;
     }
 
-    public function updateSettings($settings) {
+    public function updateGlobalSettings($settings) {
         foreach ($settings as $settingName => $settingValue) {
             $setting = Setting
                 ::where('name', $settingName)
+                ->where('user_id', -1)
                 ->first();
 
             if ($setting) {

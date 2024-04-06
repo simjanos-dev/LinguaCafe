@@ -23,7 +23,7 @@ class SettingsController extends Controller
         $settingNames = $request->post('settingNames');
 
         try {
-            $settings = $this->settingsService->getSettingsByName($settingNames);
+            $settings = $this->settingsService->getGlobalSettingsByName($settingNames);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -36,7 +36,7 @@ class SettingsController extends Controller
         $settings = $request->post('settings');
 
         try {
-            $settings = $this->settingsService->updateSettings($settings);
+            $settings = $this->settingsService->updateGlobalSettings($settings);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }

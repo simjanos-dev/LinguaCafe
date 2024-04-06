@@ -295,7 +295,7 @@
                 });
             },
             loadSettings() {
-                axios.post('/settings/get', {
+                axios.post('/settings/global/get', {
                     'settingNames': [
                         'deeplApiKey',
                         'jellyfinHost',
@@ -318,7 +318,7 @@
                 this.characterLimit = 0;
                 this.characterLimitStatus = '';
 
-                axios.post('/settings/update', {
+                axios.post('/settings/global/update', {
                     'settings': {
                         'deeplApiKey': this.settings.deeplApiKey,
                         'jellyfinHost': this.settings.jellyfinHost,

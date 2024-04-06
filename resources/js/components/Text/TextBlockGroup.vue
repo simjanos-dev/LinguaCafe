@@ -309,7 +309,7 @@
             window.addEventListener('resize', this.updateVocabBoxPositionDelay);
             window.addEventListener('mouseup', this.unselectAllWords);
 
-            axios.post('/settings/get', {
+            axios.post('/settings/global/get', {
                 'settingNames': [
                     'ankiAutoAddCards',
                     'ankiShowNotifications'
