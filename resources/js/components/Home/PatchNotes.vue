@@ -40,6 +40,9 @@
                     <li>
                         DeepL API key error will not appear on the admin page anymore if it set to the default value.
                     </li>
+                    <li>
+                        Added a warning on how hover vocabulary box works in review settings.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

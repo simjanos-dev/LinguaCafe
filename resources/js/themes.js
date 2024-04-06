@@ -14,7 +14,7 @@ export default {
         error: '#f24b4f',
         info: '#057CBC',
         success: '#3dcf59',
-        warning: '#ffb448',
+        warning: '#eea339',
         
         text: '#333333',
         highlightedWordText: '#333333',

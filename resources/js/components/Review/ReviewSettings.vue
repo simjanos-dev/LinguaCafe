@@ -61,6 +61,14 @@
                 </div>
 
                 <!-- Vocabulary hover box -->
+                <v-alert
+                    v-if="settings.reviewSentenceMode !== 'interactive-text'"
+                    type="error"
+                    color="warning"
+                >
+                    Hover vocabulary box only works if you set the "Sentence mode" option to "Interactive text".
+                </v-alert>
+
                 <v-row>
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Hover vocabulary box:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
@@ -186,6 +194,8 @@
                 this.saveSetting('reviewSentenceMode');
 
                 this.$emit('changed', this.settings);
+                
+                this.$forceUpdate();
             },
             saveSetting(name) {
                 this.$cookie.set(this.cookieNames[name], this.settings[name], 3650);
