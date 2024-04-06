@@ -24,5 +24,17 @@ In addition to saving words, LinguaCafe also allows you to save multiple words a
 
 When you reach the end of a chapter, you can click the **Finished reading** button to set all words in the chapter to known. 
 
+>[!NOTE]
+>The effect of clicking the **Finished reading** button cannot be undone, thus exercise some caution when clicking it. If you don't know all the words in the chapter and/or you don't want to set them all to known, then don't click it. Words that have been set to anything, such as known, cannot be reverted back to new.
+
+>[!IMPORTANT]
+>The effect of clicking the **Finished reading** button cannot be undone, thus exercise some caution when clicking it. If you don't know all the words in the chapter and/or you don't want to set them all to known, then don't click it. Words that have been set to anything, such as known, cannot be reverted back to new.
+
+>[!TIP]
+>The effect of clicking the **Finished reading** button cannot be undone, thus exercise some caution when clicking it. If you don't know all the words in the chapter and/or you don't want to set them all to known, then don't click it. Words that have been set to anything, such as known, cannot be reverted back to new.
+
+>[!WARNING]
+>The effect of clicking the **Finished reading** button cannot be undone, thus exercise some caution when clicking it. If you don't know all the words in the chapter and/or you don't want to set them all to known, then don't click it. Words that have been set to anything, such as known, cannot be reverted back to new.
+
 >[!CAUTION]
 >The effect of clicking the **Finished reading** button cannot be undone, thus exercise some caution when clicking it. If you don't know all the words in the chapter and/or you don't want to set them all to known, then don't click it. Words that have been set to anything, such as known, cannot be reverted back to new.
