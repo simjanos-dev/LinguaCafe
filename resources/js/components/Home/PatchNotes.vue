@@ -16,6 +16,15 @@
                 <b>Bug fixes:</b>
                 <ul>                    
                     <li>
+                        There will be no error message anymore due to empty book name when you click on "Create book" button.
+                    </li>
+                    <li>
+                        While creating a book, the save button won't be grayed out anymore if you type in a name. 
+                        Previously it only turned active after you removed the focus from the name input field.
+                    </li>
+                    <li>
+                        While creating or editing a book and uploading an image, clicking on the cancel button will now 
+                        revert the image to the default or previous image, instead of showing an error message.
                     </li>
                 </ul>
 
