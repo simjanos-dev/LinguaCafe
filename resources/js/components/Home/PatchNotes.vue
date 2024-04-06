@@ -5,6 +5,30 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.10 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>                    
+                    <li>
+                    </li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>                    
+                    <li>
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        DeepL API key error will not appear on the admin page anymore if it set to the default value.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.9 <v-spacer /> 2024.04.28.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
