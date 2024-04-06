@@ -8,8 +8,9 @@
             <v-card-title>v0.10 <v-spacer /> 2024.??.??.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
-                <ul>                    
+                <ul>
                     <li>
+                        Added a logout confirmation dialog.
                     </li>
                 </ul>
 

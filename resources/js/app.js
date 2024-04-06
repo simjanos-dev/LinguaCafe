@@ -118,10 +118,12 @@ Vue.component('review-hotkey-information-dialog', ReviewHotkeyInformationDialog)
 Vue.component('review-settings', ReviewSettings);
 
 // dialogs
+import LogoutDialog from './components/Dialogs/LogoutDialog';
 import ErrorDialog from './components/Dialogs/ErrorDialog';
 import StartReviewDialog from './components/Dialogs/StartReviewDialog';
 import ThemeSelectionDialog from './components/Dialogs/ThemeSelectionDialog';
 import LanguageSelectionDialog from './components/Dialogs/LanguageSelectionDialog';
+Vue.component('logout-dialog', LogoutDialog);
 Vue.component('error-dialog', ErrorDialog);
 Vue.component('start-review-dialog', StartReviewDialog);
 Vue.component('theme-selection-dialog', ThemeSelectionDialog);

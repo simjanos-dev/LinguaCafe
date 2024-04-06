@@ -1,8 +1,9 @@
 <template>
    <v-app :class="{'eink': theme == 'eink', 'dark': theme == 'dark'}">
-        <start-review-dialog
-            v-model="startReviewDialog"
-        ></start-review-dialog>
+        
+        <!-- Dialogs -->
+        <start-review-dialog v-model="startReviewDialog" />
+        <logout-dialog v-model="logoutDialog"/>
 
         <template v-if="$router.currentRoute.path !== '/login'">
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
@@ -41,7 +42,7 @@
                     </v-list-item>
                     
                     <!-- Logout button -->
-                    <v-list-item class="navigation-button" @click="logout">
+                    <v-list-item class="navigation-button" @click="openLogoutDialog">
                         <v-icon> mdi-logout </v-icon>
                         <span class="pl-6"> Logout </span>
                     </v-list-item>
@@ -120,6 +121,7 @@ import themes from './../themes';
             return {
                 selectedLanguage: this.$props._selectedLanguage,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                logoutDialog: false,
                 themeSelectionDialog: false,
                 languageSelectionDialog: false,
                 startReviewDialog: false,
@@ -216,10 +218,8 @@ import themes from './../themes';
             updateTheme() {
                 this.theme = (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme');
             },
-            logout() {
-                axios.post('/logout').then((response) => {
-                    window.location.href = "/";
-                })
+            openLogoutDialog() {
+                this.logoutDialog = true;
             },
         }
     }
