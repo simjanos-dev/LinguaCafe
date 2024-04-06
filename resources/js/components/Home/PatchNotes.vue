@@ -43,6 +43,12 @@
                     <li>
                         Added a warning on how hover vocabulary box works in review settings.
                     </li>
+                    <li>
+                        Lightened dark mode text color.
+                    </li>
+                    <li>
+                        Made navigation sidebar more compact.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

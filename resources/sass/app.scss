@@ -58,7 +58,7 @@
 
 #logo span  {
     font-family: Varela !important;
-    font-size: 32px;
+    font-size: 26px;
     user-select: none;
     cursor: normal;
 }
@@ -274,28 +274,6 @@ a.v-btn.menu-button {
             line-height: 40px;
             border-radius: 8px;
             color: #a4a4a4;
-        }
-    }
-
-    #user-manual, #language, #theme, #collapse {
-        width: calc(100% - 16px);
-        display: flex;
-        height: 48px;
-        line-height: 48px;
-        text-align: left;
-        
-        .v-image__image {
-            border: 1px solid rgba(53, 42, 42, 0.2);
-        }
-
-        .v-icon {
-            width: 43px;
-        }
-        
-        span {
-            width: calc(100% - 43px);
-            height: 30px;
-            line-height: 30px;
         }
     }
 

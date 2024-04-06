@@ -19,16 +19,13 @@
                 color="navigation"
             >
                 <!-- Logo -->
-                <div 
-                    id="logo" 
-                    class="my-8"
-                >
+                <div id="logo" class="my-5">
                     <span v-if="$vuetify.breakpoint.lgAndUp && !navbarCollapsed">
                             Lingua Cafe
                     </span>
                 </div>
 
-                <v-list nav shaped class="pl-0">
+                <v-list nav shaped dense class="pl-0">
                     <!-- Navigation buttons -->
                     <v-list-item 
                         class="navigation-button" 
@@ -40,34 +37,38 @@
                         <v-icon> {{ item.icon }} </v-icon>
                         <span class="pl-6"> {{ item.name }} </span>
                     </v-list-item>
-                    
-                    <!-- Logout button -->
-                    <v-list-item class="navigation-button" @click="openLogoutDialog">
-                        <v-icon> mdi-logout </v-icon>
-                        <span class="pl-6"> Logout </span>
-                    </v-list-item>
                 </v-list>
 
                 <template v-slot:append>
                     <!-- Large navigation drawer -->
                     <template v-if="!$vuetify.breakpoint.md && !navbarCollapsed">
-                        <v-btn id="collapse" rounded text class="ma-2" @click="collapseNavbar">
-                            <v-icon>mdi-arrow-collapse-left</v-icon>
-                            <span class="pl-6">Hide</span>
-                        </v-btn>
-                        <v-btn id="user-manual" rounded text class="ma-2" @click="navigationClick('User manual', $event)">
-                            <v-icon>mdi-account-question</v-icon>
-                            <span class="pl-6">User manual</span>
-                        </v-btn>
-                        <v-btn id="theme" rounded text class="ma-2" @click="themeSelectionDialog = true">
-                            <v-icon>mdi-palette</v-icon>
-                            <span class="pl-6">Theme</span>
-                        </v-btn>
-                        <v-btn id="language" rounded text class="ma-2" @click="languageSelectionDialog = true">
-                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="43" height="28"></v-img> 
-                            <span class="pl-6 text-capitalize">{{ selectedLanguage }}</span>
-                        </v-btn>
-
+                        <v-list nav shaped dense class="pl-0">
+                            <!-- Navigation buttons -->
+                            <v-list-item class="navigation-button" @click="collapseNavbar">
+                                <v-icon> mdi-arrow-collapse-left </v-icon>
+                                <span class="pl-6"> Hide </span>
+                            </v-list-item>
+                            <v-list-item class="navigation-button" @click="openLogoutDialog">
+                                <v-icon> mdi-logout </v-icon>
+                                <span class="pl-6"> Logout </span>
+                            </v-list-item>
+                            <v-list-item class="navigation-button" @click=";">
+                                <v-icon> mdi-cog </v-icon>
+                                <span class="pl-6"> User settings</span>
+                            </v-list-item>
+                            <v-list-item class="navigation-button" @click="navigationClick('User manual', $event)">
+                                <v-icon> mdi-account-question </v-icon>
+                                <span class="pl-6"> User manual</span>
+                            </v-list-item>
+                            <v-list-item class="navigation-button" @click="themeSelectionDialog = true;">
+                                <v-icon> mdi-palette </v-icon>
+                                <span class="pl-6"> Theme</span>
+                            </v-list-item>
+                            <v-list-item class="navigation-button" @click="languageSelectionDialog = true;">
+                                <v-img class="border" :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="26" height="17"></v-img>
+                                <span class="pl-5"> Language</span>
+                            </v-list-item>
+                        </v-list>
                     </template>
 
                     <!-- Mini navigation drawer -->
@@ -171,6 +172,10 @@ import themes from './../themes';
         },
         props: {
             _selectedLanguage: String,
+            _userName: {
+                type: String,
+                default: '',
+            },
             _userCount: Number,
         },
         beforeMount() {
