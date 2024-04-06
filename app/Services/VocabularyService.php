@@ -469,7 +469,7 @@ class VocabularyService {
 
             // set stage
             if (isset($record[5])) {
-                $encounteredWord->stage = $stageMapping[$stage];
+                $encounteredWord->setStage($stageMapping[$stage], true);
             }
 
             // save word with new data

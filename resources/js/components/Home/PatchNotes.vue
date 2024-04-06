@@ -27,6 +27,12 @@
                         While creating or editing a book and uploading an image, clicking on the cancel button will now 
                         revert the image to the default or previous image, instead of showing an error message.
                     </li>
+                    <li>
+                        Fixed a bug that caused vocabulary import to update daily new words achivement.
+                    </li>
+                    <li>
+                        Fixed a bug that caused words imported on the vocabulary page to not be added to the review system.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
