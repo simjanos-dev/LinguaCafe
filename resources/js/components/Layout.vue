@@ -37,6 +37,10 @@
                         <v-icon> {{ item.icon }} </v-icon>
                         <span class="pl-6"> {{ item.name }} </span>
                     </v-list-item>
+                    <v-list-item class="navigation-button" @click="openLogoutDialog">
+                        <v-icon> mdi-logout </v-icon>
+                        <span class="pl-6"> Logout </span>
+                    </v-list-item>
                 </v-list>
 
                 <template v-slot:append>
@@ -47,14 +51,6 @@
                             <v-list-item class="navigation-button" @click="collapseNavbar">
                                 <v-icon> mdi-arrow-collapse-left </v-icon>
                                 <span class="pl-6"> Hide </span>
-                            </v-list-item>
-                            <v-list-item class="navigation-button" @click="openLogoutDialog">
-                                <v-icon> mdi-logout </v-icon>
-                                <span class="pl-6"> Logout </span>
-                            </v-list-item>
-                            <v-list-item class="navigation-button" @click=";">
-                                <v-icon> mdi-cog </v-icon>
-                                <span class="pl-6"> User settings</span>
                             </v-list-item>
                             <v-list-item class="navigation-button" @click="navigationClick('User manual', $event)">
                                 <v-icon> mdi-account-question </v-icon>
@@ -73,16 +69,16 @@
 
                     <!-- Mini navigation drawer -->
                     <template v-else>
-                        <v-btn id="collapse" rounded text class="mini-drawer-button" @click="expandNavbar">
+                        <v-btn v-if="$vuetify.breakpoint.lgAndUp" id="collapse" rounded text class="mini-drawer-button" @click="expandNavbar" title="Expand sidebar">
                             <v-icon>mdi-arrow-collapse-right</v-icon>
                         </v-btn>
-                        <v-btn id="user-manual" rounded text class="mini-drawer-button" @click="navigationClick('User manual', $event)">
+                        <v-btn id="user-manual" rounded text class="mini-drawer-button" @click="navigationClick('User manual', $event)" title="User manual">
                             <v-icon>mdi-account-question</v-icon>
                         </v-btn>
-                        <v-btn id="theme" rounded text class="mini-drawer-button" @click="themeSelectionDialog = true">
+                        <v-btn id="theme" rounded text class="mini-drawer-button" @click="themeSelectionDialog = true" title="Theme">
                             <v-icon>mdi-palette</v-icon>
                         </v-btn>
-                        <v-btn id="language" rounded text class="mini-drawer-button" @click="languageSelectionDialog = true">
+                        <v-btn id="language" rounded text class="mini-drawer-button" @click="languageSelectionDialog = true" title="Select language">
                             <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="31" height="20"></v-img> 
                         </v-btn>
                     </template>
@@ -162,7 +158,13 @@ import themes from './../themes';
                     //     bottomNav: true,
                     // },
                     {
-                        name: 'Admin',
+                        name: 'User settings',
+                        url: '/user-settings',
+                        icon: 'mdi-account-cog',
+                        bottomNav: false,
+                    },
+                    {
+                        name: 'Admin settings',
                         url: '/admin',
                         icon: 'mdi-shield-lock',
                         bottomNav: false,
