@@ -130,8 +130,10 @@ Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 // user settings
+import UserSettingsThemes from './components/UserSettings/UserSettingsThemes';
 import ChangePasswordDialog from './components/UserSettings/ChangePasswordDialog';
 Vue.component('change-password-dialog', ChangePasswordDialog);
+Vue.component('user-settings-themes', UserSettingsThemes);
 
 // admin settings
 import AdminUserSettings from './components/Admin/AdminUserSettings';
@@ -192,7 +194,7 @@ const router = new VueRouter({
     routes: [
         { path: '/dev', component: DevelopmentTools },
         { path: '/', component: Home },
-        { path: '/user-settings/:currentPage?', component: UserSettingsLayout },
+        { path: '/user-settings', component: UserSettingsLayout },
         { path: '/admin', component: AdminSettingsLayout },
         { path: '/markdown-test', component: MarkdownTest },
         { path: '/user-manual/:currentPage?', component: UserManual },

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Settings;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetSettingsByNameRequest extends FormRequest
+class UpdateGlobalSettingsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class GetSettingsByNameRequest extends FormRequest
     public function rules()
     {
         return [
-            'settingNames' => 'required|array'
+            'settings' => 'required|array'
         ];
     }
 }

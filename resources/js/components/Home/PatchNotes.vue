@@ -12,6 +12,9 @@
                     <li>
                         Added a logout confirmation dialog.
                     </li>
+                    <li>
+                        Added theme customization.
+                    </li>
                 </ul>
 
                 <b>Bug fixes:</b>

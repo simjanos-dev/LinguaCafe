@@ -22,7 +22,7 @@ class SettingsService {
             });
 
         if ($settings->isEmpty()) {
-            throw new \Exception('No setting were found in the database');
+            throw new \Exception('No settings were found in the database.');
         }
 
         return $settings;
@@ -40,5 +40,45 @@ class SettingsService {
                 $setting->save();
             }
         }
+
+        return true;
+    }
+
+    public function getUserSettingsByName($userId, $settingNames) {
+        $settings = Setting
+            ::select('value', 'name')
+            ->where('user_id', $userId)
+            ->whereIn('name', $settingNames)
+            ->get()
+            ->keyBy('name')
+            ->map(function ($item, $key) {
+                return json_decode($item->value);
+            });
+
+        if ($settings->isEmpty()) {
+            return null;
+        }
+
+        return $settings;
+    }
+
+    public function updateUserSettings($userId, $settings) {
+        foreach ($settings as $settingName => $settingValue) {
+            $setting = Setting
+                ::where('name', $settingName)
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$setting) {
+                $setting = new Setting();
+                $setting->user_id = $userId;
+                $setting->name = $settingName;
+            }
+
+            $setting->value = json_encode($settingValue);
+            $setting->save();                
+        }
+
+        return true;
     }
 }

@@ -1,0 +1,29 @@
+#user-settings-themes {
+    #theme-selection {
+        width: 200px !important;
+        max-width: 200px !important;
+    }
+
+    td, th {
+        text-align: center !important;
+    }
+
+    td:nth-child(1) {
+        text-align: left !important;
+    }
+
+    td:nth-child(2), th:nth-child(2) {
+        width: 100px;
+        min-width: 100px;
+    }
+
+    td:nth-child(3), th:nth-child(3) {
+        width: 180px;
+        min-width: 180px;
+    }
+
+    td:nth-child(4), th:nth-child(4) {
+        width: 70px;
+        min-width: 70px;
+    }
+}

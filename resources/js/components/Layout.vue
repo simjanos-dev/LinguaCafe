@@ -112,7 +112,8 @@
 </template>
 
 <script>
-import themes from './../themes';
+    import ThemeService from './../services/ThemeService';
+    import defaultThemes from './../themes';
     export default {
         data: function() {
             return {
@@ -191,10 +192,7 @@ import themes from './../themes';
             }
 
             // load theme
-            var themeName = this.$cookie.get('theme') === null ? 'light' : this.$cookie.get('theme');
-            this.$vuetify.theme.themes['light'] = this.$cookie.get('theme') === null ? themes.light : themes[this.$cookie.get('theme')];
-            this.$vuetify.theme.themes['dark'] = themes.dark;
-            this.$vuetify.theme.dark = (themeName == 'dark');
+            ThemeService.loadTheme(defaultThemes, this.$cookie, this.$vuetify);
 
             // load navbar status
             if (this.$cookie.get('navbar-collapsed') !== null) {

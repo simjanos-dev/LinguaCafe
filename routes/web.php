@@ -46,7 +46,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/user-settings/{page}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
@@ -83,8 +82,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     
 
     // settings
-    Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
-    Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateSettings']);
+    Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);
+    Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateGlobalSettings']);
+    Route::post('/settings/user/get', [App\Http\Controllers\SettingsController::class, 'getUserSettingsByName']);
+    Route::post('/settings/user/update', [App\Http\Controllers\SettingsController::class, 'updateUserSettings']);
     
     // images 
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
