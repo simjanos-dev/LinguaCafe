@@ -1,5 +1,3 @@
-# Background
-
 LinguaCafe is a self-hosted web-app for learning foreign languages by reading.
 
 In summary, you import foreign language texts into LinguaCafe from ebooks, websites, etc., and read through them, creating saved definitions and associations for words as you read. As you read more, you continue to build your personal dictionary.
@@ -11,7 +9,6 @@ With LinguaCafe you:
 - **Can self-host.** LinguaCafe is self-hosted, web app which means it runs in your machine or potentially in a private web server and thus be accessible to you in the internet.
 - **Control your data.** Because you host LinguaCage yourself in your machine, you own your data and can do whatever you want with it. 
 - **Free.** LinguaCafe doesn't have a price tag, it is a free as in *free beer*.
-
 
 ## LinguaCage alternatives
 - [Lute v3](https://github.com/jzohrab/lute-v3)
