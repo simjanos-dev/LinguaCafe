@@ -11,6 +11,7 @@ RUN apt-get update -y \
 RUN pip install -U --no-cache-dir \
         setuptools \
         wheel \
+        lxml[html_clean] \
 #youtube api
         youtube_transcript_api \
 #ebook library

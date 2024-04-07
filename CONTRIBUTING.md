@@ -77,7 +77,7 @@ Linux and regular MacOs:
 chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d --force-recreate
 ```
 
-MacOs with Apple silicon processors
+MacOs with Apple silicon processors:
 
 ```
 chmod -R 777 ./ && docker compose -f ./docker-compose-dev-macos.yml up -d --force-recreate
@@ -98,6 +98,22 @@ You must not use the same folder for both the production and development version
 You can now reach your dev server on localhost:3000, it will auto reload when you save a .vue or .php file. 
 
 The developer environment does not copy the contents of the linguacafe folder into the docker image, instead it mounts the whole folder, so it is accessible for both the docker container and the developer.
+
+#### Developer environment update
+
+If there is a change in docker-compose yml file, or in one of the dockerfiles, you can use these commands to update your docker image in your developer environment.
+
+Windows, Linux and regular MacOs:
+```
+git pull
+docker compose -f ./docker-compose-dev.yml build
+```
+
+MacOs with Apple silicon processors
+```
+git pull
+docker compose -f ./docker-compose-dev-macos.yml build
+```
 
 #### Thank you!
 Thank you for everyone who contributes to LinguaCafe in any way. I really appreciate it!
