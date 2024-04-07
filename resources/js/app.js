@@ -172,6 +172,7 @@ Vue.component('user-manual-vocabulary-import', UserManualVocabularyImport);
 
 const DevelopmentTools = require('./components/DevelopmentTools.vue').default;
 const LoginForm = require('./components/Login/LoginForm.vue').default;
+const UserSettingsLayout = require('./components/UserSettings/UserSettingsLayout.vue').default;
 const AdminSettingsLayout = require('./components/Admin/AdminSettingsLayout.vue').default;
 const Home = require('./components/Home/Home.vue').default;
 const PatchNotes = require('./components/Home/PatchNotes.vue').default;
@@ -191,12 +192,13 @@ const router = new VueRouter({
     routes: [
         { path: '/dev', component: DevelopmentTools },
         { path: '/', component: Home },
+        { path: '/user-settings/:currentPage?', component: UserSettingsLayout },
+        { path: '/admin', component: AdminSettingsLayout },
         { path: '/markdown-test', component: MarkdownTest },
         { path: '/user-manual/:currentPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
-        { path: '/admin', component: AdminSettingsLayout },
         { path: '/books/:bookId?', component: Books },
         { path: '/chapters/read/:chapterId', component: TextReader },
         { path: '/flashcards', component: FlashcardCollectionList },

@@ -45,10 +45,12 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/markdown-test', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/user-settings/{page}', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books/{bookId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/book/create', [App\Http\Controllers\HomeController::class, 'index']);
