@@ -165,7 +165,6 @@
         mounted() {
             axios.post('/settings/user/get', {settingNames: ThemeService.themeColorNames}).then((response) => {
                 var savedColors = response.data;
-                console.log(response);
                 this.loading = false;
                                 
                 ThemeService.themeColorNames.forEach((value) => {

@@ -46,13 +46,22 @@ class ThemeService {
         defaultThemes = JSON.parse(JSON.stringify(defaultThemes))
 
         var themeName = cookieHandler.get('theme') === null ? 'light' : cookieHandler.get('theme');
-        vuetifyHandler.theme.themes['light'] = cookieHandler.get('theme') === null ? defaultThemes.light : defaultThemes[cookieHandler.get('theme')];
-        vuetifyHandler.theme.themes['dark'] = defaultThemes.dark;
         vuetifyHandler.theme.dark = (themeName == 'dark');
 
 
         // load custom theme from cookie (cache) if saved
-        var themeName = cookieHandler.get('theme') === null ? 'light' : cookieHandler.get('theme');
+        var colors = cookieHandler.get(themeName + '-theme-colors');
+
+        if (colors !== null && ['light', 'dark'].includes(themeName)) {
+            vuetifyHandler.theme.themes[themeName] = JSON.parse(colors);
+        } else {
+            vuetifyHandler.theme.themes['light'] = cookieHandler.get('theme') === null ? defaultThemes.light : defaultThemes[cookieHandler.get('theme')];
+            vuetifyHandler.theme.themes['dark'] = defaultThemes.dark;
+        }
+
+        if (!['light', 'dark'].includes(themeName)) {
+            return;
+        }
 
         // load custom theme from backend
         axios.post('/settings/user/get', {
@@ -67,7 +76,12 @@ class ThemeService {
                     vuetifyHandler.theme.themes[theme][colorName] = data[value];
                 }
             });
-        })
+
+            // save into cookie cache
+            cookieHandler.set(themeName + '-theme-colors', JSON.stringify(vuetifyHandler.theme.themes[themeName]), 3650);
+        }).catch((error) => {
+
+        });
     }
 
     getCurrentTheme(cookieHandler) {

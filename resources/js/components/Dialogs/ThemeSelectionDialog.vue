@@ -30,6 +30,7 @@
 
 <script>
     import themes from './../../themes';
+    import ThemeService from './../../services/ThemeService';
     export default {
         props: {
             value : Boolean,
@@ -37,7 +38,7 @@
         emits: ['input'],
         data: function() {
             return {
-                selectedTheme: this.$cookie.get('theme') === null ? 'light' : this.$cookie.get('theme'),
+                selectedTheme: ThemeService.getCurrentTheme(this.$cookie),
                 displayNames: {
                     light: {
                         name: 'Light theme',
@@ -60,9 +61,8 @@
         methods: {
             selectTheme: function(newTheme) {
                 this.$cookie.set('theme', newTheme, 3650);
-                this.$vuetify.theme.themes['light'] = themes[newTheme];
-                this.$vuetify.theme.themes['dark'] = themes[newTheme];
                 this.$vuetify.theme.dark = (newTheme == 'dark');
+                ThemeService.loadTheme(themes, this.$cookie, this.$vuetify);
 
                 this.close();
                 
