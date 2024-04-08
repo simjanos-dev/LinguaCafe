@@ -1,11 +1,29 @@
 @import 'variables';
 
-
 #user-manual {
-    display: block;
-    color: var(--v-text-base);
-    overflow: hidden;
+    display: flex;
+    flex-wrap: nowrap;
+}
 
+#user-manual-menu {
+    box-sizing: border-box;
+    width: 300px;
+}
+
+#user-manual-content {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    width: calc(100% - 300px);
+    height: 100vh;
+    color: var(--v-text-base);
+
+    & > div {
+        width: 100%;
+        max-width: 1000px;
+        padding: 0px 24px;
+    }
+    
     // blockquotes
     blockquote {
         padding: 12px;
@@ -132,5 +150,22 @@
         td {
             padding: 6px 8px;
         }
+    }
+}
+
+
+@media only screen and (max-width: 768px) {
+    #user-manual {
+        flex-wrap: wrap;
+    }
+
+    #user-manual-menu {
+        width: 100%;
+        height: auto;
+    }
+
+    #user-manual-content {
+        width: 100%;
+        height: auto;
     }
 }

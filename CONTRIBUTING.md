@@ -47,9 +47,19 @@ Vue is broken down into separate files for different pages and dialogs. Pages ar
 Back-end follows the standard Laravel structure. You can take a look at the url routes: `linguacafe/routes/web.php` or controllers: `linguacafe/app/Http/Controllers` to find a starting point.
 
 #### User manual
-We have a work in progress user manual, it is going through some changes (#187) currently. It is written with Markdown, and will be accessible as a GitHub Wiki online. It will also be stored inside the software, and it will be displayed with the `vue-showdown` library. 
+We have a work in progress user manual. It is written with Markdown, and it is accessible on the GitHub wiki online, as well as inside the software with the help of `vue-showdown` library. 
 
-Contributions to the manual are highly appreciated. My english is not my native language, and I don't phrase things the best way. Feel free to change small things, add new sections or rephrase anything I wrote. However if you would like to change a larger part of it that someone else wrote, please open a GitHub issue before you do so it can be discussed. 
+Contributions to the manual are highly appreciated. English is not my native language, and I don't phrase things the best way. Please feel free to change small things, add new sections or rephrase anything I wrote. However if you would like to change a larger part of it that someone else wrote, please open a GitHub issue before you do so it can be discussed. 
+
+**User manual structure**
+If you would like to open a PR for the user manual, you can use the dev branch's `/manual` folder. If a PR gets merged, it will be in the software at the next version release, and I will copy it to the GitHub wiki repository manually.
+
+If you would like to create a page in the user manual, create a file in the manual folder `/manual/Filename.md`.
+
+If you would like to create a sub-page inside one of the pages, you can add one by making a line inside the file starting with `# `. For example `# Languages`
+
+**User manual menu naming rules**:
+Can only contain lower and uppercase letters, numbers, `,`, `.`, `?` characters and spaces. Don't use the same name for two different pages or sub-pages. If these naming rules are not followed, the sub page scrolling will not work inside LinguaCafe. If you would like more characters to be added, please open a GitHub issue.
 
 
 #### Branches
@@ -63,7 +73,7 @@ If there are other branches, they are not used anymore. Dev branch will be merge
 #### Developer environment
 Follow these steps to setup your developer environment.
 
-**Step 1:** Run these commands to clone linguacafe into a dev folder: 
+**Step 1:** Run these commands to clone LinguaCafe into a dev folder: 
 ```
 git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev
 
@@ -114,6 +124,9 @@ MacOs with Apple silicon processors
 git pull
 docker compose -f ./docker-compose-dev-macos.yml build
 ```
+
+#### Testing http requests
+I've made a simple tool to test http requests from the context of the logged in user. You can reach it at the `/dev` url.
 
 #### Thank you!
 Thank you for everyone who contributes to LinguaCafe in any way. I really appreciate it!

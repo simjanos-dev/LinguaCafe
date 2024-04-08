@@ -42,7 +42,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/jellyfin/process-subtitles', [App\Http\Controllers\MediaPlayerController::class, 'processJellyfinSubtitle']);
 
     // vue routes
-    Route::get('/markdown-test', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
@@ -71,15 +70,16 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
     Route::get('/config/get/{configPath}', [App\Http\Controllers\HomeController::class, 'getConfig']);
 
+    // user manual
+    Route::get('/manual/get-menu-tree', [App\Http\Controllers\HomeController::class, 'getUserManualTree']);
+    Route::get('/manual/get-manual-file/{fileName}', [App\Http\Controllers\HomeController::class, 'getUserManualFile']);
+
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);
     Route::post('/goal/update', [App\Http\Controllers\GoalController::class, 'updateGoal']);
     Route::post('/goals/get-calendar-data', [App\Http\Controllers\GoalController::class, 'getCalendarData']);
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
     Route::get ('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
-
-    // dictionaries
-    
 
     // settings
     Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);

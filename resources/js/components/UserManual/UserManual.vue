@@ -1,14 +1,17 @@
 <template>
-    <!-- Menu -->
     <div id="user-manual">
+        <!-- Menu -->
         <div id="user-manual-menu">
             <v-card outlined class="rounded-lg ma-4 pa-2 pl-0">
                 <v-treeview
+                    v-if="pages"
                     shaped
                     dense
                     hoverable
                     activatable
                     open-on-click
+                    return-object
+                    open-all
                     color="primary"
                     :items="pages"
                     @update:active="updateSelectedPage"
@@ -22,147 +25,89 @@
 
         <!-- Pages -->
         <div id="user-manual-content">
-            <user-manual-introduction v-if="selectedPage === 'introduction'" />
-            <user-manual-languages v-if="selectedPage === 'languages'" />
-            <user-manual-vocabulary-import v-if="selectedPage === 'vocabulary-import'" />
-            <user-manual-reading v-if="selectedPage === 'reading'" />
-            <user-manual-backup v-if="selectedPage === 'backup'" />
+            <VueShowdown
+                v-if="userManualFile"
+                :markdown="userManualFile"
+                :options="{ 
+                    emoji: true,
+                    tables: true
+                }"
+            />
         </div>
-
     </div>
 </template>
 
-<style scoped>
-    #user-manual {
-        display: flex;
-        flex-wrap: nowrap;
-    }
-
-    #user-manual-menu {
-        box-sizing: border-box;
-        width: 300px;
-    }
-
-    #user-manual-content {
-        box-sizing: border-box;
-        display: flex;
-        justify-content: center;
-        width: calc(100% - 300px);
-        height: 100vh;
-        overflow: auto;
-    }
-
-    @media only screen and (max-width: 768px) {
-        #user-manual {
-            flex-wrap: wrap;
-        }
-
-        #user-manual-menu {
-            width: 100%;
-            height: auto;
-        }
-
-        #user-manual-content {
-            width: 100%;
-            height: auto;
-        }
-    }
-
-</style>
-
 <script>
+import axios from 'axios';
+
     export default {
         data: function() {
             return {
-                selectedPage: 'introduction',
-                pages: [
-                    {
-                        name: 'Introduction',
-                        id: 'introduction',
-                    },
-                    {
-                        name: 'Backup',
-                        id: 'backup',
-                    },
-                    // {
-                    //     id: 2,
-                    //     name: 'Installation',
-                    //     children: [
-                    //         {
-                    //             id: 3,
-                    //             name: 'Linux'
-                    //         },
-                    //         {
-                    //             id: 4,
-                    //             name: 'Windows'
-                    //         },
-                    //         {
-                    //             id: 5,
-                    //             name: 'macOS'
-                    //         }
-                    //     ]
-                    // },
-                    {
-                        name: 'Languages',
-                        id: 'languages',
-                    },
-                    // {
-                    //     id: 7,
-                    //     name: 'Dictionaries',
-                    // },
-                    // {
-                    //     id: 8,
-                    //     name: 'Backup',
-                    // },
-                    // {
-                    //     id: 9,
-                    //     name: 'Updating',
-                    // },
-                    // {
-                    //     id: 10,
-                    //     name: 'Library',
-                    // },
-                    {
-                        id: 'reading',
-                        name: 'Reading',
-                    },
-                    // {
-                    //     id: 12,
-                    //     name: 'Reviewing',
-                    // },
-                    {
-                        name: 'Vocabulary',
-                        id: 'vocabulary',
-                        children: [
-                            {
-                                name: 'Importing',
-                                id: 'vocabulary-import',
-                            },
-                            // {
-                            //     id: 15,
-                            //     name: 'Exporting',
-                            // }
-                        ]
-                    }
-                ],
+                userManualFile: null,
+                selectedPage: 'Home',
+                pages: null
             }
         },
         mounted() {
+            axios.get('/manual/get-menu-tree').then((response) => {
+                this.pages = response.data;
+            });
+
+
             if (this.$route.params.currentPage !== undefined) {
                 this.selectedPage = this.$route.params.currentPage;
             }
+
+            this.loadManualFile(this.selectedPage);
         },
         props: {
         },
         methods: {
+            replaceElements(dom) {
+                // admonitions
+                dom = dom.replaceAll('[!NOTE]', '<admonition class="note"><i aria-hidden="true" class="v-icon notranslate mdi mdi-information-outline"></i> <span>Note</span></admonition>');
+                dom = dom.replaceAll('[!TIP]', '<admonition class="tip"><i aria-hidden="true" class="v-icon notranslate mdi mdi-lightbulb-outline"></i> <span>Tip</span></admonition>');
+                dom = dom.replaceAll('[!IMPORTANT]', '<admonition class="important-note"><i aria-hidden="true" class="v-icon notranslate mdi mdi-message-alert-outline"></i> <span>Important</span></admonition>');
+                dom = dom.replaceAll('[!WARNING]', '<admonition class="warning"><i aria-hidden="true" class="v-icon notranslate mdi mdi-alert-outline"></i> <span>Warning</span></admonition>');
+                dom = dom.replaceAll('[!CAUTION]', '<admonition class="caution"><i aria-hidden="true" class="v-icon notranslate mdi mdi-alert-circle-outline"></i> <span>Caution</span></admonition>');
+
+                // flag images
+                dom = dom.replaceAll('../public/images/flags/', '/images/flags/');
+                return dom;
+            },
             updateSelectedPage(event) {
                 if (!event.length) {
                     return;
                 }
                 
-                if (this.$router.currentRoute.path !== '/user-manual/' + event[0]) {
-                    this.$router.push({ path: '/user-manual/' + event[0], replace: true });
+                var hash = '';
+                if (window.location.hash) {
+                    hash = window.location.hash;
                 }
+
+                var currentPath = '' + this.$router.currentRoute.path + hash;
+                var newPath = '' + '/user-manual/' + event[0].fileName;
+                if (currentPath !== newPath) {
+                    this.$router.push({ path: '/user-manual/' + event[0].fileName, replace: true });
+                }
+                
+            },
+            loadManualFile(fileName) {
+                this.userManualFile = null;
+                axios.get('/manual/get-manual-file/' + fileName).then((response) => {
+                    this.userManualFile = this.replaceElements(response.data);
+                    
+                    
+                    if (window.location.hash) {
+                        var hash = window.location.hash;
+                        hash = decodeURI(hash);
+                        hash = hash.toLowerCase().replaceAll(' ', '-').replaceAll('?', '').replaceAll(',', '').replaceAll('.', '');
+
+                        this.$nextTick(() => {
+                            document.querySelector(hash).scrollIntoView(hash);
+                        });
+                    }
+                });
             }
         }
     }

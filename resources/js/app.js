@@ -10,7 +10,6 @@ window.Vue.use(VueRouter);
 
 // vue showdown
 import VueShowdown from 'vue-showdown'
-import MarkdownTest from './components/MarkdownTest.vue';
 
 Vue.use(VueShowdown, {
     // set default flavor of showdown
@@ -21,7 +20,6 @@ Vue.use(VueShowdown, {
     },
   })
   
-Vue.component('markdown-test', MarkdownTest);
 
 // layout
 import Layout from './components/Layout.vue';
@@ -196,7 +194,6 @@ const router = new VueRouter({
         { path: '/', component: Home },
         { path: '/user-settings', component: UserSettingsLayout },
         { path: '/admin', component: AdminSettingsLayout },
-        { path: '/markdown-test', component: MarkdownTest },
         { path: '/user-manual/:currentPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
