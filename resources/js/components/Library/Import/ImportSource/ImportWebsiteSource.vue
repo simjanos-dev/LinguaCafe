@@ -2,17 +2,29 @@
     <div class="d-flex flex-column align-stretch">
         <!-- Website url input -->
         <label class="font-weight-bold">Website url</label>
-        <v-text-field
-            v-model="url"
-            filled
-            dense
-            rounded
-            placeholder="Website url"
-            prepend-icon="mdi-web"
-            ref="url"
-            :rules="[rules.url]"
-            @change="urlChanged"
-        ></v-text-field>
+        <div class="d-flex flex-wrap flex-md-nowrap">
+            <v-text-field
+                class="website-url-input"
+                v-model="url"
+                filled
+                dense
+                rounded
+                placeholder="Website url"
+                prepend-icon="mdi-web"
+                ref="url"
+                :rules="[rules.url]"
+                @keyup.enter="retrieveWebsiteTExt"
+            ></v-text-field>
+            <v-btn
+                id="retrieve-website-button"
+                depressed
+                rounded
+                color="primary"
+                @click="retrieveWebsiteTExt"
+            >
+                Retrieve
+            </v-btn>
+        </div>
 
         <!-- Website text -->
         <v-textarea
@@ -77,7 +89,7 @@
             this.textChanged();
         },
         methods: {
-            urlChanged() {
+            retrieveWebsiteTExt() {
                 if (this.$refs.url.validate()) {
                     this.loading = true;
                     this.text = '';
