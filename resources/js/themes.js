@@ -8,7 +8,7 @@ export default {
         gray: '#E9EAEC',
         gray2: '#E4E4E4',
         gray3: '#F0F0F0',
-        customBorder: '#DCDCDC',
+        customBorder: '#E9EAEC',
 
         error: '#F24B4F',
         info: '#057CBC',

@@ -545,3 +545,10 @@
 #app.dark #import-dialog #website-text {
     background-color: var(--v-gray-base);
 }
+
+// user manual
+#user-manual {
+    pre, pre * {
+        color: var(--v-text-base);
+    }
+}

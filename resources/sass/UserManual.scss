@@ -23,7 +23,18 @@
         max-width: 1000px;
         padding: 0px 24px;
     }
-    
+
+    // code
+    pre {
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid var(--v-customBorder-base);
+    }
+
+    pre, pre *{
+        background-color: var(--v-foreground-base);
+    }
+
     // blockquotes
     blockquote {
         padding: 12px;

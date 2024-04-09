@@ -72,7 +72,7 @@ import axios from 'axios';
                 dom = dom.replaceAll('[!CAUTION]', '<admonition class="caution"><i aria-hidden="true" class="v-icon notranslate mdi mdi-alert-circle-outline"></i> <span>Caution</span></admonition>');
 
                 // flag images
-                dom = dom.replaceAll('../public/images/flags/', '/images/flags/');
+                dom = dom.replaceAll('images/flags/', '/images/flags/');
                 return dom;
             },
             updateSelectedPage(event) {
