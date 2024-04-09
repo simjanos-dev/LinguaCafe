@@ -22,7 +22,6 @@ class CreateEncounteredWordsTable extends Migration
             $table->string('kanji');
             $table->string('reading');
             $table->text('translation');
-            $table->text('example_sentence');
             $table->timestamps();
 
             //stage
