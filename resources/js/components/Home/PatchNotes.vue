@@ -36,6 +36,10 @@
                     <li>
                         Fixed a bug that caused words imported on the vocabulary page to not be added to the review system.
                     </li>
+                    <li>
+                        Pressing the enter key when creating or editing a book or a chapter now will act the same as clicking on the Save button. 
+                        Pressing the enter key when importing something now will act as the Continue or Import button.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" persistent width="800px">
+    <v-dialog v-model="value" persistent width="800px" @keydown.enter.prevent="enterPressed">
         <v-card id="edit-book-dialog" class="rounded-lg">
             <!-- Card title -->
             <v-card-title>
@@ -25,6 +25,7 @@
                     <label class="font-weight-bold">Book name</label>
                     <v-text-field 
                         v-model="name"
+                        ref="bookName"
                         filled
                         dense
                         rounded
@@ -144,11 +145,18 @@
         },
         emits: ['input'],
         mounted() {
+            this.$refs.bookName.focus();
+
             if (this.$props.bookName.length) {
                 this.validateForm();
             }
         },
         methods: {
+            enterPressed() {
+                if (this.$refs.bookForm.validate()) {
+                    this.save();
+                }
+            },
             uploadImageButton() {
                 this.$nextTick(() => {
                     this.$refs.image.$refs.input.click();

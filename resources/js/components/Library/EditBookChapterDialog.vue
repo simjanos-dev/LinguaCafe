@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" persistent width="800px">
+    <v-dialog v-model="value" persistent width="800px" @keydown.enter.prevent="enterPressed">
         <v-card class="rounded-lg">
             <!-- Card title -->
             <v-card-title>
@@ -24,6 +24,7 @@
                 <v-form ref="editChapterForm" v-if="!loading">
                     <label class="font-weight-bold mt-2">Name</label>
                     <v-text-field 
+                        ref="chapterName"
                         filled
                         dense
                         rounded
@@ -135,6 +136,11 @@
             this.loadChapter();
         },
         methods: {
+            enterPressed() {
+                if (this.$refs.editChapterForm.validate()) {
+                    this.save();
+                }
+            },
             save() {
                 this.saveResult = '';
                 if (!this.$refs.editChapterForm.validate()) {
@@ -183,12 +189,15 @@
                         this.loading = false;
                         this.$nextTick(() => {
                             this.$refs.editChapterForm.validate();
+
+                            this.$refs.chapterName.focus();
                         });
                     });
                 } else {
                     this.loading = false;
                     this.$nextTick(() => {
                         this.$refs.editChapterForm.validate();
+                        this.$refs.chapterName.focus();
                     });
                 }
             },

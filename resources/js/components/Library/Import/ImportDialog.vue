@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" scrollable persistent width="1000px">
+    <v-dialog v-model="value" scrollable persistent width="1000px" @keydown.enter.prevent="enterPressed">
         <v-card id="import-dialog" class="rounded-lg" :loading="importLoading">
             <!-- Card title -->
             <v-card-title>
@@ -184,6 +184,7 @@
 
                 <v-btn 
                     v-if="stepperPage < 4"
+                    ref="continueButton"
                     rounded 
                     depressed
                     color="primary" 
@@ -204,6 +205,7 @@
                 </v-btn>
                 <v-btn 
                     v-if="stepperPage > 3 && importResult !== 'success'"
+                    ref="importButton"
                     rounded 
                     depressed
                     color="primary"
@@ -251,6 +253,15 @@
         mounted() {
         },
         methods: {
+            enterPressed() {
+                if (this.$refs.continueButton !== undefined && !this.$refs.continueButton.disabled) {
+                    this.stepForward();
+                }
+
+                if (this.$refs.importButton !== undefined && !this.$refs.importButton.disabled) {
+                    this.finishImport();
+                }
+            },
             selectImportType(type) {
                 this.stepperPage = 2;
                 this.importType = type;
