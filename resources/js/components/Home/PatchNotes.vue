@@ -41,13 +41,16 @@
                 <b>Other changes:</b>
                 <ul>
                     <li>
+                        The online user manual has moved from the GitHub Page to the GitHub Wiki. It also moved from a Vuetify format to Markdown.
+                    </li>
+                    <li>
                         DeepL API key error will not appear on the admin page anymore if it set to the default value.
                     </li>
                     <li>
                         Added a warning on how hover vocabulary box works in review settings.
                     </li>
                     <li>
-                        Lightened dark mode text color.
+                        Lightened default dark mode text color to make it more readable.
                     </li>
                     <li>
                         Made navigation sidebar more compact.

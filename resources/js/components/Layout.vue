@@ -50,11 +50,7 @@
                             <!-- Navigation buttons -->
                             <v-list-item class="navigation-button" @click="collapseNavbar">
                                 <v-icon> mdi-arrow-collapse-left </v-icon>
-                                <span class="pl-6"> Hide </span>
-                            </v-list-item>
-                            <v-list-item class="navigation-button" @click="navigationClick('User manual', $event)">
-                                <v-icon> mdi-account-question </v-icon>
-                                <span class="pl-6"> User manual</span>
+                                <span class="pl-6"> Hide</span>
                             </v-list-item>
                             <v-list-item class="navigation-button" @click="themeSelectionDialog = true;">
                                 <v-icon> mdi-palette </v-icon>
@@ -71,9 +67,6 @@
                     <template v-else>
                         <v-btn v-if="$vuetify.breakpoint.lgAndUp" id="collapse" rounded text class="mini-drawer-button" @click="expandNavbar" title="Expand sidebar">
                             <v-icon>mdi-arrow-collapse-right</v-icon>
-                        </v-btn>
-                        <v-btn id="user-manual" rounded text class="mini-drawer-button" @click="navigationClick('User manual', $event)" title="User manual">
-                            <v-icon>mdi-account-question</v-icon>
                         </v-btn>
                         <v-btn id="theme" rounded text class="mini-drawer-button" @click="themeSelectionDialog = true" title="Theme">
                             <v-icon>mdi-palette</v-icon>
@@ -168,6 +161,12 @@
                         name: 'Admin settings',
                         url: '/admin',
                         icon: 'mdi-shield-lock',
+                        bottomNav: false,
+                    },
+                    {
+                        name: 'User manual',
+                        url: '/user-manual',
+                        icon: 'mdi-account-question',
                         bottomNav: false,
                     }
                 ]
