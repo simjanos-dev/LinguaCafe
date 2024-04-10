@@ -337,7 +337,12 @@
                 }
                 
                 switch(event.which) {
-                    // set stage 0-7
+                    // set level to new
+                    case 67:
+                        this.setStage(2);
+                        break;
+
+                    // set level 0-7
                     case 48:
                     case 49:
                     case 50:
@@ -350,7 +355,7 @@
                         this.setStage(48 - event.which);
                         break;
                     
-                    // set stage 0-7 numpad
+                    // set level 0-7 numpad
                     case 96:
                     case 97:
                     case 98:
@@ -363,7 +368,7 @@
                         this.setStage(96 - event.which);
                         break;
 
-                    // set stage to ignore
+                    // set level to ignore
                     case 88:
                         event.preventDefault();
                         this.setStage(1);
@@ -1188,7 +1193,7 @@
                 var hoverSetStage = false;
                 
                 // do not set selected phrases to ignored
-                if (this.selection.length > 1 && stage === 1) {
+                if (this.selection.length > 1 && stage > 0) {
                     return;
                 }
 
@@ -1196,7 +1201,7 @@
                     hoverSetStage = true;
 
                     // do not set hovered phrases to ignored
-                    if (this.hoverVocabBox.hoveredWords.length > 1 && stage === 1) {
+                    if (this.hoverVocabBox.hoveredWords.length > 1 && stage > 0) {
                         return;
                     }
 

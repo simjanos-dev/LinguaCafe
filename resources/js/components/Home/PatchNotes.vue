@@ -15,6 +15,9 @@
                     <li>
                         Added theme customization.
                     </li>
+                    <li>
+                        Added a hotkey to set words' level back to new.
+                    </li>
                 </ul>
 
                 <b>Bug fixes:</b>
