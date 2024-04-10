@@ -19,89 +19,85 @@
             </div>
         </div>
 
-        <v-card outlined class="rounded-lg pa-4 pt-0" :loading="loading">
-            <div class="mt-4"></div>
+        <!-- Color table -->
+        <v-simple-table class="rounded-lg no-hover border mt-2" v-if="!loading">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th>Hex</th>
+                    <th>Reset</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(color, index) in (selectedTheme == 'light' ? lightTheme : darkTheme)" :key="selectedTheme + color.name">
+                    <td>{{ color.name }}</td>
+                    <td>
+                        <v-menu
+                            v-model="color.opened"
+                            width="290px"
+                            offset-y
+                            nudge-top="-10px"
+                            right
+                            :close-on-content-click="false"
+                        >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-card
+                                    class="border mx-auto"
+                                    outlined
+                                    :color="color.value"
+                                    width="48px"
+                                    height="26px"
+                                    @click="color.opened = true;"
+                                ></v-card>
+                            </template>
 
-            <!-- Color table -->
-            <v-simple-table class="rounded-lg no-hover border" v-if="!loading">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Color</th>
-                        <th>Hex</th>
-                        <th>Reset</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(color, index) in (selectedTheme == 'light' ? lightTheme : darkTheme)" :key="selectedTheme + color.name">
-                        <td>{{ color.name }}</td>
-                        <td>
-                            <v-menu
-                                v-model="color.opened"
-                                width="290px"
-                                offset-y
-                                nudge-top="-10px"
-                                right
-                                :close-on-content-click="false"
-                            >
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-card
-                                        class="border mx-auto"
-                                        outlined
-                                        :color="color.value"
-                                        width="48px"
-                                        height="26px"
-                                        @click="color.opened = true;"
-                                    ></v-card>
-                                </template>
+                            <v-color-picker 
+                                mode="hexa" 
+                                hide-inputs 
+                                v-model="color.value" 
+                                @update:color="colorChanged(index, $event)" 
+                            /> 
+                        </v-menu>
+                    </td>
+                    <td>
+                        <v-text-field
+                            class="my-2"
+                            v-model="color.hex"
+                            ref="colorHex"
+                            filled
+                            rounded
+                            dense
+                            hide-details
+                            maxlength="7"
+                            :rules="[rules.hex]"
+                            @keyup="hexValueChanged(index)"
+                        ></v-text-field>
+                    </td>
+                    <td>
+                        <v-btn 
+                            icon 
+                            title="Restore default"
+                            @click="resetColor(index)"
+                        >
+                            <v-icon>mdi-restore</v-icon>
+                        </v-btn>
+                    </td>
+                </tr>
+            </tbody>
+        </v-simple-table>
 
-                                <v-color-picker 
-                                    mode="hexa" 
-                                    hide-inputs 
-                                    v-model="color.value" 
-                                    @update:color="colorChanged(index, $event)" 
-                                /> 
-                            </v-menu>
-                        </td>
-                        <td>
-                            <v-text-field
-                                class="my-2"
-                                v-model="color.hex"
-                                ref="colorHex"
-                                filled
-                                rounded
-                                dense
-                                hide-details
-                                maxlength="7"
-                                :rules="[rules.hex]"
-                                @keyup="hexValueChanged(index)"
-                            ></v-text-field>
-                        </td>
-                        <td>
-                            <v-btn 
-                                icon 
-                                title="Restore default"
-                                @click="resetColor(index)"
-                            >
-                                <v-icon>mdi-restore</v-icon>
-                            </v-btn>
-                        </td>
-                    </tr>
-                </tbody>
-            </v-simple-table>
-
-            <!-- Save result alerts -->
-            <v-alert
-                v-if="!saving && saveResult === 'error'"
-                class="rounded-lg my-3"
-                color="error"
-                type="error"
-                border="left"
-                dark
-            >
-                An error has occurred while saving color theme settings.
-            </v-alert>
-        </v-card>
+        <!-- Save result alerts -->
+        <v-alert
+            v-if="!saving && saveResult === 'error'"
+            class="rounded-lg my-3"
+            color="error"
+            type="error"
+            border="left"
+            dark
+        >
+            An error has occurred while saving color theme settings.
+        </v-alert>
 
         <!-- Save button -->
         <div class="d-flex w-full mt-4 mb-16">
