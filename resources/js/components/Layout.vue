@@ -16,7 +16,7 @@
                 :mini-variant="$vuetify.breakpoint.md || navbarCollapsed" 
                 :permanent="$vuetify.breakpoint.mdAndUp" 
                 v-model="drawer" 
-                color="navigation"
+                color="foreground"
             >
                 <!-- Logo -->
                 <div id="logo" class="my-5">

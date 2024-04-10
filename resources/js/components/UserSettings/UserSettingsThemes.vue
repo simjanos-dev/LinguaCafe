@@ -206,8 +206,6 @@
                 var name = this.selectedTheme === 'light' ? this.lightTheme[index].name : this.darkTheme[index].name;
                 var defaultValue = defaultThemes[this.selectedTheme][name];
 
-                console.log('default', defaultValue);
-
                 if (this.selectedTheme == 'light') {
                     this.lightTheme[index].value = defaultValue;
                     this.lightTheme[index].hex = defaultValue;

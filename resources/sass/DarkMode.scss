@@ -45,6 +45,12 @@
 }
 
 // pagination
+// pagination
+#app.dark .theme--dark.v-pagination .v-pagination__item,
+#app.dark .theme--dark.v-pagination .v-pagination__navigation {
+    background: var(--v-foreground-base);
+}
+
 #app.dark .theme--dark.v-pagination .v-pagination__item--active {
     color: var(--v-textDark-base);
 }
