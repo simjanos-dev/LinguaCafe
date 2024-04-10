@@ -18,7 +18,7 @@
                 </ul>
 
                 <b>Bug fixes:</b>
-                <ul>                    
+                <ul>
                     <li>
                         There will be no error message anymore due to empty book name when you click on "Create book" button.
                     </li>
@@ -39,6 +39,9 @@
                     <li>
                         Pressing the enter key when creating or editing a book or a chapter now will act the same as clicking on the Save button. 
                         Pressing the enter key when importing something now will act as the Continue or Import button.
+                    </li>
+                    <li>
+                        Fixed a bug that caused hover vocabulary box to appear even when plain text mode was active 
                     </li>
                 </ul>
 
@@ -64,7 +67,7 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.9 <v-spacer /> 2024.04.28.</v-card-title>
+            <v-card-title>v0.9 <v-spacer /> 2024.03.28.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>

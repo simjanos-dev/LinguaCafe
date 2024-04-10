@@ -629,7 +629,7 @@
                 this.hoverVocabBox.disabledWhileSelecting = false;
             },
             updateHoverVocabularyBox(data) {
-                if (!this.$props.vocabularyHoverBox || data.hoveredWords === null) {
+                if (!this.$props.vocabularyHoverBox || this.plainTextMode || data.hoveredWords === null) {
                     this.hoverVocabBox.dictionarySearchTerm = '';
                     this.hoverVocabBox.hoveredWords = null;
                     this.hoverVocabBox.active = false;
