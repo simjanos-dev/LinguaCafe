@@ -59,7 +59,7 @@
                     dense
                     rounded
                     v-model="baseWord"
-                    @change="inputChanged"
+                    @keyup="inputChanged"
                     @keydown.stop=";"
                 ></v-text-field>
                 <v-icon class="mt-1 mx-1">mdi-arrow-right</v-icon>
@@ -72,7 +72,7 @@
                     dense
                     rounded
                     :value="word"
-                    @change="inputChanged"
+                    @keyup="inputChanged"
                     @keydown.stop=";"
                 ></v-text-field>
             </div>
@@ -87,7 +87,7 @@
                     dense
                     rounded
                     v-model="baseWordReading"
-                    @change="inputChanged"
+                    @keyup="inputChanged"
                     @keydown.stop=";"
                 ></v-text-field>
                 <v-icon class="mt-1 mx-1">mdi-arrow-right</v-icon>
@@ -99,7 +99,7 @@
                     dense
                     rounded
                     v-model="reading"
-                    @change="inputChanged"
+                    @keyup="inputChanged"
                     @keydown.stop=";"
                 ></v-text-field>
             </div>
@@ -132,7 +132,7 @@
                 hide-details
                 height="80"
                 v-model="reading"
-                @change="inputChanged"
+                @keyup="inputChanged"
                 @keydown.stop=";"
             ></v-textarea>
             
@@ -197,7 +197,7 @@
                 hide-details
                 height="100"
                 v-model="translationText"
-                @change="inputChanged('translation')"
+                @keyup="inputChanged('translation')"
                 @keydown.stop=";"
             ></v-textarea>
         </div>

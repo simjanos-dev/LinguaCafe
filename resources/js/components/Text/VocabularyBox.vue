@@ -168,7 +168,7 @@
                             hide-details
                             height="100"
                             v-model="translationText"
-                            @change="inputChanged('translation')"
+                            @keyup="inputChanged('translation')"
                             @keydown.stop=";"
                         ></v-textarea>
 
@@ -213,7 +213,7 @@
                                 dense
                                 rounded
                                 v-model="baseWord"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
@@ -225,7 +225,7 @@
                                 dense
                                 rounded
                                 :value="word"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                         </div>
@@ -240,7 +240,7 @@
                                 dense
                                 rounded
                                 v-model="baseWordReading"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
@@ -251,7 +251,7 @@
                                 dense
                                 rounded
                                 v-model="reading"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                         </div>
@@ -268,7 +268,7 @@
                             hide-details
                             height="100"
                             v-model="reading"
-                            @change="inputChanged"
+                            @keyup="inputChanged"
                             @keydown.stop=";"
                         ></v-textarea>
                     </v-card-text>

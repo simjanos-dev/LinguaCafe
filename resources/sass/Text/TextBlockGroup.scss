@@ -168,14 +168,17 @@
             background-color: var(--v-readerWordSelection-base) !important;
             color: var(--v-highlightedWordText-base) !important;
             border-color: var(--v-readerWordSelection-base) !important;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
         }
-
-        &.highlight-start:not(.phrase) {
+        
+        // highlighted rounding
+        &.highlighted:not(.highlighted ~ *) {
             border-top-left-radius: 6px;
             border-bottom-left-radius: 6px;
         }
 
-        &.highlight-end:not(.phrase) {
+        &.highlighted:not(:has(~ .highlighted)) {
             border-top-right-radius: 6px;
             border-bottom-right-radius: 6px;
         }

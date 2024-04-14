@@ -131,7 +131,6 @@
             };
         },
         mounted: function() {
-            console.log(this.$props.deeplEnabled);
             this.makeSearchRequest();
         },
         methods: {

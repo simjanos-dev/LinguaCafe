@@ -41,8 +41,8 @@
                         rounded
                         no-resize
                         height="300px"
-                        maxlength="10000"
-                        counter="10000"
+                        maxlength="15000"
+                        counter="15000"
                         :disabled="type !== 'text' || loading"
                     ></v-textarea>
                     
