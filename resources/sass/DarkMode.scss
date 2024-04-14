@@ -347,7 +347,7 @@
     .stage {
         &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"],
         &[stage="-3"], &[stage="-2"], &[stage="-1"] {
-            background-color: var(--v-highlightedWord-base);
+            background-color: var(--v-highlightedWordLevel1-base);
             color: var(--v-textDark-base);
         }
 
