@@ -28,7 +28,7 @@
                             </template>
                             <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts(index)">Load word counts</v-btn>
                             <v-btn class="menu-button" tile color="white" @click="showEditBookDialog(book)">Edit</v-btn>
-                            <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(book.id, book.name)">Review</v-btn>
+                            <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(book)">Review</v-btn>
                             <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog(book)">Delete</v-btn>
                         </v-menu>
                     </v-card-title>
@@ -109,8 +109,8 @@
             openBook(bookId) {
                 this.$emit('open-book', bookId);
             },
-            showStartReviewDialog(bookId, bookName) {
-                this.$emit('show-start-review-dialog', bookId, bookName);
+            showStartReviewDialog(book) {
+                this.$emit('show-start-review-dialog', book.id, book.name);
             },
             formatNumber: formatNumber
         }

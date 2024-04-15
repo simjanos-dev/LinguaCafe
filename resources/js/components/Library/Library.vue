@@ -55,6 +55,15 @@
                         class="menu-button justify-start"
                         tile
                         color="white"
+                        @click="setLayout('table')"
+                    >
+                        <v-icon class="mr-1">mdi-view-list</v-icon>
+                        List
+                    </v-btn>
+                    <v-btn
+                        class="menu-button justify-start"
+                        tile
+                        color="white"
                         @click="setLayout('cover-only')"
                     >
                         <v-icon class="mr-1">mdi-view-module</v-icon>
@@ -118,6 +127,16 @@
                 </v-btn>
         </div>
 
+        <!-- Book list table -->
+        <book-list-table
+            v-if="openedBook === -1 && layout === 'table'"
+            :books="books"
+            @show-edit-book-dialog="showEditBookDialog"
+            @show-delete-book-dialog="showDeleteBookDialog"
+            @show-start-review-dialog="showStartReviewDialog"
+            @open-book="openBook"
+        />
+
         <!-- Book list detailed -->
         <book-list-detailed
             v-if="openedBook === -1 && layout === 'detailed'"
@@ -151,7 +170,7 @@
     export default {
         data: function() {
             return {
-                layout: 'detailed',
+                layout: 'table',
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 books: [],
                 openedBook: -1,

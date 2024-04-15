@@ -167,6 +167,10 @@ button.v-btn.menu-button {
     color: var(--v-text-base);
 }
 
+.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
+    font-size: 14px;
+}
+
 // custom expansion card
 .expansion-card {
     .v-card__title {

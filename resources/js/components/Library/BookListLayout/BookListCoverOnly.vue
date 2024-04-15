@@ -4,7 +4,7 @@
         <v-card
             outlined
             :id="'book-' + book.id"
-            class="book cover-only rounded-lg ma-1"
+            class="book cover-only rounded-lg mr-1 mb-1"
             v-for="(book, index) in books"
             :key="index"
         >

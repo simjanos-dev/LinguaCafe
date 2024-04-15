@@ -27,6 +27,7 @@ Vue.component('layout', Layout);
 
 // library
 import Book from './components/Library/Book.vue';
+import BookListTable from './components/Library/BookListLayout/BookListTable.vue';
 import BookListDetailed from './components/Library/BookListLayout/BookListDetailed.vue';
 import BookListCoverOnly from './components/Library/BookListLayout/BookListCoverOnly.vue';
 import EditBookDialog from './components/Library/EditBookDialog.vue';
@@ -35,6 +36,7 @@ import EditBookChapterDialog from './components/Library/EditBookChapterDialog.vu
 import DeleteBookChapterDialog from './components/Library/DeleteBookChapterDialog.vue';
 import DeleteBookDialog from './components/Library/DeleteBookDialog.vue';
 Vue.component('book', Book);
+Vue.component('book-list-table', BookListTable);
 Vue.component('book-list-detailed', BookListDetailed);
 Vue.component('book-list-cover-only', BookListCoverOnly);
 Vue.component('edit-book-dialog', EditBookDialog);

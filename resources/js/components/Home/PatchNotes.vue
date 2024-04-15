@@ -10,6 +10,9 @@
                 <b>New features:</b>
                 <ul>
                     <li>
+                        Added a new default list layout for the library page.
+                    </li>
+                    <li>
                         Added a logout confirmation dialog.
                     </li>
                     <li>
