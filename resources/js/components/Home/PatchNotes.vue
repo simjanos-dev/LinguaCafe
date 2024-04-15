@@ -16,6 +16,12 @@
                         Added theme customization.
                     </li>
                     <li>
+                        Added different background colors for different word levels.
+                    </li>
+                    <li>
+                        Added a separate color for ignored words' text color.
+                    </li>
+                    <li>
                         Added a hotkey to set words' level back to new.
                     </li>
                 </ul>
@@ -32,9 +38,6 @@
                     <li>
                         While creating or editing a book and uploading an image, clicking on the cancel button will now 
                         revert the image to the default or previous image, instead of showing an error message.
-                    </li>
-                    <li>
-                        Fixed a bug that caused vocabulary import to update daily new words achivement.
                     </li>
                     <li>
                         Fixed a bug that caused words imported on the vocabulary page to not be added to the review system.

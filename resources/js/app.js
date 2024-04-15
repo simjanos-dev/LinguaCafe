@@ -19,18 +19,24 @@ Vue.use(VueShowdown, {
       emoji: false,
     },
   })
-  
+
 
 // layout
 import Layout from './components/Layout.vue';
 Vue.component('layout', Layout);
 
 // library
+import Book from './components/Library/Book.vue';
+import BookListDetailed from './components/Library/BookListLayout/BookListDetailed.vue';
+import BookListCoverOnly from './components/Library/BookListLayout/BookListCoverOnly.vue';
 import EditBookDialog from './components/Library/EditBookDialog.vue';
 import BookChapters from './components/Library/BookChapters.vue';
 import EditBookChapterDialog from './components/Library/EditBookChapterDialog.vue';
 import DeleteBookChapterDialog from './components/Library/DeleteBookChapterDialog.vue';
 import DeleteBookDialog from './components/Library/DeleteBookDialog.vue';
+Vue.component('book', Book);
+Vue.component('book-list-detailed', BookListDetailed);
+Vue.component('book-list-cover-only', BookListCoverOnly);
 Vue.component('edit-book-dialog', EditBookDialog);
 Vue.component('book-chapters', BookChapters);
 Vue.component('edit-book-chapter-dialog', EditBookChapterDialog);
@@ -73,7 +79,7 @@ Vue.component('goal', Goal);
 Vue.component('edit-goal-dialog', EditGoalDialog);
 Vue.component('statistics', Statistics);
 
-// text 
+// text
 import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
 import VocabularyBox from './components/Text/VocabularyBox.vue';
@@ -177,7 +183,7 @@ const AdminSettingsLayout = require('./components/Admin/AdminSettingsLayout.vue'
 const Home = require('./components/Home/Home.vue').default;
 const PatchNotes = require('./components/Home/PatchNotes.vue').default;
 const Attributions = require('./components/Home/Attributions.vue').default;
-const Books = require('./components/Library/Books.vue').default;
+const Library = require('./components/Library/Library.vue').default;
 const TextReader = require('./components/TextReader/TextReader.vue').default;
 const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
 const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
@@ -198,7 +204,7 @@ const router = new VueRouter({
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
-        { path: '/books/:bookId?', component: Books },
+        { path: '/books/:bookId?', component: Library },
         { path: '/chapters/read/:chapterId', component: TextReader },
         { path: '/flashcards', component: FlashcardCollectionList },
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollection },
