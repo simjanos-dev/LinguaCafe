@@ -8,6 +8,10 @@
 #user-manual-menu {
     box-sizing: border-box;
     width: 300px;
+
+    .v-treeview {
+        color: var(--v-text-base) !important;
+    }
 }
 
 #user-manual-content {
@@ -17,6 +21,7 @@
     width: calc(100% - 300px);
     height: 100vh;
     color: var(--v-text-base);
+    padding-top: 24px;
 
     & > div {
         width: 100%;
