@@ -88,6 +88,7 @@
                         :furigana-on-new-words="settings.furiganaOnNewWords"
                         :vocabulary-hover-box="settings.vocabularyHoverBox"
                         :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
+                        :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
                         :vocabulary-sidebar="settings.vocabularySidebar"
                         :auto-highlight-words="settings.autoHighlightWords"
                         :vocabulary-sidebar-fits="vocabularySidebarFits"
@@ -196,6 +197,8 @@
                     mediaControlsVisible: true,
                     vocabularySidebar: true,
                     vocabularyHoverBox: true,
+                    vocabularyHoverBoxSearch: true,
+                    vocabularyHoverBoxDelay: 300,
                     autoHighlightWords: true
                 },
                 fullscreenMode: false,

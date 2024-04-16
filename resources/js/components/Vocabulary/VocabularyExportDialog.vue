@@ -73,7 +73,7 @@
                             hide-details
                             class="vocabulary-export-switch my-1"
                             color="primary"
-                            label="Stage"
+                            label="Level"
                             @change="fieldSwitchChange"
                         ></v-switch>
 
@@ -118,7 +118,7 @@
                             <th v-if="fields.lemmaReading">Lemma reading</th>
                             <th v-if="fields.reading">Reading</th>
                             <th v-if="fields.translation">Translation</th>
-                            <th v-if="fields.stage">Stage</th>
+                            <th v-if="fields.stage">Level</th>
                             <th v-if="fields.addedToSrs">Added to srs</th>
                             <th v-if="fields.readCount">Read count</th>
                             <th v-if="fields.lookupCount">Lookup count</th>
@@ -127,7 +127,22 @@
                     <tbody>
                         <tr v-for="(sampleWord, wordIndex) in $props.sampleWords.slice(0, 10)" :key="wordIndex">
                             <td v-if="fields.lemma">{{ sampleWord.base_word }}</td>
-                            <td v-if="fields.word">{{ sampleWord.word }}</td>
+                            <td v-if="fields.word">
+                                <!-- Word -->
+                                <template v-if="sampleWord.type == 'word'">
+                                    {{ sampleWord.word }}
+                                </template>
+
+                                <!-- Chinese or Japanese phrase -->
+                                <template v-if="sampleWord.type == 'phrase' && ['chinese', 'japanese'].includes($props.language)">
+                                    {{ JSON.parse(sampleWord.word).join('') }}
+                                </template>
+
+                                <!-- Other language phrase -->
+                                <template v-if="sampleWord.type == 'phrase' && !['chinese', 'japanese'].includes($props.language)">
+                                    {{ JSON.parse(sampleWord.word).join(' ') }}
+                                </template>
+                            </td>
                             <td v-if="fields.lemmaReading">{{ sampleWord.base_word_reading }}</td>
                             <td v-if="fields.reading">{{ sampleWord.reading }}</td>
                             <td v-if="fields.translation">{{ sampleWord.translation }}</td>
@@ -178,6 +193,7 @@
     export default {
         props: {
             value : Boolean,
+            language: String,
             sampleWords: Array
         },
         emits: ['input'],
@@ -199,6 +215,7 @@
             };
         },
         mounted: function() {
+            console.log(this.$props.sampleWords);
         },
         methods: {
             selectAll() {

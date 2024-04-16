@@ -29,10 +29,10 @@ class EncounteredWord extends Model
         'relearning'
     ];
 
-    public function setStage($stage) {
+    public function setStage($stage, $ignoreAchivement = false) {
        
         // if it's a newly saved word, update today's achievement
-        if ($this->stage >= 0 && $stage < 0) {
+        if ($this->stage >= 0 && $stage < 0 && !$ignoreAchivement) {
             $goal = Goal::where('user_id', $this->user_id)
                 ->where('language', $this->language)
                 ->where('type', 'learn_words')

@@ -1,92 +1,71 @@
 export default {
     light: {
         background: '#F2F3F5',
-        navigation: '#ffffff',
-        primary: '#ab8875',
-        secondary: '#ab8875',
-
-        foreground: '#ffffff',
+        foreground: '#FFFFFF',
+        navigation: '#FFFFFF',
+        primary: '#AB8875',
+        
         gray: '#E9EAEC',
-        gray2: '#e4e4e4',
+        gray2: '#E4E4E4',
         gray3: '#F0F0F0',
-        customBorder: '#dcdcdc',
+        customBorder: '#E9EAEC',
 
-        error: '#f24b4f',
+        error: '#F24B4F',
         info: '#057CBC',
-        success: '#3dcf59',
-        warning: '#ffb448',
+        success: '#3DCF59',
+        warning: '#EEE339',
         
         text: '#333333',
+        textDark: '#333333',
+        
+        newWord: '#ffD08B',
+        highlightedWordLevel1: '#80E6B3',
+        highlightedWordLevel2: '#8EE9BB',
+        highlightedWordLevel3: '#9CECC4',
+        highlightedWordLevel4: '#AAEECC',
+        highlightedWordLevel5: '#B8F1D5',
+        highlightedWordLevel6: '#C7F4DD',
+        highlightedWordLevel7: '#D5F7E6',
+        ignoredWordTextColor: '#555555',
+        readerWordSelection: '#D8D8D8',
         highlightedWordText: '#333333',
-
-        newWord: '#ffdd4b',
-        highlightedWord: '#61df6b',
-        
-        readerWordSelection: '#d8d8d8',
-
-        statisticsDays: '#9830f6',
-        statisticsReadWords: '#00b452',
-        statisticsKnownWords: '#f6304c',
-        statisticsLearningWords: '#FEBB13',
-        statisticsKanji: '#2C97DF',
-        
-        // teszt
-        
-
-        newWord: '#ffd08b',
-        highlightedWord: '#80e6b3',
-        
-        // readerWordSelection: '#d8d8d8',
-
-        dailyGoalReview: '#80e6b3',
-        dailyGoalNew: '#ffd08b',
-        dailyGoalReading: '#a0b6ff',
-        
-
-        statisticsDays: '#ab8875',
-        statisticsReadWords: '#ab8875',
-        statisticsKnownWords: '#ab8875',
-        statisticsLearningWords: '#ab8875',
-        statisticsKanji: '#ab8875',
     },
     dark: {
         background: '#1C1B20',
         foreground: '#28272C',
         navigation: '#28272C',
-        primary: '#c5947d',
-        secondary: '#c5947d',
-        gray: '#E9EAEC',
-        customBorder: '#2f2f2f',
+        primary: '#C5947D',
 
-        error: '#ff4f55',
-        info: '#057CBC',
-        success: '#3dcf59',
-        warning: '#ffb448',
-        
-        text: '#c3c3c3',
-        textDark: '#141110',
-        
         gray: '#39383D',
         gray2: '#414046',
         gray3: '#45444a',
-        
-        newWord: '#d0ba49',
-        highlightedWord: '#49A74F',
-        
-        readerWordSelection: '#b6b6b6',
-        highlightedWordText: '#121212',
+        customBorder: '#2F2F2F',
 
-        statisticsDays: '#ab8875',
-        statisticsReadWords: '#ab8875',
-        statisticsKnownWords: '#ab8875',
-        statisticsLearningWords: '#ab8875',
-        statisticsKanji: '#ab8875',
+        error: '#FF4F55',
+        info: '#057CBC',
+        success: '#3DCF59',
+        warning: '#FFB448',
+        
+        text: '#CACACA',
+        textDark: '#141110',
+        
+        newWord: '#D0BA49',
+        highlightedWordLevel1: '#3F8044',
+        highlightedWordLevel2: '#49A74F',
+        highlightedWordLevel3: '#469D4C',
+        highlightedWordLevel4: '#469D4C',
+        highlightedWordLevel5: '#44934A',
+        highlightedWordLevel6: '#3F8044',
+        highlightedWordLevel7: '#3C7642',
+        ignoredWordTextColor: '#CACACA',
+        readerWordSelection: '#B6B6B6',
+        highlightedWordText: '#121212',
     },
     eink: {
         name: '#000000',
-        foreground: '#ffffff',
-        background: '#ffffff',
-        navigation: '#ffffff',
+        foreground: '#FFFFFF',
+        background: '#FFFFFF',
+        navigation: '#FFFFFF',
         primary: '#000000',
         secondary: '#000000',
         gray: '#E9EAEC',
@@ -98,17 +77,17 @@ export default {
         warning: '#000000',
         
         text: '#000000',
-        highlightedWordText: '#ffffff',
         
         newWord: '#000000',
-        highlightedWord: '#000000',
-
+        highlightedWordLevel1: '#000000',
+        highlightedWordLevel2: '#000000',
+        highlightedWordLevel3: '#000000',
+        highlightedWordLevel4: '#000000',
+        highlightedWordLevel5: '#000000',
+        highlightedWordLevel6: '#000000',
+        highlightedWordLevel7: '#000000',
+        ignoredWordTextColor: '#000000',
         readerWordSelection: '#888888',
-    
-        statisticsDays: '#000000',
-        statisticsReadWords: '#000000',
-        statisticsKnownWords: '#000000',
-        statisticsLearningWords: '#000000',
-        statisticsKanji: '#000000',
+        highlightedWordText: '#FFFFFF',
     },
 }

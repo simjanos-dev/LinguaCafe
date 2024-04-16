@@ -21,7 +21,6 @@ class StatisticsService {
 
         $languageStatistics->days = new \stdClass();
         $languageStatistics->days->name = 'Days of activity';
-        $languageStatistics->days->color = 'statisticsDays';
         $languageStatistics->days->icon = 'mdi-calendar-check';
         $languageStatistics->days->value = GoalAchievement
             ::where('user_id', $userId)
@@ -32,7 +31,6 @@ class StatisticsService {
 
         $languageStatistics->readWordCount = new \stdClass();
         $languageStatistics->readWordCount->name = 'Read words';
-        $languageStatistics->readWordCount->color = 'statisticsReadWords';
         $languageStatistics->readWordCount->icon = 'mdi-book-open-variant';
         $languageStatistics->readWordCount->value = GoalAchievement
             ::where('user_id', $userId)
@@ -61,13 +59,11 @@ class StatisticsService {
             $languageStatistics->kanji = new \stdClass();
             $languageStatistics->kanji->name = 'Kanji';
             $languageStatistics->kanji->value = count($uniqueKanji);
-            $languageStatistics->kanji->color = 'statisticsKanji';
             $languageStatistics->kanji->icon = 'mdi-ideogram-cjk';
         }
         
         $languageStatistics->known = new \stdClass();
         $languageStatistics->known->name = 'Known words';
-        $languageStatistics->known->color = 'statisticsKnownWords';
         $languageStatistics->known->icon = 'mdi-credit-card-check';
         $languageStatistics->known->value = EncounteredWord
             ::select('id')->where('stage', 0)
@@ -77,7 +73,6 @@ class StatisticsService {
 
         $languageStatistics->learning = new \stdClass();
         $languageStatistics->learning->name = 'Words currently studied';
-        $languageStatistics->learning->color = 'statisticsLearningWords';
         $languageStatistics->learning->icon = 'mdi-school';
         $languageStatistics->learning->value = EncounteredWord
             ::select('id')

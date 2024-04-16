@@ -1,7 +1,7 @@
 <template>
     <div 
         class="text-block w-100 overflow-x-hidden" 
-        @mousemove="removePhraseHover"
+        @mousemove="removePhraseHover(); stopHoverTimeout();"
     >
         <template>
             <template v-for="(word, wordIndex) in words"><!--
@@ -40,7 +40,6 @@
                     @mousemove.stop="updateSelectionMouse($event, wordIndex);" 
                     @touchend.stop="finishSelection($event)"
                     @mouseup.stop="finishSelection($event)"
-                    @mouseleave=";"
                 ><!--
                     --><template v-if="language == 'japanese'"><!--
                         --><ruby class="rubyword" :wordindex="wordIndex"><!--
@@ -136,6 +135,9 @@
             this.updatePhraseBorders();
         },
         methods: {
+            stopHoverTimeout() {
+                this.$emit('stopHoverTimeout');
+            },
             hoverPhraseSelection: function(wordIndex) {
                 // collection for hover vocabulary box
                 var hoveredWords = [];

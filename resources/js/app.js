@@ -8,16 +8,37 @@ var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
 window.Vue.use(VueRouter);
 
+// vue showdown
+import VueShowdown from 'vue-showdown'
+
+Vue.use(VueShowdown, {
+    // set default flavor of showdown
+    flavor: 'github',
+    // set default options of showdown (will override the flavor options)
+    options: {
+      emoji: false,
+    },
+  })
+
+
 // layout
 import Layout from './components/Layout.vue';
 Vue.component('layout', Layout);
 
 // library
+import Book from './components/Library/Book.vue';
+import BookListTable from './components/Library/BookListLayout/BookListTable.vue';
+import BookListDetailed from './components/Library/BookListLayout/BookListDetailed.vue';
+import BookListCoverOnly from './components/Library/BookListLayout/BookListCoverOnly.vue';
 import EditBookDialog from './components/Library/EditBookDialog.vue';
 import BookChapters from './components/Library/BookChapters.vue';
 import EditBookChapterDialog from './components/Library/EditBookChapterDialog.vue';
 import DeleteBookChapterDialog from './components/Library/DeleteBookChapterDialog.vue';
 import DeleteBookDialog from './components/Library/DeleteBookDialog.vue';
+Vue.component('book', Book);
+Vue.component('book-list-table', BookListTable);
+Vue.component('book-list-detailed', BookListDetailed);
+Vue.component('book-list-cover-only', BookListCoverOnly);
 Vue.component('edit-book-dialog', EditBookDialog);
 Vue.component('book-chapters', BookChapters);
 Vue.component('edit-book-chapter-dialog', EditBookChapterDialog);
@@ -60,7 +81,7 @@ Vue.component('goal', Goal);
 Vue.component('edit-goal-dialog', EditGoalDialog);
 Vue.component('statistics', Statistics);
 
-// text 
+// text
 import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
 import VocabularyBox from './components/Text/VocabularyBox.vue';
@@ -91,32 +112,41 @@ Vue.component('jellyfin-subtitle-list', JellyfinSubtitleList);
 // vocabulary
 import VocabularyEditDialog from './components/Vocabulary/VocabularyEditDialog';
 import VocabularyExportDialog from './components/Vocabulary/VocabularyExportDialog';
+import VocabularyImportDialog from './components/Vocabulary/VocabularyImportDialog';
 Vue.component('vocabulary-edit-dialog', VocabularyEditDialog);
 Vue.component('vocabulary-export-dialog', VocabularyExportDialog);
+Vue.component('vocabulary-import-dialog', VocabularyImportDialog);
 
 // review
 import ReviewHotkeyInformationDialog from './components/Review/ReviewHotkeyInformationDialog';
+import ReviewSettings from './components/Review/ReviewSettings';
 Vue.component('review-hotkey-information-dialog', ReviewHotkeyInformationDialog);
+Vue.component('review-settings', ReviewSettings);
 
 // dialogs
+import LogoutDialog from './components/Dialogs/LogoutDialog';
 import ErrorDialog from './components/Dialogs/ErrorDialog';
 import StartReviewDialog from './components/Dialogs/StartReviewDialog';
 import ThemeSelectionDialog from './components/Dialogs/ThemeSelectionDialog';
 import LanguageSelectionDialog from './components/Dialogs/LanguageSelectionDialog';
+Vue.component('logout-dialog', LogoutDialog);
 Vue.component('error-dialog', ErrorDialog);
 Vue.component('start-review-dialog', StartReviewDialog);
 Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 // user settings
+import UserSettingsThemes from './components/UserSettings/UserSettingsThemes';
 import ChangePasswordDialog from './components/UserSettings/ChangePasswordDialog';
 Vue.component('change-password-dialog', ChangePasswordDialog);
+Vue.component('user-settings-themes', UserSettingsThemes);
 
-// admin
+// admin settings
 import AdminUserSettings from './components/Admin/AdminUserSettings';
 import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
-import AdminApiSettings from './components/Admin/AdminApiSettings';
 import AdminDeleteDictionaryDialog from './components/Admin/AdminDeleteDictionaryDialog';
+import AdminEditDictionaryDialog from './components/Admin/AdminEditDictionaryDialog';
+import AdminApiSettings from './components/Admin/AdminApiSettings';
 import AdminDictionaryImportDialog from './components/Admin/AdminDictionaryImportDialog';
 import AdminExternalDictionaryImport from './components/Admin/AdminExternalDictionaryImport';
 import AdminSupportedDictionaryImport from './components/Admin/AdminSupportedDictionaryImport';
@@ -124,21 +154,38 @@ import AdminEditUserDialog from './components/Admin/AdminEditUserDialog';
 import AdminReviewSettings from './components/Admin/AdminReviewSettings';
 Vue.component('admin-user-settings', AdminUserSettings);
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);
-Vue.component('admin-api-settings', AdminApiSettings);
 Vue.component('admin-delete-dictionary-dialog', AdminDeleteDictionaryDialog);
+Vue.component('admin-edit-dictionary-dialog', AdminEditDictionaryDialog);
+Vue.component('admin-api-settings', AdminApiSettings);
 Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
 Vue.component('admin-external-dictionary-import', AdminExternalDictionaryImport);
 Vue.component('admin-supported-dictionary-import', AdminSupportedDictionaryImport);
 Vue.component('admin-edit-user-dialog', AdminEditUserDialog);
 Vue.component('admin-review-settings', AdminReviewSettings);
 
+
+// user manual
+const UserManual = require('./components/UserManual/UserManual.vue').default;
+import UserManualIntroduction from './components/UserManual/Pages/UserManualIntroduction';
+import UserManualBackup from './components/UserManual/Pages/UserManualBackup';
+import UserManualLanguages from './components/UserManual/Pages/UserManualLanguages';
+import UserManualReading from './components/UserManual/Pages/UserManualReading';
+import UserManualVocabularyImport from './components/UserManual/Pages/UserManualVocabularyImport';
+
+Vue.component('user-manual-introduction', UserManualIntroduction);
+Vue.component('user-manual-backup', UserManualBackup);
+Vue.component('user-manual-languages', UserManualLanguages);
+Vue.component('user-manual-reading', UserManualReading);
+Vue.component('user-manual-vocabulary-import', UserManualVocabularyImport);
+
 const DevelopmentTools = require('./components/DevelopmentTools.vue').default;
 const LoginForm = require('./components/Login/LoginForm.vue').default;
-const AdminLayout = require('./components/Admin/AdminLayout.vue').default;
+const UserSettingsLayout = require('./components/UserSettings/UserSettingsLayout.vue').default;
+const AdminSettingsLayout = require('./components/Admin/AdminSettingsLayout.vue').default;
 const Home = require('./components/Home/Home.vue').default;
 const PatchNotes = require('./components/Home/PatchNotes.vue').default;
 const Attributions = require('./components/Home/Attributions.vue').default;
-const Books = require('./components/Library/Books.vue').default;
+const Library = require('./components/Library/Library.vue').default;
 const TextReader = require('./components/TextReader/TextReader.vue').default;
 const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
 const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
@@ -153,11 +200,13 @@ const router = new VueRouter({
     routes: [
         { path: '/dev', component: DevelopmentTools },
         { path: '/', component: Home },
+        { path: '/user-settings', component: UserSettingsLayout },
+        { path: '/admin', component: AdminSettingsLayout },
+        { path: '/user-manual/:currentPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
-        { path: '/admin', component: AdminLayout },
-        { path: '/books/:bookId?', component: Books },
+        { path: '/books/:bookId?', component: Library },
         { path: '/chapters/read/:chapterId', component: TextReader },
         { path: '/flashcards', component: FlashcardCollectionList },
         { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollection },

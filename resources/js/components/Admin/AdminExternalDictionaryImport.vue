@@ -44,12 +44,13 @@
                     <!-- Step 1: dictionary data -->
                     <v-stepper-content step="1">
                         <div v-if="!configFileLoading">
-                            <label class="font-weight-bold">Dictionary language</label>
+                            <!-- Source language -->
+                            <label class="font-weight-bold">Source language</label>
                             <v-select
-                                v-model="dictionary.language"
-                                :items="languages"
+                                v-model="dictionary.sourceLanguage"
+                                :items="sourceLanguages"
                                 item-value="name"
-                                placeholder="Language"
+                                placeholder="Source language"
                                 dense
                                 filled
                                 rounded
@@ -65,6 +66,29 @@
                                 </template>
                             </v-select>
 
+                            <!-- Target language -->
+                            <label class="font-weight-bold">Target language</label>
+                            <v-select
+                                v-model="dictionary.targetLanguage"
+                                :items="targetLanguages"
+                                item-value="name"
+                                placeholder="Target language"
+                                dense
+                                filled
+                                rounded
+                                @change="updateDatabaseName"
+                            >
+                                <template v-slot:selection="{ item, index }">
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                    <span class="text-capitalize">{{ item.name }}</span>
+                                </template>
+                                <template v-slot:item="{ item }">
+                                    <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                    <span class="text-capitalize">{{ item.name }}</span>
+                                </template>
+                            </v-select>
+
+                            <!-- Dictionary name -->
                             <label class="font-weight-bold">Dictionary name</label>
                             <v-text-field 
                                 v-model="dictionary.name"
@@ -78,6 +102,7 @@
                                 maxlength="16"
                             ></v-text-field>
                             
+                            <!-- Database table name -->
                             <label class="font-weight-bold">Database table name</label>
                             <v-text-field 
                                 v-model="dictionary.databaseName"
@@ -94,6 +119,7 @@
                                 maxlength="28"
                             ></v-text-field>
 
+                            <!-- Display color -->
                             <label class="font-weight-bold">Display color</label>
                             <v-menu
                                 v-model="colorPicker"
@@ -197,15 +223,27 @@
                         <v-simple-table class="border no-hover rounded-lg" v-if="dictionary.file">
                             <tbody>
                                 <tr>
-                                    <td class="font-weight-bold">Language:</td>
+                                    <td class="font-weight-bold">Source language:</td>
                                     <td>
                                         <img 
-                                            :src="'/images/flags/' + dictionary.language.toLowerCase() + '.png'" 
+                                            :src="'/images/flags/' + dictionary.sourceLanguage.toLowerCase() + '.png'" 
                                             class="mr-2 border" 
                                             width="40" 
                                             height="26"
                                         />
-                                        {{ dictionary.language }}
+                                        {{ dictionary.sourceLanguage }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Target language:</td>
+                                    <td>
+                                        <img 
+                                            :src="'/images/flags/' + dictionary.targetLanguage.toLowerCase() + '.png'" 
+                                            class="mr-2 border" 
+                                            width="40" 
+                                            height="26"
+                                        />
+                                        {{ dictionary.targetLanguage }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -365,7 +403,8 @@
                     databaseName: '',
                     databasePrefix: 'dict_jp_',
                     color: '#B59686',
-                    language: this.$props.language,
+                    sourceLanguage: this.$props.language,
+                    targetLanguage: 'english',
                     file: null,
                     csvDelimiter: '|',
                     csvSkipHeader: false,
@@ -375,7 +414,8 @@
                     databaseValidated: false,
                 },
 
-                languages: [],
+                sourceLanguages: [],
+                targetLanguages: [],
 
                 rules: {
                     dictionaryName: [
@@ -383,6 +423,16 @@
                             if (!value.length) {
                                 this.dictionary.nameValidated = false;
                                 return 'You must type in a dictionary name!';
+                            }
+
+                            if (value.toLowerCase().includes('deepl')) {
+                                this.dictionary.nameValidated = false;
+                                return 'Cannot contain the word "deepl".';
+                            }
+
+                            if (value.toLowerCase() === 'jmdict') {
+                                this.dictionary.nameValidated = false;
+                                return 'Cannot be named jmdict.';
                             }
 
                             this.dictionary.nameValidated = true;
@@ -425,26 +475,35 @@
         mounted: function() {
             axios.all([
                 axios.get('/config/get/linguacafe.languages.supported_languages'),
+                axios.get('/config/get/linguacafe.languages.supported_target_languages'),
                 axios.get('/config/get/linguacafe.languages.database_name_language_codes')
-            ]).then(axios.spread((response1, response2) => {
+            ]).then(axios.spread((response1, response2, response3) => {
                 this.configFileLoading = false;
 
-                // add supported languages
+                // add supported source languages
                 for (let languageIndex = 0; languageIndex < response1.data.length; languageIndex++) {
-                    this.languages.push({
+                    this.sourceLanguages.push({
                         name: response1.data[languageIndex].toLowerCase(),
                         selected: false
                     });
                 }
 
+                // add supported target languages
+                for (let languageIndex = 0; languageIndex < response2.data.length; languageIndex++) {
+                    this.targetLanguages.push({
+                        name: response2.data[languageIndex].toLowerCase(),
+                        selected: false
+                    });
+                }
+
                 // update database name
-                this.databaseNameLanguageCodes = response2.data;
+                this.databaseNameLanguageCodes = response3.data;
                 this.updateDatabaseName();
             }));
         },
         methods: {
             updateDatabaseName() {
-                this.dictionary.databasePrefix = 'dict_' + this.databaseNameLanguageCodes[this.dictionary.language] + '_';
+                this.dictionary.databasePrefix = 'dict_' + this.databaseNameLanguageCodes[this.dictionary.sourceLanguage] + '_';
                 this.dictionary.databaseName = this.dictionary.name.split(' ').join('_').toLowerCase().replace(/[^a-z0-9_]/g, '');
 
                 // remove underscores from the start of the text
@@ -498,7 +557,8 @@
                 formData.append("skipHeader", this.dictionary.csvSkipHeader);
                 formData.append("dictionaryName", this.dictionary.name);
                 formData.append("databaseName", this.dictionary.databasePrefix + this.dictionary.databaseName);
-                formData.append("language", this.dictionary.language.toLowerCase());
+                formData.append("sourceLanguage", this.dictionary.sourceLanguage.toLowerCase());
+                formData.append("targetLanguage", this.dictionary.targetLanguage.toLowerCase());
                 formData.append("color", this.dictionary.color);
 
                 axios.post('/dictionary/import-csv-file', formData).then((response) => {

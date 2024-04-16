@@ -1,26 +1,21 @@
 <template>
-    <div id="vocabulary-search-box">
-        <v-text-field 
-            label="Dictionary search"
-            class="mt-2 mb-3"
-            filled
-            dense
-            rounded
-            width="100%"
-            hide-details
-            v-model="searchField"
-            @change="makeSearchRequest"
-            @keydown.stop=";"
-        ></v-text-field>
-
-
+    <div id="vocabulary-search-box" :language="$props.language">
         <!-- Search results -->
-        <div id="search-results" class="border rounded-lg">
+        <div id="search-results" class="border rounded-lg pa-2">
 
             <!-- DeepL translation -->
-            <div :class="{'search-result': true, 'disabled': !deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'}">
-                <div class="search-result-title rounded px-2" style="background-color: #92B9E2">
-                    {{ searchField }} <div class="dictionary">DeepL</div>
+            <div 
+                v-if="$props.deeplEnabled"
+                :class="{
+                    'search-result': true, 
+                    'disabled': !deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'
+                }"
+            >
+                <div class="search-result-title">
+                    <div class="dictionary-title-icon mr-1" style="background-color: #92B9E2">
+                        <v-icon small>mdi-translate</v-icon>
+                    </div>
+                    DeepL <div class="search-result-word" :title="$props.searchTerm">{{ $props.searchTerm }}</div>
                 </div>
                 
                 <!-- DeepL search result -->
@@ -29,7 +24,7 @@
                     class="search-result-definition rounded"
                     @click="addDefinitionToInput(deeplSearchResult)"
                 >
-                    {{ deeplSearchResult }} <v-icon v-if="deeplSearchResult.length">mdi-plus</v-icon>
+                    {{ deeplSearchResult }} <v-icon v-if="deeplSearchResult.length" small>mdi-plus</v-icon>
                 </div>
 
                 <!-- DeepL search error -->
@@ -48,8 +43,11 @@
 
             <!-- Dictionary loading -->
             <div class="search-result disabled" v-if="dictionarySearchLoading">
-                <div class="search-result-title rounded px-2" style="background-color: #C5947D;">
-                    {{ searchField }} <div class="dictionary">Dictionary search</div>
+                <div class="search-result-title">
+                    <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
+                        <v-icon small>mdi-list-box</v-icon>
+                    </div>
+                    {{ $props.searchTerm }} <div class="search-result-word">Dictionary search</div>
                 </div>
 
                 <div class="search-result-definition rounded pr-2">
@@ -59,8 +57,11 @@
 
             <!-- Dictionary no result message -->
             <div class="search-result disabled" v-if="!dictionarySearchLoading && !dictionarySearchResultsFound">
-                <div class="search-result-title rounded px-2" style="background-color: #C5947D;">
-                    {{ searchField }} <div class="dictionary">Dictionary search</div>
+                <div class="search-result-title">
+                    <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
+                        <v-icon small>mdi-list-box</v-icon>
+                    </div>
+                    {{ $props.searchTerm }}
                 </div>
 
                 <div class="search-result-definition rounded pr-2">
@@ -73,14 +74,20 @@
                 <!-- Regular record -->
                 <template v-if="searchResult.dictionary !== 'JMDict'">
                     <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                        <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
+                        <div class="search-result-title">
+                            <div class="dictionary-title-icon mr-1"  :style="{'background-color': searchResult.color}">
+                                <v-icon small>mdi-list-box</v-icon>
+                            </div>
+                            {{ searchResult.dictionary}}<div class="search-result-word" :title="record.word"> {{ record.word }} </div>
+                        </div>
+
                         <div 
                             v-for="(definition, definitionIndex) in record.definitions" 
                             :key="definitionIndex" 
                             class="search-result-definition rounded"
                             @click="addDefinitionToInput(definition)"
                         >
-                            {{ definition }} <v-icon>mdi-plus</v-icon>
+                            {{ definition }} <v-icon small>mdi-plus</v-icon>
                         </div>
                     </div>
                 </template>
@@ -88,9 +95,15 @@
                 <!-- JMDict record -->
                 <template v-if="searchResult.dictionary == 'JMDict'">
                     <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                        <div class="search-result-title rounded px-2" :style="{'background-color': searchResult.color}">{{ record.word }} <div class="dictionary"> {{ searchResult.dictionary}} </div></div>
+                        <div class="search-result-title">
+                            <div class="dictionary-title-icon mr-1"  :style="{'background-color': searchResult.color}">
+                                <v-icon small>mdi-list-box</v-icon>
+                            </div>
+                            {{ searchResult.dictionary}}<div class="search-result-word" :title="record.word"> {{ record.word }} </div>
+                        </div>
+                        
                         <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in record.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
-                            {{ definition }} <v-icon>mdi-plus</v-icon>
+                            {{ definition }} <v-icon small>mdi-plus</v-icon>
                         </div>
                     
                         <template v-if="record.otherForms.length">
@@ -112,11 +125,16 @@
     export default {
         props: {
             language: String,
-            _searchTerm: String
+            deeplEnabled: Boolean,
+            searchTerm: String
+        },
+        watch: { 
+            searchTerm: function(newVal, oldVal) {
+                this.makeSearchRequest();
+            }
         },
         data: function() {
             return {
-                searchField: this.$props._searchTerm,
                 searchResults: [],
                 dictionarySearchLoading: false,
                 dictionarySearchResultsFound: true,
@@ -132,7 +150,7 @@
             },
             makeSearchRequest() {
                 this.searchResults = [];
-                if (this.searchField == '') {
+                if (this.$props.searchTerm == '') {
                     return;
                 }
 
@@ -141,22 +159,24 @@
                 this.dictionarySearchResultsFound = false;
                 axios.post('/dictionary/search', {
                     language: this.$props.language,
-                    term: this.searchField
+                    term: this.$props.searchTerm
                 }).then((response) => {
                     this.processVocabularySearchResults(response.data);
                     this.dictionarySearchLoading = false;
                 });
 
                 // deepl search
-                this.deeplSearchResult = 'loading';
-                axios.post('/dictionaries/deepl/search', {
-                    language: this.$props.language,
-                    term: this.searchField
-                }).then((response) => {
-                    this.deeplSearchResult = response.data.definition;
-                }).catch(() => {
-                    this.deeplSearchResult = 'DeepL error';
-                });
+                if (this.$props.deeplEnabled) {
+                    this.deeplSearchResult = 'loading';
+                    axios.post('/dictionaries/deepl/search', {
+                        language: this.$props.language,
+                        term: this.$props.searchTerm
+                    }).then((response) => {
+                        this.deeplSearchResult = response.data.definition;
+                    }).catch(() => {
+                        this.deeplSearchResult = 'DeepL error';
+                    });
+                }
             },
             processVocabularySearchResults(data) {
                 this.searchResults = [];

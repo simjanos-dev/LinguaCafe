@@ -42,6 +42,9 @@
                     <span class="primary--text" style="width: 170px;">x</span><span>Set level to ignored</span>
                 </div>
                 <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">c</span><span>Set level to new</span>
+                </div>
+                <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">0</span><span>Set level to known</span>
                 </div>
                 <div class="hotkey d-flex">

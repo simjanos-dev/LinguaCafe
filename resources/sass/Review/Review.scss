@@ -4,6 +4,16 @@
     background: var(--v-foreground-base);
 }
 
+#review-settings div.row {
+    .switch-container {
+        height: 50px !important;
+    }
+
+    .slider-container {
+        height: 60px !important;
+    }
+}
+
 #review-box {
     position: relative;
     display: block;

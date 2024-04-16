@@ -2,26 +2,45 @@
     <div class="d-flex flex-column align-stretch">
         <!-- Website url input -->
         <label class="font-weight-bold">Website url</label>
-        <v-text-field
-            v-model="url"
+        <div class="d-flex flex-wrap flex-md-nowrap">
+            <v-text-field
+                class="website-url-input"
+                v-model="url"
+                filled
+                dense
+                rounded
+                placeholder="Website url"
+                prepend-icon="mdi-web"
+                ref="url"
+                :rules="[rules.url]"
+                @keyup.enter="retrieveWebsiteTExt"
+            ></v-text-field>
+            <v-btn
+                id="retrieve-website-button"
+                depressed
+                rounded
+                color="primary"
+                @click="retrieveWebsiteTExt"
+            >
+                Retrieve
+            </v-btn>
+        </div>
+
+        <!-- Website text -->
+        <v-textarea
+            v-if="websiteRequestStatus == 'success'"
+            id="website-import-input"
+            v-model="text"
             filled
             dense
             rounded
-            placeholder="Website url"
-            prepend-icon="mdi-web"
-            ref="url"
-            :rules="[rules.url]"
-            @change="urlChanged"
-        ></v-text-field>
-
-        <!-- Website text -->
-        <label class="font-weight-bold" v-if="text.length || loading">Website text</label>
-        <div 
-            v-if="text.length"
-            id="website-text"
-            class="rounded-xl pa-6"
-            v-html="displayedText"
-        ></div>
+            persistent-hint
+            placeholder="Website text"
+            maxlength="250000"
+            counter="250000"
+            no-resize
+            @keyup="textChanged"
+        ></v-textarea>
 
         <!-- Website text loading -->
         <div class="d-flex justify-center">
@@ -50,7 +69,6 @@
                 loading: false,
                 websiteRequestStatus: '',
                 text: '',
-                displayedText: '',
                 url: '',
                 rules: {
                     url: (value) => {
@@ -71,7 +89,7 @@
             this.textChanged();
         },
         methods: {
-            urlChanged() {
+            retrieveWebsiteTExt() {
                 if (this.$refs.url.validate()) {
                     this.loading = true;
                     this.text = '';
@@ -81,7 +99,6 @@
                         url: this.url,
                     }).then((response) => {
                         this.text = response.data;
-                        this.displayedText = this.text.replace(/(?:\r\n|\r|\n)/g, '<br>');
                         this.textChanged();
                         this.loading = false;
                         this.websiteRequestStatus = 'success';
@@ -91,12 +108,11 @@
                     });;
                 } else {
                     this.text = '';
-                    this.displayedText = '',
                     this.textChanged();
                 }
             },
             textChanged() {
-                if (!this.$refs.url.validate()) {
+                if (!this.$refs.url.validate() || !this.text.length) {
                     this.$emit('text-selected', {
                         text: '',
                         isImportSourceValid: false

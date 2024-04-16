@@ -8,6 +8,8 @@
 @import 'Dialogs/LanguageSelectionDialog';
 @import 'Login/Login';
 @import 'Home/Home';
+@import 'UserManual';
+@import 'UserSettings/UserSettings';
 @import 'Review/Review';
 @import 'Text/TextBlockGroup';
 @import 'Text/VocabularyBox';
@@ -57,7 +59,7 @@
 
 #logo span  {
     font-family: Varela !important;
-    font-size: 32px;
+    font-size: 26px;
     user-select: none;
     cursor: normal;
 }
@@ -82,6 +84,92 @@
     }
 }
 
+// v-card
+.v-card.theme--light,
+.v-card.theme--light > .v-card__subtitle, 
+.v-card.theme--light > .v-card__title, 
+.v-card.theme--light > .v-card__actions,
+.v-card.theme--light > .v-card__text {
+    color: var(--v-text-base);
+    background: var(--v-foreground-base);
+}
+
+// pagination
+.theme--light.v-pagination .v-pagination__item,
+.theme--light.v-pagination .v-pagination__navigation {
+    background: var(--v-foreground-base);
+}
+
+// v-menu
+.v-menu__content .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+    background-color: var(--v-foreground-base);
+    color: var(--v-text-base);
+}
+
+.v-menu__content .theme--light.v-list-item.v-list-item--active {
+    background-color: var(--v-primary-base) !important;
+    color: white !important;
+}
+
+.v-menu__content .v-list-item.v-list-item--active i {
+    color: white !important;
+}
+
+// vocabulary edit stage buttons
+#vocabulary-edit-stage-buttons {
+    button.v-btn.theme--light {
+        background-color: var(--v-foreground-base);
+        border-color: var(--v-foreground-base);
+
+        &.v-btn--active{
+            background-color: var(--v-primary-base);
+        }
+
+        &.v-btn--active .v-btn__content {
+            color: white;
+        }
+    }
+}
+
+// v-list
+.theme--light.v-list {
+    background: var(--v-foreground-base);
+}
+
+// tab bar
+.v-slide-group__wrapper {
+    background-color: var(--v-foreground-base);
+}
+
+// v-stepper
+.theme--light.v-stepper {
+    background: var(--v-foreground-base);
+}
+
+// v-menu
+.v-menu__content.theme--light {
+    border: 1px solid var(--v-customBorder-base) !important;
+}
+
+button.v-btn.menu-button {
+    background: var(--v-foreground-base) !important;
+    color: var(--v-text-base) !important;
+    
+    span {
+        color: var(--v-text-base) !important;
+    }
+}
+
+// table
+.theme--light.v-data-table.v-data-table--fixed-header thead th,
+.theme--light.v-data-table {
+    background: var(--v-foreground-base);
+    color: var(--v-text-base);
+}
+
+.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
+    font-size: 14px;
+}
 
 // custom expansion card
 .expansion-card {
@@ -276,28 +364,6 @@ a.v-btn.menu-button {
         }
     }
 
-    #language, #theme {
-        width: calc(100% - 16px);
-        display: flex;
-        height: 48px;
-        line-height: 48px;
-        text-align: left;
-        
-        .v-image__image {
-            border: 1px solid rgba(53, 42, 42, 0.2);
-        }
-
-        .v-icon {
-            width: 43px;
-        }
-        
-        span {
-            width: calc(100% - 43px);
-            height: 30px;
-            line-height: 30px;
-        }
-    }
-
     div.navigation-button,
     a.navigation-button {
         text-decoration: none !important; 
@@ -322,12 +388,12 @@ a.v-btn.menu-button {
         .mini-drawer-button {
             box-sizing: border-box;
             width: 46px !important;
+            height: 46px !important;
             min-width: 46px !important;
             max-width: 46px !important;
             padding-left: 0px !important;
             padding-right: 0px !important;
-            height: 46px !important;
-            margin: 2px 4px;
+            margin: 0px 4px;
         }
     }
 }

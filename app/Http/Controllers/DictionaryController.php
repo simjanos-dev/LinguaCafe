@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
-use \Exception;
 use \DeepL\Translator;
 use App\Models\Dictionary;
 use App\Models\ImportedDictionary;
@@ -17,6 +16,7 @@ use App\Models\VocabularyJmdict;
 use App\Models\DeeplCache;
 use App\Models\Setting;
 use App\Services\DictionaryImportService;
+
 
 class DictionaryController extends Controller
 {
@@ -30,7 +30,11 @@ class DictionaryController extends Controller
             if ($dictionary->database_table_name == 'API') {
                 $dictionary->records = '-';
             } else {
-                $dictionary->records = DB::table($dictionary->database_table_name)->selectRaw('count(*) as record_count')->get();
+                $dictionary->records = DB
+                    ::table($dictionary->database_table_name)
+                    ->selectRaw('count(*) as record_count')
+                    ->get();
+
                 $dictionary->records = $dictionary->records[0]->record_count;
             }
         }
@@ -38,21 +42,78 @@ class DictionaryController extends Controller
         return json_encode($dictionaries);
     }
 
-    /*
-        This function updates a dictionary's color and enabled status.
-    */
+    public function getDictionary($dictionaryId) {
+        $dictionary = Dictionary
+            ::where('id', $dictionaryId)
+            ->first();
+
+        if ($dictionary->database_table_name == 'API') {
+            $dictionary->records = '-';
+        } else {
+            $dictionary->records = DB
+                ::table($dictionary->database_table_name)
+                ->selectRaw('count(*) as record_count')
+                ->get();
+
+            $dictionary->records = $dictionary->records[0]->record_count;
+        }
+
+        return json_encode($dictionary);
+    }
+
     public function updateDictionary(Request $request) {
-        $dictionary = Dictionary::where('id', $request->post('id'))->first();
+        $dictionary = Dictionary
+            ::where('id', $request->post('id'))
+            ->first();
 
         if (!$dictionary) {
             return 'error';
         }
 
-        $dictionary->enabled = $request->post('enabled');
-        $dictionary->color = $request->post('color');
+        if (isset($request->name)) {
+            $dictionary->name = $request->post('name');
+        }
+
+        if (isset($request->source_language)) {
+            $dictionary->source_language = $request->post('source_language');
+        }
+
+        if (isset($request->target_language)) {
+            $dictionary->target_language = $request->post('target_language');
+        }
+
+        if (isset($request->color)) {
+            $dictionary->color = $request->post('color');
+        }
+        
+        if (isset($request->enabled)) {
+            $dictionary->enabled = $request->post('enabled');
+        }
+
         $dictionary->save();
 
         return 'success';
+    }
+
+    /*
+        Returns if any DeepL dictionary is enabled for the current user and selected language.
+    */
+    public function isDeeplEnabled() {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+
+        $deeplDictionary = Dictionary
+            ::where('name', 'like', 'DeepL%')
+            ->where('enabled', true)
+            ->where('database_table_name','API')
+            ->where('source_language', $language)
+            ->first();
+
+        if (!$deeplDictionary) {
+            return response()->json(false, 200);
+        }
+        
+        return response()->json(true, 200);
     }
 
     /*
@@ -89,7 +150,7 @@ class DictionaryController extends Controller
         $searchResultDictionaries = [];
         $dictionaries = Dictionary
             ::where('enabled', true)
-            ->where('language', $language)
+            ->where('source_language', $language)
             ->get();
 
         // go through each dictionary and search in them
@@ -123,7 +184,7 @@ class DictionaryController extends Controller
         
         $dictionaries = Dictionary
             ::where('enabled', true)
-            ->where('language', $language)
+            ->where('source_language', $language)
             ->get();
 
         // go through each dictionary and search in them
@@ -234,7 +295,7 @@ class DictionaryController extends Controller
             ::where('name', 'like', 'DeepL%')
             ->where('enabled', true)
             ->where('database_table_name','API')
-            ->where('language', $language)
+            ->where('source_language', $language)
             ->first();
 
         if (!$deeplDictionary) {
@@ -252,7 +313,8 @@ class DictionaryController extends Controller
 
         // check if search term is already cached
         $cache = DeeplCache
-            ::where('language', $language)
+            ::where('source_language', $language)
+            ->where('target_language', $deeplDictionary->target_language)
             ->where('hash', $hash)
             ->first();
         
@@ -262,12 +324,21 @@ class DictionaryController extends Controller
         } else {
             // make api call
             $deepl = new \DeepL\Translator($apiKey);
-            $result = $deepl->translateText($term, $languageCodes[$language], $languageCodes['english']);
+
+            // DeepL does not support 'EN-US' for source language, so
+            // I replace it to 'EN'
+            $sourceLanguage = $languageCodes[$language];
+            if ($sourceLanguage === 'EN-US') {
+                $sourceLanguage = 'EN';
+            }
+
+            $result = $deepl->translateText($term, $sourceLanguage, $languageCodes[$deeplDictionary->target_language]);
             $definition = $result->text;
 
             // create cache
             $cache = new DeeplCache();
-            $cache->language = $language;
+            $cache->source_language = $language;
+            $cache->target_language = $deeplDictionary->target_language;
             $cache->hash = $hash;
             $cache->definition = $result->text;
             $cache->save();
@@ -459,7 +530,8 @@ class DictionaryController extends Controller
         $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
         $dictionaryName = $request->post('dictionaryName');
         $databaseTableName = $request->post('databaseName');
-        $language = $request->post('language');
+        $sourceLanguage = $request->post('sourceLanguage');
+        $targetLanguage = $request->post('targetLanguage');
         $color = $request->post('color');
 
         if(!preg_match('/^[a-z0-9_]+$/', $databaseTableName)) {
@@ -490,7 +562,8 @@ class DictionaryController extends Controller
         $dictionary = new Dictionary();
         $dictionary->name = $dictionaryName;
         $dictionary->database_table_name = $databaseTableName;
-        $dictionary->language = $language;
+        $dictionary->source_language = $sourceLanguage;
+        $dictionary->target_language = $targetLanguage;
         $dictionary->color = $color;
         $dictionary->enabled = true;
         $dictionary->save();
@@ -542,9 +615,10 @@ class DictionaryController extends Controller
         
         $dictCcLanguageCodes = config('linguacafe.languages.dict_cc_language_codes');
         $databaseLanguageCodes = config('linguacafe.languages.database_name_language_codes');
+        $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
         
         $dictionaryImportService = new DictionaryImportService();
-        $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes);
+        $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
         
         return json_encode($dictionariesFound);
     }
@@ -553,9 +627,9 @@ class DictionaryController extends Controller
         set_time_limit(2400);
         $dictionaryName = $request->post('dictionaryName');
         $dictionaryFileName = $request->post('dictionaryFileName');
-        $dictionaryLanguage = $request->post('dictionaryLanguage');
+        $dictionarySourceLanguage = $request->post('dictionarySourceLanguage');
+        $dictionaryTargetLanguage = $request->post('dictionaryTargetLanguage');
         $dictionaryDatabaseName = $request->post('dictionaryDatabaseName');
-        $dictionaryExpectedRecordCount = $request->post('dictionaryExpectedRecordCount');
 
         // import jmdict files
         if ($dictionaryName == 'JMDict') {
@@ -573,11 +647,11 @@ class DictionaryController extends Controller
             return 'success';
         }
 
-        // import cc cedict file
-        if ($dictionaryName == 'cc-cedict') {
+        // import cc cedict or HanDeDict file
+        if ($dictionaryName == 'cc-cedict' || $dictionaryName == 'HanDeDict') {
             try {
                 $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importCeDict($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+                $dictionaryImportService->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
             } catch (\Throwable $t) {
                 return 'error';
             } catch (\Exception $e) {
@@ -619,12 +693,13 @@ class DictionaryController extends Controller
         
 
         // import dict cc files
-        if (str_contains($dictionaryName, 'dict cc')) {
+        if (str_contains($dictionaryName, 'dictcc')) {
             try {
                 $dictionaryImportService = new DictionaryImportService();
                 $dictionaryImportService->importDictCc(
                     $dictionaryName, 
-                    $dictionaryLanguage, 
+                    $dictionarySourceLanguage, 
+                    $dictionaryTargetLanguage,
                     $dictionaryFileName, 
                     $dictionaryDatabaseName
                 );
@@ -649,13 +724,13 @@ class DictionaryController extends Controller
             return 'success';
         }
 
-        // import dict cc files
+        // import wiktionary files
         if (str_contains($dictionaryName, 'wiktionary')) {
             try {
                 $dictionaryImportService = new DictionaryImportService();
                 $dictionaryImportService->importWiktionary(
                     $dictionaryName, 
-                    $dictionaryLanguage, 
+                    $dictionarySourceLanguage, 
                     $dictionaryFileName, 
                     $dictionaryDatabaseName
                 );

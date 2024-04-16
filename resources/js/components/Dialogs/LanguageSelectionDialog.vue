@@ -1,5 +1,5 @@
 <template>
-    <v-dialog content-class="language-selection-dialog" v-model="value" persistent>
+    <v-dialog content-class="language-selection-dialog" v-model="value" scrollable persistent>
         <v-card class="rounded-lg">
             <v-card-title>
                 <span class="text-h5">Language</span>

@@ -2,18 +2,29 @@
     <div>
         <!-- Youtube url input -->
         <label class="font-weight-bold">Youtube video url</label>
-        <v-text-field
-            v-model="url"
-            filled
-            dense
-            rounded
-            persistent-hint
-            hint="Example: https://www.youtube.com/watch?v=aaaAaa1_A1A"
-            placeholder="Youtube url"
-            prepend-icon="mdi-youtube"
-            @change="urlChanged"
-            @keydown="handleKeydown"
-        ></v-text-field>
+        <div class="d-flex flex-wrap flex-md-nowrap">
+            <v-text-field
+                class="youtube-url-input"
+                v-model="url"
+                filled
+                dense
+                rounded
+                persistent-hint
+                hint="Example: https://www.youtube.com/watch?v=aaaAaa1_A1A"
+                placeholder="Youtube url"
+                prepend-icon="mdi-youtube"
+                @keyup.enter="retrieveSubtitles"
+            ></v-text-field>
+            <v-btn
+                id="retrieve-youtube-button"
+                depressed
+                rounded
+                color="primary"
+                @click="retrieveSubtitles"
+            >
+                Retrieve
+            </v-btn>
+        </div>
 
         <!-- Subtitle list-->
         <div id="youtube-subtitles" class="mt-2" v-if="selectedSubtitle === -1 && (subtitlesLoaded || loading)">
@@ -46,12 +57,6 @@
                     class="d-flex youtube-subtitle regular-list-height rounded-pill mb-2 pl-10"
                     @click="selectSubtitle(subtitleIndex)"
                 >
-                    <v-img 
-                        :src="'/images/flags/' + subtitle.languageLowerCase.replace(' (auto-generated)', '') + '.png'"
-                        class="border mr-4"
-                        max-width="43" 
-                        height="28"
-                    />
                     {{ subtitle.language }}
                 </div>
 
@@ -83,16 +88,6 @@
             >
                 Selected subtitle
             </label>
-            
-                <v-spacer />
-
-            <v-btn
-                v-if="$vuetify.breakpoint.smAndUp"
-                rounded
-                depressed
-                color="primary"
-                @click="unselectSubtitle"
-            >Select another subtitle</v-btn>
         </div>
         <div 
             v-if="selectedSubtitle !== -1"
@@ -145,12 +140,7 @@
                     isImportSourceValid: true
                 });
             },
-            handleKeydown(event) {
-                if (event.which === 13) {
-                    this.urlChanged();
-                }
-            },
-            urlChanged() {
+            retrieveSubtitles() {
                 this.selectedSubtitle = -1;
                 this.loading = true;
                 this.error = false;

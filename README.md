@@ -1,6 +1,6 @@
 ## LinguaCafe
 
-![GitHub Release](https://img.shields.io/github/v/release/simjanos-dev/LinguaCafe?label=Release&logo=buymeacoffee&logoColor=white&color=%23b58873) ![Static Badge](https://img.shields.io/badge/Languages-15-b58873?logo=readme&logoColor=white) [![Discord](https://img.shields.io/discord/1193631644662386788?logo=discord&logoColor=white&label=Discord&color=%235460ce&link=https%3A%2F%2Fdiscord.gg%2FwZYZYrdaeP)](https://discord.gg/wZYZYrdaeP) ![Static Badge](https://img.shields.io/badge/Jellyfin-API-%23983883?logo=jellyfin&logoColor=white) ![Static Badge](https://img.shields.io/badge/DeepL-API-%23983883?logo=deepl&logoColor=white) ![Static Badge](https://img.shields.io/badge/Anki-API-%23983883?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBoZWlnaHQ9IjQ4cHQiIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4cHQiPjxsaW5lYXJHcmFkaWVudCBpZD0iYSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCg0OS4wNzcgMCAwIDQ5LjY1MSAtMS4wMTcgLS45MDkpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHgyPSIuOTA3NDg4IiB5MT0iLjUiIHkyPSIuOTIwMDc4IiBmaWxsPSIjZmZmZmZmIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiIGZpbGw9IiNmZmZmZmYiLz48c3RvcCBvZmZzZXQ9Ii44Mzg4ODM5NzkzOCIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgZmlsbD0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdGggZD0ibTIwLjUwOSAxMi42OTdjLS4yNzggMS4yNTktMS41MjggMi4wNjEtMi43OSAxLjc5LTEuMjYzLS4yNzEtMi4wNjItMS41MTktMS43ODUtMi43ODRsMS40ODQtNi44OTNjLjY3OS0zLjE1NiAzLjA4NS0zLjg2NiA1LjM2OS0xLjU4NGw4LjE2OSA4LjE2MSAxMS4yNzMtLjkxYzMuMjE4LS4yNiA0LjY1NSAxLjg3MiAzLjIwNyA0Ljc1N2wtNC45MzQgOS44MjkgMy44MjYgOS45MTVjMS4xNjIgMy4wMTItLjQ4MSA1LjAzOC0zLjY2OCA0LjUyMWwtMTEuMzE4LTEuODM2LTguOTM5IDcuMzZjLTIuNDkyIDIuMDUzLTQuODI5IDEuMTE3LTUuMjE2LTIuMDg4bC0xLjMtMTAuNzcxLTkuOTctNi4zNDZjLTIuNzIzLTEuNzM0LTIuNTIxLTQuMTYzLjQ1Mi01LjQyMmw4LjE4NC0zLjQ2NGMxLjE4OS0uNTAzIDIuNTYyLjA1MiAzLjA2NiAxLjI0LjUwMyAxLjE4OC0uMDUyIDIuNTYyLTEuMjQxIDMuMDY2bC01LjM2OSAyLjI4MSA5LjI1NCA1Ljg4NCAxLjI0IDEwLjI5NiA4LjUwNS02Ljk5NiAxMS4xMjYgMS44MDEtMy43NDQtOS42OTggNC43NjEtOS40NjUtMTAuOTczLjg4OS03Ljc2OC03Ljc1NnoiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=)
+![GitHub Release](https://img.shields.io/github/v/release/simjanos-dev/LinguaCafe?label=Release&logo=buymeacoffee&logoColor=white&color=%23b58873) ![Static Badge](https://img.shields.io/badge/Languages-18-b58873?logo=readme&logoColor=white) [![Discord](https://img.shields.io/discord/1193631644662386788?logo=discord&logoColor=white&label=Discord&color=%235460ce&link=https%3A%2F%2Fdiscord.gg%2FwZYZYrdaeP)](https://discord.gg/wZYZYrdaeP) ![Static Badge](https://img.shields.io/badge/Jellyfin-API-%23983883?logo=jellyfin&logoColor=white) ![Static Badge](https://img.shields.io/badge/DeepL-API-%23983883?logo=deepl&logoColor=white) ![Static Badge](https://img.shields.io/badge/Anki-API-%23983883?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBoZWlnaHQ9IjQ4cHQiIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4cHQiPjxsaW5lYXJHcmFkaWVudCBpZD0iYSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCg0OS4wNzcgMCAwIDQ5LjY1MSAtMS4wMTcgLS45MDkpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAiIHgyPSIuOTA3NDg4IiB5MT0iLjUiIHkyPSIuOTIwMDc4IiBmaWxsPSIjZmZmZmZmIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiIGZpbGw9IiNmZmZmZmYiLz48c3RvcCBvZmZzZXQ9Ii44Mzg4ODM5NzkzOCIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgZmlsbD0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdGggZD0ibTIwLjUwOSAxMi42OTdjLS4yNzggMS4yNTktMS41MjggMi4wNjEtMi43OSAxLjc5LTEuMjYzLS4yNzEtMi4wNjItMS41MTktMS43ODUtMi43ODRsMS40ODQtNi44OTNjLjY3OS0zLjE1NiAzLjA4NS0zLjg2NiA1LjM2OS0xLjU4NGw4LjE2OSA4LjE2MSAxMS4yNzMtLjkxYzMuMjE4LS4yNiA0LjY1NSAxLjg3MiAzLjIwNyA0Ljc1N2wtNC45MzQgOS44MjkgMy44MjYgOS45MTVjMS4xNjIgMy4wMTItLjQ4MSA1LjAzOC0zLjY2OCA0LjUyMWwtMTEuMzE4LTEuODM2LTguOTM5IDcuMzZjLTIuNDkyIDIuMDUzLTQuODI5IDEuMTE3LTUuMjE2LTIuMDg4bC0xLjMtMTAuNzcxLTkuOTctNi4zNDZjLTIuNzIzLTEuNzM0LTIuNTIxLTQuMTYzLjQ1Mi01LjQyMmw4LjE4NC0zLjQ2NGMxLjE4OS0uNTAzIDIuNTYyLjA1MiAzLjA2NiAxLjI0LjUwMyAxLjE4OC0uMDUyIDIuNTYyLTEuMjQxIDMuMDY2bC01LjM2OSAyLjI4MSA5LjI1NCA1Ljg4NCAxLjI0IDEwLjI5NiA4LjUwNS02Ljk5NiAxMS4xMjYgMS44MDEtMy43NDQtOS42OTggNC43NjEtOS40NjUtMTAuOTczLjg4OS03Ljc2OC03Ljc1NnoiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=)
 
 LinguaCafe is a free self-hosted software that helps language learners acquire vocabulary by reading. It provides a set of tools to read, look up unknown words and review them later as effortlessly as possible.
 
@@ -18,29 +18,32 @@ You can read about all the features of LinguaCafe in this [overview](https://sim
 Lemma: a dictionary form of a word (E.g: worked -> to work).  
 Gender tagging: extending nouns' lemma with additional information (E.g: hus -> et hus).
 
-| Flag                                                          | Language  | DeepL   | Lemma generation | Gender tagging | Dictionaries          |
-|:-------------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|-----------------------|
-| <img src='public/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict |
-| <img src='public/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc               |
-| <img src='public/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc   |
-| <img src='public/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary    |
-| <img src='public/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic   |
-| <img src='public/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc   |
-| <img src='public/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc   |
-| <img src='public/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc               |
-| <img src='public/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary            |
-| <img src='public/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa     |
+| Flag                                                     | Language  | DeepL   | Lemma generation | Gender tagging      |Dictionaries                     |
+|:--------------------------------------------------------:|:---------:|:-------:|:----------------:|:-------------------:|---------------------------------|
+| <img src='public/images/flags/chinese.png' width='25'>   | Chinese   | &check; |                  |                     | wiktionary, cc-cedict           |
+| <img src='public/images/flags/czech.png' width='25'>     | Czech     | &check; |                  |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/dutch.png' width='25'>     | Dutch     | &check; | &check;          |                     | dict cc                         |
+| <img src='public/images/flags/english.png' width='25'>   | English   | &check; | &check;          |                     | dict cc                         |
+| <img src='public/images/flags/finnish.png' width='25'>   | Finnish   | &check; | inaccurate       |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/french.png' width='25'>    | French    | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/german.png' width='25'>    | German    | &check; | &check;          | &check;             | wiktionary, dict cc, handedict  |
+| <img src='public/images/flags/greek.png' width='25'>     | Greek     | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/italian.png' width='25'>   | Italian   | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/japanese.png' width='25'>  | Japanese  | &check; | &check;          |                     | jmdict, wiktionary              |
+| <img src='public/images/flags/korean.png' width='25'>    | Korean    | &check; | &check;          |                     | wiktionary, kengdic             |
+| <img src='public/images/flags/latin.png' width='25'>     | Latin     |         |                  |                     | wiktionary                      |
+| <img src='public/images/flags/norwegian.png' width='25'> | Norwegian | &check; | &check;          | &check;             | wiktionary, dict cc             |
+| <img src='public/images/flags/russian.png' width='25'>   | Russian   | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/spanish.png' width='25'>   | Spanish   | &check; | &check;          |                     | wiktionary, dict cc             |
+| <img src='public/images/flags/swedish.png' width='25'>   | Swedish   | &check; | &check;          |                     | dict cc                         |
+| <img src='public/images/flags/ukrainian.png' width='25'> | Ukrainian | &check; |                  |                     | wiktionary                      |
+| <img src='public/images/flags/welsh.png' width='25'>     | Welsh     |         |                  |                     | wiktionary, eurfa               |
 
 Chinese: Mandarin language with simplified Chinese characters.
 
 ## Supported platforms:
 - x64, which includes most desktop computers made in the last decade.
-- Macs with Apple silicon are supported, but need to uncomment the line that says `platform: linux/amd64` by removing the "#" near the end of the `docker-compose.yml`file. To do this, you will need to split the chained install command, first clone the repository, then uncomment the line, then run the rest of the commands. You will also need to comment it and uncomment it again for each update to avoid git conflict error.
+- Mac users with Apple silicon must perform an additional step, see the 'Installation' section for details
 
 Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 
@@ -48,6 +51,8 @@ Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 LinguaCafe uses RAM based on how many and which languages do you use. If you use every language, the RAM usage can be over 2GB.
 
 ## Installation
+
+The installation process may seem a bit strange to some people. It is just a simple docker compose file, except that the git pull command pulls some empty folder structure, and some default files. You might understand it better, if you take a look at the `deploy` branch.
 
 Step 1: Install docker desktop and git.
 
@@ -65,9 +70,14 @@ DB_USERNAME="linguacafe"
 DB_PASSWORD="linguacafe"
 ```
 
+MacOs users with Apple silicon must also create a `.env` file, and add the following line:
+```
+PLATFORM="linux/amd64"
+```
+
 Run the remaining commands:
 ```
-chmod 777 -R ./ && docker compose up -d
+chmod -R 777 ./ && docker compose up -d
 ```
 
 ##### Windows:
@@ -86,9 +96,33 @@ Your server now should be running and accessible on http://localhost:9191.
 Step 3: Follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
 
 ## Updating to the latest version 
+
+Always check this section and the update's release notes before updating, any important changes will be here.
+
+Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://simjanos-dev.github.io/LinguaCafeHome/#user-manual)
+
 If you are below v0.5.2, please use the migration guide provided [here](/migration.md) instead of this command.
 
-I recommend making a copy of your linguacafe folder before updating, to make sure you will have a backup if anything goes wrong.
+#### v0.9 Mac changes
+
+If you are a Mac user with Apple silicon, and you had to uncomment a line in the `docker-compose.yml` file before, please follow these instructions before you update:
+
+Step 1: Comment the the line again at the end of the `docker-compose.yml` file :
+```
+volumes:
+    - ./storage:/var/www/html/storage
+networks:
+    - linguacafe
+# platform: linux/amd64
+```
+
+Step 2: Create a `.env` file in the linguacafe, and add the this line to it:
+
+```
+PLATFORM="linux/amd64"
+```
+
+This change will will simplify the update process, and prevent any possible conflict errors with the git pull command in the future.
 
 ##### Linux and MacOs:
 ```
@@ -132,6 +166,11 @@ Languages: Chinese
 
 Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
 
+#### HanDeDict
+Languages: Chinese
+
+Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
+
 #### Kengdic
 Languages: Korean
 
@@ -143,16 +182,16 @@ Languages: Welsh
 Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
 
 #### Wiktionary
-Languages: Chinese, Czech, Finnish, French, German, Italian, Japanese, Korean, Norwegian, Russian, Spanish, Ukrainian, Welsh
+Languages: Chinese, Czech, Finnish, French, German, Greek, Italian, Japanese, Korean, Latin, Norwegian, Russian, Spanish, Ukrainian, Welsh
 
 Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
 
 #### <span>Dict</span>.cc
-Languages: Czech, Dutch, Finnish, French, German, Italian, Norwegian, Russian, Spanish, Swedish
+Languages: Czech, Dutch, English, Finnish, French, German, Greek, Italian, Norwegian, Russian, Spanish, Swedish
 
 Download: [dict.cc](https://www1.dict.cc/translation_file_request.php?l=e)
 
-This dictionary's license only allows personal use.
+This dictionary's license only allow personal use.
 
 #### Custom dictionary
 You can also import a custom dictionary file in the form of a .csv file.
@@ -194,7 +233,7 @@ Series Name - S01E01.de.ass
 Movie name.es.ass  
 ```  
 
-Language codes for subtitle filenames that Jellyfin recognizes: Chinese: `zh`, Czech: `cs`, Dutch: `nl`, Finnish: `fi`, French: `fr`, German: `de`, Italian: `it`, Japanese: `ja`, Korean: `ko`, Norwegian: `no`, Russian: `ru`, Spanish: `es`, Swedish: `sv`, Ukrainian: `uk`, Welsh: `cy`
+Language codes for subtitle filenames that Jellyfin recognizes: Chinese: `zh`, Czech: `cs`, Dutch: `nl`, English: `en`, Finnish: `fi`, French: `fr`, German: `de`, Greek: `el`, Italian: `it`, Japanese: `ja`, Korean: `ko`, Latin: `la`, Norwegian: `no`, Russian: `ru`, Spanish: `es`, Swedish: `sv`, Ukrainian: `uk`, Welsh: `cy`
 
 [Jellyfin external file naming](https://jellyfin.org/docs/general/server/media/external-files/)
 
@@ -254,6 +293,24 @@ License: License: GNU General Public License 3
 
 [Pykakasi license](https://www.gnu.org/licenses/gpl-3.0.html)
 
+**Pinyin**
+
+License: MIT license
+
+[Pinyin website](https://pinyin.lxyu.net/)
+
+[Pinyin github](https://github.com/lxyu/pinyin)
+
+[Pinyin license](https://github.com/lxyu/pinyin?tab=MIT-1-ov-file#readme)
+
+**Newspaper3k**
+
+License: MIT, Apache-2.0
+
+[Newspaper3k github](https://github.com/codelucas/newspaper)
+
+[Newspaper3k license](https://github.com/codelucas/newspaper/blob/master/LICENSE)
+
 **EbookLib**
 
 License: GNU Affero General Public License v3.0
@@ -288,6 +345,13 @@ License: Creative Commons Attribution-Share Alike 3.0 License
 
 [CC-CEDICT website](https://cc-cedict.org/wiki/)
 [CC-CEDICT license](https://creativecommons.org/licenses/by-sa/3.0/)
+&nbsp;
+
+**HanDeDict dictionary file**  
+License: Creative Commons Attribution-ShareAlike 2.0 Germany License
+
+[HanDeDict website](http://www.handedict.de/)
+[HanDeDict license](https://creativecommons.org/licenses/by-sa/2.0/de/)
 &nbsp;
 
 **Kengdic dictionary file**  

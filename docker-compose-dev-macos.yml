@@ -1,0 +1,64 @@
+version: '3'
+name: linguacafedev
+
+networks:
+    linguacafedev:
+        driver: bridge
+
+services:
+    webserver:
+        container_name: linguacafe-webserver-dev
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: ./docker/PhpDockerfileDev
+        depends_on:
+            - mysql
+        volumes:
+            - ./:/var/www/html
+            - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+        environment:
+            PYTHON_CONTAINER_NAME: linguacafe-python-service-dev
+            DB_DATABASE: linguacafe-dev
+            DB_USERNAME: linguacafe-dev
+            DB_PASSWORD: linguacafe-dev
+            DB_HOST: linguacafe-database-dev
+        ports:
+            - "3000:3000"
+            - "81:80"
+        networks:
+            - linguacafedev
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+    mysql:
+        image: mysql:8.0
+        container_name: linguacafe-database-dev
+        restart: unless-stopped
+        tty: true
+        ports:
+          - "3308:3306"
+        volumes:
+          - ./docker/mysql:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: linguacafe-dev
+            MYSQL_USER: linguacafe-dev
+            MYSQL_PASSWORD: linguacafe-dev
+            MYSQL_ROOT_PASSWORD: linguacafe-dev
+            SERVICE_NAME: linguacafe-dev
+        networks:
+            - linguacafedev
+    python:
+        container_name: linguacafe-python-service-dev 
+        command: "python3 /app/tokenizer.py"
+        restart: unless-stopped
+        tty: true
+        ports: 
+            - "8678:8678"
+        build:
+            dockerfile: ./docker/PythonDockerfileDev
+        volumes:
+            - ./tools:/app
+            - ./storage/app:/var/www/html/storage/app
+        networks:
+            - linguacafedev
+        platform: linux/amd64

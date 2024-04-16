@@ -27,6 +27,25 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Pinyin</v-card-title>
+            <v-card-text>
+                License: MIT license<br><br>
+                <a href="https://pinyin.lxyu.net/">Pinyin website.</a><br>
+                <a href="https://github.com/lxyu/pinyin">Pinyin github.</a><br>
+                <a href="https://github.com/lxyu/pinyin?tab=MIT-1-ov-file#readme">Pinyin license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">Newspaper3k</v-card-title>
+            <v-card-text>
+                License: MIT, Apache-2.0<br><br>
+                <a href="https://github.com/codelucas/newspaper">Newspaper3k github.</a><br>
+                <a href="https://github.com/codelucas/newspaper/blob/master/LICENSE">Newspaper3k license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
             <v-card-title class="pb-0">EbookLib</v-card-title>
             <v-card-text>
                 License: GNU Affero General Public License v3.0<br><br>
@@ -71,6 +90,15 @@
                 License: Creative Commons Attribution-Share Alike 3.0 License<br><br>
                 <a href="https://cc-cedict.org/wiki/">CC-CEDICT website.</a><br>
                 <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-CEDICT license.</a><br>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-6">
+            <v-card-title class="pb-0">HanDeDict</v-card-title>
+            <v-card-text>
+                License: Creative Commons Attribution-ShareAlike 2.0 Germany License<br><br>
+                <a href="http://www.handedict.de/">HanDeDict website.</a><br>
+                <a href="https://creativecommons.org/licenses/by-sa/2.0/de/">HanDeDict license.</a><br>
             </v-card-text>
         </v-card>
 

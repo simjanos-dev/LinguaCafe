@@ -21,7 +21,7 @@ class ImageService {
             ->where('cover_image', $fileName)
             ->first();
 
-        if (!$book) {
+        if (!$book && $fileName !== 'default.jpg') {
             abort(500, 'The file does not exist, or it belongs to a different user.');
         }
 

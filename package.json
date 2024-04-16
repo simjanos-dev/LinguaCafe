@@ -29,11 +29,12 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@mdi/font": "^7.4.47",
         "@popperjs/core": "^2.11.6",
         "vue-cookie": "^1.1.4",
         "vue-router": "3.6.5",
+        "vue-showdown": "^2.4.1",
         "vue2-circle-progress": "1.2.3",
-        "vuetify": "^2.6.12",
-        "@mdi/font": "^7.4.47"
+        "vuetify": "^2.6.12"
     }
 }

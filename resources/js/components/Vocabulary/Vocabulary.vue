@@ -15,8 +15,15 @@
             v-if="vocabularyExportDialog.active"
             v-model="vocabularyExportDialog.active" 
             :sample-words="words"
+            :language="$props.language"
             @export-to-csv="exportToCsv"
         ></vocabulary-export-dialog>
+
+        <!-- Vocabulary import dialog -->
+        <vocabulary-import-dialog 
+            v-if="vocabularyImportDialog.active"
+            v-model="vocabularyImportDialog.active"
+        ></vocabulary-import-dialog>
 
         <!-- Search header -->
         <v-card outlined class="rounded-lg px-4 pb-4 my-4" :loading="loading">
@@ -39,7 +46,7 @@
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
-                                Stage
+                                Level
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
                             </v-btn>
@@ -192,7 +199,10 @@
                         </template>
                         <v-list class="filter-popup pa-0" dense>
                             <v-list-item @click="openExportDialog" :disabled="loading">
-                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Export to csv
+                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Export
+                            </v-list-item>
+                            <v-list-item @click="openImportDialog" :disabled="loading">
+                                <v-icon class="mr-1">mdi-file-delimited</v-icon>Import
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -200,7 +210,7 @@
             </v-container>
         </v-card>
 
-        <!-- vocabulary list -->
+        <!-- Vocabulary list -->
         <v-simple-table id="vocabulary-list" class="py-0 no-hover border rounded-lg" dense>
             <thead>
                 <tr>
@@ -303,7 +313,10 @@
                 currentPage: 1,
                 vocabularyExportDialog: {
                     active: false,
-                    },
+                },
+                vocabularyImportDialog: {
+                    active: false,
+                },
                 vocabularyEditDialog: {
                     active: false,
                     wordId: -1,
@@ -378,6 +391,9 @@
             },
             openExportDialog() {
                 this.vocabularyExportDialog.active = true;
+            },
+            openImportDialog() {
+                this.vocabularyImportDialog.active = true;
             },
             exportToCsv(fields) {
                 var text = 'anytext';

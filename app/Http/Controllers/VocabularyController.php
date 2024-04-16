@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 // services
 use App\Services\VocabularyService;
+use App\Services\TempFileService;
 
 // request classes
 use App\Http\Requests\Vocabulary\GetUniqueWordRequest;
@@ -20,13 +21,15 @@ use App\Http\Requests\Vocabulary\SearchVocabularyRequest;
 use App\Http\Requests\Vocabulary\ExportToCsvRequest;
 use App\Http\Requests\Vocabulary\SearchKanjiRequest;
 use App\Http\Requests\Vocabulary\GetKanjiDetailsRequest;
+use App\Http\Requests\Vocabulary\ImportFromCsvRequest;
 
-class VocabularyController extends Controller
-{
+class VocabularyController extends Controller {
     private $vocabularyService;
+    private $tempFileService;
 
-    public function __construct(VocabularyService $vocabularyService) {
+    public function __construct(VocabularyService $vocabularyService, TempFileService $tempFileService) {
         $this->vocabularyService = $vocabularyService;
+        $this->tempFileService = $tempFileService;
     }
 
 
@@ -264,5 +267,25 @@ class VocabularyController extends Controller
         }
 
         return response()->json($kanjiData, 200);
+    }
+
+    public function importFromCsv(ImportFromCsvRequest $request) {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+        $importFile = $request->file('importFile');
+        $onlyUpdate = $request->post('onlyUpdate');
+        $skipHeader = $request->post('skipHeader');
+        $delimiter = $request->post('delimiter');
+
+        try {
+            $fileName = $this->tempFileService->moveFileToTempFolder($userId, $importFile);
+            $importResponseData = $this->vocabularyService->importFromCsv($userId, $language, $fileName, $delimiter, $onlyUpdate, $skipHeader);
+        } catch (\Exception $e) {
+            $this->tempFileService->deleteTempFile($fileName);
+            abort(500, $e->getMessage());
+        }
+
+        $this->tempFileService->deleteTempFile($fileName);
+        return response()->json($importResponseData, 200);
     }
 }

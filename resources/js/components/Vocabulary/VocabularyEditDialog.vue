@@ -92,6 +92,7 @@
                     ></v-text-field>
 
                     <v-text-field 
+                        v-if="['chinese', 'japanese'].includes($props.language)"
                         v-model="item.base_word_reading"
                         @keyup="changed"
                         filled
@@ -104,7 +105,7 @@
                 <!-- Arrows -->
                 <div id="vocabulary-edit-middle" v-if="$props.itemType == 'Word'">
                     <div class="arrow pt-2 text-center"><v-icon large>mdi-arrow-right</v-icon></div>
-                    <div class="arrow pt-2 text-center"><v-icon large>mdi-arrow-right</v-icon></div>
+                    <div class="arrow pt-2 text-center" v-if="['chinese', 'japanese'].includes($props.language)"><v-icon large>mdi-arrow-right</v-icon></div>
                 </div>
 
                 <!-- Word -->
@@ -131,6 +132,7 @@
                     ></v-text-field>
 
                     <v-text-field 
+                    v-if="['chinese', 'japanese'].includes($props.language)"
                         v-model="item.reading"
                         @keyup="changed"
                         filled

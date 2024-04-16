@@ -5,7 +5,7 @@
         <v-card outlined class="rounded-lg pa-4 pt-0" :loading="characterLimitLoading">
             <v-card-text id="deepl-card-text">
                 <!-- DeepL cache -->
-                <label class="font-weight-bold" v-if="characterLimitStatus !== 'error'">
+                <label class="font-weight-bold"">
                     DeepL Cache
                 </label>
                 
@@ -17,7 +17,7 @@
                     ></v-skeleton-loader>
                 </div>
                 
-                <div v-if="!characterLimitLoading && characterLimitStatus !== 'error'">
+                <div v-if="!characterLimitLoading">
                     {{ formatNumber(cachedDeeplTranslations).replace('&nbsp;', '') }} cached translations.
                 </div>
 
@@ -36,13 +36,13 @@
 
                 <!-- DeepL API usage -->
                 <label 
-                    v-if="characterLimitStatus !== 'error'"
+                    v-if="!['error', 'default'].includes(characterLimitStatus)"
                     class="font-weight-bold mt-4" 
                 >
                     DeepL character usage
                 </label>
 
-                <v-card id="deepl-api-card" class="rounded-lg pa-6" elevation="0" v-if="characterLimitStatus !== 'error'">
+                <v-card id="deepl-api-card" class="rounded-lg pa-6" elevation="0" v-if="!['error', 'default'].includes(characterLimitStatus)">
                     <!-- DeepL API usage skeleton -->
                     <v-card-text class="pa-0" v-if="characterLimitLoading">
                         <v-skeleton-loader
@@ -267,6 +267,7 @@
                 characterUsed: 0,
                 characterLimit: 0,
                 cachedDeeplTranslations: 0,
+                defaultDeeplApiKey: '00000000-aaaa-aaaa-aaaa-000aaaa000aa:00',
             }
         },
         props: {
@@ -280,7 +281,11 @@
                 axios.get('/dictionaries/deepl/get-usage').then((result) => {
                     this.characterLimitLoading = false;
                     if (result.data == 'error') {
-                        this.characterLimitStatus = 'error';
+                        if (this.settings.deeplApiKey === this.defaultDeeplApiKey) {
+                            this.characterLimitStatus = 'default';
+                        } else {
+                            this.characterLimitStatus = 'error';
+                        }
                     } else {
                         this.characterLimitStatus = 'success';
                         this.cachedDeeplTranslations = result.data.cachedDeeplTranslations;
@@ -290,7 +295,7 @@
                 });
             },
             loadSettings() {
-                axios.post('/settings/get', {
+                axios.post('/settings/global/get', {
                     'settingNames': [
                         'deeplApiKey',
                         'jellyfinHost',
@@ -313,7 +318,7 @@
                 this.characterLimit = 0;
                 this.characterLimitStatus = '';
 
-                axios.post('/settings/update', {
+                axios.post('/settings/global/update', {
                     'settings': {
                         'deeplApiKey': this.settings.deeplApiKey,
                         'jellyfinHost': this.settings.jellyfinHost,

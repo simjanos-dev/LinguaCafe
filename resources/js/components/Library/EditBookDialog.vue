@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" persistent width="800px">
+    <v-dialog v-model="value" persistent width="800px" @keydown.enter.prevent="enterPressed">
         <v-card id="edit-book-dialog" class="rounded-lg">
             <!-- Card title -->
             <v-card-title>
@@ -25,31 +25,32 @@
                     <label class="font-weight-bold">Book name</label>
                     <v-text-field 
                         v-model="name"
+                        ref="bookName"
                         filled
                         dense
                         rounded
                         placeholder="Name"
                         :rules="[rules.name]"
                         maxlength="128"
-                        @change="validateForm"
+                        @keyup="validateForm"
                     ></v-text-field>
                     
                     
-                    <label class="font-weight-bold mt-2">Book cover image</label><br>
-                    <template v-if="editImage">
-                        <v-file-input
-                            v-model="image"
-                            filled
-                            dense
-                            rounded
-                            ref="image"
-                            :rules="[rules.image]"
-                            accept=".jpg,.jpeg,.png"
-                            placeholder="Cover image"
-                            prepend-icon="mdi-image"
-                            @change="validateForm"
-                        ></v-file-input>
-                    </template>
+                    <label class="font-weight-bold mt-2" v-show="editImage">Book cover image</label><br>
+                    <v-file-input
+                        v-show="editImage"
+                        v-model="image"
+                        filled
+                        dense
+                        rounded
+                        clearable
+                        ref="image"
+                        accept=".jpg,.jpeg,.png"
+                        placeholder="Cover image"
+                        prepend-icon="mdi-image"
+                        @change="imageChanged"
+                    ></v-file-input>
+                    
                     <template v-if="!editImage">
                         <div id="image-upload-box" class="d-flex">
                             <div id="image-box" class="d-flex align-center">
@@ -127,15 +128,12 @@
                             return 'You must type in a name.'
                         }
 
-                        return true;
-                    },
-                    image: (value) => {
-                        if (value === null) {
-                            return 'You must select a cover image.'
+                        if (value.length > 128) {
+                            return 'Book name must be below 128 characters..'
                         }
 
                         return true;
-                    },
+                    }
                 },
             }
         },
@@ -147,15 +145,30 @@
         },
         emits: ['input'],
         mounted() {
-            this.validateForm();
+            this.$refs.bookName.focus();
+
+            if (this.$props.bookName.length) {
+                this.validateForm();
+            }
         },
         methods: {
+            enterPressed() {
+                if (this.$refs.bookForm.validate()) {
+                    this.save();
+                }
+            },
             uploadImageButton() {
-                this.editImage = true;
-                this.isFormValid = false;
                 this.$nextTick(() => {
                     this.$refs.image.$refs.input.click();
                 });
+            },
+            imageChanged(event) {
+                console.log('image changed', this.image, event);
+                this.editImage = true;
+                if (this.image === null || this.image === undefined) {
+                    this.image = null;
+                    this.editImage = false;
+                }
             },
             validateForm() {
                 this.isFormValid = this.$refs.bookForm.validate();

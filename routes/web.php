@@ -28,6 +28,8 @@ Route::group(['middleware' => 'web'], function () {
 });
 
 Route::group(['middleware' => ['auth', 'web']], function () {
+    Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+
     // users
     Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
     Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
@@ -42,9 +44,11 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     // vue routes
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books/{bookId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/book/create', [App\Http\Controllers\HomeController::class, 'index']);
@@ -66,6 +70,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
     Route::get('/config/get/{configPath}', [App\Http\Controllers\HomeController::class, 'getConfig']);
 
+    // user manual
+    Route::get('/manual/get-menu-tree', [App\Http\Controllers\HomeController::class, 'getUserManualTree']);
+    Route::get('/manual/get-manual-file/{fileName}', [App\Http\Controllers\HomeController::class, 'getUserManualFile']);
+
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);
     Route::post('/goal/update', [App\Http\Controllers\GoalController::class, 'updateGoal']);
@@ -73,23 +81,24 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
     Route::get ('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
 
-    // dictionaries
-    
-
     // settings
-    Route::post('/settings/get', [App\Http\Controllers\SettingsController::class, 'getSettingsByName']);
-    Route::post('/settings/update', [App\Http\Controllers\SettingsController::class, 'updateSettings']);
+    Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);
+    Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateGlobalSettings']);
+    Route::post('/settings/user/get', [App\Http\Controllers\SettingsController::class, 'getUserSettingsByName']);
+    Route::post('/settings/user/update', [App\Http\Controllers\SettingsController::class, 'updateUserSettings']);
     
     // images 
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
 
-    // dictionary
+    // dictionaries
     Route::get('/dictionaries/scan', [App\Http\Controllers\DictionaryController::class, 'getImportableDictionaryList']);
     Route::post('/dictionaries/import', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
     Route::get('/dictionaries/get-record-count/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'getDictionaryRecordCount']);
     Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
     Route::post('/dictionaries/deepl/search', [App\Http\Controllers\DictionaryController::class, 'searchDeepl']);
+    Route::get('/dictionaries/deepl/is-enabled', [App\Http\Controllers\DictionaryController::class, 'isDeeplEnabled']);
     Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
+    Route::get('/dictionary/get/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'getDictionary']);
     Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);
     Route::post('/dictionary/search-for-hover-vocabulary', [App\Http\Controllers\DictionaryController::class, 'searchDefinitionsForHoverVocabulary']);
@@ -109,6 +118,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/vocabulary/example-sentence/create-or-update', [App\Http\Controllers\VocabularyController::class, 'createOrUpdateExampleSentence']);
     Route::post('/vocabulary/search', [App\Http\Controllers\VocabularyController::class, 'searchVocabulary']);
     Route::post('/vocabulary/export-to-csv', [App\Http\Controllers\VocabularyController::class, 'exportToCsv']);
+    Route::post('/vocabulary/import-from-csv', [App\Http\Controllers\VocabularyController::class, 'importFromCsv']);
     Route::get ('/vocabulary/example-sentence/{targetType}/{targetId}', [App\Http\Controllers\VocabularyController::class, 'getExampleSentence']);
     Route::post('/kanji/search', [App\Http\Controllers\VocabularyController::class, 'searchKanji']);
     Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);

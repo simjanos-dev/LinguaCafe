@@ -168,14 +168,30 @@
                             hide-details
                             height="100"
                             v-model="translationText"
-                            @change="inputChanged('translation')"
+                            @keyup="inputChanged('translation')"
                             @keydown.stop=";"
                         ></v-textarea>
 
+                        <!-- Search field -->
+                        <v-text-field 
+                            placeholder="Dictionary search"
+                            class="dictionary-search-field mt-2 mb-3"
+                            filled
+                            dense
+                            rounded
+                            width="100%"
+                            hide-details
+                            prepend-inner-icon="mdi-magnify"
+                            :value="searchField"
+                            @change="searchFieldChanged"
+                            @keydown.stop=";"
+                        ></v-text-field>
+
                         <!-- Search box -->
                         <vocabulary-search-box
+                            :deeplEnabled="$props.deeplEnabled"
                             :language="$props.language"
-                            :_searchTerm="searchField"
+                            :searchTerm="searchField"
                             @addDefinitionToInput="addDefinitionToInput"
                         ></vocabulary-search-box>
                     </v-card-text>
@@ -212,7 +228,7 @@
                                 dense
                                 rounded
                                 v-model="baseWord"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
@@ -224,7 +240,7 @@
                                 dense
                                 rounded
                                 :value="word"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                         </div>
@@ -239,7 +255,7 @@
                                 dense
                                 rounded
                                 v-model="baseWordReading"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
@@ -250,7 +266,7 @@
                                 dense
                                 rounded
                                 v-model="reading"
-                                @change="inputChanged"
+                                @keyup="inputChanged"
                                 @keydown.stop=";"
                             ></v-text-field>
                         </div>
@@ -267,7 +283,7 @@
                             hide-details
                             height="100"
                             v-model="reading"
-                            @change="inputChanged"
+                            @keyup="inputChanged"
                             @keydown.stop=";"
                         ></v-textarea>
                     </v-card-text>
@@ -311,6 +327,7 @@
             phrase: Array,
             kanjiList: Array,
             stage: Number,
+            deeplEnabled: Boolean,
             _reading: String,
             _baseWord: String,
             _baseWordReading: String,
@@ -343,9 +360,15 @@
             };
         },
         mounted: function() {
-            this.makeSearchRequest();
         },
         methods: {
+            searchFieldChanged(event) {
+                if (event === '') {
+                    return;
+                }
+                
+                this.searchField = event;
+            },
             setStage(stage) {
                 this.$emit('setStage', stage);
             },
@@ -361,69 +384,6 @@
             updateVocabBoxTranslationList() {
                 this.translationList = this.$props._translationText.split(';');
             },
-            makeSearchRequest() {
-                this.searchResults = [];
-                if (this.searchField == '') {
-                    return;
-                }
-
-                axios.post('/dictionary/search', {
-                    language: this.$props.language,
-                    term: this.searchField
-                }).then((response) => {
-                    this.processVocabularySearchResults(response.data);
-                });
-
-                // search inflections
-                // axios.post('/dictionary/search/inflections', {
-                //     dictionary: 'jmdict',
-                //     term: this.searchField
-                // })
-                // .then((response) => {
-                //     this.processInflectionSearchResults(response.data);
-                // });
-            },
-            processVocabularySearchResults(data) {
-                this.searchResults = [];
-
-                for (var dictionaryIndex = 0; dictionaryIndex < data.length; dictionaryIndex++) {
-                    if (data[dictionaryIndex].name == 'JMDict') {
-                        let searchResult = {
-                            dictionary: data[dictionaryIndex].name,
-                            color: data[dictionaryIndex].color,
-                            records: []
-                        };
-
-                        for (var jmdictIndex = 0; jmdictIndex < data[dictionaryIndex].jmdictRecords.length; jmdictIndex++) {
-                            var jmdictRecord = data[dictionaryIndex].jmdictRecords[jmdictIndex];
-                            
-                            searchResult.records.push({
-                                word: jmdictRecord.words.length ? jmdictRecord.words[0] : '',
-                                otherForms: data[dictionaryIndex].jmdictRecords[jmdictIndex].words,
-                                definitions: data[dictionaryIndex].jmdictRecords[jmdictIndex].definitions,
-                            });                            
-                        }
-
-                        this.searchResults.push(searchResult);
-                    } else {
-                        let searchResult = {
-                            dictionary: data[dictionaryIndex].name,
-                            color: data[dictionaryIndex].color,
-                            records: []
-                        };
-
-                        for (var recordIndex = 0; recordIndex < data[dictionaryIndex].records.length; recordIndex++) {
-                            searchResult.records.push({
-                                word: data[dictionaryIndex].records[recordIndex].word,
-                                definitions: data[dictionaryIndex].records[recordIndex].definitions,
-                            });                            
-                        }
-
-                        this.searchResults.push(searchResult);
-                    }
-                }
-            },
-            
             addDefinitionToInput(definition) {
                 if (this.translationText.length && this.translationText[this.translationText.length - 1] !== ';') {
                     this.translationText += ';';

@@ -141,6 +141,15 @@
                 <v-row>
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Auto move words to known:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                Clicking the <b>Finish reading</b> button moves new words to known.
+                            </v-card>
+                        </v-menu>
+
                         <v-switch
                             color="primary"
                             v-model="settings.autoMoveWordsToKnown"
@@ -218,7 +227,7 @@
                     </v-col>
                 </v-row>
                 
-                <!-- Vocabulary box section-->
+                <!-- Vocabulary hover box section-->
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Vocabulary hover box
                 </div>
@@ -255,7 +264,26 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
-                
+
+                <!-- Hover vocabulary delay -->
+                <v-row>
+                    <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Hover vocabulary delay:</v-col>
+                    <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
+                        <v-slider
+                            v-model="settings.vocabularyHoverBoxDelay"
+                            :tick-labels="['200ms', '', '', '', '', '', '', '', '1000ms']"
+                            :tick-size="0"
+                            :min="200"
+                            :max="1000"
+                            thumb-label="always"
+                            thumb-size="38"
+                            step="100"
+                            track-color="#c5c5c5"
+                            @change="saveSettings"
+                        >
+                        </v-slider>
+                    </v-col>
+                </v-row>
             </v-card-text>
 
             <v-card-actions>
@@ -287,6 +315,7 @@
                     vocabularySidebar: 'vocabulary-sidebar',
                     vocabularyHoverBox: 'vocabulary-hover-box',
                     vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
+                    vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
                     autoHighlightWords: 'auto-highlight-words'
                 },
                 settings: {},
@@ -325,6 +354,7 @@
             this.loadSetting('vocabularySidebar', 'boolean', true);
             this.loadSetting('vocabularyHoverBox', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
+            this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
             this.loadSetting('autoHighlightWords', 'boolean', true);
             this.settingsLoaded = true;
             this.saveSettings();
@@ -358,6 +388,7 @@
                 this.saveSetting('vocabularySidebar');
                 this.saveSetting('vocabularyHoverBox');
                 this.saveSetting('vocabularyHoverBoxSearch');
+                this.saveSetting('vocabularyHoverBoxDelay');
                 this.saveSetting('autoHighlightWords');
 
                 this.$emit('changed', this.settings);

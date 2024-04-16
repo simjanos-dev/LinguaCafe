@@ -5,10 +5,133 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.8 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-title>v0.10 <v-spacer /> 2024.??.??.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
+                    <li>
+                        Added a new default list layout for the library page.
+                    </li>
+                    <li>
+                        Added a logout confirmation dialog.
+                    </li>
+                    <li>
+                        Added theme customization.
+                    </li>
+                    <li>
+                        Added different background colors for different word levels.
+                    </li>
+                    <li>
+                        Added a separate color for ignored words' text color.
+                    </li>
+                    <li>
+                        Added a hotkey to set words' level back to new.
+                    </li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        There will be no error message anymore due to empty book name when you click on "Create book" button.
+                    </li>
+                    <li>
+                        While creating a book, the save button won't be grayed out anymore if you type in a name. 
+                        Previously it only turned active after you removed the focus from the name input field.
+                    </li>
+                    <li>
+                        While creating or editing a book and uploading an image, clicking on the cancel button will now 
+                        revert the image to the default or previous image, instead of showing an error message.
+                    </li>
+                    <li>
+                        Fixed a bug that caused words imported on the vocabulary page to not be added to the review system.
+                    </li>
+                    <li>
+                        Pressing the enter key when creating or editing a book or a chapter now will act the same as clicking on the Save button. 
+                        Pressing the enter key when importing something now will act as the Continue or Import button.
+                    </li>
+                    <li>
+                        Fixed a bug that caused hover vocabulary box to appear even when plain text mode was active 
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        Improved dictionary search UI: made dictionary colors less distracting and vocabulary sidebar more compact and uniform.
+                    </li>
+                    <li>
+                        The online user manual has been moved from the GitHub Page to the GitHub Wiki. It also moved from a Vuetify format to Markdown.
+                    </li>
+                    <li>
+                        DeepL API key error will not appear on the admin page anymore if it set to the default value.
+                    </li>
+                    <li>
+                        Added a warning on how hover vocabulary box works in review settings.
+                    </li>
+                    <li>
+                        Lightened default dark mode text color to make it more readable.
+                    </li>
+                    <li>
+                        Made navigation sidebar more compact.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.9 <v-spacer /> 2024.03.28.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Added new supported languages: English, Greek and Latin.
+                    </li>
+                    <li>
+                        Made text editable when importing a website.
+                    </li>
+                    <li>
+                        Added settings dialog for the review page.
+                    </li>
+                    <li>
+                        Expanded example sentence mode on the review page. Now it has 3 options: disabled, plain text and interactive text.
+                    </li>
+                    <li>
+                        Added hover vocabulary on the review page.
+                    </li>
+                    <li>
+                        Added dictionary edit dialog for the admin page.
+                    </li>
+                    <li>
+                        DeepL translator's target language now can be changed.
+                    </li>
+                    <li>
+                        Added support for HanDeDict dictionary.
+                    </li>
+                    <li>
+                        Added support for every dict cc dictionary. Now you can import multiple of them for the same language.
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        MacOS users have a new, simpler install and update process.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.8 <v-spacer /> 2024.03.21.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Added "website" import option.
+                    </li>
+                    <li>
+                        Added vocabulary word import from .csv.
+                    </li>
                     <li>
                         Added start review dialog for the review button in the navigation sidebar.
                     </li>
@@ -17,6 +140,12 @@
                     </li>
                     <li>
                         Word counts now load automatically when you open a book.
+                    </li>
+                    <li>
+                        Added a setting for hover vocabulary's delay.
+                    </li>
+                    <li>
+                        Added user manual. Will be extended and updated regularly.
                     </li>
                 </ul>
 
@@ -36,6 +165,43 @@
                     </li>
                     <li>
                         Text reader had an error if the opened chapter had no text.
+                    </li>
+                    <li>
+                        Renamed label "stage" to "level" on vocabulary page to make it consistent.
+                    </li>
+                    <li>
+                        Non Chinese and Japanese phrases were only searchable on the vocabulary page without spaces. This fix only applies to phrases created after this update.
+                    </li>
+                    <li>
+                        Non Chinese and Japanese phrases were displayed incorrectly on the vocabulary sidebar.
+                    </li>
+                    <li>
+                        Phrases were displayed incorrectly on the vocabulary export dialog.
+                    </li>
+                    <li>
+                        Reading fields were visible on vocabulary search page's edit dialog for languages that had no readings.
+                    </li>
+                    <li>
+                        Numpad hotkeys were not working.
+                    </li>
+                    <li>
+                        Hover vocabulary's search dictionary setting was not working when it was turned off.
+                    </li>
+                    <li>
+                        Hover vocabulary sent a request to the server even if you took the mouse off from the hovered word before the delay ended.
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        If DeepL is disabled for a language, the dictionaries will not show a DeepL error message anymore, 
+                        and they also won't make a request to retrieve the DeepL translations.
+                    </li>
+                    <li>
+                        For better performance and to avoid accidentaly opening hover vocabulary on words, a slight delay was added before 
+                        the hover vocabulary box becomes visible. The dictionary and DeepL searches already had this delay, it just has 
+                        been applied to the visibility of the hover vocabulary box as well.
                     </li>
                 </ul>
             </v-card-text>

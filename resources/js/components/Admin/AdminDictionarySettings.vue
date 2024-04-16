@@ -11,9 +11,16 @@
         <admin-delete-dictionary-dialog
             v-if="deleteDialog.active"
             v-model="deleteDialog.active" 
-            @confirm="deleteDictionaryConfirm" 
             :dictionary-name="deleteDialog.dictionaryName" 
             :database-table-name="deleteDialog.databaseTableName" 
+            @confirm="deleteDictionaryConfirm" 
+        />
+
+        <admin-edit-dictionary-dialog
+            v-if="editDialog.active"
+            v-model="editDialog.active" 
+            :dictionary-id="editDialog.id" 
+            @dictionary-saved="loadDictionaries"
         />
 
         <error-dialog
@@ -36,12 +43,12 @@
             <thead>
                 <tr>
                     <th class="text-center">Name</th>
-                    <th class="text-center">Color</th>
                     <th class="text-center">Records</th>
                     <th class="text-center">Database name</th>
-                    <th class="text-center">Language</th>
+                    <th class="text-center">Source language</th>
+                    <th class="text-center">Target language</th>
                     <th class="text-center">Enabled</th>
-                    <th class="text-center">Delete</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,58 +56,20 @@
                     <!-- Name -->
                     <td class="text-center">{{ dictionary.name }}</td>
                     
-                    <!-- Color -->
-                    <td id="dictionary-color-picker" class="text-center">
-                        <v-menu
-                            v-model="dictionary.colorPicker"
-                            width="290px"
-                            offset-y
-                            nudge-top="-10px"
-                            right
-                            :close-on-content-click="false"
-                        >
-
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-card
-                                    class="border mx-auto"
-                                    outlined
-                                    :color="dictionary.color"
-                                    width="48px"
-                                    height="26px"
-                                    @click="dictionary.colorPicker = true;"
-                                ></v-card>
-                            </template>
-
-                            <v-color-picker hide-inputs v-model="dictionary.tempColor" />
-                            <div class="color-picker-actions w-full d-flex">
-                                <v-spacer />
-                                <v-btn
-                                    rounded
-                                    small
-                                    text
-                                    class="mt-2"
-                                    @click="dictionary.colorPicker = false;"
-                                >Cancel</v-btn>
-                                <v-btn
-                                    rounded
-                                    small
-                                    class="ma-2"
-                                    color="primary"
-                                    @click="saveColor(index)"
-                                >Save</v-btn>
-                            </div>
-                        </v-menu>
-                    </td>
-
                     <!-- Records -->
                     <td class="text-center">{{ dictionary.records == '-' ? '-' : formatNumber(dictionary.records) }}</td>
                     
                     <!-- Database table name -->
                     <td class="text-center">{{ dictionary.database_table_name }}</td>
 
-                    <!-- Language -->
+                    <!-- Source language -->
                     <td>
-                        <v-img class="mx-auto border" :src="'/images/flags/' + dictionary.language + '.png'" max-width="43" height="28" /> 
+                        <v-img class="mx-auto border" :src="'/images/flags/' + dictionary.source_language + '.png'" max-width="43" height="28" /> 
+                    </td>
+
+                    <!-- Target language -->
+                    <td>
+                        <v-img class="mx-auto border" :src="'/images/flags/' + dictionary.target_language + '.png'" max-width="43" height="28" /> 
                     </td>
 
                     <!-- Enabled/disabled -->
@@ -114,17 +83,23 @@
                         </div>
                     </td>
 
-                    <!-- Delete -->
+                    <!-- Actions -->
                     <td class="text-center">
                         <v-btn 
+                            icon 
+                            title="Edit"
+                            @click="editDictionary(dictionary.id)"
+                        >
+                            <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                        <v-btn 
                             v-if="dictionary.imported === '1'"
-                            class="delete-button"
-                            rounded
-                            dark
-                            color="error" 
+                            icon 
+                            title="Delete"
+                            color="error"
                             @click="deleteDictionary(dictionary.name, dictionary.database_table_name)"
                         >
-                            Delete
+                            <v-icon>mdi-delete</v-icon>
                         </v-btn>
                     </td>
                 </tr>
@@ -140,7 +115,7 @@
                 elevation="0"
             >
                 <v-card-title class="expansion-card-title py-3 px-0" @click="toggleExpansion(index)">
-                    <v-img class="mx-4 border" :src="'/images/flags/' + dictionary.language + '.png'" max-width="43" height="28" />
+                    <v-img class="mx-4 border" :src="'/images/flags/' + dictionary.source_language + '.png'" max-width="43" height="28" />
                     {{ dictionary.name }}
                     <v-spacer />
                     <v-icon class="mr-4">{{ dictionary.expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -213,10 +188,16 @@
                                 <td class="text-center">{{ dictionary.database_table_name }}</td>
                             </tr>
                             
-                            <!-- Language -->
+                            <!-- Source language -->
                             <tr>
-                                <td>Language</td>
-                                <td><v-img class="mx-auto border" :src="'/images/flags/' + dictionary.language + '.png'" max-width="43" height="28" /> </td>
+                                <td>Source language</td>
+                                <td><v-img class="mx-auto border" :src="'/images/flags/' + dictionary.source_language + '.png'" max-width="43" height="28" /> </td>
+                            </tr>
+
+                            <!-- Target language -->
+                            <tr>
+                                <td>Target language</td>
+                                <td><v-img class="mx-auto border" :src="'/images/flags/' + dictionary.target_language + '.png'" max-width="43" height="28" /> </td>
                             </tr>
 
                             <!-- Enabled/disabled -->
@@ -233,21 +214,29 @@
                                 </td>
                             </tr>
 
-                            <!-- Delete -->
+                            <!-- Actions -->
                             <tr>
-                                <td>Delete</td>
+                                <td>Actions</td>
                                 <td class="text-center">
-                                    <v-btn 
-                                        v-if="dictionary.imported === '1'"
-                                        class="delete-button"
-                                        rounded
-                                        dark
-                                        small
-                                        color="error" 
-                                        @click="deleteDictionary(dictionary.name, dictionary.database_table_name)"
-                                    >
-                                        Delete
-                                    </v-btn>
+                                    <v-menu offset-y class="rounded-lg">
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-btn rounded depressed v-bind="attrs" v-on="on">
+                                                Actions
+                                                <v-icon v-if="attrs['aria-expanded'] === 'true'">mdi-chevron-up</v-icon>
+                                                <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <v-btn class="menu-button" tile color="white" @click="editDictionary(dictionary.id)">Edit</v-btn>
+                                        <v-btn
+                                            class="menu-button"
+                                            tile
+                                            color="white"
+                                            @click="deleteDictionary(dictionary.name, dictionary.database_table_name)" 
+                                            v-if="dictionary.imported === '1'"
+                                        >
+                                            Delete
+                                        </v-btn>
+                                    </v-menu>
                                 </td>
                             </tr>
                         </tbody>
@@ -269,6 +258,10 @@
                     active: false,
                     databaseTableName: '',
                     dictionaryName: ''
+                },
+                editDialog: {
+                    active: false,
+                    id: -1,
                 },
                 errorDialog: {
                     active: false
@@ -307,6 +300,10 @@
 
                 this.dictionaries[dictionaryIndex].colorPicker = false;
                 this.dictionaries[dictionaryIndex].colorPickerMobile = false;
+            },
+            editDictionary(id) {
+                this.editDialog.active = true;
+                this.editDialog.id = id;
             },
             deleteDictionary(dictionaryName, databaseTableName) {
                 this.deleteDialog.active = true;

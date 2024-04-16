@@ -9,6 +9,32 @@
     }
 }
 
+#app.dark kbd {
+    background-color: var(--v-primary-base);
+    color: var(--v-textDark-base);
+}
+
+// input text color
+#app.dark input,
+#app.dark textarea {
+    color: var(--v-text-base) !important;
+}
+
+// input placeholder color
+#app.dark input::placeholder,
+#app.dark textarea::placeholder {
+    color: var(--v-text-base) !important;
+    -webkit-text-fill-color: var(--v-text-base) !important;
+    opacity: .5 !important;
+}
+
+.v-text-field.v-input--has-state .v-input__control>.v-text-field__details>.v-counter, .v-text-field.v-input--is-disabled .v-input__control>.v-text-field__details>.v-counter, .v-text-field.v-input--is-disabled .v-input__control>.v-text-field__details>.v-messages, .v-text-field .v-input__control, .v-text-field fieldset
+
+// text area
+#app.dark textarea {
+    color: var(--v-text-base);
+}
+
 // select text color
 #app.dark .theme--dark.v-select .v-select__selections {
     color: var(--v-text-base);
@@ -34,6 +60,12 @@
 }
 
 // pagination
+// pagination
+#app.dark .theme--dark.v-pagination .v-pagination__item,
+#app.dark .theme--dark.v-pagination .v-pagination__navigation {
+    background: var(--v-foreground-base);
+}
+
 #app.dark .theme--dark.v-pagination .v-pagination__item--active {
     color: var(--v-textDark-base);
 }
@@ -330,7 +362,7 @@
     .stage {
         &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"],
         &[stage="-3"], &[stage="-2"], &[stage="-1"] {
-            background-color: var(--v-highlightedWord-base);
+            background-color: var(--v-highlightedWordLevel1-base);
             color: var(--v-textDark-base);
         }
 
@@ -399,13 +431,21 @@
     // search result title color
     #vocab-box #search-results .search-result .search-result-title, 
     #vocab-side-box #search-results .search-result .search-result-title {
-        color: var(--v-textDark-base);
+        color: var(--v-text-base);
+
+        i {
+            color: var(--v-textDark-base);
+        }
     }
 
     // search result color
     #search-results .search-result .search-result-definition:hover {
-        color: var(--v-textDark-base);
-        background-color: var(--v-primary-base);
+        color: var(--v-text-base);
+        background-color: var(--v-gray2-base);
+
+        i {
+            color: var(--v-text-base) !important;
+        }
     }
 
     
@@ -432,20 +472,25 @@
     // vocab box stage buttons border
     #vocab-box #vocab-box-stage-buttons .v-btn,
     #vocab-side-box #vocab-box-stage-buttons .v-btn {
-        border-color: var(--v-gray3-base);
+        background-color: var(--v-gray-base);
+        
         color: var(--v-text-base) !important;
     }
 
-    // vocab box stage button
+    // vocab box active stage button
     #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active, 
     #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active {
-        background-color: var(--v-gray-base) !important;
-    }
+        background-color: var(--v-primary-base) !important;
+        border-color: var(--v-primary-base) !important;
+        color: var(--v-textDark-base) !important;
+        
+        i {
+            color: var(--v-textDark-base) !important;
+        }
 
-    
-    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active i,
-    #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active i {
-        color: var(--v-text-base) !important;
+        &::before {
+            display: none !important;
+        }
     }
 
     // text highlighting
@@ -533,4 +578,11 @@
 #app.dark #import-dialog .jellyfin-subtitle-source #selected-jellyfin-subtitle,
 #app.dark #import-dialog #website-text {
     background-color: var(--v-gray-base);
+}
+
+// user manual
+#user-manual {
+    pre, pre * {
+        color: var(--v-text-base);
+    }
 }

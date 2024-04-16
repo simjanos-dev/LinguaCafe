@@ -25,7 +25,7 @@ class DictionaryImportService {
         Scans the /storage/app/dictionaries folder, 
         and returns a list of importable dictionaries.
     */
-    public function getImportableDictionaryList($dictCcLanguageCodes, $databaseLanguageCodes) {
+    public function getImportableDictionaryList($supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes) {
         $dictionariesFound = [];
         $files = Storage::files('dictionaries');
 
@@ -38,7 +38,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'JMDict';
             $dictionary->databaseName = 'dict_jp_jmdict';
-            $dictionary->language = 'japanese';
+            $dictionary->source_language = 'japanese';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#74E39A'; 
             $dictionary->expectedRecordCount = 207690;
             $dictionary->firstUpdateInterval = 25000;
@@ -66,7 +67,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'cc-cedict';
             $dictionary->databaseName = 'dict_zh_cedict';
-            $dictionary->language = 'chinese';
+            $dictionary->source_language = 'chinese';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#EF4556'; 
             $dictionary->expectedRecordCount = 0;
             $dictionary->firstUpdateInterval = 25000;
@@ -97,12 +99,39 @@ class DictionaryImportService {
             $dictionariesFound[] = $dictionary;
         }
 
+        // HanDeDict dictionary
+        if (Storage::exists('dictionaries/handedict.u8')) {
+            $dictionary = new \stdClass();
+            $dictionary->name = 'HanDeDict';
+            $dictionary->databaseName = 'dict_zh_handedict';
+            $dictionary->source_language = 'chinese';
+            $dictionary->target_language = 'german';
+            $dictionary->color = '#EF4556'; 
+            $dictionary->expectedRecordCount = 0;
+            $dictionary->firstUpdateInterval = 25000;
+            $dictionary->updateInterval = 10000;
+            $dictionary->fileName = 'handedict.u8';
+            $dictionary->imported = false;
+
+            // check if cc cedict is imported
+            if (Schema::hasTable($dictionary->databaseName)) {
+                $dictionary->imported = true;
+            }
+
+            // check record count
+            $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path('dictionaries/handedict.u8'));
+            
+            // add cc cedict to the list
+            $dictionariesFound[] = $dictionary;
+        }
+
         // kengdic dictionary
         if (Storage::exists('dictionaries/kengdic.tsv')) {
             $dictionary = new \stdClass();
             $dictionary->name = 'kengdic';
             $dictionary->databaseName = 'dict_ko_kengdic';
-            $dictionary->language = 'korean';
+            $dictionary->source_language = 'korean';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#DDBFE4'; 
             $dictionary->expectedRecordCount =  117509;
             $dictionary->firstUpdateInterval = 25000;
@@ -124,7 +153,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'eurfa';
             $dictionary->databaseName = 'dict_cy_eurfa';
-            $dictionary->language = 'welsh';
+            $dictionary->source_language = 'welsh';
+            $dictionary->target_language = 'english';
             $dictionary->color = '#32DB4D'; 
             $dictionary->expectedRecordCount =  210579 * 2;
             $dictionary->firstUpdateInterval = 25000;
@@ -167,9 +197,13 @@ class DictionaryImportService {
                     if (count($words) > 1) {
                         $fileLanguage = explode('-', $words[1]);
 
-                        // if language code does not exist in config file, 
-                        // skip this file
-                        if (!isset($dictCcLanguageCodes[$fileLanguage[0]])) {
+                        // skip not supported languages
+                        if (
+                            !isset($dictCcLanguageCodes[$fileLanguage[0]]) || 
+                            !isset($dictCcLanguageCodes[$fileLanguage[1]]) || 
+                            !in_array(ucfirst($dictCcLanguageCodes[$fileLanguage[0]]), $supportedSourceLanguages, true)
+                            
+                        ) {
                             continue;
                         }
                     }
@@ -181,11 +215,12 @@ class DictionaryImportService {
 
             // add the found dictionary to the list
             $dictionary = new \stdClass();
-            $dictionary->name = 'dict cc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]];
-            $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_dict_cc';
-            $dictionary->language = $dictCcLanguageCodes[$fileLanguage[0]];
+            $dictionary->name = 'dictcc ' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '-'. $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[1]]];
+            $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[0]]] . '_' . $databaseLanguageCodes[$dictCcLanguageCodes[$fileLanguage[1]]] . '_dict_cc';
+            $dictionary->source_language = $dictCcLanguageCodes[$fileLanguage[0]];
+            $dictionary->target_language = $dictCcLanguageCodes[$fileLanguage[1]];
             $dictionary->color = '#FF981B'; 
-            $dictionary->expectedRecordCount = count(file(Storage::path($file)));
+            $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path($file));
             $dictionary->firstUpdateInterval = 3000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = pathinfo($file, PATHINFO_BASENAME);
@@ -227,7 +262,8 @@ class DictionaryImportService {
             $dictionary = new \stdClass();
             $dictionary->name = 'wiktionary ' . $databaseLanguageCodes[$language];
             $dictionary->databaseName = 'dict_' . $databaseLanguageCodes[$language] . '_wiktionary';
-            $dictionary->language = $language;
+            $dictionary->source_language = $language;
+            $dictionary->target_language = 'english';
             $dictionary->color = '#E9CDA0'; 
             $dictionary->expectedRecordCount = count(file(Storage::path($file)));
             $dictionary->firstUpdateInterval = 5000;
@@ -246,10 +282,31 @@ class DictionaryImportService {
         return $dictionariesFound;
     }
 
+    private function getFileLineCount($fileName) {
+        $lineCount =0;
+        $file = fopen($fileName, 'r');
+        
+        if ($file) {
+            while(!feof($file)){
+                $content = fgets($file);
+                if($content) {
+                    $lineCount ++;
+                }
+            }
+        } else {
+            return -1;
+        }
+
+        fclose($file);
+
+        return $lineCount;
+    }
+
     /*
-        Imports a cc-cedict dictionary file into the database.
+        Imports a cc-cedict or HanDeDict dictionary file into the database.
+        They are in the same format, HanDeDict is just translated to German.
     */
-    public function importCeDict($name, $databaseName, $fileName) {
+    public function importCeDictOrHanDeDict($name, $targetLanguage, $databaseName, $fileName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -265,7 +322,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => 'chinese',
+                'source_language' => 'chinese',
+                'target_language' => $targetLanguage,
                 'color' => '#EF4556',
                 'imported' => true,
                 'enabled' => true
@@ -339,7 +397,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => 'korean',
+                'source_language' => 'korean',
+                'target_language' => 'english',
                 'color' => '#DDBFE4',
                 'imported' => true,
                 'enabled' => true
@@ -411,7 +470,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => 'welsh',
+                'source_language' => 'welsh',
+                'target_language' => 'english',
                 'color' => '#32DB4D',
                 'imported' => true,
                 'enabled' => true
@@ -458,7 +518,7 @@ class DictionaryImportService {
     /*
         Imports a dict cc dictionary file into the database.
     */
-    public function importDictCc($name, $language, $fileName, $databaseName) {
+    public function importDictCc($name, $sourceLanguage, $targetLanguage, $fileName, $databaseName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -474,7 +534,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => $language,
+                'source_language' => $sourceLanguage,
+                'target_language' => $targetLanguage,
                 'color' => '#FF981B',
                 'imported' => true,
                 'enabled' => true
@@ -540,7 +601,8 @@ class DictionaryImportService {
             DB::table('dictionaries')->insert([
                 'name' => $name,
                 'database_table_name' => $databaseName,
-                'language' => $language,
+                'source_language' => $language,
+                'target_language' => 'english',
                 'color' => '#E9CDA0',
                 'imported' => true,
                 'enabled' => true

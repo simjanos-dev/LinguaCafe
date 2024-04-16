@@ -34,11 +34,22 @@
                             <td>{{ formatNumber(dictionary.expectedRecordCount) }}</td>
                         </tr>
                         <tr>
-                            <td>Language:</td>
+                            <td>Source language:</td>
                             <td>
                                 <v-img 
                                     class="border" 
-                                    :src="'/images/flags/' + dictionary.language + '.png'" 
+                                    :src="'/images/flags/' + dictionary.source_language + '.png'" 
+                                    max-width="43" 
+                                    height="28"
+                                ></v-img> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Target language:</td>
+                            <td>
+                                <v-img 
+                                    class="border" 
+                                    :src="'/images/flags/' + dictionary.target_language + '.png'" 
                                     max-width="43" 
                                     height="28"
                                 ></v-img> 
@@ -184,7 +195,8 @@
                 }, this.dictionary.firstUpdateInterval);
 
                 axios.post('/dictionaries/import', {
-                    'dictionaryLanguage': this.$props.dictionary.language,
+                    'dictionarySourceLanguage': this.$props.dictionary.source_language,
+                    'dictionaryTargetLanguage': this.$props.dictionary.target_language,
                     'dictionaryName': this.$props.dictionary.name,
                     'dictionaryDatabaseName': this.$props.dictionary.databaseName,
                     'dictionaryExpectedRecordCount': this.$props.dictionary.expectedRecordCount,
