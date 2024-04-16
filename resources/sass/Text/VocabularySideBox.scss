@@ -25,6 +25,10 @@
             font-weight: bold;
         }
 
+        .dictionary-search-field .v-input__slot{
+            padding-left: 16px;
+        }
+
         #vocab-box-stage-buttons {
             width: 100% !important;
             display: flex;
@@ -35,7 +39,7 @@
                 margin: 0px;
                 border: none;
                 border-radius: 0px;
-                height: 52px;
+                height: 40px;
                 width: unset !important;
                 min-width: unset !important;
                 padding: 0px !important;

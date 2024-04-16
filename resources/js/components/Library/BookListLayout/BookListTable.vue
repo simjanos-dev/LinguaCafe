@@ -1,7 +1,7 @@
 <template>
     <!-- Book list detailed -->
     <div id="book-list" class="table-layout">
-        <v-simple-table class="no-hover border rounded-lg mt-4">
+        <v-simple-table class="no-hover border rounded-lg mt-4" v-if="books.length">
             <thead>
                 <tr>
                     <th class="book-cover text-center">Cover</th>

@@ -1,6 +1,12 @@
 #vocabulary-search-box {
     position: relative;
 
+    &:not([language="japanese"]):not([language="chinese"]) {
+        .search-result-word {
+            font-weight: bold;
+        }
+    }
+
     #search-results {
         display: block;
         width: 100%;
@@ -9,18 +15,39 @@
 
         .search-result {
             display: block;
-            margin-bottom: 16px;
+            box-sizing: border-box;
 
+            &:not(:first-child) .search-result-title {
+                padding-top: 12px !important;
+                margin-top: 12px !important;
+                border-top: 1px solid var(--v-gray-base);
+                height: calc(32px + 12px);
+            }
 
             .search-result-title {
-                display: block;
-                width: 100%;
-                height: 32 px;
-                line-height: 32px;
+                display: inine-block;
+                height: 32px;
+                line-height: 28px;
+                font-size: 14px;
+                margin-bottom: 4px;
+                
+                .dictionary-title-icon {
+                    display: inline-block;
+                    border-radius: 12px;
+                    height: 24px;
+                    line-height: 22px !important;
+                    width: 42px;
+                    text-align: center;
+                }
 
-                .dictionary {
+
+                .search-result-word {
                     display: inline-block;
                     float: right;
+                    max-width: 180px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
             
@@ -28,22 +55,23 @@
                 position: relative;
                 display: block;
                 width: 100%;
-                min-height: 36px;
-                line-height: 36px;
+                min-height: 30px;
+                line-height: 30px;
                 user-select: none;
                 cursor: pointer;
                 text-align: right;
                 overflow: hidden;
-                padding-right: 32px;
+                padding-right: 26px;
+                font-size: 13px;
 
                 &:hover {
-                    background-color: #e0e0e0;
+                    background-color: var(--v-gray-base);
                 }
 
                 i.v-icon {
                     position: absolute;
                     right: 4px;
-                    top: calc(50% - 12px);
+                    top: calc(50% - 8px);
                 }
             }
 
@@ -56,10 +84,6 @@
 
             .search-result-other-forms {
                 width: 100%;
-            }
-
-            &.jmdict .search-result-title {
-                background-color: #74e39a;
             }
         }
     }

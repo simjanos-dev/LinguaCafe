@@ -54,7 +54,8 @@
                 <v-text-field 
                     :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                     hide-details
-                    label="Lemma"
+                    placeholder="Lemma"
+                    title="Lemma"
                     filled
                     dense
                     rounded
@@ -66,7 +67,8 @@
                 <v-text-field 
                     :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                     hide-details
-                    label="Word"
+                    placeholder="Word"
+                    title="Word"
                     disabled
                     filled
                     dense
@@ -82,7 +84,8 @@
                 <v-text-field 
                     class="my-2"
                     hide-details
-                    label="Lemma reading"
+                    placeholder="Lemma reading"
+                    title="Lemma reading"
                     filled
                     dense
                     rounded
@@ -94,7 +97,8 @@
                 <v-text-field 
                     class="my-2"
                     hide-details
-                    label="Reading"
+                    placeholder="Reading"
+                    title="Reading"
                     filled
                     dense
                     rounded
@@ -138,30 +142,7 @@
             
             <!-- Stage buttons-->
             <template v-if="$props.type !== 'new-phrase'">
-                <div class="vocab-box-subheader d-flex mb-2">
-                    <span class="rounded-pill py-1">Level</span>
-                    <v-spacer />
-
-                    <!-- Level info box -->
-                    <v-menu offset-y left nudge-top="-12px">
-                        <template v-slot:activator="{ on, attrs }">
-                            <div>
-                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
-                            </div>
-                        </template>
-                        <v-card outlined class="rounded-lg pa-4" width="320px">
-                            A word's or phrase's level represents how well you know it. 
-                            The closer it is to 0, the closer you are to learn it, and it 
-                            will appear in reviews less frequently.<br><br>
-
-                            <v-icon class="mr-2">mdi-check</v-icon>
-                            represents known words.<br>
-                            <v-icon class="mr-2">mdi-close</v-icon>
-                            represents ignored words. Ignored words do not count in learned word statistics.
-                        </v-card>
-                    </v-menu>
-                </div>
-                <div id="vocab-box-stage-buttons" class="mb-4">
+                <div id="vocab-box-stage-buttons" class="mb-2">
                     <v-btn :class="{'v-btn--active': stage == -7}" @click="setStage(-7)">7</v-btn>
                     <v-btn :class="{'v-btn--active': stage == -6}" @click="setStage(-6)">6</v-btn>
                     <v-btn :class="{'v-btn--active': stage == -5}" @click="setStage(-5)">5</v-btn>
@@ -173,23 +154,26 @@
                         :class="{'v-btn--active': stage == 0}"
                         @click="setStage(0)" 
                     >
-                        <v-icon>mdi-check</v-icon>
+                        <v-icon small>mdi-check</v-icon>
                     </v-btn>
                     <v-btn 
                         :class="{'v-btn--active': stage == 1}" 
                         @click="setStage(1)" 
                         v-if="$props.type == 'word'"
                     >
-                        <v-icon>mdi-close</v-icon>
+                        <v-icon small>mdi-close</v-icon>
                     </v-btn>
                 </div>
             </template>
             
             <!-- Translation -->
-            <div class="vocab-box-subheader">Translation:</div>
+            <div class="vocab-box-subheader d-flex">
+                Translation
+            </div>
             <v-textarea
-                class="mt-2"
-                label="Translation"
+                class="mb-2 mt-1"
+                placeholder="Translation"
+                title="Translation"
                 filled
                 dense
                 no-resize
@@ -200,6 +184,21 @@
                 @keyup="inputChanged('translation')"
                 @keydown.stop=";"
             ></v-textarea>
+
+            <!-- Search field -->
+            <v-text-field 
+                placeholder="Dictionary search"
+                class="dictionary-search-field mt-2 mb-3"
+                width="100%"
+                prepend-inner-icon="mdi-magnify"
+                filled
+                dense
+                rounded
+                hide-details
+                :value="searchField"
+                @change="searchFieldChanged"
+                @keydown.stop=";"
+            ></v-text-field>
         </div>
 
         <!-- Search box -->
@@ -207,7 +206,7 @@
             v-if="$props.type !== 'empty'"
             :deeplEnabled="$props.deeplEnabled"
             :language="$props.language"
-            :_searchTerm="searchField"
+            :searchTerm="searchField"
             @addDefinitionToInput="addDefinitionToInput"
         ></vocabulary-search-box>
 
@@ -290,6 +289,13 @@
             }
         },
         methods: {
+            searchFieldChanged(event) {
+                if (event === '') {
+                    return;
+                }
+
+                this.searchField = event;
+            },
             setStage(stage) {
                 this.$emit('setStage', stage);
             },

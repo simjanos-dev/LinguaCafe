@@ -57,7 +57,10 @@
                 <b>Other changes:</b>
                 <ul>
                     <li>
-                        The online user manual has moved from the GitHub Page to the GitHub Wiki. It also moved from a Vuetify format to Markdown.
+                        Improved dictionary search UI: made dictionary colors less distracting and vocabulary sidebar more compact and uniform.
+                    </li>
+                    <li>
+                        The online user manual has been moved from the GitHub Page to the GitHub Wiki. It also moved from a Vuetify format to Markdown.
                     </li>
                     <li>
                         DeepL API key error will not appear on the admin page anymore if it set to the default value.
