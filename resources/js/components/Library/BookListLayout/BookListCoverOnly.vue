@@ -1,10 +1,10 @@
 <template>
     <!-- Book list detailed -->
-    <div id="book-list" class="cover-only d-flex flex-row flex-wrap justify-space-around">
+    <div id="book-list" class="cover-only d-flex flex-row flex-wrap justify-center">
         <v-card
             outlined
             :id="'book-' + book.id"
-            class="book cover-only rounded-lg mr-1 mb-1"
+            class="book cover-only rounded-lg mr-3 mb-3"
             v-for="(book, index) in books"
             :key="index"
         >

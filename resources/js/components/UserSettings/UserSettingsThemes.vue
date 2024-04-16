@@ -196,6 +196,11 @@
                 }
             },
             hexValueChanged(index) {
+                if (!this.$refs.colorHex[index].validate()) {
+                    return;
+                }
+                
+                console.log('hex value changed');
                 if (this.selectedTheme == 'light') {
                     this.lightTheme[index].value = this.lightTheme[index].hex;
                 } else {
