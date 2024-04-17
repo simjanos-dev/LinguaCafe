@@ -53,16 +53,12 @@
             @touchend.stop="finishSelection"
             >
             
-            <template v-for="(word, wordIndex) in words">
-                <!-- New line -->
-                <br v-if="word.word === 'NEWLINE'" />
-
-                <!-- Subtitle timestamp -->
-                <div class="subtitle-timestamp rounded-pill py-1 mt-12 mb-1" v-if="word.subtitleIndex !== -1">
-                    {{ subtitleTimestamps[word.subtitleIndex].start }}
-                </div>
-
-                <div
+            <template v-for="(word, wordIndex) in words"><!--
+                --><br v-if="word.word === 'NEWLINE'" /><!--
+                --><div class="subtitle-timestamp rounded-pill py-1 mt-12 mb-1" v-if="word.subtitleIndex !== -1"><!--
+                    -->{{ subtitleTimestamps[word.subtitleIndex].start }}<!--
+                --></div><!--
+                --><div
                     v-else
                     :wordindex="wordIndex"
                     :stage="word.stage"
@@ -80,10 +76,8 @@
                     }"
 
                     :key="wordIndex"
-                >
-                    {{ word.word }}
-                </div>
-            </template>
+                >{{ word.word }}</div><!--
+            --></template>
         </div>
 
         <!-- Vocabulary popup box -->
