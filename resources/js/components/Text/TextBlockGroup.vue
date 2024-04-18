@@ -54,10 +54,10 @@
             >
             
             <template v-for="(word, wordIndex) in words"><!--
-                --><br v-if="word.word === 'NEWLINE'" /><!--
                 --><div class="subtitle-timestamp rounded-pill py-1 mt-12 mb-1" v-if="word.subtitleIndex !== -1"><!--
                     -->{{ subtitleTimestamps[word.subtitleIndex].start }}<!--
                 --></div><!--
+                --><br v-if="word.word === 'NEWLINE'" /><!--
                 --><div
                     v-else
                     :wordindex="wordIndex"
