@@ -1,4 +1,4 @@
-from bottle import route, request, response, run, BaseRequest
+from bottle import route, request, response, run, BaseRequest, HTTPResponse
 BaseRequest.MEMFILE_MAX = 1024 * 1024 * 100
 from spacy.language import Language
 import sys
@@ -18,6 +18,9 @@ from pysubparser import parser
 from pysubparser.cleaners import formatting
 import lxml.html.clean
 import lxml.html
+import importlib
+import shutil
+import subprocess
 from newspaper import Article
 
 # create emtpy sapce models
@@ -488,5 +491,71 @@ def getWebsiteText():
     article.parse()
 
     return json.dumps(article.text);
+
+# Language model management
+model_url: dict[str, str] = {
+    "japanese": "https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl",
+    "korean": "https://github.com/explosion/spacy-models/releases/download/ko_core_news_sm-3.7.0/ko_core_news_sm-3.7.0-py3-none-any.whl",
+    "russian": "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0-py3-none-any.whl",
+    "ukrainian": "https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl",
+    "chinese": "https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl",
+}
+
+model_name: dict[str, str] = {
+    "ja-core-news-sm": "japanese",
+    "ko-core-news-sm": "korean",
+    "ru-core-news-sm": "russian",
+    "uk-core-news-sm": "ukrainian",
+    "zh-core-web-sm": "chinese",
+}
+
+
+@route('/models/install', method = 'POST')
+def model_install():
+    """Installs the given language model from Spacy.
+    Valid languages are 'ja', 'ko', 'ru', 'uk', 'zh'.
+    Thai and vietnamese support can be added later."""
+    response.headers['Content-Type'] = 'application/json'
+    lang = request.headers.get('lang')
+    try:
+        subprocess.check_output(
+            [
+                "pip",
+                "install",
+                "--target=/var/www/html/storage/app/model",
+                model_url[lang],
+            ]
+        )
+        importlib.invalidate_caches()
+        return HTTPResponse(status=200, body="Language and dependencies installed correctly")
+    except subprocess.CalledProcessError as e:
+        return HTTPResponse(status=500, body=f"Error: {e}")
+
+
+@route('/models/list', method = 'GET')
+def model_installed():
+    """Returns the list of all installed python packages"""
+    response.headers['Content-Type'] = 'application/json'
+    try:
+        result = subprocess.run(
+            ["pip", "list"], capture_output=True, text=True, check=True
+        )
+        installed = result.stdout.splitlines()[2:]
+        package_names = [pkg.split()[0] for pkg in installed if pkg.strip()]
+        installed_models = [model_name[lang] for lang in package_names if lang in model_name]
+        return json.dumps(installed_models)
+    except subprocess.CalledProcessError as e:
+        return HTTPResponse(status=200, body=f"Error: {e}")
+
+
+@route('/models/remove', method = 'DELETE')
+def model_remove():
+    """Removes all the contents of the model directory"""
+    try:
+        response.headers['Content-Type'] = 'application/json'
+        shutil.rmtree("/var/www/html/storage/app/model")
+        return HTTPResponse(status=200, body="Model directoy removed successfully")
+    except subprocess.CalledProcessError as e:
+        return HTTPResponse(status=500, body=f"Error: {e}")
 
 run(host='0.0.0.0', port=8678, reloader=True, debug=True)
