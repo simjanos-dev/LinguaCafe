@@ -52,14 +52,24 @@
 
             <div id="about" class="d-flex flex-wrap">
                 <v-card outlined class="rounded-lg pt-0 mr-4 mb-4" width="290px">
-                    <v-card-title>Developement</v-card-title>
+                    <v-card-title>LinguaCafe</v-card-title>
                     <v-card-text>
-                        You can find more information about LinguaCafe's developement on these links.
+                        You can find more information about LinguaCafe on these links.
                         <div class="footer-link-box mb-1 mt-4">
                             <router-link to="/attributions"><v-icon class="mr-2">mdi-copyright</v-icon>Attributions</router-link>
                         </div>
                         <div class="footer-link-box mb-1">
                             <a href="https://simjanos-dev.github.io/LinguaCafeHome/"><v-icon class="mr-2">mdi-file-document</v-icon>Overview</a>
+                        </div>
+                    </v-card-text>
+                </v-card>
+
+                <v-card outlined class="rounded-lg pt-0 mr-4 mb-4" width="290px">
+                    <v-card-title>Contact</v-card-title>
+                    <v-card-text>
+                        You can contact the developer of LinguaCafe on these platforms.
+                        <div class="footer-link-box mb-1 mt-4">
+                            <a href="https://discord.gg/wZYZYrdaeP"><v-icon class="mr-2">mdi-message-text</v-icon>Discord chat</a>
                         </div>
                         <div class="footer-link-box mb-1">
                             <a href="https://github.com/simjanos-dev/LinguaCafe"><v-icon class="mr-2">mdi-github</v-icon>Github</a>
@@ -71,29 +81,9 @@
                 </v-card>
 
                 <v-card outlined class="rounded-lg pt-0 mr-4 mb-4" width="290px">
-                    <v-card-title>Contact</v-card-title>
-                    <v-card-text>
-                        You can contact the developer of LinguaCafe on these platforms.
-                        <div class="footer-link-box mb-1 mt-4">
-                            <a href="https://discord.gg/wZYZYrdaeP"><v-icon class="mr-2">mdi-message-text</v-icon>Discord server invite</a>
-                        </div>
-                        <div class="footer-link-box mb-1 primary--text">
-                            <v-icon class="mr-2">mdi-message-text</v-icon>Discord: linguacafe_47757
-                        </div>
-                        
-                        <div class="footer-link-box mb-1">
-                            <a href="https://www.reddit.com/u/linguacafe/"><v-icon class="mr-2">mdi-reddit</v-icon>Reddit</a>
-                        </div>
-                        <div class="footer-link-box mb-1 primary--text">
-                            <v-icon class="mr-2">mdi-email</v-icon>E-mail: simjanos.dev@gmail.com
-                        </div>
-                    </v-card-text>
-                </v-card>
-
-                <v-card outlined class="rounded-lg pt-0 mr-4 mb-4" width="290px">
                     <v-card-title>Version</v-card-title>
                     <v-card-text>
-                        The current LinguaCafe version is v0.10x.
+                        The current LinguaCafe version is v0.10.
                         <div class="footer-link-box mb-1 mt-4">
                             <router-link to="/patch-notes"><v-icon class="mr-2">mdi-update</v-icon>Patch notes</router-link>
                         </div>
