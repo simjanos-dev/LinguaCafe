@@ -36,6 +36,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
     Route::get ('/users/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
 
+    // languages
+    Route::get ('/languages/installed', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
+    Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
+
     // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);
     Route::get('/jellyfin/subtitles', [App\Http\Controllers\MediaPlayerController::class, 'getJellyfinCurrentlyPlayedSubtitles']);
