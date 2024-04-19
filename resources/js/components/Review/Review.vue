@@ -181,6 +181,7 @@
                                     <text-block-group
                                         v-if="!revealed && settings.reviewSentenceMode === 'interactive-text'"
                                         ref="textBlock"
+                                        :key="'text-block-1' + textBlockKey"
                                         :theme="theme"
                                         :fullscreen="fullscreen"
                                         :_text="exampleSentence"
@@ -228,6 +229,7 @@
                                     <text-block-group
                                         v-if="!revealed && settings.reviewSentenceMode === 'interactive-text'"
                                         ref="textBlock"
+                                        :key="'text-block-2' + textBlockKey"
                                         :theme="theme"
                                         :fullscreen="fullscreen"
                                         :_text="exampleSentence"
@@ -293,6 +295,7 @@
                             <text-block-group
                                 v-if="revealed && settings.reviewSentenceMode === 'interactive-text'"
                                 ref="textBlock"
+                                :key="'text-block-3' + textBlockKey"
                                 :theme="theme"
                                 :fullscreen="fullscreen"
                                 :_text="exampleSentence"
@@ -343,6 +346,7 @@
             return {
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 hotkeyDialog: false,
+                textBlockKey: 0,
                 exampleSentence: [
                     {
                         id: -1,
@@ -628,9 +632,7 @@
                         };
                     }
 
-                    if (this.settings.reviewSentenceMode === 'interactive-text' && firstTime) {
-                        this.$refs.textBlock.$forceUpdate();
-                    }
+                    this.textBlockKey++;
                 });
 
                 // update reviewed and read words data
