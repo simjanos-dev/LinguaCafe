@@ -93,7 +93,7 @@
                             <v-simple-table dense class="no-row-border no-hover">
                                 <tbody>
                                     <tr>
-                                        <td>Reviewes due:</td>
+                                        <td>Reviews due:</td>
                                         <td>{{ popupMenu.day.reviewsDue }}</td>
                                     </tr>
                                     <tr v-for="(achievement, index) in popupMenu.achievements" :key="index">
