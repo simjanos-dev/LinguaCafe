@@ -50,7 +50,7 @@
             @mouseup.stop="finishSelection"
             @touchstart="startSelectionTouchEvent"
             @touchmove="updateSelectionTouchEvent"
-            @touchend.stop="finishSelection"
+            @touchend="finishSelection"
             >
             
             <template v-for="(word, wordIndex) in words"><!--
@@ -393,10 +393,6 @@
                     clearTimeout(this.touchTimer);
                     this.touchTimer = null;
                     return;
-                } else {
-                    if (event.cancelable) {
-                        event.preventDefault();
-                    }
                 }
                 
                 var touch = event.changedTouches[0];
