@@ -66,7 +66,7 @@ class TextBlock
     public $phrases = [];
 
     // stores the python service container's name
-    private $pythonService = '';
+    private $pythonService;
 
     function __construct() {
         $this->language = Auth::user()->selected_language;
