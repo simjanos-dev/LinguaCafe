@@ -41,6 +41,8 @@ ukrainian_nlp = None
 russian_nlp = None
 greek_nlp = None
 english_nlp = None
+thai_nlp = None
+turkish_nlp = None
 
 @Language.component("custom_sentence_splitter")
 def custom_sentence_splitter(doc):    
@@ -161,6 +163,21 @@ def getTokenizerDoc(language, words):
             greek_nlp = spacy.load("el_core_news_sm", disable = ['ner', 'parser'])
             greek_nlp.add_pipe("custom_sentence_splitter", first=True)
         doc = greek_nlp(words)
+
+    if language == 'thai':
+        global thai_nlp
+        if thai_nlp is None:
+            import spacy_thai
+            thai_nlp = spacy_thai.load()
+            thai_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = thai_nlp(words)
+
+    if language == 'turkish':
+        global turkish_nlp
+        if turkish_nlp is None:
+            turkish_nlp = spacy.load("tr_core_news_md", disable = ['ner', 'parser'])
+            turkish_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = turkish_nlp(words)
 
     if language in ('welsh', 'czech', 'latin'):
         global multi_nlp
