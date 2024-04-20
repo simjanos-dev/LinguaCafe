@@ -499,6 +499,8 @@ model_url: dict[str, str] = {
     "russian": "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0-py3-none-any.whl",
     "ukrainian": "https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl",
     "chinese": "https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl",
+    "turkish": "https://huggingface.co/turkish-nlp-suite/tr_core_news_md/resolve/main/tr_core_news_md-any-py3-none-any.whl",
+    "thai": "spacy_thai",
 }
 
 model_name: dict[str, str] = {
@@ -507,6 +509,8 @@ model_name: dict[str, str] = {
     "ru-core-news-sm": "russian",
     "uk-core-news-sm": "ukrainian",
     "zh-core-web-sm": "chinese",
+    "tr-core-news-md": "turkish",
+    "spacy-thai": "thai",
 }
 
 
