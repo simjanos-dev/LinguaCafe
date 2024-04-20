@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
     Route::get ('/languages/installed/list', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
     Route::get ('/languages/installed/delete', [App\Http\Controllers\LanguageController::class, 'deleteInstalledLanguages']);
+    Route::get('/languages/get-languages-for-language-selection-dialog', [App\Http\Controllers\LanguageController::class, 'getLanguagesForLanguageSelectorDialog']);
+    Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
 
     // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);
@@ -71,8 +73,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     
     // home
     Route::post('/statistics/get', [App\Http\Controllers\HomeController::class, 'getStatistics']);
-    Route::get('/language/change/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
-    Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
     Route::get('/config/get/{configPath}', [App\Http\Controllers\HomeController::class, 'getConfig']);
 
     // user manual

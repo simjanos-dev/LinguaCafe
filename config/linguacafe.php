@@ -25,6 +25,14 @@ return [
             'Welsh',
         ],
 
+        'supported_languages_with_required_install' => [
+            "Japanese",
+            "Korean",
+            "Russian",
+            "ukrainian",
+            "Chinese",
+        ],
+
         /*
             List of languages that can be selected for target language. These should also have flag images. 
             
