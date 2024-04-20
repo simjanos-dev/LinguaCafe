@@ -51,4 +51,14 @@ class LanguageController extends Controller {
 
         return response()->json('Language has been installed successfully.', 200);
     }
+
+    public function deleteInstalledLanguages() {
+        try {
+            $this->languageService->deleteInstalledLanguages();
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
+
+        return response()->json('Installed languages has been deleted successfully.', 200);        
+    }
 }

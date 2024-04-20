@@ -15,6 +15,7 @@ class LanguageService {
     public function getInstalledLanguages() {
         $installedLanguages = Http::get($this->pythonService . ':8678/models/list');
         $installedLanguages = json_decode($installedLanguages);
+        
         return $installedLanguages;
     }
 
@@ -24,5 +25,11 @@ class LanguageService {
         ]);
 
         return $installResult;
+    }
+
+    public function deleteInstalledLanguages() {
+        Http::delete($this->pythonService . ':8678/models/remove');
+
+        return true;
     }
 }
