@@ -535,7 +535,7 @@ def model_install():
     Valid languages are 'ja', 'ko', 'ru', 'uk', 'zh'.
     Thai and vietnamese support can be added later."""
     response.headers['Content-Type'] = 'application/json'
-    lang = request.json.get('lang')
+    lang = request.json.get('language')
     try:
         subprocess.check_output(
             [
