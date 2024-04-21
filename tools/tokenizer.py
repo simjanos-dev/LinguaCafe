@@ -546,6 +546,12 @@ def model_install():
                 model_url[lang],
             ]
         )
+        if lang == "thai":
+            subprocess.check_output([
+                "pip",
+                "install",
+                "--target=/var/www/html/storage/app/model",
+                "tzdata"])
         importlib.invalidate_caches()
         return HTTPResponse(status=200, body="Language and dependencies installed correctly")
     except subprocess.CalledProcessError as e:
