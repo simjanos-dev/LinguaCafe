@@ -20,7 +20,13 @@
                 >
                     <v-row align="center">
                         <v-col class="grow">
-                            There are {{ notInstalledLanguages }} additional languages that you can install.
+                            <template v-if="notInstalledLanguages === 1">
+                                There is 1 additional language that you can install.
+                            </template>
+
+                            <template v-else>
+                                There are {{ notInstalledLanguages }} additional languages that you can install.
+                            </template>
                         </v-col>
                         <v-col class="shrink">
                             <v-btn outlined depressed rounded color="foreground" @click="manageLanguages">

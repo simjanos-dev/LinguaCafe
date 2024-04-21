@@ -12,7 +12,7 @@
                 <admin-user-settings></admin-user-settings>
             </v-tab-item>
             <v-tab-item :value="1">
-                languages
+                <admin-language-settings></admin-language-settings>
             </v-tab-item>
             <v-tab-item :value="2">
                 <admin-dictionary-settings :language="$props.language"></admin-dictionary-settings>
