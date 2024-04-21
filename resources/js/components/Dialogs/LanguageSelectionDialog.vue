@@ -101,7 +101,7 @@
                 this.notInstalledLanguages = 0;
 
                 // get selected and supported languages
-                axios.get('/languages/get-languages-for-language-selection-dialog').then((response) => {
+                axios.get('/languages/get-language-selection-dialog-data').then((response) => {
                     this.supportedLanguages = response.data.languages;
                     this.notInstalledLanguages = response.data.notInstalledLanguages;
                     this.loading = false;

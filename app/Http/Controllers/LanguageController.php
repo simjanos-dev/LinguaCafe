@@ -23,15 +23,31 @@ class LanguageController extends Controller {
 
     public function getLanguageSelectionDialogData() {
         $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
-        $supportedSourceLanguagesWithRequiredInstall = config('linguacafe.languages.supported_languages_with_required_install');
+        $installableLanguages = config('linguacafe.languages.supported_languages_with_required_install');
 
         try {
-            $languageData = $this->languageService->getLanguageSelectionDialogData($supportedSourceLanguages, $supportedSourceLanguagesWithRequiredInstall);
+            $languageData = $this->languageService->getLanguageSelectionDialogData($supportedSourceLanguages, $installableLanguages);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
         }
 
         return response()->json($languageData, 200);
+    }
+
+    public function getAdminLanguageSettingsData() {
+        $installableLanguages = config('linguacafe.languages.supported_languages_with_required_install');
+
+        try {
+            $installedLanguages = $this->languageService->getInstalledLanguages();
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
+
+        $responseData = new \stdClass();
+        $responseData->languages = $installableLanguages;
+        $responseData->installedLanguages = $installedLanguages;
+
+        return response()->json($responseData, 200);
     }
 
     public function selectLanguage($language, ChangeLanguageRequest $request) {
@@ -56,10 +72,11 @@ class LanguageController extends Controller {
 
 
     public function installLanguage(InstallLanguageRequest $request) {
+        $installableLanguages = config('linguacafe.languages.supported_languages_with_required_install');
         $language = $request->post('language');
 
         try {
-            $installResult = $this->languageService->installLanguage($language);
+            $installResult = $this->languageService->installLanguage($language, $installableLanguages);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
         }

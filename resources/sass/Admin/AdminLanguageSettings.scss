@@ -1,0 +1,34 @@
+#admin-language-settings {
+    td:nth-child(1) {
+        width: 43px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(3) {
+        width: 120px;
+    }
+
+    // Flag skeleton
+    td:nth-child(1) .v-skeleton-loader .v-skeleton-loader__image,
+    td:nth-child(1) .v-skeleton-loader .v-skeleton-loader__card,
+    td:nth-child(1) .v-skeleton-loader {
+        width: 43px;
+        height: 28px;
+    }
+
+    // Language skeleton
+    td:nth-child(2) .v-skeleton-loader .v-skeleton-loader__image,
+    td:nth-child(2) .v-skeleton-loader .v-skeleton-loader__card,
+    td:nth-child(2) .v-skeleton-loader {
+        width: 160px;
+        height: 24px;
+    }
+
+    // Install button skeleton
+    td:nth-child(3) .v-skeleton-loader .v-skeleton-loader__image,
+    td:nth-child(3) .v-skeleton-loader .v-skeleton-loader__card,
+    td:nth-child(3) .v-skeleton-loader {
+        width: 100px;
+        height: 36px;
+    }
+}

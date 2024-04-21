@@ -144,6 +144,8 @@ Vue.component('user-settings-themes', UserSettingsThemes);
 // admin settings
 import AdminUserSettings from './components/Admin/AdminUserSettings';
 import AdminLanguageSettings from './components/Admin/AdminLanguageSettings';
+import AdminInstallLanguageDialog from './components/Admin/AdminInstallLanguageDialog';
+import AdminUninstallLanguagesDialog from './components/Admin/AdminUninstallLanguagesDialog';
 import AdminDictionarySettings from './components/Admin/AdminDictionarySettings';
 import AdminDeleteDictionaryDialog from './components/Admin/AdminDeleteDictionaryDialog';
 import AdminEditDictionaryDialog from './components/Admin/AdminEditDictionaryDialog';
@@ -155,6 +157,8 @@ import AdminEditUserDialog from './components/Admin/AdminEditUserDialog';
 import AdminReviewSettings from './components/Admin/AdminReviewSettings';
 Vue.component('admin-user-settings', AdminUserSettings);
 Vue.component('admin-language-settings', AdminLanguageSettings);
+Vue.component('admin-install-language-dialog', AdminInstallLanguageDialog);
+Vue.component('admin-uninstall-languages-dialog', AdminUninstallLanguagesDialog);
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);
 Vue.component('admin-delete-dictionary-dialog', AdminDeleteDictionaryDialog);
 Vue.component('admin-edit-dictionary-dialog', AdminEditDictionaryDialog);

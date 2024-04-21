@@ -227,7 +227,7 @@
 
 // white button icon
 #app.dark .v-btn .theme--dark.v-icon.white--text {
-    color: var(--v-background-base) !important;
+    color: var(--v-textDark-base) !important;
 }
 
 // error v-icon button
@@ -243,7 +243,7 @@
 // button
 #app.dark .v-btn.primary .v-btn__content i.v-icon,
 #app.dark .v-btn.success .v-btn__content i.v-icon {
-    color: var(--v-background-base);
+    color: var(--v-textDark-base);
 }
 
 //  button
@@ -254,10 +254,10 @@
 #app.dark .v-btn.primary .v-btn__content,
 #app.dark .v-btn.error .v-btn__content,
 #app.dark .v-btn.success .v-btn__content {
-    color: var(--v-background-base);
+    color: var(--v-textDark-base);
 
-    span {
-        color: var(--v-background-base);
+    span, i {
+        color: var(--v-textDark-base);
     }
 }
 // password change alert

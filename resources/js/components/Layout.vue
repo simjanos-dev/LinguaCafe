@@ -159,7 +159,7 @@
                     },
                     {
                         name: 'Admin settings',
-                        url: '/admin/users',
+                        url: '/admin',
                         icon: 'mdi-shield-lock',
                         bottomNav: false,
                     },
