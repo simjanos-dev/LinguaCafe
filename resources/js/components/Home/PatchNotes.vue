@@ -5,6 +5,18 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.10.1 <v-spacer /> 2024.04.21.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed a bug that disabled some hotkeys.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.10 <v-spacer /> 2024.04.19.</v-card-title>
             <v-card-text>
                 <b>New features:</b>

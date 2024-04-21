@@ -958,11 +958,8 @@
                 // select the new word
                 this.unselectAllWords();
                 this.$nextTick(() => {
-                    var wordElement = document.querySelector('.word[wordindex="' + wordToSelect  + '"]');
-                    var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
-                    var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
-                    wordElement.dispatchEvent(mouseDownEvent);
-                    wordElement.dispatchEvent(mouseUpEvent);
+                    this.startSelection(wordToSelect);
+                    this.finishSelection();;
                 });
             },
             selectNextWord(newWordOnly, highlightedWordOnly) {
@@ -1014,11 +1011,8 @@
                 // select the new word
                 this.unselectAllWords();
                 this.$nextTick(() => {
-                    var wordElement = document.querySelector('.word[wordindex="' + wordToSelect  + '"]');
-                    var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
-                    var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
-                    wordElement.dispatchEvent(mouseDownEvent);
-                    wordElement.dispatchEvent(mouseUpEvent);
+                    this.startSelection(wordToSelect);
+                    this.finishSelection();;
                 });
             },
             scrollText(direction, largeScroll) {
@@ -1573,11 +1567,6 @@
 
                         this.startSelection(this.hoverVocabBox.hoveredWords[0].wordIndex);
                         this.finishSelection();
-                        // var wordElement = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]');
-                        // var mouseDownEvent = new CustomEvent('mousedown', {cancelable: true});
-                        // var mouseUpEvent = new CustomEvent('mouseup', {cancelable: true});
-                        // wordElement.dispatchEvent(mouseDownEvent);
-                        // wordElement.dispatchEvent(mouseUpEvent);
                         break;
                     }
                 }
