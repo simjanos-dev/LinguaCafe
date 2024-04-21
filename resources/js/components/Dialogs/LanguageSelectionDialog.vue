@@ -10,9 +10,26 @@
             </v-card-title>
             <v-card-text>
 
-                <template v-if="!everyLanguageInstalled">
-                    installme
-                </template>
+                <v-alert
+                    v-if="notInstalledLanguages"
+                    dense
+                    class="rounded-lg mt-2"
+                    color="primary"
+                    border="left"
+                    dark
+                >
+                    <v-row align="center">
+                        <v-col class="grow">
+                            There are {{ notInstalledLanguages }} additional languages that you can install.
+                        </v-col>
+                        <v-col class="shrink">
+                            <v-btn outlined depressed rounded color="foreground">
+                                <v-icon class="mr-1">mdi-cog</v-icon>
+                                Manage languages
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </v-alert>
 
                 <!-- List of supported and installed languages -->
                 <div id="language-buttons" class="d-flex flex-wrap mt-2" v-if="!loading">
@@ -53,7 +70,7 @@
             return {
                 loading: false,
                 supportedLanguages: [],
-                everyLanguageInstalled: true,
+                notInstalledLanguages: 0,
             };
         },
         watch: { 
@@ -68,12 +85,12 @@
         methods: {
             loadLanguages() {
                 this.loading = true;
-                this.everyLanguageInstalled = true;
+                this.notInstalledLanguages = 0;
 
                 // get selected and supported languages
                 axios.get('/languages/get-languages-for-language-selection-dialog').then((response) => {
                     this.supportedLanguages = response.data.languages;
-                    this.everyLanguageInstalled = response.data.everyLanguageInstalled;
+                    this.notInstalledLanguages = response.data.notInstalledLanguages;
                     this.loading = false;
                 });
             },

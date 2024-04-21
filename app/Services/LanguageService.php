@@ -17,12 +17,12 @@ class LanguageService {
         
         // select installed languages only
         $languages = [];
-        $everyLanguageInstalled = true;
+        $notInstalledLanguages = 0;
         foreach ($supportedSourceLanguages as $supportedLanguage) {
             // if it is a language that must be installed, and it is not installed currently
             if (in_array($supportedLanguage, $supportedSourceLanguagesWithRequiredInstall, true)
                 && !in_array($supportedLanguage, $installedLanguages)) {
-                $everyLanguageInstalled = false;
+                $notInstalledLanguages ++;
                 continue;
             }
 
@@ -31,7 +31,7 @@ class LanguageService {
 
         $responseData = new \stdClass();
         $responseData->languages = $languages;
-        $responseData->everyLanguageInstalled = $everyLanguageInstalled;
+        $responseData->notInstalledLanguages = $notInstalledLanguages;
 
         return $responseData;
     }
