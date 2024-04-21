@@ -21,36 +21,17 @@ class LanguageController extends Controller {
         $this->goalService = $goalService;
     }
 
-    public function getLanguagesForLanguageSelectorDialog() {
+    public function getLanguageSelectionDialogData() {
         $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
         $supportedSourceLanguagesWithRequiredInstall = config('linguacafe.languages.supported_languages_with_required_install');
-        $selectedLanguage = Auth::user()->selected_language;
 
         try {
-            $installedLanguages = $this->languageService->getInstalledLanguages();
+            $languageData = $this->languageService->getLanguageSelectionDialogData($supportedSourceLanguages, $supportedSourceLanguagesWithRequiredInstall);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
         }
-        
-        // select installed languages only
-        $languages = [];
-        $everyLanguageInstalled = true;
-        foreach ($supportedSourceLanguages as $supportedLanguage) {
-            // if it is a language that must be installed, and it is not installed currently
-            if (in_array($supportedLanguage, $supportedSourceLanguagesWithRequiredInstall, true)
-                && !in_array($supportedLanguage, $installedLanguages)) {
-                $everyLanguageInstalled = false;
-                continue;
-            }
 
-            $languages[] = $supportedLanguage;
-        }
-
-        $responseData = new \stdClass();
-        $responseData->languages = $languages;
-        $responseData->everyLanguageInstalled = $everyLanguageInstalled;
-
-        return response()->json($responseData, 200);
+        return response()->json($languageData, 200);
     }
 
     public function selectLanguage($language, ChangeLanguageRequest $request) {

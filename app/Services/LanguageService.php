@@ -12,6 +12,30 @@ class LanguageService {
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
 
+    public function getLanguageSelectionDialogData($supportedSourceLanguages, $supportedSourceLanguagesWithRequiredInstall) {
+        $installedLanguages = $this->getInstalledLanguages();
+        
+        // select installed languages only
+        $languages = [];
+        $everyLanguageInstalled = true;
+        foreach ($supportedSourceLanguages as $supportedLanguage) {
+            // if it is a language that must be installed, and it is not installed currently
+            if (in_array($supportedLanguage, $supportedSourceLanguagesWithRequiredInstall, true)
+                && !in_array($supportedLanguage, $installedLanguages)) {
+                $everyLanguageInstalled = false;
+                continue;
+            }
+
+            $languages[] = $supportedLanguage;
+        }
+
+        $responseData = new \stdClass();
+        $responseData->languages = $languages;
+        $responseData->everyLanguageInstalled = $everyLanguageInstalled;
+
+        return $responseData;
+    }
+    
     public function getInstalledLanguages() {
         $installedLanguages = Http::get($this->pythonService . ':8678/models/list');
         $installedLanguages = json_decode($installedLanguages);

@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
     Route::get ('/languages/installed/list', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
     Route::get ('/languages/installed/delete', [App\Http\Controllers\LanguageController::class, 'deleteInstalledLanguages']);
-    Route::get('/languages/get-languages-for-language-selection-dialog', [App\Http\Controllers\LanguageController::class, 'getLanguagesForLanguageSelectorDialog']);
+    Route::get('/languages/get-languages-for-language-selection-dialog', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
     Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
 
     // jellyfin
