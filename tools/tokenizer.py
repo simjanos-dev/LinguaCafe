@@ -528,6 +528,7 @@ model_name: dict[str, str] = {
     "zh-core-web-sm": "Chinese",
     "tr-core-news-md": "Turkish",
     "spacy-thai": "Thai",
+}
 
 @route('/models/install', method = 'POST')
 def model_install():
