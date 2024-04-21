@@ -546,7 +546,7 @@ def model_install():
                 model_url[lang],
             ]
         )
-        if lang == "thai":
+        if lang == "Thai":
             subprocess.check_output([
                 "pip",
                 "install",
