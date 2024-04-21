@@ -21,16 +21,20 @@ return [
             'Russian',
             'Spanish',
             'Swedish',
+            'Thai',
+            'Turkish',
             'Ukrainian',
             'Welsh',
         ],
 
         'supported_languages_with_required_install' => [
+            "Chinese",
             "Japanese",
             "Korean",
             "Russian",
+            "Turkish",
+            "Thai",
             "Ukrainian",
-            "Chinese",
         ],
 
         /*
