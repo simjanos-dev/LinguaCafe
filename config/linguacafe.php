@@ -29,7 +29,7 @@ return [
             "Japanese",
             "Korean",
             "Russian",
-            "ukrainian",
+            "Ukrainian",
             "Chinese",
         ],
 

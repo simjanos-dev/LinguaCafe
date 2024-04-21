@@ -23,7 +23,7 @@
                             There are {{ notInstalledLanguages }} additional languages that you can install.
                         </v-col>
                         <v-col class="shrink">
-                            <v-btn outlined depressed rounded color="foreground">
+                            <v-btn outlined depressed rounded color="foreground" @click="manageLanguages">
                                 <v-icon class="mr-1">mdi-cog</v-icon>
                                 Manage languages
                             </v-btn>
@@ -83,6 +83,13 @@
         mounted: function() {
         },
         methods: {
+            manageLanguages() {
+                if (this.$router.currentRoute.fullPath !== '/admin/languages') {
+                    this.$router.push('/admin/languages');
+                }
+                
+                this.close();
+            },
             loadLanguages() {
                 this.loading = true;
                 this.notInstalledLanguages = 0;

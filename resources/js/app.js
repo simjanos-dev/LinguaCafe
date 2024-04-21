@@ -201,7 +201,7 @@ const router = new VueRouter({
         { path: '/dev', component: DevelopmentTools },
         { path: '/', component: Home },
         { path: '/user-settings', component: UserSettingsLayout },
-        { path: '/admin', component: AdminSettingsLayout },
+        { path: '/admin/:page?', component: AdminSettingsLayout },
         { path: '/user-manual/:currentPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },

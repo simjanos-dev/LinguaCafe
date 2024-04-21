@@ -52,7 +52,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/admin/{page?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
