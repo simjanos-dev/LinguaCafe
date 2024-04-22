@@ -37,6 +37,16 @@ return [
             "Ukrainian",
         ],
 
+        'languages_without_spaces' => [
+            'chinese',
+            'japanese',
+            'thai',
+
+            'Chinese',
+            'Japanese',
+            'Thai',
+        ],
+
         /*
             List of languages that can be selected for target language. These should also have flag images. 
             
@@ -274,6 +284,7 @@ return [
             'slovak' => 'sk',
             'spanish' => 'es',
             'swedish' => 'sv',
+            'thai' => 'th',
             'turkish' => 'tr',
             'ukrainian' => 'ua',
             'welsh' => 'cy',
@@ -306,7 +317,8 @@ return [
             'Slovak' => 'sk',
             'Spanish' => 'es',
             'Swedish' => 'sv',
-            'turkish' => 'tr',
+            'Thai' => 'th',
+            'Turkish' => 'tr',
             'Ukrainian' => 'ua',
             'Welsh' => 'cy',
         ],
