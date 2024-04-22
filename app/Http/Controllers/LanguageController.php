@@ -91,8 +91,11 @@ class LanguageController extends Controller {
     }
 
     public function deleteInstalledLanguages() {
+        $installableLanguages = config('linguacafe.languages.supported_languages_with_required_install');
+        $user = Auth::user();
+
         try {
-            $uninstallResult = $this->languageService->deleteInstalledLanguages();
+            $uninstallResult = $this->languageService->deleteInstalledLanguages($user, $installableLanguages);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
         }

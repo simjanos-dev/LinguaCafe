@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class LanguageService {
     // stores the python service container's name
@@ -52,12 +54,50 @@ class LanguageService {
             'language' => $language,
         ]);
 
+        // Download KanjiVG
+        if ($language == 'Japanese') {
+            $filePath = Storage::path('temp/kanjivg.zip');
+            $extractPath = Storage::path('temp/kanjivg');
+            File::delete($filePath);
+            Storage::deleteDirectory('temp/kanjivg');
+            Storage::deleteDirectory('images/kanjivg');
+
+            $file = file_get_contents("https://github.com/KanjiVG/kanjivg/archive/master.zip");
+            file_put_contents($filePath, $file);
+
+            $zip = new \ZipArchive();
+            $zipFile = $zip->open($filePath);
+            if ($zipFile === TRUE) {
+                $zip->extractTo($extractPath);
+                $zip->close();
+
+                Storage::move('temp/kanjivg/kanjivg-master/kanji', 'images/kanjivg');
+                Storage::deleteDirectory('temp/kanjivg');
+                File::delete($filePath);
+            } else {
+                throw new \Exception('KanjiVG zip file could not be extracted.');
+            }
+        }
+
         return $installResult;
     }
 
-    public function deleteInstalledLanguages() {
-        Http::delete($this->pythonService . ':8678/models/remove');
+    public function deleteInstalledLanguages($user, $installableLanguages) {
+        /*
+            Reset selected language to the default spanish, 
+            so the user won't have a language selected that has been uninstalled.
+        */
+        if (in_array(ucfirst($user->selected_language), $installableLanguages)) {
+            $user->selected_language = 'spanish';
+            $user->save();
+        }
 
-        return true;
+        // delete KanjiVG files
+        Storage::deleteDirectory('images/kanjivg');
+
+        // delete python language models
+        $uninstallResult = Http::delete($this->pythonService . ':8678/models/remove');
+
+        return $uninstallResult;
     }
 }

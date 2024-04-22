@@ -104,6 +104,8 @@
                 });
             },
             close() {
+                this.installResult = '';
+                this.installing = false;
                 this.$emit('input', false);
             }
         }

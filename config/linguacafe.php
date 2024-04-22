@@ -96,6 +96,7 @@ return [
             'Slovenian',
             'Spanish',
             'Swedish',
+            'Thai',
             'Turkish',
             'Ukrainian',
             'Welsh',

@@ -97,15 +97,13 @@
                     this.uninstalling = false;
                     if (response.status === 200) {
                         this.uninstallResult = 'success';
-                        this.$emit('languages-uninstalled');
+                        window.location.href = "/admin/languages";
                     } else {
                         this.uninstallResult = 'error';
-                        console.log('error');
                     }
                 }).catch((error) => {
                     this.uninstalling = false;
                     this.uninstallResult = 'error';
-                    console.log('error');
                 });
             },
             close() {

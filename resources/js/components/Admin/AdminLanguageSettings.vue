@@ -10,7 +10,6 @@
         <!-- Uninstall languages dialog -->
         <admin-uninstall-languages-dialog 
             v-model="uninstallLanguagesDialog"
-            @languages-uninstalled="loadLanguages"
         />
 
         <!-- Title subheader -->
