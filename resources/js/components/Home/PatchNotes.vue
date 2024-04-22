@@ -4,6 +4,34 @@
             Patch notes
         </div>
         
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.11 <v-spacer /> 2024.05.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>
+                        Language installation. Some languages have been removed from the docker image to reduce its size, and became installable on the admin page.
+                    </li>
+                    <li>
+                        Added new languages: Thai and Turkish.
+                    </li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.10.1 <v-spacer /> 2024.04.21.</v-card-title>
             <v-card-text>
