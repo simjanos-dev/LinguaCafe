@@ -57,7 +57,7 @@ class VocabularyService {
         return true;
     }
 
-    public function createPhrase($userId, $language, $words, $stage, $reading, $translation) {
+    public function createPhrase($userId, $language, $words, $stage, $reading, $translation, $languagesWithoutSpaces) {
         $phrase = new Phrase();
         $phrase->user_id = $userId;
         $phrase->language = $language;
@@ -66,7 +66,7 @@ class VocabularyService {
         $phrase->translation = $translation;
         $phrase->words = json_encode($words);
 
-        if ($language === 'japanese' || $language === 'chinese') {
+        if (in_array($language, $languagesWithoutSpaces, true)) {
             $phrase->words_searchable = implode('', $words);
         } else {
             $phrase->words_searchable = implode(' ', $words);
@@ -290,7 +290,7 @@ class VocabularyService {
         return true;
     }
 
-    public function searchVocabulary($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $page) {
+    public function searchVocabulary($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $page, $languagesWithoutSpaces) {
         // get books and chapters
         $books = Book::where('user_id', $userId)->where('language', $language)->get();
         $bookIndex = -1;
@@ -311,11 +311,12 @@ class VocabularyService {
         $data->bookIndex = $bookIndex;
         $data->pageCount = ceil($data->wordCount / $this->itemsPerPage);
         $data->currentPage = $page;
+        $data->languageSpaces = !in_array($language, $languagesWithoutSpaces, true);
 
         return $data;
     }
 
-    public function exportToCsv($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $fields) {    
+    public function exportToCsv($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $fields, $languagesWithoutSpaces) {    
         $words = $this->buildSearchRequest($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation)->get();
 
         // create csv file
@@ -333,7 +334,7 @@ class VocabularyService {
         $csv->insertOne($csvArray);
 
         // insert data to csv
-        $phraseWordDelimiter = ($language === 'japanese' || $language === 'chinese') ? '' : ' ';
+        $phraseWordDelimiter = in_array($language, $languagesWithoutSpaces, true) ? '' : ' ';
         foreach($words as $word) {
             $csvArray = [];
             foreach ($fields as $field) {

@@ -16,6 +16,7 @@
             v-model="vocabularyExportDialog.active" 
             :sample-words="words"
             :language="$props.language"
+            :languageSpaces="languageSpaces"
             @export-to-csv="exportToCsv"
         ></vocabulary-export-dialog>
 
@@ -225,8 +226,8 @@
             <tbody>
                 <tr v-for="(word, index) in words" :key="index">
                     <template v-if="word.type == 'phrase'">
-                        <td class="word" v-if="($props.language == 'japanese' || $props.language == 'chinese')">{{ (JSON.parse(word.word)).join('') }}</td>
-                        <td class="word" v-if="($props.language !== 'japanese' && $props.language !== 'chinese')">{{ (JSON.parse(word.word)).join(' ') }}</td>
+                        <td class="word" v-if="!languageSpaces">{{ (JSON.parse(word.word)).join('') }}</td>
+                        <td class="word" v-if="languageSpaces">{{ (JSON.parse(word.word)).join(' ') }}</td>
                     </template>
                     <template v-if="word.type == 'word'">
                         <td class="word">{{ word.word }}</td>
@@ -234,10 +235,10 @@
                     <td class="reading" v-if="($props.language == 'japanese' || $props.language == 'chinese')">{{ word.reading }}</td>
                     
                     <template v-if="word.type == 'phrase'">
-                        <td class="word-with-reading" v-if="($props.language == 'japanese' || $props.language == 'chinese')">
+                        <td class="word-with-reading" v-if="!languageSpaces">
                             {{ (JSON.parse(word.word)).join('') }}
                         </td>
-                        <td class="word-with-reading" v-if="($props.language !== 'japanese' && $props.language !== 'chinese')">
+                        <td class="word-with-reading" v-if="languageSpaces">
                             {{ (JSON.parse(word.word)).join(' ') }}
                         </td>
                     </template>
@@ -331,7 +332,8 @@
                     phrases: 'both',
                     orderBy: 'words',
                     text: ''
-                }
+                },
+                languageSpaces: true,
             }
         },
         props: {
@@ -375,6 +377,7 @@
                     this.pageCount = data.pageCount;
                     this.currentPage = parseInt(data.currentPage);
                     this.wordCount = data.wordCount;
+                    this.languageSpaces = data.languageSpaces;
 
                     if (this.pageCount - this.currentPage < 3) {
                         this.paginationLimitBefore += 3 - (this.pageCount - this.currentPage);

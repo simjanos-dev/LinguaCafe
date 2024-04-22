@@ -133,14 +133,14 @@
                                     {{ sampleWord.word }}
                                 </template>
 
-                                <!-- Chinese or Japanese phrase -->
-                                <template v-if="sampleWord.type == 'phrase' && ['chinese', 'japanese'].includes($props.language)">
-                                    {{ JSON.parse(sampleWord.word).join('') }}
+                                <!-- Language with spaces -->
+                                <template v-if="sampleWord.type == 'phrase' && languageSpace">
+                                    {{ JSON.parse(sampleWord.word).join(' ') }}
                                 </template>
 
-                                <!-- Other language phrase -->
-                                <template v-if="sampleWord.type == 'phrase' && !['chinese', 'japanese'].includes($props.language)">
-                                    {{ JSON.parse(sampleWord.word).join(' ') }}
+                                <!-- Language without spaces -->
+                                <template v-if="sampleWord.type == 'phrase' && !languageSpace">
+                                    {{ JSON.parse(sampleWord.word).join('') }}
                                 </template>
                             </td>
                             <td v-if="fields.lemmaReading">{{ sampleWord.base_word_reading }}</td>
@@ -194,6 +194,7 @@
         props: {
             value : Boolean,
             language: String,
+            languageSpace: Boolean,
             sampleWords: Array
         },
         emits: ['input'],
