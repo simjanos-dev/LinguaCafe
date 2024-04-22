@@ -531,6 +531,7 @@ class TextBlock
             // Add space for word if the language has spaces in it.
             if ($this->language == 'thai') {
                 $word->spaceAfter = (
+                    isset($this->processedWords[$wordIndex]->sentence_index) &&
                     $wordIndex < $wordCount - 1 && 
                     $this->processedWords[$wordIndex + 1]->sentence_index !== $this->processedWords[$wordIndex]->sentence_index
                 );
