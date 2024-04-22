@@ -38,7 +38,7 @@
                     type="error"
                     border="left"
                 >
-                    An error has occurred while uninstalling the languages.
+                    An error has occurred while uninstalling the languages. Please wait a few seconds, and try again.
                 </v-alert>
 
                 <!-- Installation in progress message -->
@@ -100,10 +100,12 @@
                         this.$emit('languages-uninstalled');
                     } else {
                         this.uninstallResult = 'error';
+                        console.log('error');
                     }
                 }).catch((error) => {
                     this.uninstalling = false;
                     this.uninstallResult = 'error';
+                    console.log('error');
                 });
             },
             close() {

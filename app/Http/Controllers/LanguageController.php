@@ -82,10 +82,8 @@ class LanguageController extends Controller {
         }
 
         
-        if ($installResult->getStatusCode() === 200) {
-
-        } else {
-            echo($installResult->getBody());exit;
+        if ($installResult->getStatusCode() !== 200) {
+            return response()->json("An error has occured.", 500);
         }
         
 
@@ -94,9 +92,13 @@ class LanguageController extends Controller {
 
     public function deleteInstalledLanguages() {
         try {
-            $this->languageService->deleteInstalledLanguages();
+            $uninstallResult = $this->languageService->deleteInstalledLanguages();
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
+        }
+
+        if ($uninstallResult->getStatusCode() !== 200) {
+            return response()->json("An error has occured.", 500);
         }
 
         return response()->json('Installed languages has been deleted successfully.', 200);        
