@@ -43,6 +43,17 @@ greek_nlp = None
 english_nlp = None
 thai_nlp = None
 turkish_nlp = None
+catalan_nlp = None
+croatian_nlp = None
+danish_nlp = None
+lithuanian_nlp = None
+macedonian_nlp = None
+polish_nlp = None
+portuguese_nlp = None
+romanian_nlp = None
+slovenian_nlp = None
+
+
 
 @Language.component("custom_sentence_splitter")
 def custom_sentence_splitter(doc):    
@@ -179,6 +190,69 @@ def getTokenizerDoc(language, words):
             turkish_nlp.add_pipe("custom_sentence_splitter", first=True)
         doc = turkish_nlp(words)
 
+    if language == 'catalan':
+        global catalan_nlp
+        if catalan_nlp is None:
+            catalan_nlp = spacy.load("ca_core_news_sm", disable = ['ner', 'parser'])
+            catalan_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = catalan_nlp(words)
+    
+    if language == 'croatian':
+        global croatian_nlp
+        if croatian_nlp is None:
+            croatian_nlp = spacy.load("hr_core_news_sm", disable = ['ner', 'parser'])
+            croatian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = croatian_nlp(words)
+
+    if language == 'danish':
+        global danish_nlp
+        if danish_nlp is None:
+            danish_nlp = spacy.load("da_core_news_sm", disable = ['ner', 'parser'])
+            danish_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = danish_nlp(words)
+
+    if language == 'lithuanian':
+        global lithuanian_nlp
+        if lithuanian_nlp is None:
+            lithuanian_nlp = spacy.load("lt_core_news_sm", disable = ['ner', 'parser'])
+            lithuanian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = lithuanian_nlp(words)
+
+    if language == 'macedonian':
+        global macedonian_nlp
+        if macedonian_nlp is None:
+            macedonian_nlp = spacy.load("mk_core_news_sm", disable = ['ner', 'parser'])
+            macedonian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = macedonian_nlp(words)
+
+    if language == 'polish':
+        global polish_nlp
+        if polish_nlp is None:
+            polish_nlp = spacy.load("pl_core_news_sm", disable = ['ner', 'parser'])
+            polish_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = polish_nlp(words)
+
+    if language == 'portuguese':
+        global portuguese_nlp
+        if portuguese_nlp is None:
+            portuguese_nlp = spacy.load("pt_core_news_sm", disable = ['ner', 'parser'])
+            portuguese_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = portuguese_nlp(words)
+
+    if language == 'romanian':
+        global romanian_nlp
+        if romanian_nlp is None:
+            romanian_nlp = spacy.load("ro_core_news_sm", disable = ['ner', 'parser'])
+            romanian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = romanian_nlp(words)
+    
+    if language == 'slovenian':
+        global slovenian_nlp
+        if slovenian_nlp is None:
+            slovenian_nlp = spacy.load("sl_core_news_sm", disable = ['ner', 'parser'])
+            slovenian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = slovenian_nlp(words)
+        
     if language in ('welsh', 'czech', 'latin'):
         global multi_nlp
         if multi_nlp == None:
