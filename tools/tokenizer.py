@@ -577,11 +577,17 @@ def model_installed():
 @route('/models/remove', method = 'DELETE')
 def model_remove():
     """Removes all the contents of the model directory"""
-    try:
-        response.headers['Content-Type'] = 'application/json'
-        shutil.rmtree("/var/www/html/storage/app/model")
-        return HTTPResponse(status=200, body="Model directoy removed successfully")
-    except subprocess.CalledProcessError as e:
-        return HTTPResponse(status=500, body=f"Error: {e}")
+    retries = 0
+    while retries < 5:
+        try:
+            response.headers['Content-Type'] = 'application/json'
+            shutil.rmtree("/var/www/html/storage/app/model")
+            return HTTPResponse(status=200, body="Model directoy removed successfully")
+        except FileNotFoundError:
+            return HTTPResponse(status=202, body="No local files to be deleted")
+        except subprocess.CalledProcessError:
+            retries += 1
+            continue
+    return HTTPResponse(status=500, body="Error: Model directory could not be removed in 5 retries")
 
 run(host='0.0.0.0', port=8678, reloader=True, debug=True)
