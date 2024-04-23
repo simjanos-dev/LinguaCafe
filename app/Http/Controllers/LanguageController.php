@@ -100,7 +100,7 @@ class LanguageController extends Controller {
             return response()->json($e->getMessage(), 500);
         }
 
-        if ($uninstallResult->getStatusCode() !== 200) {
+        if ($uninstallResult->getStatusCode() !== 200 && $uninstallResult->getStatusCode() !== 202) {
             return response()->json("An error has occured.", 500);
         }
 
