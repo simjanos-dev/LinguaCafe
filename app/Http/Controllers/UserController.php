@@ -22,6 +22,11 @@ class UserController extends Controller {
 
     }
 
+    public function isAdmin() {
+        $isAdmin = Auth::user()->is_admin;
+        return response($isAdmin, 200);
+    }
+
     public function isUserPasswordChanged() {
         $passwordChanged = Auth::user()->password_changed;
         return response($passwordChanged, 200);
@@ -40,13 +45,13 @@ class UserController extends Controller {
     public function updatePassword(UpdatePasswordRequest $request) {
         $user = Auth::user();
         $password = $request->post('password');
-        
+
         try {
             $this->userService->updatePassword($user, $password);
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }
-                
+
         return response()->json('Password has been updated successfully.', 200);
     }
 
