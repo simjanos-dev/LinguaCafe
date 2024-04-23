@@ -1,5 +1,5 @@
 <template>
-    <div id="admin-user-settings" v-if="!error && !loading">
+    <div id="admin-user-settings">
         <!-- Add or edit user dialog -->
         <admin-edit-user-dialog
             v-if="editDialog.active"
