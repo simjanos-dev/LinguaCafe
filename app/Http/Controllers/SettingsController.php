@@ -31,7 +31,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
-        
+
         return response()->json($settings, 200);
     }
 
@@ -44,7 +44,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
-        
+
         return response()->json('Settings have been updated successfully.', 200);
     }
 
@@ -58,7 +58,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
-        
+
         return response()->json($settings, 200);
     }
 
@@ -72,7 +72,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
-        
+
         return response()->json('Settings have been updated successfully.', 200);
     }
 }

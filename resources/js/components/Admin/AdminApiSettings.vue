@@ -8,7 +8,7 @@
                 <label class="font-weight-bold"">
                     DeepL Cache
                 </label>
-                
+
                 <div v-if="characterLimitLoading">
                     <v-skeleton-loader
                         id="skeleton-cached-translations"
@@ -16,14 +16,14 @@
                         type="image"
                     ></v-skeleton-loader>
                 </div>
-                
+
                 <div v-if="!characterLimitLoading">
                     {{ formatNumber(cachedDeeplTranslations).replace('&nbsp;', '') }} cached translations.
                 </div>
 
                 <!-- DeepL API key input -->
                 <label class="font-weight-bold mt-4">DeepL API key</label>
-                <v-text-field 
+                <v-text-field
                     v-model="settings.deeplApiKey"
                     class="mb-4"
                     hide-details
@@ -35,9 +35,9 @@
                 ></v-text-field>
 
                 <!-- DeepL API usage -->
-                <label 
+                <label
                     v-if="!['error', 'default'].includes(characterLimitStatus)"
-                    class="font-weight-bold mt-4" 
+                    class="font-weight-bold mt-4"
                 >
                     DeepL character usage
                 </label>
@@ -75,9 +75,9 @@
                         <div class="font-weight-bold mt-2 mb-3" style="font-size: 36px;">
                             {{ formatNumber(characterUsed).replace('&nbsp;', '') }}
                         </div>
-                        
+
                         <div>Out of max.{{ formatNumber(characterLimit) }} characters</div>
-                        
+
                         <v-progress-linear
                             color="primary"
                             height="36"
@@ -109,7 +109,7 @@
         <v-card outlined class="rounded-lg pa-4 pt-0">
             <v-card-text id="jellyfin-card-text">
                 <label class="font-weight-bold">Anki-connect host</label>
-                <v-text-field 
+                <v-text-field
                     v-model="settings.ankiConnectHost"
                     hide-details
                     filled
@@ -123,7 +123,7 @@
                 <!-- Auto add cards label -->
                 <label class="font-weight-bold mt-4 mb-0">
                     Auto add cards while reading
-                    
+
                     <!-- Auto add cards info box -->
                     <v-menu offset-y nudge-top="-12px">
                         <template v-slot:activator="{ on, attrs }">
@@ -148,7 +148,7 @@
                 <!-- Update existing cards label -->
                 <label class="font-weight-bold mt-4 mb-0">
                     Update existing cards
-                    
+
                     <!-- Update existing cards info box -->
                     <v-menu offset-y nudge-top="-12px">
                         <template v-slot:activator="{ on, attrs }">
@@ -159,7 +159,7 @@
                         </v-card>
                     </v-menu>
                 </label>
-                
+
                 <!-- Update existing cards input -->
                 <v-switch
                     v-model="settings.ankiUpdateCards"
@@ -173,7 +173,7 @@
                 <!-- Show notifications label -->
                 <label class="font-weight-bold mt-4 mb-0">
                     Show notifications
-                    
+
                     <!-- Show notifications info box -->
                     <v-menu offset-y nudge-top="-12px">
                         <template v-slot:activator="{ on, attrs }">
@@ -201,8 +201,30 @@
         <div class="subheader subheader-margin-top">Jellyfin</div>
         <v-card outlined class="rounded-lg pa-4 pt-0">
             <v-card-text id="jellyfin-card-text">
+                <label clas="font-weight-bold mt-4 mb-0">
+                    Enable Jellyfin
+
+                    <v-menu offset-y nudge-top="-12px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                        </template>
+                        <v-card outlined class="rounded-lg pa-4" width="320px">
+                           You may want to disable Jellyfin if hosting LinguaCafe for multiple users.
+                        </v-card>
+                    </v-menu>
+                </label>
+
+                <v-switch
+                    v-model="settings.jellyfinEnabled"
+                    class="mt-0"
+                    color="primary"
+                    hide-hints
+                    dense
+                    label="Enable Jellyfin"
+                ></v-switch>
+
                 <label class="font-weight-bold">Jellyfin host address</label>
-                <v-text-field 
+                <v-text-field
                     v-model="settings.jellyfinHost"
                     hide-details
                     filled
@@ -213,7 +235,7 @@
                 ></v-text-field>
 
                 <label class="font-weight-bold mt-4">Jellyfin API key</label>
-                <v-text-field 
+                <v-text-field
                     v-model="settings.jellyfinApiKey"
                     hide-details
                     filled
@@ -240,8 +262,8 @@
         <!-- Save button -->
         <div class="d-flex">
             <v-spacer />
-            <v-btn 
-                rounded 
+            <v-btn
+                rounded
                 :class="{'my-2': saving || saveStatus == '' || saveStatus == 'success'}"
                 color="primary"
                 @click="saveSettings"
@@ -298,6 +320,7 @@
                 axios.post('/settings/global/get', {
                     'settingNames': [
                         'deeplApiKey',
+                        'jellyfinEnabled',
                         'jellyfinHost',
                         'jellyfinApiKey',
                         'ankiConnectHost',
@@ -312,7 +335,7 @@
             },
             saveSettings() {
                 this.saving = true;
-                
+
                 this.characterLimitLoading = true;
                 this.characterUsed = 0;
                 this.characterLimit = 0;
@@ -321,6 +344,7 @@
                 axios.post('/settings/global/update', {
                     'settings': {
                         'deeplApiKey': this.settings.deeplApiKey,
+                        'jellyfinEnabled': this.settings.jellyfinEnabled,
                         'jellyfinHost': this.settings.jellyfinHost,
                         'jellyfinApiKey': this.settings.jellyfinApiKey,
                         'ankiConnectHost': this.settings.ankiConnectHost,
