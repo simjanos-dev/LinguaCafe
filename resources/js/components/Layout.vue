@@ -184,8 +184,6 @@
                 });
             }
 
-            console.log("is admin: " + this.$props._isAdmin);
-
             if(this.$props._isAdmin == true) {
                 this.navigation.push({
                     name: 'Admin settings',
