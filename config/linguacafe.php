@@ -262,6 +262,15 @@ return [
             'rus' => 'russian',
             'wel' => 'welsh',
             'cze' => 'czech',
+            'hrv' => 'Croatian',
+            'dan' => 'Danish',
+            'mac' => 'Macedonian',
+            'pol' => 'Polish',
+            'por' => 'Portuguese',
+            'rum' => 'Romanian',
+            'slv' => 'Slovenian',
+            'tha' => 'Thai',
+            'tur' => 'Turkish',
         ],
 
         /*

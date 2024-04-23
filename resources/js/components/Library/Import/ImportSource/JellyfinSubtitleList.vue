@@ -83,7 +83,7 @@
                     <div class="subtitle-language">
                         <v-img 
                             class="border mx-auto" 
-                            :src="'/images/flags/' + subtitle.language + '.png'" 
+                            :src="'/images/flags/' + subtitle.language.toLowerCase() + '.png'" 
                             max-width="43" 
                             height="28"
                         ></v-img> 
@@ -157,7 +157,7 @@ export default {
 
                         // remove note-selected language subtitle
                         if (sessions[sessionIndex].subtitles[subtitleIndex].language !== this.$props.language) {
-                            sessions[sessionIndex].subtitles.splice(subtitleIndex, 1);
+                            // sessions[sessionIndex].subtitles.splice(subtitleIndex, 1);
                         }
                     }
                 }
