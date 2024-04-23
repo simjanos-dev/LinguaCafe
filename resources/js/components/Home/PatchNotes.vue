@@ -14,19 +14,7 @@
                         Language installation. Some languages have been removed from the docker image to reduce its size, and became installable on the admin page.
                     </li>
                     <li>
-                        Added new languages: Thai and Turkish.
-                    </li>
-                </ul>
-
-                <b>Bug fixes:</b>
-                <ul>
-                    <li>
-                    </li>
-                </ul>
-
-                <b>Other changes:</b>
-                <ul>
-                    <li>
+                        Added new languages: Croatian, Danish, Macedonian, Polish, Portuguese, Romanian, Slovenian, Thai and Turkish.
                     </li>
                 </ul>
             </v-card-text>
