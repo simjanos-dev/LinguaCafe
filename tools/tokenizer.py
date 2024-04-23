@@ -41,6 +41,19 @@ ukrainian_nlp = None
 russian_nlp = None
 greek_nlp = None
 english_nlp = None
+thai_nlp = None
+turkish_nlp = None
+catalan_nlp = None
+croatian_nlp = None
+danish_nlp = None
+lithuanian_nlp = None
+macedonian_nlp = None
+polish_nlp = None
+portuguese_nlp = None
+romanian_nlp = None
+slovenian_nlp = None
+
+
 
 @Language.component("custom_sentence_splitter")
 def custom_sentence_splitter(doc):    
@@ -162,6 +175,84 @@ def getTokenizerDoc(language, words):
             greek_nlp.add_pipe("custom_sentence_splitter", first=True)
         doc = greek_nlp(words)
 
+    if language == 'thai':
+        global thai_nlp
+        if thai_nlp is None:
+            import spacy_thai
+            thai_nlp = spacy_thai.load()
+            thai_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = thai_nlp(words)
+
+    if language == 'turkish':
+        global turkish_nlp
+        if turkish_nlp is None:
+            turkish_nlp = spacy.load("tr_core_news_md", disable = ['ner', 'parser'])
+            turkish_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = turkish_nlp(words)
+
+    if language == 'catalan':
+        global catalan_nlp
+        if catalan_nlp is None:
+            catalan_nlp = spacy.load("ca_core_news_sm", disable = ['ner', 'parser'])
+            catalan_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = catalan_nlp(words)
+    
+    if language == 'croatian':
+        global croatian_nlp
+        if croatian_nlp is None:
+            croatian_nlp = spacy.load("hr_core_news_sm", disable = ['ner', 'parser'])
+            croatian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = croatian_nlp(words)
+
+    if language == 'danish':
+        global danish_nlp
+        if danish_nlp is None:
+            danish_nlp = spacy.load("da_core_news_sm", disable = ['ner', 'parser'])
+            danish_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = danish_nlp(words)
+
+    if language == 'lithuanian':
+        global lithuanian_nlp
+        if lithuanian_nlp is None:
+            lithuanian_nlp = spacy.load("lt_core_news_sm", disable = ['ner', 'parser'])
+            lithuanian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = lithuanian_nlp(words)
+
+    if language == 'macedonian':
+        global macedonian_nlp
+        if macedonian_nlp is None:
+            macedonian_nlp = spacy.load("mk_core_news_sm", disable = ['ner', 'parser'])
+            macedonian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = macedonian_nlp(words)
+
+    if language == 'polish':
+        global polish_nlp
+        if polish_nlp is None:
+            polish_nlp = spacy.load("pl_core_news_sm", disable = ['ner', 'parser'])
+            polish_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = polish_nlp(words)
+
+    if language == 'portuguese':
+        global portuguese_nlp
+        if portuguese_nlp is None:
+            portuguese_nlp = spacy.load("pt_core_news_sm", disable = ['ner', 'parser'])
+            portuguese_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = portuguese_nlp(words)
+
+    if language == 'romanian':
+        global romanian_nlp
+        if romanian_nlp is None:
+            romanian_nlp = spacy.load("ro_core_news_sm", disable = ['ner', 'parser'])
+            romanian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = romanian_nlp(words)
+    
+    if language == 'slovenian':
+        global slovenian_nlp
+        if slovenian_nlp is None:
+            slovenian_nlp = spacy.load("sl_core_news_sm", disable = ['ner', 'parser'])
+            slovenian_nlp.add_pipe("custom_sentence_splitter", first=True)
+        doc = slovenian_nlp(words)
+        
     if language in ('welsh', 'czech', 'latin'):
         global multi_nlp
         if multi_nlp == None:
@@ -494,21 +585,24 @@ def getWebsiteText():
 
 # Language model management
 model_url: dict[str, str] = {
-    "japanese": "https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl",
-    "korean": "https://github.com/explosion/spacy-models/releases/download/ko_core_news_sm-3.7.0/ko_core_news_sm-3.7.0-py3-none-any.whl",
-    "russian": "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0-py3-none-any.whl",
-    "ukrainian": "https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl",
-    "chinese": "https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl",
+    "Japanese": "https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl",
+    "Korean": "https://github.com/explosion/spacy-models/releases/download/ko_core_news_sm-3.7.0/ko_core_news_sm-3.7.0-py3-none-any.whl",
+    "Russian": "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0-py3-none-any.whl",
+    "Ukrainian": "https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl",
+    "Chinese": "https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl",
+    "Turkish": "https://huggingface.co/turkish-nlp-suite/tr_core_news_md/resolve/main/tr_core_news_md-any-py3-none-any.whl",
+    "Thai": "spacy_thai",
 }
 
 model_name: dict[str, str] = {
-    "ja-core-news-sm": "japanese",
-    "ko-core-news-sm": "korean",
-    "ru-core-news-sm": "russian",
-    "uk-core-news-sm": "ukrainian",
-    "zh-core-web-sm": "chinese",
+    "ja-core-news-sm": "Japanese",
+    "ko-core-news-sm": "Korean",
+    "ru-core-news-sm": "Russian",
+    "uk-core-news-sm": "Ukrainian",
+    "zh-core-web-sm": "Chinese",
+    "tr-core-news-md": "Turkish",
+    "spacy-thai": "Thai",
 }
-
 
 @route('/models/install', method = 'POST')
 def model_install():
@@ -516,7 +610,7 @@ def model_install():
     Valid languages are 'ja', 'ko', 'ru', 'uk', 'zh'.
     Thai and vietnamese support can be added later."""
     response.headers['Content-Type'] = 'application/json'
-    lang = request.json.get('lang')
+    lang = request.json.get('language')
     try:
         subprocess.check_output(
             [
@@ -526,6 +620,12 @@ def model_install():
                 model_url[lang],
             ]
         )
+        if lang == "Thai":
+            subprocess.check_output([
+                "pip",
+                "install",
+                "--target=/var/www/html/storage/app/model",
+                "tzdata"])
         importlib.invalidate_caches()
         return HTTPResponse(status=200, body="Language and dependencies installed correctly")
     except subprocess.CalledProcessError as e:
@@ -551,11 +651,17 @@ def model_installed():
 @route('/models/remove', method = 'DELETE')
 def model_remove():
     """Removes all the contents of the model directory"""
-    try:
-        response.headers['Content-Type'] = 'application/json'
-        shutil.rmtree("/var/www/html/storage/app/model")
-        return HTTPResponse(status=200, body="Model directoy removed successfully")
-    except subprocess.CalledProcessError as e:
-        return HTTPResponse(status=500, body=f"Error: {e}")
+    retries = 0
+    while retries < 5:
+        try:
+            response.headers['Content-Type'] = 'application/json'
+            shutil.rmtree("/var/www/html/storage/app/model")
+            return HTTPResponse(status=200, body="Model directoy removed successfully")
+        except FileNotFoundError:
+            return HTTPResponse(status=202, body="No local files to be deleted")
+        except subprocess.CalledProcessError:
+            retries += 1
+            continue
+    return HTTPResponse(status=500, body="Error: Model directory could not be removed in 5 retries")
 
 run(host='0.0.0.0', port=8678, reloader=True, debug=True)

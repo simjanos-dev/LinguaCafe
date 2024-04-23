@@ -13,7 +13,7 @@ class ReviewService {
     public function __construct() {
     }
 
-    public function getReviewItems($userId, $language, $bookId, $chapterId, $practiceMode) {
+    public function getReviewItems($userId, $language, $bookId, $chapterId, $practiceMode, $languagesWithoutSpaces) {
         // check if book exists
         if ($bookId !== -1) {
             $book = Book

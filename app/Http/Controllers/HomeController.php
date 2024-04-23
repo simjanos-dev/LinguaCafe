@@ -10,7 +10,6 @@ use App\Services\GoalService;
 use App\Services\StatisticsService;
 
 // request classes
-use App\Http\Requests\Home\ChangeLanguageRequest;
 use App\Http\Requests\Home\GetConfigRequest;
 
 class HomeController extends Controller {
@@ -52,21 +51,6 @@ class HomeController extends Controller {
         }
 
         return response()->json($statistics, 200);
-    }
-
-    public function getLanguage() {
-        $language = Auth::user()->selected_language;
-        return response()->json($language, 200);
-    }
-
-    public function changeLanguage($language, ChangeLanguageRequest $request) {
-        $user = Auth::user();
-        $user->selected_language = strtolower($language);
-        $user->save();
-
-        $this->goalService->createGoalsForLanguage($user->id, $language);
-
-        return response()->json('Language has been changed successfully.', 200);
     }
 
     public function getConfig($configPath, GetConfigRequest $request) {

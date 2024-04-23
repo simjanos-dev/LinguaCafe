@@ -103,12 +103,23 @@ class TextBlock
         return $wordCount;
     }
 
+    private function preProcessText() {
+        $text = $this->rawText;
+        $text = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
+
+        if ($this->language === 'thai') {
+            $text = str_replace(' ', ' THAINEWSENTENCE ', $text);
+        }
+
+        return $text;
+    }
+
     /* 
         Sends the raw text to python tokenizer service, and stores the result.
     */
     public function tokenizeRawText() {
         $this->tokenizedWords = Http::post($this->pythonService . ':8678/tokenizer', [
-            'raw_text' => preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $this->rawText)),
+            'raw_text' => $this->preProcessText(),
             'language' => $this->language,
         ]);
 
@@ -148,6 +159,7 @@ class TextBlock
         $processedWordCount = 0;
         $wordCount = count($this->tokenizedWords);
 
+        $thaiSentenceIndex = 0;
         for ($wordIndex = 0; $wordIndex < $wordCount; $wordIndex++) {
             $word = new \stdClass();
             $word->user_id = $userId;
@@ -162,6 +174,7 @@ class TextBlock
                 $word->reading = '';
                 $word->lemma_reading = '';
             }
+            
             $word->pos = $this->tokenizedWords[$wordIndex]->pos;
             $word->phrase_ids = [];
 
@@ -197,6 +210,18 @@ class TextBlock
                             $wordIndex --; break;
                         }
                     } while($this->tokenizedWords[$wordIndex]->pos == 'SCONJ' && $wordIndex < $wordCount - 1);
+                }
+            }
+
+            // thai post processing
+            if ($this->language == 'thai') { 
+                if ($word->word == 'NEWLINE') {
+                    $thaiSentenceIndex ++;
+                } else if ($word->word == 'THAINEWSENTENCE') {
+                    $thaiSentenceIndex ++;
+                    continue;
+                } else {
+                    $word->sentence_index = $thaiSentenceIndex;
                 }
             }
 
@@ -481,6 +506,7 @@ class TextBlock
     public function prepareTextForReader() {
         $tokensWithNoSpaceBefore = config('linguacafe.tokens_with_no_space_before');
         $tokensWithNoSpaceAfter = config('linguacafe.tokens_with_no_space_after');
+        $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
 
         $this->words = [];
         $encounteredWords = DB::table('encountered_words')
@@ -489,7 +515,8 @@ class TextBlock
             ->whereIn('word', $this->uniqueWords)
             ->get();
 
-        for ($wordIndex = 0; $wordIndex < count($this->processedWords); $wordIndex ++) {
+        $wordCount = count($this->processedWords);
+        for ($wordIndex = 0; $wordIndex < $wordCount; $wordIndex ++) {
             // make the word into an object
             $word = $this->processedWords[$wordIndex];
             $word->selected = false;
@@ -502,7 +529,15 @@ class TextBlock
             
             
             // Add space for word if the language has spaces in it.
-            $word->spaceAfter = ($this->language !== 'japanese' && $this->language !== 'chinese');
+            if ($this->language == 'thai') {
+                $word->spaceAfter = (
+                    isset($this->processedWords[$wordIndex]->sentence_index) &&
+                    $wordIndex < $wordCount - 1 && 
+                    $this->processedWords[$wordIndex + 1]->sentence_index !== $this->processedWords[$wordIndex]->sentence_index
+                );
+            } else {
+                $word->spaceAfter = !in_array($this->language, $languagesWithoutSpaces, true);
+            }
             
             if ($wordIndex < count($this->processedWords) - 1 && in_array($this->processedWords[$wordIndex + 1]->word, $tokensWithNoSpaceBefore, true)) {
                     $word->spaceAfter = false;

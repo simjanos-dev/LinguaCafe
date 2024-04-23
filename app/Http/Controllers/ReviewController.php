@@ -30,9 +30,10 @@ class ReviewController extends Controller {
         $practiceMode = $request->post('practiceMode') === 'true';
         $chapterId = $request->post('chapterId');
         $bookId = $request->post('bookId');
+        $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
         
         try {
-            $reviews = $this->reviewService->getReviewItems($userId, $language, $bookId, $chapterId, $practiceMode);
+            $reviews = $this->reviewService->getReviewItems($userId, $language, $bookId, $chapterId, $practiceMode, $languagesWithoutSpaces);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -40,6 +41,7 @@ class ReviewController extends Controller {
         $reviewData = new \stdClass();
         $reviewData->reviews = $reviews;
         $reviewData->language = $language;
+        $reviewData->languageSpaces = !in_array($language, $languagesWithoutSpaces, true);
 
         return response()->json($reviewData, 200);
     }

@@ -209,7 +209,8 @@
                 type: String,
                 default: 'Word'
             },
-            language: String
+            language: String,
+            languageSpaces: Boolean,
         },
         emits: ['input'],
         data: function() {
@@ -226,10 +227,10 @@
                 this.item = response.data;
                 
                 if (this.$props.itemType == 'Phrase') {
-                    if (this.$props.language == 'japanese' || this.$props.language == 'chinese') {
-                        this.item.words = JSON.parse(this.item.words).join('');
-                    } else {
+                    if (this.$props.languageSpaces) {
                         this.item.words = JSON.parse(this.item.words).join(' ');
+                    } else {
+                        this.item.words = JSON.parse(this.item.words).join('');
                     }
                 }
             });

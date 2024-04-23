@@ -42,8 +42,12 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get ('/users/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
 
     // languages
-    Route::get ('/languages/installed', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
     Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
+    Route::get ('/languages/installed/list', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
+    Route::delete ('/languages/installed/delete', [App\Http\Controllers\LanguageController::class, 'deleteInstalledLanguages']);
+    Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
+    Route::get('/languages/get-admin-language-settings-data', [App\Http\Controllers\LanguageController::class, 'getAdminLanguageSettingsData']);
+    Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
 
     // jellyfin
     Route::post('/jellyfin/request', [App\Http\Controllers\MediaPlayerController::class, 'jellyfinRequest']);
@@ -54,7 +58,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index']);
+    Route::get('/admin/{page?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
@@ -75,8 +79,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // home
     Route::post('/statistics/get', [App\Http\Controllers\HomeController::class, 'getStatistics']);
-    Route::get('/language/change/{language}', [App\Http\Controllers\HomeController::class, 'changeLanguage']);
-    Route::get('/language/get', [App\Http\Controllers\HomeController::class, 'getLanguage']);
     Route::get('/config/get/{configPath}', [App\Http\Controllers\HomeController::class, 'getConfig']);
 
     // user manual

@@ -39,5 +39,14 @@ RUN python3 -m spacy download de_core_news_sm \
     && python3 -m spacy download sv_core_news_sm \
     && python3 -m spacy download en_core_web_sm \
     && python3 -m spacy download el_core_news_sm \
+    && python3 -m spacy download ca_core_news_sm \
+    && python3 -m spacy download hr_core_news_sm \
+    && python3 -m spacy download da_core_news_sm \
+    && python3 -m spacy download lt_core_news_sm \
+    && python3 -m spacy download mk_core_news_sm \
+    && python3 -m spacy download pl_core_news_sm \
+    && python3 -m spacy download pt_core_news_sm \
+    && python3 -m spacy download ro_core_news_sm \
+    && python3 -m spacy download sl_core_news_sm \
     && python3 -m spacy download xx_ent_wiki_sm
 

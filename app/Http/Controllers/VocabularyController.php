@@ -111,9 +111,10 @@ class VocabularyController extends Controller {
         $stage = $request->stage;
         $reading = is_null($request->reading) ? '' : $request->reading;
         $translation = is_null($request->translation) ? '' : $request->translation;
+        $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
 
         try {
-            $phraseId = $this->vocabularyService->createPhrase($userId, $language, $words, $stage, $reading, $translation);
+            $phraseId = $this->vocabularyService->createPhrase($userId, $language, $words, $stage, $reading, $translation, $languagesWithoutSpaces);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -209,9 +210,10 @@ class VocabularyController extends Controller {
         $orderBy = $request->orderBy;
         $translation = $request->translation;
         $page = $request->page; 
+        $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
 
         try {
-            $searchResults = $this->vocabularyService->searchVocabulary($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $page);
+            $searchResults = $this->vocabularyService->searchVocabulary($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $page, $languagesWithoutSpaces);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -230,9 +232,22 @@ class VocabularyController extends Controller {
         $orderBy = $request->post('orderBy');
         $translation = $request->post('translation');
         $fields = $request->post('fields');
+        $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
 
         try {
-            $csv = $this->vocabularyService->exportToCsv($userId, $language, $text, $bookId, $chapterId, $stage, $phrases, $orderBy, $translation, $fields);
+            $csv = $this->vocabularyService->exportToCsv(
+                $userId,
+                $language,
+                $text,
+                $bookId,
+                $chapterId,
+                $stage,
+                $phrases,
+                $orderBy,
+                $translation,
+                $fields,
+                $languagesWithoutSpaces
+            );
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }

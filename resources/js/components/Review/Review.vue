@@ -217,11 +217,11 @@
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
                                 <!-- Phrase only mode -->
                                 <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                    <template v-if="language == 'japanese' || language == 'chinese'">
-                                        {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                                    <template v-if="languageSpaces">
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
                                     </template>
                                     <template v-else>
-                                        {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
                                     </template>
 
                                     <!-- Example sentence interactive text mode -->
@@ -274,11 +274,11 @@
 
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
                                 <div :style="{'font-size': (settings.fontSize) + 'px'}">
-                                    <template v-if="language == 'japanese' || language == 'chinese'">
-                                        {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
+                                    <template v-if="languageSpaces">
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
                                     </template>
                                     <template v-else>
-                                        {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
+                                        {{ JSON.parse(reviews[currentReviewIndex].words).join('') }}
                                     </template>
                                 </div>
                             </template>
@@ -376,6 +376,7 @@
                 totalReviews: [],
                 correctReviews: 0,
                 language: '',
+                languageSpaces: false,
                 readWords: 0,
                 finishedReviews: -1,
                 finished: false,
@@ -410,6 +411,7 @@
                 this.reviews = data.reviews;
                 this.totalReviews = data.reviews.length;
                 this.language = data.language;
+                this.languageSpaces = data.languageSpaces;
 
                 if (this.reviews.length) {
                     this.$nextTick(() => {

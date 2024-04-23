@@ -325,11 +325,15 @@ class DictionaryController extends Controller
             // make api call
             $deepl = new \DeepL\Translator($apiKey);
 
-            // DeepL does not support 'EN-US' for source language, so
-            // I replace it to 'EN'
+            // DeepL does not support 'EN-US' for source language 
+            // and 'PT-PT' for language, so I replace them
             $sourceLanguage = $languageCodes[$language];
             if ($sourceLanguage === 'EN-US') {
                 $sourceLanguage = 'EN';
+            }
+
+            if ($sourceLanguage === 'PT-PT') {
+                $sourceLanguage = 'PT';
             }
 
             $result = $deepl->translateText($term, $sourceLanguage, $languageCodes[$deeplDictionary->target_language]);
