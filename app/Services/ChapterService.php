@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 use App\Services\GoalService;
+use App\Services\BookService;
 
 use App\Models\Book;
 use App\Models\Lesson;
@@ -242,21 +243,9 @@ class ChapterService {
         $chapter->unique_word_ids = json_encode($uniqueWordIds);
         $chapter->setProcessedText($textBlock->processedWords);
         $chapter->save();
-
-        // calculate book word count
-        $bookWordCount = Lesson
-            ::where('user_id', $userId)
-            ->where('book_id', $chapter->book_id)
-            ->sum('word_count');
-
-        $bookWordCount = intval($bookWordCount);
-
-        // update book word count
-        Book
-            ::where('user_id', $userId)
-            ->where('id', $chapter->book_id)
-            ->update(['word_count' => $bookWordCount]);
-
+        
+        (new BookService())->updateBookWordCount($userId, $chapter->book_id);
+        
         return true;
     }
 

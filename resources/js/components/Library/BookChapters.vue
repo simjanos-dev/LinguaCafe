@@ -13,7 +13,7 @@
             v-model="editBookChapterDialog.active" 
             :book-id="$props.bookId"
             :chapter-id="editBookChapterDialog.chapterId"
-            @chapter-saved="loadChapters"
+            @chapter-saved="chapterSaved"
         >
         </edit-book-chapter-dialog>
 
@@ -296,6 +296,9 @@
             this.loadChapters();
         },
         methods: {
+            chapterSaved() {
+                this.$emit('chapter-saved');
+            },
             toggleExpansion(expansionIndex) {
                 for (let chapterIndex = 0; chapterIndex < this.chapters.length; chapterIndex++) {
                     if (chapterIndex == expansionIndex) {

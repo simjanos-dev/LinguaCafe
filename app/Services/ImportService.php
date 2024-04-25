@@ -162,6 +162,9 @@ class ImportService {
             $lesson->unique_word_ids = json_encode($uniqueWordIds);
             $lesson->save();
         }
+
+        // update book words
+        (new BookService())->updateBookWordCount($userId, $book->id);
     }
 
     public function getYoutubeSubtitles($url) {

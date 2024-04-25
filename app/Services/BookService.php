@@ -53,6 +53,29 @@ class BookService {
         return $book->getWordCounts($userId, $words);
     }
 
+    /*
+        Updates the word count of the book. This only stores the length of the book,
+        other word counts are being calculated in real time.
+    */
+
+    public function updateBookWordCount($userId, $bookId) {
+        // calculate book word count
+        $bookWordCount = Lesson
+            ::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->sum('word_count');
+
+        $bookWordCount = intval($bookWordCount);
+
+        // update book word count
+        Book
+            ::where('user_id', $userId)
+            ->where('id', $bookId)
+            ->update(['word_count' => $bookWordCount]);
+        
+        return true;
+    }
+
     public function createBook($userId, $selectedLanguage, $bookName, $bookCoverFile) {
         // create book model
         $book = new Book();
