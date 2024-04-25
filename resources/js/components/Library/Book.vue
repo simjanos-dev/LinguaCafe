@@ -28,10 +28,10 @@
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
                         </template>
-                        <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts(book.id)">Load word counts</v-btn>
-                        <v-btn class="menu-button" tile color="white" @click="showEditBookDialog(book)">Edit</v-btn>
-                        <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(book.id, book.name)">Review</v-btn>
-                        <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog(book)">Delete</v-btn>
+                        <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts()">Load word counts</v-btn>
+                        <v-btn class="menu-button" tile color="white" @click="showEditBookDialog()">Edit</v-btn>
+                        <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog()">Review</v-btn>
+                        <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog()">Delete</v-btn>
                     </v-menu>
                 </v-card-title>
 
@@ -77,6 +77,7 @@
         <book-chapters
             ref="bookChapters"
             :book-id="book.id"
+            @chapter-saved="chapterSaved"
         ></book-chapters>
     </v-card>
 </template>
@@ -97,6 +98,7 @@
             book: Object
         },
         mounted() {
+            this.loadBookWordCounts();
         },
         methods: {
             addChapter() {
@@ -105,27 +107,28 @@
                 this.editBookChapterDialog.chapterId = -1;
             },
             chapterSaved() {
+                this.loadBookWordCounts();
                 this.$refs.bookChapters.loadChapters();
             },
-            loadBookWordCounts(bookId) {
+            loadBookWordCounts() {
                 this.book.wordCountLoading = true;
                 this.book.wordCount = null;
 
-                axios.get('/books/get-word-counts/' + bookId).then((response) => {
+                axios.get('/books/get-word-counts/' + this.book.id).then((response) => {
                     if (response.data !== 'error') {
                         this.book.wordCountLoading = false;
                         this.book.wordCount = response.data;
                     }
                 });
             },
-            showEditBookDialog(book) {
-                this.$emit('show-edit-book-dialog', book);
+            showEditBookDialog() {
+                this.$emit('show-edit-book-dialog', this.book);
             },
-            showDeleteBookDialog(book) {
-                this.$emit('show-delete-book-dialog', book);
+            showDeleteBookDialog() {
+                this.$emit('show-delete-book-dialog', this.book);
             },
-            showStartReviewDialog(bookId, bookName) {
-                this.$emit('show-start-review-dialog', bookId, bookName);
+            showStartReviewDialog() {
+                this.$emit('show-start-review-dialog', this.book.id, this.book.name);
             },
             closeBook() {
                 this.$emit('close-book');

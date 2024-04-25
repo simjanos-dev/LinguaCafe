@@ -14,6 +14,13 @@
                     </li>
                 </ul>
 
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Book word counts now update after importing something.
+                    </li>
+                </ul>
+
                 <b>Other changes:</b>
                 <ul>
                 </ul>
