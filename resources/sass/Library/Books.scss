@@ -33,6 +33,10 @@
         width: 120px;
     }
 
+    .book-length {
+        width: 120px;
+    }
+
     td.book-title {
         font-size: 16px;
     }
@@ -46,6 +50,10 @@
 // cover only layout
 #books {
     max-width: 1200px;
+
+    .book {
+        overflow: hidden;
+    }
 }
 
 #books #book-list.cover-only {
@@ -175,7 +183,7 @@
 
     // table leyout
     #books #book-list.table-layout {
-        .book-cover {
+        .book-cover, .book-length {
             display: none;
         }
     }

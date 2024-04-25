@@ -12,7 +12,7 @@
                 <!-- Cover image -->
                 <div class="cover-image-box">
                     <img
-                        class="cover-image"
+                        class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
                 </div>
