@@ -14,6 +14,25 @@ class LanguageService {
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
 
+    public function selectLanguage($user, $language) {
+        $installedLanguages = $this->getInstalledLanguages();
+        $installableLanguages = config('linguacafe.languages.supported_languages_with_required_install');
+
+        /*
+            This is an extra protection, to avoid switching to not installed
+            languages. Since this should never happen in the software, it does not
+            throw an exception.
+        */
+        if (in_array($language, $installableLanguages, true) && !in_array($language, $installedLanguages, true)) {
+            return false;
+        }
+
+        $user->selected_language = strtolower($language);
+        $user->save();
+        
+        return true;
+    }
+
     public function getLanguageSelectionDialogData($supportedSourceLanguages, $installableLanguages) {
         $installedLanguages = $this->getInstalledLanguages();
         

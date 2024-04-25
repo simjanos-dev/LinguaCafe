@@ -27,6 +27,19 @@
                     border="left"
                 >
                     {{ $props.language }} has been successfully installed.
+                    <div class="w-full d-flex">
+                        <v-spacer />
+                        <v-btn 
+                            class="d-block mt-6"
+                            outlined 
+                            depressed 
+                            rounded 
+                            color="foreground" 
+                            @click="selectNewLanguage" 
+                        >
+                            Switch to {{ $props.language }}
+                        </v-btn>
+                    </div>
                 </v-alert>
 
                 <!-- Error message -->
@@ -49,7 +62,7 @@
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                
+
                 <!-- Cancel button -->
                 <v-btn rounded text @click="close" :disabled="installing" v-if="installResult !== 'success'">
                     Cancel
@@ -101,6 +114,14 @@
                 }).catch((error) => {
                     this.installing = false;
                     this.installResult = 'error';
+                });
+            },
+            selectNewLanguage() {
+                var language = this.$props.language;
+
+                axios.get('/languages/select/' + language).then(function (response) {
+                    document.location.href = '/admin/languages';
+                }.bind(this)).catch(function (error) {}).then(() => {
                 });
             },
             close() {
