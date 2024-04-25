@@ -17,6 +17,13 @@
                         Added new languages: Croatian, Danish, Macedonian, Polish, Portuguese, Romanian, Slovenian, Thai and Turkish.
                     </li>
                 </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        The default language has been changed to Spanish.
+                    </li>
+                </ul>
             </v-card-text>
         </v-card>
 

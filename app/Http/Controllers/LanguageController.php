@@ -50,12 +50,20 @@ class LanguageController extends Controller {
         return response()->json($responseData, 200);
     }
 
+    /*
+        This function will not change the language if it's not installed.
+        Since this should never happen in the software, it does not
+        throw an exception.
+    */
     public function selectLanguage($language, ChangeLanguageRequest $request) {
         $user = Auth::user();
-        $user->selected_language = strtolower($language);
-        $user->save();
-
-        $this->goalService->createGoalsForLanguage($user->id, $language);
+        
+        try {
+            $this->languageService->selectLanguage($user, $language);
+            $this->goalService->createGoalsForLanguage($user->id, $language);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
 
         return response()->json('Language has been changed successfully.', 200);
     }
