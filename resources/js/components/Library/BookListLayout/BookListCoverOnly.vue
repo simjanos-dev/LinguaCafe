@@ -1,6 +1,6 @@
 <template>
     <!-- Book list detailed -->
-    <div id="book-list" class="cover-only d-flex flex-row flex-wrap justify-center">
+    <div id="book-list" class="cover-only d-flex flex-row flex-wrap justify-start">
         <v-card
             outlined
             :id="'book-' + book.id"

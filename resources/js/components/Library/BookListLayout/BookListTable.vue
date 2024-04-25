@@ -6,24 +6,27 @@
                 <tr>
                     <th class="book-cover text-center">Cover</th>
                     <th class="book-title text-center px-1" >Title</th>
-                    <!-- <th class="text-center px-1" >Unique</th>
-                    <th class="text-center px-1" >Known</th>
-                    <th class="text-center px-1" >Highlighted</th>
-                    <th class="text-center px-1" >New</th> -->
+                    <th class="book-length text-center px-1" >Length</th>
                     <th class="book-actions text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="book" v-for="(book, index) in books">
+                <tr class="book" v-for="(book, index) in books" :key="index">
                     <td class="book-cover">
                         <img
                             class="cover-image rounded-lg ma-2"
                             :src="'/images/book_images/' + book.cover_image"
                         ></img>
                     </td>
+                    
                     <td class="book-title">
                         {{ book.name }}
                     </td>
+                    
+                    <td class="book-length text-center">
+                        {{ formatNumber(book.word_count) }}
+                    </td>
+
                     <td class="book-actions">
                         <v-btn icon title="Open book" @click="openBook(book.id)"><v-icon>mdi-book-open</v-icon></v-btn>
                         <v-menu content-class="book-menu" rounded offset-y bottom left nudge-top="-5">
@@ -58,6 +61,7 @@
         },
         methods: {
             openBook(bookId) {
+                console.log('books', this.$props.books);
                 this.$emit('open-book', bookId);
             },
             showEditBookDialog(book) {
