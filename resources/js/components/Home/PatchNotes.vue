@@ -40,6 +40,9 @@
                     <li>
                         JMDict's source language is not editable anymore.
                     </li>
+                    <li>
+                        Copying a selected word with ctrl+c won't set the word's level to new anymore.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
