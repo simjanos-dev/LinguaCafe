@@ -822,7 +822,10 @@
                 switch(event.which) {
                     // set level to new
                     case 67:
-                        this.setStage(2);
+                        if (!event.ctrlKey) {
+                            this.setStage(2);
+                        }
+                        
                         break;
 
                     // set level 0-7
