@@ -179,7 +179,7 @@
 
                                     <!-- Example sentence interactive text mode -->
                                     <text-block-group
-                                        v-if="!revealed && settings.reviewSentenceMode === 'interactive-text'"
+                                        v-if="!revealed && exampleSentence !== null && settings.reviewSentenceMode === 'interactive-text'"
                                         ref="textBlock"
                                         :key="'text-block-1' + textBlockKey"
                                         :theme="theme"
@@ -196,7 +196,7 @@
                                     />
 
                                     <!-- Example sentence plain text mode -->
-                                    <template v-if="settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
+                                    <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
                                         <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
                                             <span 
                                                 v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
@@ -227,7 +227,7 @@
                                     <!-- Example sentence interactive text mode -->
                                     <hr v-if="settings.reviewSentenceMode !== 'disabled'">
                                     <text-block-group
-                                        v-if="!revealed && settings.reviewSentenceMode === 'interactive-text'"
+                                        v-if="!revealed && exampleSentence !== null && settings.reviewSentenceMode === 'interactive-text'"
                                         ref="textBlock"
                                         :key="'text-block-2' + textBlockKey"
                                         :theme="theme"
@@ -244,7 +244,7 @@
                                     />
 
                                     <!-- Example sentence plain text mode -->
-                                    <template v-if="settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
+                                    <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
                                         <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
                                             <span 
                                                 v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
@@ -293,7 +293,7 @@
                             <!-- Example sentence interactive text mode -->
                             <hr v-if="settings.reviewSentenceMode !== 'disabled'">
                             <text-block-group
-                                v-if="revealed && settings.reviewSentenceMode === 'interactive-text'"
+                                v-if="revealed && exampleSentence !== null && settings.reviewSentenceMode === 'interactive-text'"
                                 ref="textBlock"
                                 :key="'text-block-3' + textBlockKey"
                                 :theme="theme"
@@ -310,7 +310,7 @@
                             />
 
                             <!-- Example sentence plain text mode -->
-                            <template v-if="settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
+                            <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
                                 <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <span 
                                         v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
@@ -478,7 +478,7 @@
                     return;
                 }
                 
-                if (this.settings.reviewSentenceMode === 'interactive-text') {
+                if (this.$refs.textBlock !== undefined && this.settings.reviewSentenceMode === 'interactive-text') {
                     this.$refs.textBlock.unselectAllWords(true);
                 }
                 
@@ -604,27 +604,20 @@
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = true;
                 this.backgroundColor = this.$vuetify.theme.currentTheme.foreground;
+                
+                if (this.$refs.textBlock !== undefined && this.settings.reviewSentenceMode === 'interactive-text') {
+                    this.$refs.textBlock.unselectAllWords(true);
+                }
 
                 setTimeout(() => {
-                    if (this.settings.reviewSentenceMode === 'interactive-text') {
-                        this.$refs.textBlock.unselectAllWords(true);
-                    }
-
                     this.newCardAnimation = false;
                 }, this.transitionDuration);
 
                 this.finishedReviews ++;
                 this.currentReviewIndex = Math.floor(Math.random() * this.reviews.length);
-                this.exampleSentence = {
-                    id: -1,
-                    words: [],
-                    phrases: [],
-                    uniqueWords: [],
-                };
 
+                this.exampleSentence = null;
                 axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].type + '/' + this.reviews[this.currentReviewIndex].id).then((response) => {
-                    let firstTime = (this.exampleSentence.id == -1);
-
                     if (response.data !== 'no example sentence') {
                         this.exampleSentence = {
                             id: 0,

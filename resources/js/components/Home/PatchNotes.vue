@@ -28,6 +28,12 @@
                     <li>
                         Fixed highlighted word colors that were displayed incorrectly at several places.
                     </li>
+                    <li>
+                        Interactive text is not selectable anymore on the review page natively like other texts in the browser.
+                    </li>
+                    <li>
+                        Previous example sentences are not visible anymore on the reivew page while the new one is loading.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
