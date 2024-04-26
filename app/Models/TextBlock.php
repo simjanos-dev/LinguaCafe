@@ -280,8 +280,17 @@ class TextBlock
                 // nouns' lemma needs der/die/das before them
                 $word->lemma = str_replace('+', '', $word->lemma);
             }
+
+            // limit text length
+            if (mb_strlen($word->word) > 255) {
+                continue;
+            }
+
+            $word->lemma = mb_strlen($word->lemma) > 255 ? mb_substr($word->lemma, 0, 255) : $word->lemma;
+            $word->reading = mb_strlen($word->reading) > 255 ? mb_substr($word->reading, 0, 255) : $word->reading;
+            $word->lemma_reading = mb_strlen($word->lemma_reading) > 255 ? mb_substr($word->lemma_reading, 0, 255) : $word->lemma_reading;
             
-            $this->processedWords[$processedWordCount] = $word;
+            $this->processedWords[$processedWordCount] = $word; 
             $processedWordCount ++;
         }
     }
@@ -329,8 +338,8 @@ class TextBlock
             $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
             $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
             $encounteredWord['base_word'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
-            $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
             $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
+            $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
             $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
             $encounteredWord['example_sentence'] = '';
             $encounteredWord['stage'] = 2;

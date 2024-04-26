@@ -19,6 +19,9 @@
                     <li>
                         Book word counts now update after importing something.
                     </li>
+                    <li>
+                        Importing texts now won't throw an error if it contains a word longer than 255 characters.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
