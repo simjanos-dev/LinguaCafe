@@ -22,6 +22,9 @@
                     <li>
                         Importing texts now won't throw an error if it contains a word longer than 255 characters.
                     </li>
+                    <li>
+                        Importing dictionaries now skips records that contain a word or a definition that is too long instead of throwing an error.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
