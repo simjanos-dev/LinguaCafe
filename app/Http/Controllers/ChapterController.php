@@ -51,10 +51,11 @@ class ChapterController extends Controller {
 
     public function getChapterForReader(GetChapterForReaderRequest $request) {        
         $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
         $chapterId = $request->chapterId;
         
         try {
-            $chapter = $this->chapterService->getChapterForReader($userId, $chapterId);
+            $chapter = $this->chapterService->getChapterForReader($userId, $language, $chapterId);
         } catch (\Exemption $e) {
             abort(500, $e->getMessage());
         }

@@ -10,7 +10,7 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        Added book length to library table view.
+                        Added book length to the library table view.
                     </li>
                 </ul>
 
@@ -20,7 +20,7 @@
                         Book word counts now update after importing something.
                     </li>
                     <li>
-                        Importing texts now won't throw an error if it contains a word longer than 255 characters.
+                        Importing texts now skips too long words instead of throwing an error.
                     </li>
                     <li>
                         Importing dictionaries now skips records that contain a word or a definition that is too long instead of throwing an error.
@@ -33,6 +33,9 @@
                     </li>
                     <li>
                         Previous example sentences are not visible anymore on the reivew page while the new one is loading.
+                    </li>
+                    <li>
+                        Users cannot open a chapter in the text reader anymore that does not belong to their selected language.
                     </li>
                 </ul>
 
