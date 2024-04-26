@@ -418,10 +418,6 @@
                     wordIndex = parseInt(element.attributes['wordindex'].nodeValue);
                 }
 
-                if (wordIndex === -1) {
-                    return;
-                }
-
                 if (event.buttons === 0 && wordIndex === -1 || wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
                     this.removePhraseHover();
                 }
@@ -430,6 +426,9 @@
                     this.closeHoverBox();
                 }
 
+                if (wordIndex === -1) {
+                    return;
+                }
 
                 if (event.buttons === 0 && wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
                     this.updateHoverSelection(wordIndex);
