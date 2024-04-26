@@ -29,7 +29,20 @@
                     ></v-text-field>
 
                     <!-- Source language -->
-                    <label class="font-weight-bold">Source language</label>
+                    <label class="font-weight-bold">
+                        Source language
+                        
+                        <!-- Source language info box -->
+                        <v-menu offset-y nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                The language that you are learning.
+                            </v-card>
+                        </v-menu>
+                    </label>
+
                     <v-select
                         v-model="dictionary.source_language"
                         :items="supportedSourceLanguages"
@@ -38,7 +51,7 @@
                         dense
                         filled
                         rounded
-                        :disabled="dictionary.database_table_name === 'API'"
+                        :disabled="dictionary.database_table_name === 'API' || dictionary.name === 'JMDict'"
                     >
                         <template v-slot:selection="{ item, index }">
                             <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
@@ -52,7 +65,22 @@
 
                     <!-- Target language -->
                     <template v-if="dictionary.database_table_name === 'API' && dictionary.name.includes('DeepL')">
-                        <label class="font-weight-bold">Target language</label>
+                        <label class="font-weight-bold">
+                            Target language
+
+                            <!-- Target language info box -->
+                            <v-menu offset-y nudge-top="-12px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                                </template>
+                                <v-card outlined class="rounded-lg pa-4" width="320px">
+                                    The language that the dictionary translates to. For example if it's a German -> English 
+                                    dictionary, you should select English as the target language. Target language has no function, 
+                                    it's just a visual help to arrange your dictionaries.
+                                </v-card>
+                            </v-menu>
+                        </label>
+                        
                         <v-select
                             v-model="dictionary.target_language"
                             :items="supportedDeeplTargetLanguages"
@@ -75,7 +103,22 @@
 
                     <!-- Target DeepL language -->
                     <template v-else>
-                        <label class="font-weight-bold">Target language</label>
+                        <label class="font-weight-bold">
+                            Target language
+
+                            <!-- Target language info box -->
+                            <v-menu offset-y nudge-top="-12px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                                </template>
+                                <v-card outlined class="rounded-lg pa-4" width="320px">
+                                    The language that the dictionary translates to. For example if it's a German -> English 
+                                    dictionary, you should select English as the target language. Target language has no function, 
+                                    it's just a visual help to arrange your dictionaries.
+                                </v-card>
+                            </v-menu>
+                        </label>
+
                         <v-select
                             v-model="dictionary.target_language"
                             :items="supportedTargetLanguages"
