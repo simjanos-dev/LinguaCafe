@@ -71,10 +71,11 @@ class ChapterService {
         return $chapter;
     }
 
-    public function getChapterForReader($userId, $chapterId) {
+    public function getChapterForReader($userId, $language, $chapterId) {
         $chapter = Lesson
             ::where('id', $chapterId)
             ->where('user_id', $userId)
+            ->where('language', $language)
             ->first();
         
         if (!$chapter) {
