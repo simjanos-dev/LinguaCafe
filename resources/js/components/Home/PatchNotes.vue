@@ -47,6 +47,9 @@
 
                 <b>Other changes:</b>
                 <ul>
+                    <li>
+                        The import dialog won't close by itself anymore after importing has finished.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

@@ -354,9 +354,7 @@
                     if (response.status == 200) {
                         this.importResult = 'success';
                         this.importLoading = false;
-                        setTimeout(() => {
-                            this.$emit('import-finished', false);
-                        }, 1000);
+                        this.$emit('import-finished', false);
                     }
                 }).catch((error) => {
                     this.importResult = 'error';

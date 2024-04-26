@@ -278,7 +278,6 @@
                 this.startReviewDialog.visible = true;
             },
             importFinished() {
-                this.importDialog.active = false;
                 this.loadBooks();
             },
             loadBooks() {

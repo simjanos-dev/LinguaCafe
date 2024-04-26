@@ -40,6 +40,7 @@
             <label class="font-weight-bold mt-2">Maximum characters per chapter</label>
             <v-text-field 
                 v-model="maximumCharactersPerChapter"
+                ref="maximumCharactersPerChapterInput"
                 filled
                 dense
                 rounded
@@ -88,6 +89,7 @@
         },
         mounted() {
             this.importOptionsChanged();
+            this.$refs.maximumCharactersPerChapterInput.focus();
         },
         methods: {
             importOptionsChanged() {
