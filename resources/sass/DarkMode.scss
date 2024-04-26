@@ -236,7 +236,7 @@
 }
 
 // success v-icon button
-#app.dark .v-btn.success--text .theme--dark.v-icon, {
+#app.dark .v-btn.success--text .theme--dark.v-icon {
     color: var(--v-success-base);
 }
 
@@ -360,8 +360,31 @@
     }
 
     .stage {
-        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"],
-        &[stage="-3"], &[stage="-2"], &[stage="-1"] {
+        &[stage="-7"] {
+            background-color: var(--v-highlightedWordLevel7-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-6"] {
+            background-color: var(--v-highlightedWordLevel6-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-5"] {
+            background-color: var(--v-highlightedWordLevel5-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-4"] {
+            background-color: var(--v-highlightedWordLevel4-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-3"] {
+            background-color: var(--v-highlightedWordLevel3-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-2"] {
+            background-color: var(--v-highlightedWordLevel2-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-1"] {
             background-color: var(--v-highlightedWordLevel1-base);
             color: var(--v-textDark-base);
         }
