@@ -22,6 +22,10 @@
     margin: auto;
     background-color: var(--v-background-base);
 
+    .text-block-group {
+        user-select: none !important;
+    }
+
     #review * {
         font-family: notosans-jp !important;
     }
