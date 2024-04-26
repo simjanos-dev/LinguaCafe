@@ -208,6 +208,7 @@
         }
 
         &.phrase-start {
+            border-left: 1px solid var(--v-text-base);
             border-top-left-radius: 6px !important;
             border-bottom-left-radius: 6px !important;
             margin-left: .5px !important;
@@ -243,7 +244,7 @@
         }
 
         &.phrase-end {
-            border-right: 1px solid var(--v-highlightedWordLevel1-darken1);
+            border-right: 1px solid var(--v-text-base);
             border-top-right-radius: 6px !important;
             border-bottom-right-radius: 6px !important;
             margin-right: .5px !important;
