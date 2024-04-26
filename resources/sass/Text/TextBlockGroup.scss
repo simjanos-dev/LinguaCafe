@@ -127,43 +127,50 @@
 
 
         &.phrase {
-            background-color: var(--v-highlightedWordLevel1-base);
             color: var(--v-highlightedWordText-base);
-            border-top: 1px solid var(--v-highlightedWordLevel1-darken1);
-            border-bottom: 1px solid var(--v-highlightedWordLevel1-darken1);
             margin-left: 0 !important;
             margin-right: 0 !important;
 
             &[phraseStage="-1"] {
                 background-color: var(--v-highlightedWordLevel1-base);
+                border-top: 1px solid var(--v-highlightedWordLevel1-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel1-darken1);
             }
     
             &[phraseStage="-2"] {
                 background-color: var(--v-highlightedWordLevel2-base);
+                border-top: 1px solid var(--v-highlightedWordLevel2-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel2-darken1);
             }
             
             &[phraseStage="-3"] {
                 background-color: var(--v-highlightedWordLevel3-base);
+                border-top: 1px solid var(--v-highlightedWordLevel3-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel3-darken1);
             }
             
             &[phraseStage="-4"] {
                 background-color: var(--v-highlightedWordLevel4-base);
+                border-top: 1px solid var(--v-highlightedWordLevel4-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel4-darken1);
             }
             
             &[phraseStage="-5"] {
                 background-color: var(--v-highlightedWordLevel5-base);
+                border-top: 1px solid var(--v-highlightedWordLevel5-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel5-darken1);
             }
             
             &[phraseStage="-6"] {
                 background-color: var(--v-highlightedWordLevel6-base);
+                border-top: 1px solid var(--v-highlightedWordLevel6-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel6-darken1);
             }
     
             &[phraseStage="-7"] {
                 background-color: var(--v-highlightedWordLevel7-base);
-            }
-
-            &:hover {
-                background-color: var(--v-highlightedWordLevel1-darken2);
+                border-top: 1px solid var(--v-highlightedWordLevel7-darken1);
+                border-bottom: 1px solid var(--v-highlightedWordLevel7-darken1);
             }
             
             &[phrasestage="0"] {
@@ -201,11 +208,38 @@
         }
 
         &.phrase-start {
-            border-left: 1px solid var(--v-highlightedWordLevel1-darken1);
             border-top-left-radius: 6px !important;
             border-bottom-left-radius: 6px !important;
             margin-left: .5px !important;
             padding-left: 4px !important;
+
+            &[phraseStage="-1"] {
+                border-left: 1px solid var(--v-highlightedWordLevel1-darken1);
+            }
+    
+            &[phraseStage="-2"] {
+                border-left: 1px solid var(--v-highlightedWordLevel2-darken1);
+            }
+            
+            &[phraseStage="-3"] {
+                border-left: 1px solid var(--v-highlightedWordLevel3-darken1);
+            }
+            
+            &[phraseStage="-4"] {
+                border-left: 1px solid var(--v-highlightedWordLevel4-darken1);
+            }
+            
+            &[phraseStage="-5"] {
+                border-left: 1px solid var(--v-highlightedWordLevel5-darken1);
+            }
+            
+            &[phraseStage="-6"] {
+                border-left: 1px solid var(--v-highlightedWordLevel6-darken1);
+            }
+    
+            &[phraseStage="-7"] {
+                border-left: 1px solid var(--v-highlightedWordLevel7-darken1);
+            }
         }
 
         &.phrase-end {
@@ -214,6 +248,34 @@
             border-bottom-right-radius: 6px !important;
             margin-right: .5px !important;
             padding-right: 4px !important;
+
+            &[phraseStage="-1"] {
+                border-right: 1px solid var(--v-highlightedWordLevel1-darken1);
+            }
+    
+            &[phraseStage="-2"] {
+                border-right: 1px solid var(--v-highlightedWordLevel2-darken1);
+            }
+            
+            &[phraseStage="-3"] {
+                border-right: 1px solid var(--v-highlightedWordLevel3-darken1);
+            }
+            
+            &[phraseStage="-4"] {
+                border-right: 1px solid var(--v-highlightedWordLevel4-darken1);
+            }
+            
+            &[phraseStage="-5"] {
+                border-right: 1px solid var(--v-highlightedWordLevel5-darken1);
+            }
+            
+            &[phraseStage="-6"] {
+                border-right: 1px solid var(--v-highlightedWordLevel6-darken1);
+            }
+    
+            &[phraseStage="-7"] {
+                border-right: 1px solid var(--v-highlightedWordLevel7-darken1);
+            }
         }
 
         &[stage="2"] {

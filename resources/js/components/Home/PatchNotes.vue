@@ -25,6 +25,9 @@
                     <li>
                         Importing dictionaries now skips records that contain a word or a definition that is too long instead of throwing an error.
                     </li>
+                    <li>
+                        Fixed highlighted word colors that were displayed incorrectly at several places.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
