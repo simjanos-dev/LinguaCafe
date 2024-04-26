@@ -37,6 +37,9 @@
                     <li>
                         Users cannot open a chapter in the text reader anymore that does not belong to their selected language.
                     </li>
+                    <li>
+                        JMDict's source language is not editable anymore.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
