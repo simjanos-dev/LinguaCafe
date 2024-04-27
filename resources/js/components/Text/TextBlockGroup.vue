@@ -65,6 +65,7 @@
                     :stage="word.stage"
                     :phrasestage="word.phraseStage"
                     :class="{
+                        'no-highlight': hideAllHighlights || (hideNewWordHighlights && word.stage == 2),
                         'word': true,
                         'highlighted': word.selected || word.hover,
                         'phrase': word.phraseIndexes.length,
