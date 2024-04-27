@@ -314,32 +314,32 @@
                 padding-right: 5px !important;
             }
         }
+    }
 
-        &.plain-text-mode, &.plain-text-mode:hover {
-            margin-left: none !important;
-            margin-right: none !important;
-            padding-left: none !important;
-            padding-right: none !important;
+    &.plain-text-mode .word, &.plain-text-mode .word:hover {
+        margin-left: none !important;
+        margin-right: none !important;
+        padding-left: none !important;
+        padding-right: none !important;
+        background-color: rgba(0, 0, 0, 0) !important;
+        color: var(--v-text-base) !important;
+        border: none !important;
+        cursor: default !important;
+        user-select: text !important;
+
+        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], 
+        &[stage="-3"], &[stage="-2"], &[stage="-1"], &[stage="2"], 
+        &.phrase, &.phrase-start, &.phrase-end, &.highlighted, &:hover, 
+        &.space-after, &.space-after.highlighted, &.space-after.phrase {
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
             background-color: rgba(0, 0, 0, 0) !important;
             color: var(--v-text-base) !important;
             border: none !important;
             cursor: default !important;
             user-select: text !important;
-
-            &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], 
-            &[stage="-3"], &[stage="-2"], &[stage="-1"], &[stage="2"], 
-            &.phrase, &.phrase-start, &.phrase-end, &.highlighted, &:hover, 
-            &.space-after, &.space-after.highlighted, &.space-after.phrase {
-                margin-left: 0px !important;
-                margin-right: 0px !important;
-                padding-left: 0px !important;
-                padding-right: 0px !important;
-                background-color: rgba(0, 0, 0, 0) !important;
-                color: var(--v-text-base) !important;
-                border: none !important;
-                cursor: default !important;
-                user-select: text !important;
-            }
         }
     }
 }

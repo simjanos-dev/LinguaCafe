@@ -2,6 +2,7 @@
     <div
         :class="{
             'text-block-group': true,
+            'plain-text-mode': plainTextMode,
             'w-100': true,
             'chinese-font': language == 'chinese'
         }"
@@ -78,7 +79,21 @@
                     }"
 
                     :key="wordIndex"
-                >{{ word.word }}</div><!--
+                ><!--
+                    --><template v-if="$props.language == 'japanese'"><!--
+                        --><ruby class="rubyword" :wordindex="wordIndex"><!--
+                            -->{{ word.word }}<!--
+                            --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                                -->{{ word.furigana }}<!--
+                            --></rt><!--
+                            --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                                -->{{ word.furigana }}<!--
+                            --></rt><!--
+                        --></ruby>
+                    </template><!--
+                    --><template v-else>{{ word.word }}</template><!--
+                    --><template v-if="plainTextMode && word.spaceAfter">&nbsp;</template><!--
+                --></div><!--
             --></template>
         </div>
 
@@ -362,6 +377,10 @@
                     element = event.target.parentElement;
                 }
 
+                if (event.target.localName === 'rt') {
+                    element = event.target.parentElement.parentElement;
+                }
+
                 if (!element.classList.contains('word')) {
                     this.unselectAllWords();
                     return;
@@ -384,6 +403,10 @@
                 var element = event.target
                 if (event.target.localName === 'ruby') {
                     element = event.target.parentElement;
+                }
+
+                if (event.target.localName === 'rt') {
+                    element = event.target.parentElement.parentElement;
                 }
 
                 if (!element.classList.contains('word')) {
@@ -425,6 +448,10 @@
                     wordIndex = parseInt(element.attributes['wordindex'].nodeValue);
                 }
 
+                if (wordIndex === -1) {
+                    return;
+                }
+                
                 if (event.buttons === 0 && wordIndex === -1 || wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
                     this.removePhraseHover();
                 }
