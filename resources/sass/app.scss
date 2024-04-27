@@ -85,6 +85,11 @@
     }
 }
 
+// tab item
+.v-window.v-item-group, .v-window-item, .v-window__container {
+    background-color: var(--v-foreground-base);
+}
+
 // v-card
 .v-card.theme--light,
 .v-card.theme--light > .v-card__subtitle, 

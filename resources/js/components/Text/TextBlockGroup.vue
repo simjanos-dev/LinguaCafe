@@ -8,6 +8,8 @@
     >
         <!-- Anki api notifications -->
         <v-snackbar
+            v-for="(snackBar, snackBarIndex) in snackBars"
+            :key="'snackbar-' + snackBarIndex"
             :value="true"
             right
             top
@@ -18,8 +20,7 @@
             height="108"
             :style="{'margin-top': ((snackBarIndex) * 124 + 16) + 'px'}"
             :timeout="-1"
-            v-for="(snackBar, snackBarIndex) in snackBars"
-            :key="'snackbar-' + snackBarIndex"
+            @mouseup.native.stop=";"
         >
             <div class="pl-3 pr-2 pt-1 d-flex font-weight-bold snackbar-title">
                 <v-icon v-if="snackBar.type !== 'success' && snackBar.type !== 'update success'" color="error" class="mr-2">mdi-alert</v-icon>
@@ -106,6 +107,7 @@
             :word="vocabBox.word"
             :phrase="vocabBox.phrase"
             :stage="vocabBox.stage"
+            :inflections="vocabBox.inflections"
             :auto-highlight-words="$props.autoHighlightWords"
             :deepl-enabled="this.deeplEnabled"
             :_reading="vocabBox.reading"
@@ -137,6 +139,7 @@
             :word="vocabBox.word"
             :phrase="vocabBox.phrase"
             :stage="vocabBox.stage"
+            :inflections="vocabBox.inflections"
             :auto-highlight-words="$props.autoHighlightWords"
             :deepl-enabled="this.deeplEnabled"
             :_reading="vocabBox.reading"
@@ -193,7 +196,6 @@
                         This is required because sidebar is always visible, and it does not re-render
                         when active is changed.
                     */
-
                     key: 0,
 
                     /*
@@ -202,9 +204,13 @@
                         a text is opened.
                     */
                     sidebarHidden: true,
-
+                    
 
                     active: false,
+
+                    // inflections table
+                    inflections: [],
+
                     // word, new phrase, existing phrase
                     type: 'empty',
 
@@ -597,9 +603,56 @@
                         this.updatePhraseLookupCount(this.selectedPhrase);
                     }
 
+                    var inflectionSearchTerm = this.uniqueWords[uniqueWordIndex].base_word.length ? this.uniqueWords[uniqueWordIndex].base_word : this.uniqueWords[uniqueWordIndex].word;
                     this.updatePhraseBorders();
                     this.updateVocabBoxDataAfterSelection();
+                    this.requestInflections(inflectionSearchTerm);
                 }
+            },
+            requestInflections: function(term) {
+                if (this.$props.language !== 'japanese') {
+                    return;
+                }
+
+                // search inflections
+                this.vocabBox.inflections = [];
+                axios.post('/dictionary/search/inflections', {
+                    term: term
+                }).then((response) => {
+                    if (response.data === '[]' || response.data == '') {
+                        return;
+                    }
+
+                    var data = JSON.parse(response.data);
+                    var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
+                    
+                    for (var i = 0; i < data.length; i++) {
+                        if (!displayedInflections.includes(data[i].name)) {
+                            continue;
+                        }
+
+                        var index = this.vocabBox.inflections.findIndex(item => item.name === data[i].name);
+                        if (index == -1) {
+                            this.vocabBox.inflections.push({
+                                name: data[i].name,
+                            });
+                            index = this.vocabBox.inflections.length - 1;
+                        }
+                        // add different forms to the item
+                        if (data[i].form == 'aff-plain:') {
+                            this.vocabBox.inflections[index].affPlain = data[i].value;
+                        }
+                        if (data[i].form == 'aff-formal:') {
+                            this.vocabBox.inflections[index].affFormal = data[i].value;
+                        }
+                        if (data[i].form == 'neg-plain:') {
+                            this.vocabBox.inflections[index].negPlain = data[i].value;
+                        }
+                        if (data[i].form == 'neg-formal:') {
+                            this.vocabBox.inflections[index].negFormal = data[i].value;
+                        }
+                    }
+                });
             },
             selectPhraseInstanceByWord: function(wordIndex, phraseIndex) {
                 var currentWordIndex = wordIndex;
@@ -1118,6 +1171,11 @@
                 if (!this.$props.vocabularyHoverBoxSearch) {
                     this.hoverVocabBox.dictionaryTranslation = '';
                     this.hoverVocabBox.deeplTranslation = '';
+                }
+
+                // do not make a search request if a word has been selected 
+                if (this.selection.length) {
+                    return;
                 }
 
                 // do not make search request for empty string

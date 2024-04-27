@@ -12,6 +12,9 @@
                     <li>
                         Added book length to the library table view.
                     </li>
+                    <li>
+                        Added word inflections table for japanese.
+                    </li>
                 </ul>
 
                 <b>Bug fixes:</b>
