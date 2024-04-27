@@ -452,8 +452,8 @@
     }
 
     // search result title color
-    #vocab-box #search-results .search-result .search-result-title, 
-    #vocab-side-box #search-results .search-result .search-result-title {
+    #vocab-box .search-result .search-result-title, 
+    #vocab-side-box .search-result .search-result-title {
         color: var(--v-text-base);
 
         i {
@@ -462,7 +462,7 @@
     }
 
     // search result color
-    #search-results .search-result .search-result-definition:hover {
+    .search-result .search-result-definition:hover {
         color: var(--v-text-base);
         background-color: var(--v-gray2-base);
 
@@ -472,8 +472,8 @@
     }
 
     
-    #search-results .search-result.disabled .search-result-definition:hover,
-    #search-results .search-result.disabled .search-result-definition:hover {
+    .search-result.disabled .search-result-definition:hover,
+    .search-result.disabled .search-result-definition:hover {
         &:hover {
             background-color: var(--v-foreground-base);
             color: var(--v-text-base);
@@ -482,12 +482,12 @@
     }
 
     // search bar result icon color transition
-    #search-results .search-result .search-result-definition i {
+    .search-result .search-result-definition i {
         transition: 0s;
     }
 
     // search bar result icon color
-    #search-results .search-result .search-result-definition:hover i {
+    .search-result .search-result-definition:hover i {
         color: var(--v-textDark-base);
     }
     
