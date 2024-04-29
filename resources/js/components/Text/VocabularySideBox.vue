@@ -43,6 +43,15 @@
                     <v-icon>mdi-list-box</v-icon>
                 </v-btn>
 
+                <v-btn 
+                    v-if="tab == 0 && $props.textToSpeechAvailable"
+                    icon
+                    title="Text to speech"
+                    @click="textToSpeech"
+                >
+                    <v-icon>mdi-bullhorn</v-icon>
+                </v-btn>
+
                 <!-- Send to Anki button -->
                 <v-btn 
                     v-if="tab == 0 && $props.type !== 'new-phrase'"
@@ -291,6 +300,7 @@
             stage: Number,
             inflections: Array,
             deeplEnabled: Boolean,
+            textToSpeechAvailable: Boolean,
             _reading: String,
             _baseWord: String,
             _baseWordReading: String,
@@ -340,6 +350,9 @@
             }
         },
         methods: {
+            textToSpeech() {
+                this.$emit('textToSpeech');
+            },
             searchFieldChanged(event) {
                 if (event === '') {
                     return;

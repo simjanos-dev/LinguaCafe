@@ -319,6 +319,7 @@
             <v-btn icon @click="close" title="Close"><v-icon>mdi-close</v-icon></v-btn>
             <v-btn icon @click="tab = 1;" title="Edit" v-if="tab == 0"><v-icon>mdi-pencil</v-icon></v-btn>
             <v-btn icon @click="addSelectedWordToAnki" v-if="tab === 0 && $props.type !== 'new-phrase'" title="Send to anki"><v-icon class="mr-1">mdi-cards</v-icon></v-btn>
+            <v-btn icon v-if="tab == 0 && $props.textToSpeechAvailable" title="Text to speech" @click="textToSpeech"><v-icon>mdi-bullhorn</v-icon></v-btn>
             <v-btn icon @click="tab = 2;" title="Show inflections" v-if="tab == 0 && $props.inflections.length"><v-icon>mdi-list-box</v-icon></v-btn>
             <v-btn icon @click="tab = 0;" v-if="tab !== 0" title="Back"><v-icon>mdi-arrow-left</v-icon></v-btn>
         </div>
@@ -338,6 +339,7 @@
             stage: Number,
             inflections: Array,
             deeplEnabled: Boolean,
+            textToSpeechAvailable: Boolean,
             _reading: String,
             _baseWord: String,
             _baseWordReading: String,
@@ -372,6 +374,9 @@
         mounted: function() {
         },
         methods: {
+            textToSpeech() {
+                this.$emit('textToSpeech');
+            },
             searchFieldChanged(event) {
                 if (event === '') {
                     return;

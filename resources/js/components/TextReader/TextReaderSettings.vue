@@ -284,6 +284,29 @@
                         </v-slider>
                     </v-col>
                 </v-row>
+
+                <!-- Text to speech section -->
+                <div class="subheader subheader-margin-top d-flex mb-2">
+                    Text to speech
+                </div>
+                
+                <!-- Text to speech -->
+                <v-row v-if="textToSpeechVoices.length">
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">TTS voice:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="textTospeechSelectedVoice"
+                            :items="textToSpeechVoices"
+                            item-text="name"
+                            item-value="name"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
+                    </v-col>
+                </v-row>
             </v-card-text>
 
             <v-card-actions>
@@ -295,10 +318,19 @@
 </template>
 
 <script>
+    import TextToSpeechService from './../../services/TextToSpeechService';
     export default {    
         emits: ['input'],   
         data: function() {
             return {
+                /*
+                    Text to speech settings are handled differently, because they are a separate
+                    setting for every language.
+                */
+                textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.textToSpeechVoicesChanged),
+                textToSpeechVoices: [],
+                textTospeechSelectedVoice: null,
+
                 settingsLoaded: false,
                 cookieNames: {
                     hideAllHighlights: 'hide-all-highlights',
@@ -338,6 +370,7 @@
         },
         props: {
             value : Boolean,
+            language: String,
         },
         mounted() {
             this.loadSetting('hideAllHighlights', 'boolean', false);
@@ -358,8 +391,20 @@
             this.loadSetting('autoHighlightWords', 'boolean', true);
             this.settingsLoaded = true;
             this.saveSettings();
+
+            this.textToSpeechVoicesChanged();
         },
         methods: {
+            textToSpeechVoicesChanged() {
+                // set selected voice
+                var selectedVoice = this.textToSpeechService.getSelectedVoice();
+                if (selectedVoice !== null) {
+                    this.textTospeechSelectedVoice = selectedVoice.name;
+                }
+
+                // get list of voice
+                this.textToSpeechVoices = this.textToSpeechService.getVoiceNames();
+            },
             saveSettings(settingName = '') {
                 if (settingName == 'hideAllHighlights') {
                     this.settings.hideNewWordHighlights = this.settings.hideAllHighlights;
@@ -390,6 +435,12 @@
                 this.saveSetting('vocabularyHoverBoxSearch');
                 this.saveSetting('vocabularyHoverBoxDelay');
                 this.saveSetting('autoHighlightWords');
+
+                // save text to speech
+                if (this.textTospeechSelectedVoice !== null) {
+                    this.$cookie.set(this.$props.language + '-text-to-speech-voice', this.textTospeechSelectedVoice, 3650);
+                }
+
 
                 this.$emit('changed', this.settings);
             },
