@@ -23,8 +23,10 @@
 
             <!-- Settings -->
             <text-reader-settings
+                v-if="language !== null"
                 v-show="dialogs.settings"
                 v-model="dialogs.settings"
+                :language="language"
                 ref="textReaderSettings"
                 @changed="updateSettings"
             ></text-reader-settings>

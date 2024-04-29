@@ -110,9 +110,12 @@
                     <span class="primary--text" style="width: 170px;">Ctrl + d</span><span>Select next new word</span>
                 </div>
 
-                <label class="font-weight-bold mt-4 mb-0">Anki</label>
+                <label class="font-weight-bold mt-4 mb-0">Other</label>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">f</span><span>Send word to anki</span>
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">v</span><span>Text to speech</span>
                 </div>
 
             </v-card-text>

@@ -126,12 +126,14 @@
             :inflections="vocabBox.inflections"
             :auto-highlight-words="$props.autoHighlightWords"
             :deepl-enabled="this.deeplEnabled"
+            :textToSpeechAvailable="textToSpeechAvailable"
             :_reading="vocabBox.reading"
             :_baseWord="vocabBox.baseWord"
             :_baseWordReading="vocabBox.baseWordReading"
             :_phraseReading="vocabBox.phraseReading"
             :_translationText="vocabBox.translationText"
             :_searchField="vocabBox.searchField"
+            @textToSpeech="textToSpeech"
             @setStage="setStage"
             @unselectAllWords="unselectAllWords"
             @updateVocabBoxData="updateVocabBoxData"
@@ -158,12 +160,14 @@
             :inflections="vocabBox.inflections"
             :auto-highlight-words="$props.autoHighlightWords"
             :deepl-enabled="this.deeplEnabled"
+            :textToSpeechAvailable="textToSpeechAvailable"
             :_reading="vocabBox.reading"
             :_baseWord="vocabBox.baseWord"
             :_baseWordReading="vocabBox.baseWordReading"
             :_phraseReading="vocabBox.phraseReading"
             :_translationText="vocabBox.translationText"
             :_searchField="vocabBox.searchField"
+            @textToSpeech="textToSpeech"
             @setStage="setStage"
             @unselectAllWords="unselectAllWords"
             @updateVocabBoxData="updateVocabBoxData"
@@ -175,9 +179,14 @@
 </template>
 
 <script>
+    import TextToSpeechService from './../../services/TextToSpeechService';
     export default {
         data: function() {
             return {
+                // tts
+                textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.updateTextToSpeechState),
+                textToSpeechAvailable: false,
+
                 // text
                 words: [],
                 uniqueWords: this.$props._text.uniqueWords,
@@ -363,6 +372,7 @@
 
             this.updateVocabBoxPositionDelay();
             this.updatePhraseBorders();
+            this.updateTextToSpeechState();
         },
         beforeDestroy() {
             window.removeEventListener('resize', this.updateVocabBoxPositionDelay);
@@ -371,6 +381,32 @@
             window.removeEventListener('mousemove', this.closeHoverBox);
         },
         methods: {
+            textToSpeech() {
+                if (!this.selection.length) {
+                    return;
+                }
+
+                if (this.vocabBox.type === 'word') {
+                    var text = this.vocabBox.reading.length ? this.vocabBox.reading : this.vocabBox.word;
+                } else if (this.vocabBox.type !== 'word' && this.vocabBox.reading.length) {
+                    var text = this.vocabBox.reading;
+                } else {
+                    var text = '';
+
+                    this.vocabBox.phrase.forEach((phraseWord, index) => {
+                        text += phraseWord.word;
+
+                        if (index) {
+                            text += ' ';
+                        }
+                    });
+                }
+
+                this.textToSpeechService.speak(text);
+            },
+            updateTextToSpeechState() {
+                this.textToSpeechAvailable = this.textToSpeechService.getLanguageVoices().length > 0;
+            },
             startSelectionTouchEvent: function(event) {
                 var element = event.target
                 if (event.target.localName === 'ruby') {
@@ -619,6 +655,7 @@
                 }
 
                 this.selection = this.ongoingSelection;
+                this.vocabBox.inflections = [];
                 this.ongoingSelection = [];
 
                 if (this.selection.length) {
@@ -626,15 +663,15 @@
 
                     // update lookup counts
                     if (this.selection.length == 1) {
+                        var inflectionSearchTerm = this.uniqueWords[uniqueWordIndex].base_word.length ? this.uniqueWords[uniqueWordIndex].base_word : this.uniqueWords[uniqueWordIndex].word;
+                        this.requestInflections(inflectionSearchTerm);
                         this.updateWordLookupCount(this.selection[0].word);
                     } else if (this.selectedPhrase !== -1) {
                         this.updatePhraseLookupCount(this.selectedPhrase);
                     }
 
-                    var inflectionSearchTerm = this.uniqueWords[uniqueWordIndex].base_word.length ? this.uniqueWords[uniqueWordIndex].base_word : this.uniqueWords[uniqueWordIndex].word;
                     this.updatePhraseBorders();
                     this.updateVocabBoxDataAfterSelection();
-                    this.requestInflections(inflectionSearchTerm);
                 }
             },
             requestInflections: function(term) {
@@ -643,7 +680,6 @@
                 }
 
                 // search inflections
-                this.vocabBox.inflections = [];
                 axios.post('/dictionary/search/inflections', {
                     term: term
                 }).then((response) => {
@@ -900,6 +936,14 @@
                 }
 
                 switch(event.which) {
+                    // set level to new
+                    case 86:
+                        if (!event.ctrlKey) {
+                            this.textToSpeech();
+                        }
+                        
+                        break;
+
                     // set level to new
                     case 67:
                         if (!event.ctrlKey) {
