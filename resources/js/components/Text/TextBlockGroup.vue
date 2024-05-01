@@ -111,7 +111,7 @@
 
         <!-- Vocabulary popup box -->
         <vocabulary-box
-            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active"
+            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active && !vocabBox.vocabularyBottomSheet"
             ref="vocabularyBox"
             :language="$props.language"
             :active="vocabBox.active"
@@ -141,6 +141,41 @@
             @deletePhrase="deletePhrase"
             @addSelectedWordToAnki="addSelectedWordToAnki"
         ></vocabulary-box>
+
+        <v-bottom-sheet
+            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active && vocabBox.vocabularyBottomSheet"
+            v-model="vocabBox.active"
+            persistent
+            scrollable
+        >
+            <vocabulary-bottom-sheet
+                :key="'vocab-bottom-sheet' + vocabBox.key"
+                :language="$props.language"
+                :active="vocabBox.active"
+                :type="vocabBox.type"
+                :kanjiList="vocabBox.kanjiList"
+                :word="vocabBox.word"
+                :phrase="vocabBox.phrase"
+                :stage="vocabBox.stage"
+                :inflections="vocabBox.inflections"
+                :auto-highlight-words="$props.autoHighlightWords"
+                :deepl-enabled="this.deeplEnabled"
+                :textToSpeechAvailable="textToSpeechAvailable"
+                :_reading="vocabBox.reading"
+                :_baseWord="vocabBox.baseWord"
+                :_baseWordReading="vocabBox.baseWordReading"
+                :_phraseReading="vocabBox.phraseReading"
+                :_translationText="vocabBox.translationText"
+                :_searchField="vocabBox.searchField"
+                @textToSpeech="textToSpeech"
+                @setStage="setStage"
+                @unselectAllWords="unselectAllWords"
+                @updateVocabBoxData="updateVocabBoxData"
+                @addNewPhrase="addNewPhrase"
+                @deletePhrase="deletePhrase"
+                @addSelectedWordToAnki="addSelectedWordToAnki"
+            ></vocabulary-bottom-sheet>
+        </v-bottom-sheet>
 
         <!--Vocabulary sidebar-->
         <vocabulary-side-box
@@ -229,6 +264,7 @@
                         a text is opened.
                     */
                     sidebarHidden: true,
+                    vocabularyBottomSheet: true,
                     
 
                     active: false,
@@ -352,7 +388,7 @@
         mounted() {
             this.preProcessWords();
             window.addEventListener('resize', this.updateVocabBoxPositionDelay);
-            window.addEventListener('mouseup', this.unselectAllWords);
+            window.addEventListener('mouseup', this.unselectAllWordsOnEmptyClick);
             window.addEventListener('keydown', this.hotkeyHandle);
             window.addEventListener('mousemove', this.closeHoverBox);
 
@@ -376,7 +412,7 @@
         },
         beforeDestroy() {
             window.removeEventListener('resize', this.updateVocabBoxPositionDelay);
-            window.removeEventListener('mouseup', this.unselectAllWords);
+            window.removeEventListener('mouseup', this.unselectAllWordsOnEmptyClick);
             window.removeEventListener('keydown', this.hotkeyHandle);
             window.removeEventListener('mousemove', this.closeHoverBox);
         },
@@ -1302,6 +1338,13 @@
                         this.hoverVocabBox.deeplTranslation = 'DeepL error';
                     });
                 }
+            },
+            unselectAllWordsOnEmptyClick(event) {
+                if (event.target.classList.contains('v-overlay__scrim')) {
+                    return;
+                }
+
+                this.unselectAllWords();
             },
             unselectAllWords() {
                 if (this.selection.length == 1) {

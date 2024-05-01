@@ -15,6 +15,7 @@
 @import 'Text/VocabularyBox';
 @import 'Text/VocabularyHoverBox';
 @import 'Text/VocabularySideBox';
+@import 'Text/VocabularyBottomSheet';
 @import 'Text/VocabularySearchBox';
 @import 'TextReader/TextReader';
 @import 'TextReader/TextReaderChapterList';
@@ -122,7 +123,8 @@
 }
 
 // vocabulary edit stage buttons
-#vocabulary-edit-stage-buttons {
+#vocabulary-edit-stage-buttons,
+#vocabulary-bottom-sheet-stage-buttons {
     button.v-btn.theme--light {
         background-color: var(--v-foreground-base);
         border-color: var(--v-foreground-base);
