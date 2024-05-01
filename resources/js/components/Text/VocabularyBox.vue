@@ -12,18 +12,7 @@
             'width': $props.width + 'px'
         }"
         @mouseup.stop=";"
-    >
-        <v-overlay 
-            v-if="active && phraseCurrentlySaving"
-            class="text-center rounded-lg" 
-            absolute 
-            :value="phraseCurrentlySaving" 
-            opacity="0.6" 
-        >
-            <span class="h5">Saving phrase, please wait a second.</span><br><br>
-            <v-progress-circular indeterminate size="64" color="white"></v-progress-circular>
-        </v-overlay>
-        
+    >   
         <!-- Vocab box content -->
         <div class="vocab-box-content pa-4 pb-1">
             <v-tabs-items v-model="tab">
@@ -352,9 +341,6 @@
         },
         data: function() {
             return {
-                //temp, to be reviewed
-                phraseCurrentlySaving: false,
-
                 // data for word
                 reading: this.$props._reading,
                 baseWord: this.$props._baseWord,

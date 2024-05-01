@@ -105,3 +105,19 @@
         }
     }
 }
+
+#vocab-bottom-sheet {
+    #vocabulary-search-box {
+        height: unset;
+        border: none !important;
+
+        div.v-input {
+            flex: unset;
+        }
+        
+        #search-results {
+            overflow-y: scroll;
+            flex: 1;
+        }
+    }
+}

@@ -396,6 +396,71 @@
     }
 }
 
+// vocab box active stage button
+#app.dark #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active, 
+#app.dark #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active,
+#app.dark #vocabulary-bottom-sheet-stage-buttons .v-btn.v-btn--active {
+    background-color: var(--v-primary-base) !important;
+    border-color: var(--v-primary-base) !important;
+    color: var(--v-textDark-base) !important;
+    
+    i {
+        color: var(--v-textDark-base) !important;
+    }
+
+    &::before {
+        display: none !important;
+    }
+}
+
+// vocab box stage buttons border
+#app.dark #vocab-box #vocab-box-stage-buttons .v-btn,
+#app.dark #vocab-side-box #vocab-box-stage-buttons .v-btn,
+#app.dark #vocabulary-bottom-sheet-stage-buttons .v-btn {
+    background-color: var(--v-gray-base);
+    
+    color: var(--v-text-base) !important;
+}
+
+// search result color
+#app.dark .search-result .search-result-definition:hover {
+    color: var(--v-text-base);
+    background-color: var(--v-gray2-base);
+
+    i {
+        color: var(--v-text-base) !important;
+    }
+}
+
+
+#app.dark .search-result.disabled .search-result-definition:hover,
+#app.dark .search-result.disabled .search-result-definition:hover {
+    &:hover {
+        background-color: var(--v-foreground-base);
+        color: var(--v-text-base);
+        cursor: default;
+    }
+}
+
+// search bar result icon color transition
+.search-result .search-result-definition i {
+    transition: 0s;
+}
+
+// search bar result icon color
+.search-result .search-result-definition:hover i {
+    color: var(--v-textDark-base) !important;
+}
+
+// search result title color
+.search-result .search-result-title {
+    color: var(--v-text-base) !important;
+
+    i {
+        color: var(--v-textDark-base) !important;
+    }
+}
+
 // text block
 #app.dark .text-block-group {
 
@@ -449,71 +514,6 @@
     // vocab box lemma arrow
     #vocab-box .expression i {
         color: var(--v-text-base);
-    }
-
-    // search result title color
-    #vocab-box .search-result .search-result-title, 
-    #vocab-side-box .search-result .search-result-title {
-        color: var(--v-text-base);
-
-        i {
-            color: var(--v-textDark-base);
-        }
-    }
-
-    // search result color
-    .search-result .search-result-definition:hover {
-        color: var(--v-text-base);
-        background-color: var(--v-gray2-base);
-
-        i {
-            color: var(--v-text-base) !important;
-        }
-    }
-
-    
-    .search-result.disabled .search-result-definition:hover,
-    .search-result.disabled .search-result-definition:hover {
-        &:hover {
-            background-color: var(--v-foreground-base);
-            color: var(--v-text-base);
-            cursor: default;
-        }
-    }
-
-    // search bar result icon color transition
-    .search-result .search-result-definition i {
-        transition: 0s;
-    }
-
-    // search bar result icon color
-    .search-result .search-result-definition:hover i {
-        color: var(--v-textDark-base);
-    }
-    
-
-    // vocab box stage buttons border
-    #vocab-box #vocab-box-stage-buttons .v-btn,
-    #vocab-side-box #vocab-box-stage-buttons .v-btn {
-        background-color: var(--v-gray-base);
-        
-        color: var(--v-text-base) !important;
-    }
-
-    // vocab box active stage button
-    #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active, 
-    #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active {
-        background-color: var(--v-primary-base) !important;
-        border-color: var(--v-primary-base) !important;
-        color: var(--v-textDark-base) !important;
-        
-        i {
-            color: var(--v-textDark-base) !important;
-        }
-
-        &::before {
-            display: none !important;
-        }
     }
 
     // text highlighting
