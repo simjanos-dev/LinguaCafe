@@ -13,7 +13,13 @@
                         Added book length to the library table view.
                     </li>
                     <li>
-                        Added word inflections table for japanese.
+                        Added word inflections table for Japanese.
+                    </li>
+                    <li>
+                        Added text to speech option for text reader.
+                    </li>
+                    <li>
+                        Added bottom sheet vocabulary for mobile view.
                     </li>
                 </ul>
 

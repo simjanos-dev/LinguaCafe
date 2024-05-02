@@ -226,7 +226,32 @@
                         ></v-switch>
                     </v-col>
                 </v-row>
-                
+
+                <!-- Vocabulary bottom sheet -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">
+                        Vocabulary bottom sheet:
+                    </v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <!-- Vocabulary sidebar info box -->
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                A bottom sheet vocabulary designed for mobile screens, that replaces the popup vocabulary. <br><br>
+                                This option is only available for devices with less than or equal to 768px screen width. 
+                            </v-card>
+                        </v-menu>
+
+                        <v-switch
+                            color="primary"
+                            v-model="settings.vocabularyBottomSheet" 
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
                 <!-- Vocabulary hover box section-->
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Vocabulary hover box
@@ -345,6 +370,7 @@
                     furiganaOnHighlightedWords: 'furigana-on-highlighted-words',
                     furiganaOnNewWords: 'furigana-on-new-words',
                     vocabularySidebar: 'vocabulary-sidebar',
+                    vocabularyBottomSheet: 'vocabulary-bottom-sheet',
                     vocabularyHoverBox: 'vocabulary-hover-box',
                     vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
@@ -385,6 +411,7 @@
             this.loadSetting('furiganaOnHighlightedWords', 'boolean', false);
             this.loadSetting('furiganaOnNewWords', 'boolean', false);
             this.loadSetting('vocabularySidebar', 'boolean', true);
+            this.loadSetting('vocabularyBottomSheet', 'boolean', true);
             this.loadSetting('vocabularyHoverBox', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
@@ -431,6 +458,7 @@
                 this.saveSetting('furiganaOnHighlightedWords');
                 this.saveSetting('furiganaOnNewWords');
                 this.saveSetting('vocabularySidebar');
+                this.saveSetting('vocabularyBottomSheet');
                 this.saveSetting('vocabularyHoverBox');
                 this.saveSetting('vocabularyHoverBoxSearch');
                 this.saveSetting('vocabularyHoverBoxDelay');
