@@ -17,10 +17,10 @@
             "type": "image/png",
             "sizes": "512x512"
         }
-        ],
-        "start_url": "/",
-        "background_color": "#F2F3F5",
-        "display": "standalone",
+    ],
+    "start_url": "/",
+    "background_color": "#F2F3F5",
+    "display": "standalone",
     "scope": "/",
     "theme_color": "#C5947D",
     "description": "Foreign language reader"
