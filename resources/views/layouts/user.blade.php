@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <link href="/css/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="manifest" href="./manifest.json"> 
+    <link rel="manifest" href="/manifest.json"> 
     
     @if ($theme === 'dark')
         <meta name="theme-color" content="#28272C" />
