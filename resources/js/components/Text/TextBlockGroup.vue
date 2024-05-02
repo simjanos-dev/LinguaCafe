@@ -111,7 +111,7 @@
 
         <!-- Vocabulary popup box -->
         <vocabulary-box
-            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active && !vocabBox.vocabularyBottomSheet"
+            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active && (!$props.vocabularyBottomSheet || !vocabBox.vocabularyBottomSheetVisible)"
             ref="vocabularyBox"
             :language="$props.language"
             :active="vocabBox.active"
@@ -143,7 +143,12 @@
         ></vocabulary-box>
 
         <v-bottom-sheet
-            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active && vocabBox.vocabularyBottomSheet"
+            v-if="
+                (!$props.vocabularySidebar || !$props.vocabularySidebarFits) 
+                && vocabBox.active 
+                && $props.vocabularyBottomSheet 
+                && vocabBox.vocabularyBottomSheetVisible
+            "
             v-model="vocabBox.active"
             persistent
             scrollable
@@ -235,6 +240,8 @@
                 ankiAutoAddCards: false,
                 ankiShowNotifications: false,
                 deeplEnabled: false,
+
+                // hover vocabulary box
                 hoverVocabBox: {
                     hoverVocabularyDelayTimeout: null,
                     dictionarySearchTerm: '',
@@ -251,7 +258,10 @@
                     positionLeft: 0,
                     positionTop: 0,
                 },
+
+                // vocabulary box
                 vocabBox: {
+                    vocabularyBottomSheetVisible: false,
                     /*
                         This is required because sidebar is always visible, and it does not re-render
                         when active is changed.
@@ -264,9 +274,6 @@
                         a text is opened.
                     */
                     sidebarHidden: true,
-                    vocabularyBottomSheet: true,
-                    
-
                     active: false,
 
                     // inflections table
@@ -360,6 +367,10 @@
                 type: Boolean,
                 default: false
             },
+            vocabularyBottomSheet: {
+                type: Boolean,
+                default: false
+            },
             vocabularySidebarFits: {
                 type: Boolean,
                 default: true
@@ -387,7 +398,7 @@
         },
         mounted() {
             this.preProcessWords();
-            window.addEventListener('resize', this.updateVocabBoxPositionDelay);
+            window.addEventListener('resize', this.resizeHandle);
             window.addEventListener('mouseup', this.unselectAllWordsOnEmptyClick);
             window.addEventListener('keydown', this.hotkeyHandle);
             window.addEventListener('mousemove', this.closeHoverBox);
@@ -406,12 +417,12 @@
                 this.deeplEnabled = response.data;
             });
 
-            this.updateVocabBoxPositionDelay();
+            this.resizeHandle();
             this.updatePhraseBorders();
             this.updateTextToSpeechState();
         },
         beforeDestroy() {
-            window.removeEventListener('resize', this.updateVocabBoxPositionDelay);
+            window.removeEventListener('resize', this.resizeHandle);
             window.removeEventListener('mouseup', this.unselectAllWordsOnEmptyClick);
             window.removeEventListener('keydown', this.hotkeyHandle);
             window.removeEventListener('mousemove', this.closeHoverBox);
@@ -1264,7 +1275,7 @@
                 }
 
                 this.vocabBox.key ++;
-                this.updateVocabBoxPositionDelay();
+                this.resizeHandle();
                 this.hoverVocabBox.disabledWhileSelecting = false;
             },
             clearHoverVocabularyBoxTimeout() {
@@ -1536,7 +1547,7 @@
                 this.selectedPhrase = this.getSelectedPhraseIndex();
 
                 this.updateSelectedWordStage();
-                this.updateVocabBoxPositionDelay();
+                this.resizeHandle();
                 this.savePhrase();
                 this.vocabBox.type = 'phrase';
             },
@@ -1866,7 +1877,10 @@
                     exampleSentenceWords: JSON.stringify(exampleSentence),
                 });
             },
-            updateVocabBoxPositionDelay() {
+            resizeHandle() {
+                // update bottom sheet vocabulary
+                this.vocabBox.vocabularyBottomSheetVisible = window.innerWidth <= 768;
+
                 this.$nextTick(() => {
                     this.updateVocabBoxPosition();
                 });
