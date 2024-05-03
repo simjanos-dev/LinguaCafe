@@ -7,6 +7,12 @@
             'chinese-font': language == 'chinese'
         }"
     >
+        <!-- Delete phrase dialog -->
+        <delete-phrase-dialog 
+            v-model="deletePhraseDialog"
+            @confirm="deletePhrase"
+        />
+
         <!-- Anki api notifications -->
         <v-snackbar
             v-for="(snackBar, snackBarIndex) in snackBars"
@@ -142,6 +148,7 @@
             @addSelectedWordToAnki="addSelectedWordToAnki"
         ></vocabulary-box>
 
+        <!-- Vocabulary bottom sheet -->
         <v-bottom-sheet
             v-if="
                 (!$props.vocabularySidebar || !$props.vocabularySidebarFits) 
@@ -177,7 +184,7 @@
                 @unselectAllWords="unselectAllWords"
                 @updateVocabBoxData="updateVocabBoxData"
                 @addNewPhrase="addNewPhrase"
-                @deletePhrase="deletePhrase"
+                @showDeletePhraseDialog="showDeletePhraseDialog"
                 @addSelectedWordToAnki="addSelectedWordToAnki"
             ></vocabulary-bottom-sheet>
         </v-bottom-sheet>
@@ -223,6 +230,9 @@
     export default {
         data: function() {
             return {
+                // dialogs
+                deletePhraseDialog: false,
+
                 // tts
                 textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.updateTextToSpeechState),
                 textToSpeechAvailable: false,
@@ -1569,11 +1579,15 @@
 
                 return phraseIndex;
             },
+            showDeletePhraseDialog() {
+                this.deletePhraseDialog = true;
+            },
             deletePhrase() {
                 if (this.selectedPhrase == -1) {
                     return;
                 }
-
+                
+                this.deletePhraseDialog = false;
                 var deletedPhraseId = this.phrases[this.selectedPhrase].id;
                 var deletedPhraseIndex = this.phrases.map(e => e.id).indexOf(deletedPhraseId);
 
@@ -1605,6 +1619,7 @@
 
                 this.selectedPhrase = -1;
                 this.selection = [];
+                this.removePhraseHover();
                 this.unselectAllWords();
                 this.updatePhraseBorders();
             },

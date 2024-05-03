@@ -89,6 +89,7 @@ import VocabularyBottomSheet from './components/Text/VocabularyBottomSheet.vue';
 import VocabularyHoverBox from './components/Text/VocabularyHoverBox.vue';
 import VocabularySideBox from './components/Text/VocabularySideBox.vue';
 import VocabularySearchBox from './components/Text/VocabularySearchBox.vue';
+import DeletePhraseDialog from './components/Text/DeletePhraseDialog.vue';
 Vue.component('text-block', TextBlock);
 Vue.component('text-block-group', TextBlockGroup);
 Vue.component('vocabulary-box', VocabularyBox);
@@ -96,6 +97,7 @@ Vue.component('vocabulary-bottom-sheet', VocabularyBottomSheet);
 Vue.component('vocabulary-hover-box', VocabularyHoverBox);
 Vue.component('vocabulary-side-box', VocabularySideBox);
 Vue.component('vocabulary-search-box', VocabularySearchBox);
+Vue.component('delete-phrase-dialog', DeletePhraseDialog);
 
 // text reader
 import TextReaderSettings from './components/TextReader/TextReaderSettings.vue';
