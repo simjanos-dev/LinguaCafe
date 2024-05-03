@@ -26,6 +26,9 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
+                        Added missing kanji images. Now you can see the kanji stroke order and writing animation on the kanji info pages.
+                    </li>
+                    <li>
                         Book word counts now update after importing something.
                     </li>
                     <li>
