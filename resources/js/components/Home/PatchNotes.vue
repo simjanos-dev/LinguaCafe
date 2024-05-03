@@ -59,6 +59,9 @@
                     <li>
                         The import dialog won't close by itself anymore after importing has finished.
                     </li>
+                    <li>
+                        Laravel now produces more detailed logs, and logs both to the log file and the docker terminal.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>
