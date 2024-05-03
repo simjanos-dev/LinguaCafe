@@ -119,7 +119,7 @@
         mounted() {
             this.dmak = new Dmak(this.kanji, {
                 element : 'character-dmak',
-                uri: '/js/dmak/kanji/',
+                uri: '/images/kanji/',
                 step: 0.01,
                 grid: {
                     show: false

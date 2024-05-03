@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
+// form requests
 use App\Http\Requests\Image\GetBookImageRequest;
+use App\Http\Requests\Image\GetKanjiImageRequest;
 
 // services
 use App\Services\ImageService;
@@ -26,6 +30,11 @@ class ImageController extends Controller
             abort(500, $e->getMessage());
         }
         
+        return response()->file($imagePath);
+    }
+
+    public function getKanjiImage($fileName, GetKanjiImageRequest $request) {
+        $imagePath = Storage::path('/images/kanjivg/' . $fileName);
         return response()->file($imagePath);
     }
 }
