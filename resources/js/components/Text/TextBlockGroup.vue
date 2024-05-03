@@ -542,15 +542,15 @@
                 }
 
                 if (wordIndex === -1) {
+                    if (wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
+                        this.closeHoverBox();
+                    }
+
                     return;
                 }
                 
                 if (event.buttons === 0 && wordIndex === -1 || wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
                     this.removePhraseHover();
-                }
-
-                if (wordIndex === -1 && wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
-                    this.closeHoverBox();
                 }
 
                 if (wordIndex === -1) {
