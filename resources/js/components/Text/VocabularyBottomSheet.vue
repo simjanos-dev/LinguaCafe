@@ -326,7 +326,7 @@ export default {
                 this.$emit('addNewPhrase');
             },
             deletePhrase() {
-                this.$emit('deletePhrase');
+                this.$emit('showDeletePhraseDialog');
             },
             updateVocabBoxTranslationList() {
                 this.translationList = this.$props._translationText.split(';');
