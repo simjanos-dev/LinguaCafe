@@ -66,6 +66,14 @@ class VocabularyService {
         $phrase->translation = $translation;
         $phrase->words = json_encode($words);
 
+        if (!is_array($words)) {
+            throw new \Exception('Words parameter must be an array!');
+        }
+
+        if (!count($words)) {
+            throw new \Exception('Words parameter must not be empty!');
+        }
+
         if (in_array($language, $languagesWithoutSpaces, true)) {
             $phrase->words_searchable = implode('', $words);
         } else {
@@ -131,6 +139,14 @@ class VocabularyService {
     }
 
     public function updatePhrase($userId, $phraseId, $phraseData, $phraseStage = null) {
+        
+        /*
+            Unset words in case it somehow ended up in the array, because
+            it is also a fillable property, but should not be changed after
+            the phrase was created.
+        */
+        unset($phraseData['words']);
+
         $phrase = Phrase
             ::where('user_id', $userId)
             ->where('id', $phraseId)

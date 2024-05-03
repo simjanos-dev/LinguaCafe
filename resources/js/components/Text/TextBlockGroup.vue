@@ -1639,13 +1639,13 @@
 
                 var url = '/vocabulary/phrases/update';
                 var saveData = {
-                    words: JSON.stringify(this.phrases[this.selectedPhrase].words),
                     reading: this.phrases[this.selectedPhrase].reading,
                     translation: this.phrases[this.selectedPhrase].translation,
                     lookup_count: this.phrases[this.selectedPhrase].lookup_count,
                 };
 
                 if (this.phrases[this.selectedPhrase].id === -1) {
+                    saveData.words = JSON.stringify(this.phrases[this.selectedPhrase].words);
                     saveData.stage = this.phrases[this.selectedPhrase].stage;
                     url = '/vocabulary/phrases/create';
                 } else {
