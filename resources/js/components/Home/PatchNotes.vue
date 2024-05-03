@@ -16,7 +16,7 @@
                         Added word inflections table for Japanese.
                     </li>
                     <li>
-                        Added text to speech option for text reader.
+                        Added text to speech option for the text reader.
                     </li>
                     <li>
                         Added bottom sheet vocabulary for mobile view.
@@ -51,6 +51,9 @@
                     </li>
                     <li>
                         Copying a selected word with ctrl+c won't set the word's level to new anymore.
+                    </li>
+                    <li>
+                        It is now impossible to create a phrase without any words, which would corrupt the database.
                     </li>
                 </ul>
 
