@@ -4,10 +4,11 @@
             <v-tab>Users</v-tab>
             <v-tab>Languages</v-tab>
             <v-tab>Dictionaries</v-tab>
+            <v-tab>Fonts</v-tab>
             <v-tab>API</v-tab>
             <v-tab>Reviews</v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab" id="admin-tab-items" elevation="0" class="rounded-lg mt-4 pa-6">
+        <v-tabs-items v-model="tab" id="admin-tab-items" elevation="0" class="no-background rounded-lg mt-4 pa-6">
             <v-tab-item :value="0">
                 <admin-user-settings></admin-user-settings>
             </v-tab-item>
@@ -18,9 +19,12 @@
                 <admin-dictionary-settings :language="$props.language"></admin-dictionary-settings>
             </v-tab-item>
             <v-tab-item :value="3">
-                <admin-api-settings></admin-api-settings>
+                <admin-font-type-settings></admin-font-type-settings>
             </v-tab-item>
             <v-tab-item :value="4">
+                <admin-api-settings></admin-api-settings>
+            </v-tab-item>
+            <v-tab-item :value="5">
                 <admin-review-settings></admin-review-settings>
             </v-tab-item>
         </v-tabs-items>
@@ -41,13 +45,15 @@
                     'users': 0,
                     'languages': 1,
                     'dictionaries': 2,
-                    'api': 3,
-                    'reviews': 4,
+                    'font-types': 3,
+                    'api': 4,
+                    'reviews': 5,
                 },
                 tabUrls: [
                     'users',
                     'languages',
                     'dictionaries',
+                    'font-types',
                     'api',
                     'reviews',
                 ]
