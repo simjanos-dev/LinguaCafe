@@ -87,7 +87,9 @@
 }
 
 // tab item
-.v-window.v-item-group, .v-window-item, .v-window__container {
+.v-window.v-item-group:not(.no-background), 
+.v-window:not(.no-background) .v-window-item, 
+.v-window:not(.no-background).v-window__container {
     background-color: var(--v-foreground-base);
 }
 

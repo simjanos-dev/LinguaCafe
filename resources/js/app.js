@@ -147,6 +147,7 @@ Vue.component('user-settings-themes', UserSettingsThemes);
 
 // admin settings
 import AdminUserSettings from './components/Admin/AdminUserSettings';
+import AdminFontTypeSettings from './components/Admin/AdminFontTypeSettings';
 import AdminLanguageSettings from './components/Admin/AdminLanguageSettings';
 import AdminInstallLanguageDialog from './components/Admin/AdminInstallLanguageDialog';
 import AdminUninstallLanguagesDialog from './components/Admin/AdminUninstallLanguagesDialog';
@@ -161,6 +162,7 @@ import AdminEditUserDialog from './components/Admin/AdminEditUserDialog';
 import AdminReviewSettings from './components/Admin/AdminReviewSettings';
 Vue.component('admin-user-settings', AdminUserSettings);
 Vue.component('admin-language-settings', AdminLanguageSettings);
+Vue.component('admin-font-type-settings', AdminFontTypeSettings);
 Vue.component('admin-install-language-dialog', AdminInstallLanguageDialog);
 Vue.component('admin-uninstall-languages-dialog', AdminUninstallLanguagesDialog);
 Vue.component('admin-dictionary-settings', AdminDictionarySettings);

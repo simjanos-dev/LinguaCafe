@@ -21,6 +21,9 @@
                     <li>
                         Added bottom sheet vocabulary for mobile view.
                     </li>
+                    <li>
+                        Added font type management system.
+                    </li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -30,6 +33,9 @@
                     </li>
                     <li>
                         Book word counts now update after importing something.
+                    </li>
+                    <li>
+                        Hover vocabulary now disappears when the user moves their mouse pointer to empty space.
                     </li>
                     <li>
                         Importing texts now skips too long words instead of throwing an error.
