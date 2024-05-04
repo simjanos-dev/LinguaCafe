@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SettingsSeeder::class,
             DictionarySeeder::class,
+            FontTypeSeeder::class,
         ]);
     }
 }

@@ -14,6 +14,7 @@
                     <span class="text-h5">Edit user</span>
                 </template>
 
+                <!-- Close button -->
                 <v-spacer />
                 <v-btn icon @click="close">
                     <v-icon>mdi-close</v-icon>

@@ -22,6 +22,9 @@
                         Added bottom sheet vocabulary for mobile view.
                     </li>
                     <li>
+                        Added progressive web app support. Now users can use LinguaCafe as a full screen mobile app.
+                    </li>
+                    <li>
                         Added font type management system.
                     </li>
                 </ul>
@@ -29,7 +32,7 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Added missing kanji images. Now you can see the kanji stroke order and writing animation on the kanji info pages.
+                        Added missing kanji images. Now users can see the kanji stroke order and writing animation on the kanji info pages.
                     </li>
                     <li>
                         Book word counts now update after importing something.
