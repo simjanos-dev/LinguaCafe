@@ -79,6 +79,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     // user manual
     Route::get('/manual/get-menu-tree', [App\Http\Controllers\HomeController::class, 'getUserManualTree']);
     Route::get('/manual/get-manual-file/{fileName}', [App\Http\Controllers\HomeController::class, 'getUserManualFile']);
+    
+    // fonts
+    Route::get ('/fonts/get', [App\Http\Controllers\FontTypeController::class, 'getInstalledFontTypes']);
+    Route::post('/fonts/upload', [App\Http\Controllers\FontTypeController::class, 'uploadFontType']);
 
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);
