@@ -56,4 +56,23 @@ class FontTypeService {
 
         return true;
     }
+
+    public function deleteFontType($fontId) {
+        $fontType = FontType
+            ::where('default', false)
+            ->where('id', $fontId)
+            ->first();
+
+        if (!$fontType) {
+            throw new \Exception('Font not found.');
+        }
+
+        // delete file
+        Storage::delete('fonts/' . $fontType->filename);
+
+        // delete database record
+        $fontType->delete();
+
+        return true;
+    }
 }
