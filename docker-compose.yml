@@ -1,4 +1,3 @@
-version: "3"
 name: linguacafe
 
 networks:
@@ -13,7 +12,7 @@ services:
         depends_on:
             - mysql
         volumes:
-            - ./storage:/var/www/html/storage
+            - storage:/var/www/html/storage
         environment:
             DB_DATABASE: ${DB_DATABASE:-linguacafe}
             DB_USERNAME: ${DB_USERNAME:-linguacafe}
@@ -49,7 +48,15 @@ services:
         environment:
             PYTHONPATH: "/var/www/html/storage/app/model"
         volumes:
-            - ./storage:/var/www/html/storage
+            - storage:/var/www/html/storage
         networks:
             - linguacafe
         platform: ${PLATFORM:-}
+
+volumes:
+  storage:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: ${STORAGE_FOLDER:-./storage}
