@@ -8,6 +8,7 @@ use App\Services\FontTypeService;
 // request classes
 use App\Http\Requests\FontTypes\UploadFontTypeRequest;
 use App\Http\Requests\FontTypes\UpdateFontTypeRequest;
+use App\Http\Requests\FontTypes\DeleteFontTypeRequest;
 
 class FontTypeController extends Controller {
     private $fontTypeService;
@@ -52,5 +53,17 @@ class FontTypeController extends Controller {
         }
 
         return response()->json('Font type file has been updated successfully.', 200);
+    }
+
+    public function deleteFontType(DeleteFontTypeRequest $request) {
+        $fontId = $request->post('id');
+
+        try {
+            $this->fontTypeService->deleteFontType($fontId);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json('Font type file has been deleted successfully.', 200);
     }
 }

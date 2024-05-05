@@ -12,6 +12,14 @@
             @fonts-changed="loadFonts"
         />
 
+        <!-- Delete font type dialog -->
+        <admin-delete-font-type-dialog 
+            v-if="deleteFontTypeDialog.active"
+            v-model="deleteFontTypeDialog.active"
+            :id="deleteFontTypeDialog.id"
+            @fonts-changed="loadFonts"
+        />
+
         <!-- Title subheader -->
         <div class="d-flex subheader mt-4 mb-4 px-2 ">
             Fonts
@@ -57,7 +65,7 @@
                             depressed 
                             icon
                             color="error"
-                            @click=";"
+                            @click="deleteFont(fontIndex)"
                         >
                             <v-icon>mdi-delete</v-icon>
                         </v-btn>
@@ -78,6 +86,10 @@
                     name: '',
                     languages: [],
                     default: false,
+                },
+                deleteFontTypeDialog: {
+                    active: false,
+                    id: -1,
                 },
                 supportedlanguages: [],
                 loading: false,
@@ -103,6 +115,10 @@
                 this.editFontTypeDialog.name = '';
                 this.editFontTypeDialog.languages = [];
                 this.editFontTypeDialog.default = false;
+            },
+            deleteFont(index) {
+                this.deleteFontTypeDialog.active = true;
+                this.deleteFontTypeDialog.id = this.fonts[index].id;
             },
             loadFonts() {
                 this.loading = true;
