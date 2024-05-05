@@ -62,7 +62,7 @@
                 });
             },
             deleteFlashcardCollection: function(flashcardCollectionId) {
-                if(confirm('Are you sure you want to delete this collection?')) {
+                if(confirm('Do you want to delete this collection?')) {
                     axios.post('/flashcards/delete', {
                         flashcardCollectionId: flashcardCollectionId
                     }).then(function (response) {
