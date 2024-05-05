@@ -7,6 +7,7 @@ use App\Services\FontTypeService;
 
 // request classes
 use App\Http\Requests\FontTypes\UploadFontTypeRequest;
+use App\Http\Requests\FontTypes\UpdateFontTypeRequest;
 
 class FontTypeController extends Controller {
     private $fontTypeService;
@@ -31,11 +32,25 @@ class FontTypeController extends Controller {
         $fontLanguages = $request->post('languages');
 
         try {
-            $this->fontTypeService->uploadfontType($fontFile, $fontName, $fontLanguages);
+            $this->fontTypeService->uploadFontType($fontFile, $fontName, $fontLanguages);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
         return response()->json('Font type file has been uploaded successfully.', 200);
+    }
+
+    public function updateFontType(UpdateFontTypeRequest $request) {
+        $fontId = $request->post('id');
+        $fontName = $request->post('name');
+        $fontLanguages = $request->post('languages');
+
+        try {
+            $this->fontTypeService->updateFontType($fontId, $fontName, $fontLanguages);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json('Font type file has been updated successfully.', 200);
     }
 }

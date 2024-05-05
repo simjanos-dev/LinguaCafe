@@ -1,6 +1,6 @@
 <template>
-    <v-dialog v-model="value" persistent max-width="600px" height="300px" scrollable>
-        <v-card class="rounded-lg">
+    <v-dialog v-model="value" persistent max-width="800px" height="300px" scrollable>
+        <v-card class="rounded-lg" :loading="saving">
             <!-- Card title -->
             <v-card-title>
                 <!-- Upload font title -->
@@ -22,11 +22,11 @@
 
             <!-- Card content-->
             <v-card-text>
-                <v-form ref="fontForm">
+                <v-form ref="fontForm" v-if="saveResult !== 'success'">
                     <!-- Font file -->
                     <label class="font-weight-bold" v-if="$props.id === -1">Font file</label><br>
                     <v-file-input
-                        v-show="$props.id === -1"
+                        v-if="$props.id === -1"
                         v-model="fontFile"
                         filled
                         dense
@@ -35,6 +35,7 @@
                         accept=".otf,.ttf,.woff,.woff2"
                         placeholder="Font file"
                         prepend-icon="mdi-file"
+                        :disabled="saving"
                         :rules="[rules.fontFileRule]"
                         @change="validateForm"
                     ></v-file-input>
@@ -47,7 +48,7 @@
                         dense
                         rounded
                         placeholder="Font name"
-                        :disabled="$props.default"
+                        :disabled="$props.default || saving"
                         :rules="[rules.fontName]"
                         @keyup="validateForm"
                     ></v-text-field>
@@ -63,36 +64,73 @@
                             hide-details
                             dense
                             :label="language.name"
-                            :disabled="$props.default"
+                            :disabled="$props.default || saving"
                         ></v-checkbox>
                     </div>
                 </v-form>
+
+                <!-- Success message -->
+                <v-alert
+                    v-if="!saving && saveResult == 'success'"
+                    class="rounded-lg mb-2 w-100"
+                    color="success"
+                    type="success"
+                    border="left"
+                    dark
+                >
+                    Font type has been {{ $props.id === -1 ? 'uploaded' : 'saved'  }} successfully.
+                </v-alert>
             </v-card-text>
 
             <!-- Card actions -->
-            <v-card-actions>
+            <v-card-actions class="flex-wrap">
+                <!-- Error message -->
+                <v-alert
+                    v-if="!saving && saveResult == 'error'"
+                    class="rounded-lg mb-2 w-100"
+                    color="error"
+                    type="error"
+                    border="left"
+                    dark
+                >
+                    An error has occured while {{ $props.id === -1 ? 'uploading' : 'saving'  }} the font type.
+                </v-alert>
+
                 <!-- Select all checkbox -->
                 <v-checkbox 
+                    v-if="saveResult !== 'success'"
                     class="font-weight-normal"
                     :label="$vuetify.breakpoint.smAndUp ? 'Select all' : 'All'"
                     hide-details
                     dense
                     @change="selectAllChanged"
-                    :disabled="$props.default"
+                    :disabled="$props.default || saving"
                 ></v-checkbox>
 
                 <v-spacer></v-spacer>
 
-                <!-- cancel button -->
-                <v-btn rounded text @click="close">Cancel</v-btn>
-
-                <!-- Uploadtton -->
+                <!-- Cancel button -->
                 <v-btn 
-                    v-if="$props.id === -1"
+                    v-if="saveResult !== 'success'"
+                    rounded 
+                    text 
+                    :disabled="saving"
+                    @click="close" 
+                >
+                    Cancel
+                </v-btn>
+                
+                <!-- Close button -->
+                <v-btn rounded text @click="close" v-if="saveResult === 'success'">Close</v-btn>
+
+                <!-- Upload button -->
+                <v-btn 
+                    v-if="$props.id === -1 && saveResult !== 'success'"
                     rounded 
                     depressed
                     color="primary" 
-                    :disabled="$props.default || !isFormValid"
+                    :loading="saving"
+                    :disabled="$props.default || !isFormValid || saving"
                     @click="uploadFont"
                 >
                     <v-icon class="mr-1">mdi-upload</v-icon>
@@ -101,11 +139,12 @@
 
                 <!-- Save button -->
                 <v-btn 
-                    v-if="$props.id !== -1"
+                    v-if="$props.id !== -1 && saveResult !== 'success'"
                     rounded 
                     depressed
                     color="primary" 
-                    :disabled="$props.default || !isFormValid"
+                    :loading="saving"
+                    :disabled="$props.default || !isFormValid || saving"
                     @click="updateFont"
                 >
                     Save
@@ -128,6 +167,8 @@
         emits: ['input'],
         data: function() {
             return {
+                saving: false,
+                saveResult: '',
                 isFormValid: false,
                 name: this.$props._name,
                 selectAll: true,
@@ -163,11 +204,15 @@
         },
         mounted: function() {
             this.initLanguages();
+
+            // validate form on open if it's an edit dialog and not upload
+            if (this.$props.id !== -1) {
+                this.validateForm();
+            }
         },
         methods: {
             validateForm() {
                 this.isFormValid = this.$refs.fontForm.validate();
-                console.log(this.isFormValid);
             },
             selectAllChanged(value) {
                 this.languages.forEach((language) => {
@@ -208,18 +253,46 @@
                 let formData = new FormData();
                 formData.append("name", this.name);
                 formData.append("languages", JSON.stringify(formDataLanguages));
+                formData.append("fontFile", this.fontFile);
 
-                // only add file for new fonts
-                if (this.$props.id === -1) {
-                    formData.append("fontFile", this.fontFile);
-                }
-
+                this.saving = true;
                 axios.post('/fonts/upload', formData).then((response) => {
-                    console.log(response.data);
+                    this.saving = false;
+                    if (response.status === 200) {
+                        this.saveResult = 'success';
+                        this.$emit('fonts-changed');
+                    }
+                }).catch((error) => {
+                    this.saving = false;
+                    this.saveResult = 'error';
                 });
             },
             updateFont() {
+                // collect selected languages
+                let formDataLanguages = [];
+                this.languages.forEach((value) => {
+                    if (value.enabled) {
+                        formDataLanguages.push(value.name);
+                    }
+                });
 
+                // create form data object
+                let formData = new FormData();
+                formData.append("id", this.$props.id);
+                formData.append("name", this.name);
+                formData.append("languages", JSON.stringify(formDataLanguages));
+
+                this.saving = true;
+                axios.post('/fonts/update', formData).then((response) => {
+                    this.saving = false;
+                    if (response.status === 200) {
+                        this.saveResult = 'success';
+                        this.$emit('fonts-changed');
+                    }
+                }).catch((error) => {
+                    this.saving = false;
+                    this.saveResult = 'error';
+                });
             },
             close() {
                 this.$emit('input', false);
