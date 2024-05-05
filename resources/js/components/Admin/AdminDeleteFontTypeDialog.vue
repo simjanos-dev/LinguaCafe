@@ -14,7 +14,7 @@
 
             <!-- Card content-->
             <v-card-text>
-                Are you sure you want to delete this font type?
+                Do you want to delete this font type?
 
                 <!-- Error message -->
                 <v-alert

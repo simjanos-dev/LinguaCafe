@@ -16,7 +16,7 @@
                 </v-btn>
             </v-card-title>
             <v-card-text class="pt-4 pb-6">
-                Are you sure you want to delete this chapter called {{ $props.chapterName }}?
+                Do you want to delete this chapter called {{ $props.chapterName }}?
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
