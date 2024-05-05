@@ -10,7 +10,7 @@
                 </v-btn>
             </v-card-title>
             <v-card-text class="pt-4 pb-6">
-                Are you sure you want to logout?
+                Do you want to logout?
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
