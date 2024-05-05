@@ -19,12 +19,41 @@ class FontTypeService {
         return $fonts;
     }
 
-    public function uploadfontType($fontFile, $fontName, $fontLanguages) {
+    public function uploadFontType($fontFile, $fontName, $fontLanguages) {
+        $fileName = $fontFile->getClientOriginalName();
+
+        if (Storage::exists('fonts/' . $fileName)) {
+            throw new \Exception('The font file already exists on the server.');
+        }
+
         // upload file
-        $fontFile->move(storage_path('app/fonts'), $fontFile->getClientOriginalName());
+        $fontFile->move(storage_path('app/fonts'), $fileName);
 
         // create font in database
+        $fontType = new FontType();
+        $fontType->filename = $fileName;
+        $fontType->name = $fontName;
+        $fontType->languages = $fontLanguages;
+        $fontType->default = false;
+        $fontType->save();
         
+        return true;
+    }
+
+    public function updateFontType($fontId, $fontName, $fontLanguages) {
+        $fontType = FontType
+            ::where('default', false)
+            ->where('id', $fontId)
+            ->first();
+
+        if (!$fontType) {
+            throw new \Exception('Font not found.');
+        }
+
+        $fontType->name = $fontName;
+        $fontType->languages = $fontLanguages;
+        $fontType->save();
+
         return true;
     }
 }

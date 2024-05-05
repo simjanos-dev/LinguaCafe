@@ -3,12 +3,13 @@
         <!-- Edit font type dialog -->
         <admin-edit-font-type-dialog 
             v-if="editFontTypeDialog.active"
+            v-model="editFontTypeDialog.active"
             :id="editFontTypeDialog.id"
             :supported-languages="supportedlanguages"
             :default="editFontTypeDialog.default"
             :_languages="editFontTypeDialog.languages"
             :_name="editFontTypeDialog.name"
-            v-model="editFontTypeDialog.active"
+            @fonts-changed="loadFonts"
         />
 
         <!-- Title subheader -->
