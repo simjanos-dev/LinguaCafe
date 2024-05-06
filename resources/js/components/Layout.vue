@@ -106,6 +106,7 @@
 
 <script>
     import ThemeService from './../services/ThemeService';
+    import FontTypeService from './../services/FontTypeService';
     import defaultThemes from './../themes';
     export default {
         data: function() {
@@ -197,6 +198,13 @@
             if (this.$cookie.get('navbar-collapsed') !== null) {
                 this.navbarCollapsed = this.$cookie.get('navbar-collapsed') === 'true';
             }
+        },
+        mounted() {
+            // load default and selected font types into the dom
+            var fontTypeService = new FontTypeService(this.selectedLanguage, this.$cookie, () => {
+                fontTypeService.loadSelectedFontTypeIntoDom();
+                fontTypeService.loadDefaultFontTypeIntoDom();
+            });
         },
         methods: {
             collapseNavbar() {

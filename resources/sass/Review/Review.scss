@@ -26,14 +26,6 @@
         user-select: none !important;
     }
 
-    #review * {
-        font-family: notosans-jp !important;
-    }
-
-    &.chinese-font #review * {
-        font-family: notosans-sc !important;
-    }
-
     .review-button-box {
         box-sizing: border-box;
         position: absolute !important;

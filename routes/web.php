@@ -85,6 +85,8 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/fonts/upload', [App\Http\Controllers\FontTypeController::class, 'uploadFontType']);
     Route::post('/fonts/update', [App\Http\Controllers\FontTypeController::class, 'updateFontType']);
     Route::post('/fonts/delete', [App\Http\Controllers\FontTypeController::class, 'deleteFontType']);
+    Route::get('/fonts/get-fonts-for-language/{language}', [App\Http\Controllers\FontTypeController::class, 'getFontTypesForLanguage']);
+    Route::get('/fonts/file/{fileName}', [App\Http\Controllers\FontTypeController::class, 'getFontTypeFile']);
 
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);

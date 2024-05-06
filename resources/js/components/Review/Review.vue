@@ -173,7 +173,7 @@
                             <!-- Word review -->
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                                 <!-- Example sentence mode -->
-                                <div :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <div :style="{'font-size': (settings.fontSize) + 'px'}" class="selected-font">
                                     <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                     {{ reviews[currentReviewIndex].word }}<hr>
 
@@ -197,17 +197,18 @@
 
                                     <!-- Example sentence plain text mode -->
                                     <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
-                                        <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                        <div class="
+                                        " :style="{'font-size': (settings.fontSize) + 'px'}">
                                             <span 
                                                 v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
-                                                :class="{'mr-2': word.spaceAfter}"
+                                                :class="{'selected-font': true, 'mr-2': word.spaceAfter}"
                                             >{{ word.word }}</span>
                                         </div>
                                     </template>
                                 </div>
                                 
                                 <!-- Single word  mode -->
-                                <div class="single-word" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <div class="single-word selected-font" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                     {{ reviews[currentReviewIndex].word }}
                                 </div>
@@ -216,7 +217,7 @@
                             <!-- Phrase review -->
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
                                 <!-- Phrase only mode -->
-                                <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <div class="phrase-words selected-font" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <template v-if="languageSpaces">
                                         {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
                                     </template>
@@ -248,7 +249,7 @@
                                         <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
                                             <span 
                                                 v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
-                                                :class="{'mr-2': word.spaceAfter}"
+                                                :class="{'selected-font': true, 'mr-2': word.spaceAfter}"
                                             >{{ word.word }}</span>
                                         </div>
                                     </template>
@@ -266,14 +267,15 @@
                             <!-- Word review -->
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                                 <!-- Single word  mode -->
-                                <div class="word" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <div class="word selected-font" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                     {{ reviews[currentReviewIndex].word }}
                                 </div>
                             </template>
 
+                            <!-- Phrase review -->
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'phrase'">
-                                <div :style="{'font-size': (settings.fontSize) + 'px'}">
+                                <div class="selected-font" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <template v-if="languageSpaces">
                                         {{ JSON.parse(reviews[currentReviewIndex].words).join(' ') }}
                                     </template>
@@ -284,7 +286,7 @@
                             </template>
 
                             <!-- Reading -->
-                            <div class="reading" v-if="reviews[currentReviewIndex] !== undefined && (language == 'japanese' || language == 'chinese')" :style="{'font-size': (settings.fontSize) + 'px'}">
+                            <div class="reading selected-font" v-if="reviews[currentReviewIndex] !== undefined && (language == 'japanese' || language == 'chinese')" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <hr>
                                 <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].reading }}
@@ -314,7 +316,7 @@
                                 <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <span 
                                         v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
-                                        :class="{'mr-2': word.spaceAfter}"
+                                        :class="{'selected-font': true, 'mr-2': word.spaceAfter}"
                                     >{{ word.word }}</span>
                                 </div>
                             </template>

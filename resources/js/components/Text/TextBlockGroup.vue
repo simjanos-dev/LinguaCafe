@@ -74,6 +74,7 @@
                     :class="{
                         'no-highlight': hideAllHighlights || (hideNewWordHighlights && word.stage == 2),
                         'word': true,
+                        'selected-font': true,
                         'highlighted': word.selected || word.hover,
                         'phrase': word.phraseIndexes.length,
                         'space-after': word.spaceAfter,
@@ -87,7 +88,7 @@
                     :key="wordIndex"
                 ><!--
                     --><template v-if="$props.language == 'japanese'"><!--
-                        --><ruby class="rubyword" :wordindex="wordIndex"><!--
+                        --><ruby class="rubyword selected-font" :wordindex="wordIndex"><!--
                             -->{{ word.word }}<!--
                             --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
                                 -->{{ word.furigana }}<!--

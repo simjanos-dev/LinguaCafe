@@ -36,14 +36,6 @@
         font-weight: bold;
     }
 
-    * {
-        font-family: notosans-jp !important;
-    }
-
-    &.chinese-font * {
-        font-family: notosans-sc !important;
-    }
-
     .text-block {
         background-color: var(--v-foreground-base);
         overflow: hidden !important;

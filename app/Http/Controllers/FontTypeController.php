@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Services\FontTypeService;
 
 // request classes
 use App\Http\Requests\FontTypes\UploadFontTypeRequest;
 use App\Http\Requests\FontTypes\UpdateFontTypeRequest;
 use App\Http\Requests\FontTypes\DeleteFontTypeRequest;
+use App\Http\Requests\FontTypes\GetFontTypesForLanguageRequest;
+use App\Http\Requests\FontTypes\GetFontTypeFileRequest;
 
 class FontTypeController extends Controller {
     private $fontTypeService;
@@ -20,6 +22,21 @@ class FontTypeController extends Controller {
     public function getInstalledFontTypes() {
         try {
             $fonts = $this->fontTypeService->getInstalledFontTypes();
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json($fonts, 200);
+    }
+
+    public function getFontTypeFile($fileName, GetFontTypeFileRequest $request) {
+        $imagePath = Storage::path('/fonts/' . $fileName);
+        return response()->file($imagePath);
+    }
+
+    public function getFontTypesForLanguage($language, GetFontTypesForLanguageRequest $request) {
+        try {
+            $fonts = $this->fontTypeService->getFontTypesForLanguage(ucfirst($language));
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
