@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use App\Models\FontType;
 
 class FontTypeService {
@@ -17,6 +16,19 @@ class FontTypeService {
     public function getInstalledFontTypes() {
         $fonts = FontType::get();
         return $fonts;
+    }
+
+    public function getFontTypesForLanguage($language) {
+        $fonts = FontType
+            ::orderBy('default', 'desc')
+            ->get();
+
+        $fonts = $fonts->filter(function ($font) use($language) {
+            $fontLanguages = json_decode($font->languages);
+            return in_array($language, $fontLanguages, true);
+        });
+
+        return array_values($fonts->toArray());
     }
 
     public function uploadFontType($fontFile, $fontName, $fontLanguages) {

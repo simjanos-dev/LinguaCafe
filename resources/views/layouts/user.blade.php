@@ -25,6 +25,11 @@
     
 
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+
+    <!-- These are dynamically set with javascript -->
+    <style id="dynamic-default-font"></style>
+    <style id="dynamic-selected-font"></style>
+
     @yield('header')
 </head>
 <body><!--

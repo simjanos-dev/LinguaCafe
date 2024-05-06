@@ -18,6 +18,24 @@
                     Text
                 </div>
 
+                <!-- Font type -->
+                <v-row v-if="fontTypes.length">
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Font type:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="selectedFontType"
+                            :items="fontTypes"
+                            item-text="name"
+                            item-value="id"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
+                    </v-col>
+                </v-row>
+
                 <!-- Line spacing -->
                 <v-row>
                     <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Space between lines:</v-col>
@@ -344,14 +362,18 @@
 
 <script>
     import TextToSpeechService from './../../services/TextToSpeechService';
+    import FontTypeService from './../../services/FontTypeService';
     export default {    
         emits: ['input'],   
         data: function() {
             return {
                 /*
-                    Text to speech settings are handled differently, because they are a separate
-                    setting for every language.
+                    Text to speech and font type settings are handled differently, 
+                    because they are a separate setting for every language.
                 */
+                fontTypeService: new FontTypeService(this.$props.language, this.$cookie, this.fontTypesLoaded),
+                fontTypes: [],
+                selectedFontType: null,
                 textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.textToSpeechVoicesChanged),
                 textToSpeechVoices: [],
                 textTospeechSelectedVoice: null,
@@ -422,6 +444,13 @@
             this.textToSpeechVoicesChanged();
         },
         methods: {
+            fontTypesLoaded() {
+                // set selected font
+                this.selectedFontType = this.fontTypeService.getSelectedFontTypeId();
+
+                // set font list
+                this.fontTypes = this.fontTypeService.fonts;
+            },
             textToSpeechVoicesChanged() {
                 // set selected voice
                 var selectedVoice = this.textToSpeechService.getSelectedVoice();
@@ -467,6 +496,12 @@
                 // save text to speech
                 if (this.textTospeechSelectedVoice !== null) {
                     this.$cookie.set(this.$props.language + '-text-to-speech-voice', this.textTospeechSelectedVoice, 3650);
+                }
+
+                // save font
+                if (this.fontTypeService !== null && this.selectedFontType) {
+                    this.fontTypeService.selectFontType(this.selectedFontType);
+                    this.fontTypeService.loadSelectedFontTypeIntoDom(this.selectedFontType);
                 }
 
 
