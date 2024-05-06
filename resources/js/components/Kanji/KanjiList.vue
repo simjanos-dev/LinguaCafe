@@ -78,7 +78,7 @@
                         <template v-for="(kanji, kanjiIndex) in group">
                             <v-btn
                                 icon
-                                :class="{'kanji': true, 'pa-0': true,  'learned': kanji.known}"
+                                :class="{'default-font': true, 'kanji': true, 'pa-0': true,  'learned': kanji.known}"
                                 :key="groupIndex + '-' + kanjiIndex"
                                 v-if="showUnknown || kanji.known"
                                 :to="'/kanji/' + kanji.kanji"

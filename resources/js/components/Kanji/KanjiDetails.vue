@@ -5,7 +5,7 @@
             <v-card-text class="d-flex flex-wrap justify-center">
                 <div id="characters">
                     <!-- Kanji -->
-                    <div class="character">{{ kanji }}</div>
+                    <div class="character default-font">{{ kanji }}</div>
                     
                     <!-- Kanji drawing -->
                     <div class="character"><div id="character-dmak"></div></div>
@@ -35,13 +35,13 @@
                     </div>
                     <div class="kanji-info-group my-4" v-if="readingsKun.length">
                         <div class="kanji-info-title">Kun'yomi</div>
-                        <div class="kanji-info my-2 pl-4">
+                        <div class="kanji-info default-font my-2 pl-4">
                             <span class="mr-6" v-for="(reading, index) in readingsKun">{{ reading }}</span>
                         </div>
                     </div>
                     <div class="kanji-info-group"  v-if="readingsOn.length">
                         <div class="kanji-info-title">On'yomi</div>
-                        <div class="kanji-info my-2 pl-4">
+                        <div class="kanji-info default-font my-2 pl-4">
                             <span class="mr-6" v-for="(reading, index) in readingsOn">{{ reading }}</span>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
         
         <!-- Kanji radicals -->
         <div class="subheader mt-8">Radicals</div>
-        <div id="kanji-radicals" class="d-flex flex-wrap">
+        <div id="kanji-radicals" class="default-font d-flex flex-wrap">
             <div class="kanji-radical mr-3" v-for="(radical, index) in radicals">{{ radical.radical }} <span>{{ radical.strokes }} strokes</span></div>
         </div>
         
@@ -68,8 +68,8 @@
                 </thead>
                 <tbody>
                     <tr v-for="(word, index) in words" :key="index">
-                        <td>{{ word.word }}</td>
-                        <td class="reading">{{ word.reading }}</td>
+                        <td class="default-font">{{ word.word }}</td>
+                        <td class="default-font reading">{{ word.reading }}</td>
                         <td>{{ word.translation }}</td>
                     </tr>
                 </tbody>

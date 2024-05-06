@@ -69,7 +69,7 @@ class FontTypeService {
         }
 
         var fileName = this.fonts[0].filename;
-        let fontStyleText = "@font-face { font-family: defaultFont; src: url('/fonts/file/" + fileName + "'); } .default-font { font-family: defaultFont !important; }";
+        let fontStyleText = "@font-face { font-family: defaultFont; src: url('/fonts/file/" + fileName + "'); } .default-font, .default-font * { font-family: defaultFont !important; }";
         document.getElementById('dynamic-default-font').innerHTML = fontStyleText;
     }
 }
