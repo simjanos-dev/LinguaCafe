@@ -21,7 +21,7 @@
             <!-- Title bar -->
             <v-card-text class="book-information pa-0 pl-3">
                 <v-card-title class="book-title pa-3">
-                    <div class="book-title-text">{{ book.name }}</div>
+                    <div class="book-title-text default-font">{{ book.name }}</div>
                     <v-spacer></v-spacer>
                     <v-btn icon @click.stop="closeBook"><v-icon>mdi-arrow-left</v-icon></v-btn>
                     <v-menu content-class="book-menu" rounded offset-y bottom left nudge-top="-5">

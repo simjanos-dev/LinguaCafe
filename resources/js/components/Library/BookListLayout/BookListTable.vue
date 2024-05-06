@@ -19,7 +19,7 @@
                         ></img>
                     </td>
                     
-                    <td class="book-title">
+                    <td class="book-title default-font">
                         {{ book.name }}
                     </td>
                     

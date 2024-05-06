@@ -25,6 +25,7 @@
                     <label class="font-weight-bold">Book name</label>
                     <v-text-field 
                         v-model="name"
+                        class="default-font"
                         ref="bookName"
                         filled
                         dense

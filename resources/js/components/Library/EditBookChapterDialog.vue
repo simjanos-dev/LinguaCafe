@@ -25,6 +25,7 @@
                     <label class="font-weight-bold mt-2">Name</label>
                     <v-text-field 
                         ref="chapterName"
+                        class="default-font"
                         filled
                         dense
                         rounded
@@ -35,6 +36,7 @@
                     
                     <label class="font-weight-bold mt-2">Text</label>
                     <v-textarea
+                        class="default-font"
                         v-model="text"
                         filled
                         dense

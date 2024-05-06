@@ -105,7 +105,7 @@
                 <!-- Chapter list -->
                 <template v-if="!chaptersLoading">
                     <tr v-for="(chapter, index) in chapters" :key="index">
-                        <td>{{ chapter.name }}</td>
+                        <td class="default-font">{{ chapter.name }}</td>
                         <td class="text-center px-1">{{ formatNumber(chapter.wordCount.total) }}</td>
                         <td class="text-center px-1">{{ formatNumber(chapter.wordCount.unique) }}</td>
                         <td class="text-center px-1">{{ formatNumber(chapter.wordCount.known) }}</td>
@@ -182,7 +182,7 @@
                     :class="{'expansion-card': true, 'open': chapter.expanded}"
                     elevation="0"
                 >
-                    <v-card-title class="expansion-card-title py-3 px-2" @click="toggleExpansion(index)">
+                    <v-card-title class="expansion-card-title default-font py-3 px-2" @click="toggleExpansion(index)">
                         {{ chapter.name }}
                         <v-spacer />
                         <v-icon class="mr-4">{{ chapter.expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
