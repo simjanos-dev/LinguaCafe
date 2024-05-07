@@ -84,21 +84,23 @@
                 <div class="vocabulary-edit-side" v-if="$props.itemType == 'Word'">
                     <v-text-field 
                         v-model="item.base_word"
-                        @keyup="changed"
+                        class="default-font"
                         filled
                         dense
                         rounded
                         label="Lemma"
+                        @keyup="changed"
                     ></v-text-field>
 
                     <v-text-field 
                         v-if="['chinese', 'japanese'].includes($props.language)"
                         v-model="item.base_word_reading"
-                        @keyup="changed"
+                        class="default-font"
                         filled
                         dense
                         rounded
                         label="Lemma reading"
+                        @keyup="changed"
                     ></v-text-field>
                 </div>
 
@@ -113,32 +115,35 @@
                     <v-text-field 
                         v-if="$props.itemType == 'Word'"
                         v-model="item.word"
-                        @keyup="changed"
+                        class="default-font"
                         filled
                         dense
                         rounded
                         disabled
                         label="Word"
+                        @keyup="changed"
                     ></v-text-field>
                     <v-text-field 
                         v-else
                         v-model="item.words"
-                        @keyup="changed"
+                        class="default-font"
                         filled
                         dense
                         rounded
                         disabled
                         label="Phrase"
+                        @keyup="changed"
                     ></v-text-field>
 
                     <v-text-field 
                     v-if="['chinese', 'japanese'].includes($props.language)"
                         v-model="item.reading"
-                        @keyup="changed"
+                        class="default-font"
                         filled
                         dense
                         rounded
                         label="Reading"
+                        @keyup="changed"
                     ></v-text-field>
                 </div>
 
@@ -146,12 +151,12 @@
                 <v-textarea
                     v-if="item" 
                     v-model="item.translation"
-                    @keyup="changed"
                     filled
                     dense
                     rounded
                     no-resize
                     label="Translation"
+                    @keyup="changed"
                 ></v-textarea>
 
                 <!-- Stage -->

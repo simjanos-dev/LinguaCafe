@@ -1,16 +1,5 @@
 @import './../variables';
 
-#vocabulary-edit-dialog {
-    input, textarea{
-        font-family: notosans-jp !important;
-    }
-
-    &.chinese-language input,
-    &.chinese-language textarea {
-        font-family: notosans-sc !important;
-    }
-}
-
 #vocabulary-edit-chips {
     width: 100%;
 }
