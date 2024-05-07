@@ -1380,6 +1380,7 @@
                 this.vocabBox.active = false;
 
                 this.unselectAllWordsProcess();
+                this.removePhraseHover();
                 this.hoverVocabBox.disabledWhileSelecting = false;
                 this.textBlockKey ++;
             },
