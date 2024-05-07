@@ -17,95 +17,95 @@
                 <!-- Field selection switches -->
                 <label class="font-weight-bold mt-2">Select fields to export</label>
                 <div class="d-flex flex-wrap">
-                        <!-- Lemma switch -->
-                        <v-switch
-                            v-model="fields.lemma"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Lemma"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Lemma switch -->
+                    <v-switch
+                        v-model="fields.lemma"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Lemma"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Word switch -->
-                        <v-switch
-                            v-model="fields.word"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Word"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Word switch -->
+                    <v-switch
+                        v-model="fields.word"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Word"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Lemma reading switch -->
-                        <v-switch
-                            v-model="fields.lemmaReading"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Lemma reading"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Lemma reading switch -->
+                    <v-switch
+                        v-model="fields.lemmaReading"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Lemma reading"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Reading switch -->
-                        <v-switch
-                            v-model="fields.reading"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Reading"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Reading switch -->
+                    <v-switch
+                        v-model="fields.reading"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Reading"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Translation switch -->
-                        <v-switch
-                            v-model="fields.translation"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Translation"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Translation switch -->
+                    <v-switch
+                        v-model="fields.translation"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Translation"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Stage switch -->
-                        <v-switch
-                            v-model="fields.stage"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Level"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Stage switch -->
+                    <v-switch
+                        v-model="fields.stage"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Level"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Added to srs switch -->
-                        <v-switch
-                            v-model="fields.addedToSrs"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Added to srs date"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Added to srs switch -->
+                    <v-switch
+                        v-model="fields.addedToSrs"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Added to srs date"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Read count switch -->
-                        <v-switch
-                            v-model="fields.readCount"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Read count"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Read count switch -->
+                    <v-switch
+                        v-model="fields.readCount"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Read count"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
 
-                        <!-- Lookup count switch -->
-                        <v-switch
-                            v-model="fields.lookupCount"
-                            hide-details
-                            class="vocabulary-export-switch my-1"
-                            color="primary"
-                            label="Lookup count"
-                            @change="fieldSwitchChange"
-                        ></v-switch>
+                    <!-- Lookup count switch -->
+                    <v-switch
+                        v-model="fields.lookupCount"
+                        hide-details
+                        class="vocabulary-export-switch my-1"
+                        color="primary"
+                        label="Lookup count"
+                        @change="fieldSwitchChange"
+                    ></v-switch>
                 </div>
 
                 <!-- Sample -->
@@ -126,8 +126,8 @@
                     </thead>
                     <tbody>
                         <tr v-for="(sampleWord, wordIndex) in $props.sampleWords.slice(0, 10)" :key="wordIndex">
-                            <td v-if="fields.lemma">{{ sampleWord.base_word }}</td>
-                            <td v-if="fields.word">
+                            <td class="default-font" v-if="fields.lemma">{{ sampleWord.base_word }}</td>
+                            <td class="default-font" v-if="fields.word">
                                 <!-- Word -->
                                 <template v-if="sampleWord.type == 'word'">
                                     {{ sampleWord.word }}
@@ -143,8 +143,8 @@
                                     {{ JSON.parse(sampleWord.word).join('') }}
                                 </template>
                             </td>
-                            <td v-if="fields.lemmaReading">{{ sampleWord.base_word_reading }}</td>
-                            <td v-if="fields.reading">{{ sampleWord.reading }}</td>
+                            <td class="default-font" v-if="fields.lemmaReading">{{ sampleWord.base_word_reading }}</td>
+                            <td class="default-font" v-if="fields.reading">{{ sampleWord.reading }}</td>
                             <td v-if="fields.translation">{{ sampleWord.translation }}</td>
                             <td v-if="fields.stage">{{ sampleWord.stage }}</td>
                             <td v-if="fields.addedToSrs">{{ sampleWord.added_to_srs }}</td>
