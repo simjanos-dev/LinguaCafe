@@ -53,7 +53,7 @@
                         Interactive text is not selectable anymore on the review page natively like other texts in the browser.
                     </li>
                     <li>
-                        Previous example sentences are not visible anymore on the reivew page while the new one is loading.
+                        Previous example sentences are not visible anymore on the review page while the new one is loading.
                     </li>
                     <li>
                         Users cannot open a chapter in the text reader anymore that does not belong to their selected language.
@@ -68,7 +68,10 @@
                         It is now impossible to create a phrase without any words, which would corrupt the database.
                     </li>
                     <li>
-                        Fixed light theme warning color. For devices that already opened LinguaCafe, users must click on the reset color button to update it.
+                        Fixed light theme's warning color, because it was too yellow and lacking in contrast. For devices that already opened LinguaCafe, users must click on the reset color button to update it.
+                    </li>
+                    <li>
+                        Fixed plain text mode copy-paste in Firefox.
                     </li>
                 </ul>
 
