@@ -67,6 +67,9 @@
                     <li>
                         It is now impossible to create a phrase without any words, which would corrupt the database.
                     </li>
+                    <li>
+                        Fixed light theme warning color. For devices that already opened LinguaCafe, users must click on the reset color button to update it.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>

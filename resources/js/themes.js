@@ -13,7 +13,7 @@ export default {
         error: '#F24B4F',
         info: '#057CBC',
         success: '#3DCF59',
-        warning: '#EEE339',
+        warning: '#FFA73C',
         
         text: '#333333',
         textDark: '#333333',
