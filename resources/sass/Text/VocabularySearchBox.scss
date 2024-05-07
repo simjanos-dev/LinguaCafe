@@ -94,6 +94,8 @@
         flex-grow: 1;
         align-self: stretch;
         overflow: hidden;
+        overflow-y: scroll;
+            
 
         div.v-input {
             flex: unset;
