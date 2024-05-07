@@ -73,6 +73,9 @@
                     <li>
                         Fixed plain text mode copy-paste in Firefox.
                     </li>
+                    <li>
+                        Symbols won't be combined anymore with words in Japanese. This only applies to texts that are imported after this update.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
