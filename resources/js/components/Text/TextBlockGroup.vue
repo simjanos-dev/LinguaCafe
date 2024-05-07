@@ -66,7 +66,7 @@
                     -->{{ subtitleTimestamps[word.subtitleIndex].start }}<!--
                 --></div><!--
                 --><br v-if="word.word === 'NEWLINE'" /><!--
-                --><div
+                --><span
                     v-else
                     :wordindex="wordIndex"
                     :stage="word.stage"
@@ -100,7 +100,7 @@
                     </template><!--
                     --><template v-else>{{ word.word }}</template><!--
                     --><template v-if="plainTextMode && word.spaceAfter">&nbsp;</template><!--
-                --></div><!--
+                --></span><!--
             --></template>
         </div>
 
@@ -1880,6 +1880,7 @@
             },
             updateExampleSentence() {
                 var exampleSentence = this.getExampleSentence();
+                console.log(exampleSentence);
 
                 var targetType = this.selection.length > 1 ? 'phrase' : 'word';
                 var targetId = this.uniqueWords[this.selection[0].uniqueWordIndex].id;
