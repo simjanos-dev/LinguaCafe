@@ -102,6 +102,18 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.11.3 <v-spacer /> 2024.05.08.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed a bug that caused practice review mode to be always turned off.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.11.2 <v-spacer /> 2024.04.27.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
