@@ -27,7 +27,7 @@ class ReviewController extends Controller {
     public function getReviewItems(GetReviewItemsRequest $request) {
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
-        $practiceMode = $request->post('practiceMode') === 'true';
+        $practiceMode = $request->post('practiceMode');
         $chapterId = $request->post('chapterId');
         $bookId = $request->post('bookId');
         $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
