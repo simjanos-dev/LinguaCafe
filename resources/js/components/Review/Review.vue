@@ -110,6 +110,7 @@
                 <v-btn title="Exit fullscreen" icon class="my-2" @click="exitFullscreen" v-if="fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
                 <v-btn title="Review settings" icon @click="settingsDialog = true;"><v-icon>mdi-cog</v-icon></v-btn>
                 <v-btn 
+                    class="my-2"
                     icon
                     title="Text to speech"
                     :disabled="!textToSpeechAvailable"
