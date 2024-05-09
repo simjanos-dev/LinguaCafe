@@ -18,6 +18,7 @@
             v-show="settingsDialog"
             v-model="settingsDialog"
             ref="reviewSettings"
+            :language="language"
             @changed="updateSettings"
         ></review-settings>
         
@@ -201,6 +202,7 @@
                                         :vocabulary-hover-box="settings.vocabularyHoverBox"
                                         :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
                                         :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                                        :vocabulary-bottom-sheet="settings.vocabularyBottomSheet"
                                     />
 
                                     <!-- Example sentence plain text mode -->
@@ -250,6 +252,7 @@
                                         :vocabulary-hover-box="settings.vocabularyHoverBox"
                                         :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
                                         :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                                        :vocabulary-bottom-sheet="settings.vocabularyBottomSheet"
                                     />
 
                                     <!-- Example sentence plain text mode -->
@@ -317,6 +320,7 @@
                                 :vocabulary-hover-box="settings.vocabularyHoverBox"
                                 :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
                                 :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                                :vocabulary-bottom-sheet="settings.vocabularyBottomSheet"
                             />
 
                             <!-- Example sentence plain text mode -->
@@ -381,6 +385,7 @@
                     vocabularyHoverBox: true,
                     vocabularyHoverBoxSearch: true,
                     vocabularyHoverBoxDelay: 300,
+                    vocabularyBottomSheet: true,
                 },
                 transitionDuration: this.$cookie.get('theme') === 'eink' ? 0 : 400,
                 fullscreen: false,

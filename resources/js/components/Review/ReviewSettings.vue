@@ -18,6 +18,24 @@
                     Text
                 </div>
 
+                <!-- Font type -->
+                <v-row v-if="fontTypes.length">
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Font type:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="selectedFontType"
+                            :items="fontTypes"
+                            item-text="name"
+                            item-value="id"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
+                    </v-col>
+                </v-row>
+
                 <!-- Font size -->
                 <v-row>
                     <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Font size:</v-col>
@@ -52,6 +70,36 @@
                             hide-details
                             @change="saveSettings"
                         ></v-select>
+                    </v-col>
+                </v-row>
+
+                <!-- Vocabulary box section-->
+                <div class="subheader subheader-margin-top d-flex mb-2">
+                    Vocabulary box
+                </div>
+                
+                <!-- Vocabulary bottom sheet -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">
+                        Vocabulary bottom sheet:
+                    </v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <!-- Vocabulary sidebar info box -->
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                A bottom sheet vocabulary designed for mobile screens, that replaces the popup vocabulary. <br><br>
+                                This option is only available for devices with less than or equal to 768px screen width. 
+                            </v-card>
+                        </v-menu>
+
+                        <v-switch
+                            color="primary"
+                            v-model="settings.vocabularyBottomSheet" 
+                            @change="saveSettings"
+                        ></v-switch>
                     </v-col>
                 </v-row>
 
@@ -120,6 +168,29 @@
                         </v-slider>
                     </v-col>
                 </v-row>
+
+                <!-- Text to speech section -->
+                <div class="subheader subheader-margin-top d-flex mb-2">
+                    Text to speech
+                </div>
+                
+                <!-- Text to speech -->
+                <v-row v-if="textToSpeechVoices.length">
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">TTS voice:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="textTospeechSelectedVoice"
+                            :items="textToSpeechVoices"
+                            item-text="name"
+                            item-value="name"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
+                    </v-col>
+                </v-row>
             </v-card-text>
 
             <v-card-actions>
@@ -131,16 +202,31 @@
 </template>
 
 <script>
+    import TextToSpeechService from './../../services/TextToSpeechService';
+    import FontTypeService from './../../services/FontTypeService';
     export default {    
         emits: ['input'],   
         data: function() {
             return {
+                /*
+                    Text to speech and font type settings are handled differently, 
+                    because they are a separate setting for every language.
+                */
+
+                fontTypeService: new FontTypeService(this.$props.language, this.$cookie, this.fontTypesLoaded),
+                fontTypes: [],
+                selectedFontType: null,
+                textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.textToSpeechVoicesChanged),
+                textToSpeechVoices: [],
+                textTospeechSelectedVoice: null,
+
                 settingsLoaded: false,
                 cookieNames: {
                     fontSize: 'font-size',
                     vocabularyHoverBox: 'vocabulary-hover-box',
                     vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
+                    vocabularyBottomSheet: 'vocabulary-bottom-sheet',
                     reviewSentenceMode: 'review-sentence-mode',
                 },
                 sentenceModes: [
@@ -162,18 +248,37 @@
         },
         props: {
             value : Boolean,
+            language: String,
         },
         mounted() {
             this.loadSetting('fontSize', 'integer', 20);
             this.loadSetting('vocabularyHoverBox', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
+            this.loadSetting('vocabularyBottomSheet', 'boolean', true);
             this.loadSetting('reviewSentenceMode', 'string', 'plain-text');
             
             this.settingsLoaded = true;
             this.saveSettings();
         },
         methods: {
+            fontTypesLoaded() {
+                // set selected font
+                this.selectedFontType = this.fontTypeService.getSelectedFontTypeId();
+
+                // set font list
+                this.fontTypes = this.fontTypeService.fonts;
+            },
+            textToSpeechVoicesChanged() {
+                // set selected voice
+                var selectedVoice = this.textToSpeechService.getSelectedVoice();
+                if (selectedVoice !== null) {
+                    this.textTospeechSelectedVoice = selectedVoice.name;
+                }
+
+                // get list of voice
+                this.textToSpeechVoices = this.textToSpeechService.getVoiceNames();
+            },
             saveSettings(settingName = '') {
                 if (settingName == 'hideAllHighlights') {
                     this.settings.hideNewWordHighlights = this.settings.hideAllHighlights;
@@ -191,7 +296,19 @@
                 this.saveSetting('vocabularyHoverBox');
                 this.saveSetting('vocabularyHoverBoxSearch');
                 this.saveSetting('vocabularyHoverBoxDelay');
+                this.saveSetting('vocabularyBottomSheet');
                 this.saveSetting('reviewSentenceMode');
+
+                // save text to speech
+                if (this.textTospeechSelectedVoice !== null) {
+                    this.$cookie.set(this.$props.language + '-text-to-speech-voice', this.textTospeechSelectedVoice, 3650);
+                }
+
+                // save font
+                if (this.fontTypeService !== null && this.selectedFontType) {
+                    this.fontTypeService.selectFontType(this.selectedFontType);
+                    this.fontTypeService.loadSelectedFontTypeIntoDom(this.selectedFontType);
+                }
 
                 this.$emit('changed', this.settings);
                 
