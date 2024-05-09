@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Folders needed for persistence
-folder_paths="./storage/app/dictionaries
+folder_paths="
+    ./storage/app/dictionaries
     ./storage/app/fonts
     ./storage/app/images/book_images
     ./storage/app/public
@@ -9,7 +10,8 @@ folder_paths="./storage/app/dictionaries
     ./storage/framework/sessions
     ./storage/framework/testing
     ./storage/framework/views
-    ./storage/logs"
+    ./storage/logs
+"
 
 # Ensure the folders exist
 for folder_path in $folder_paths; do
