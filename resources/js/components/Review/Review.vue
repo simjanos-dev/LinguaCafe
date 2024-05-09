@@ -109,7 +109,14 @@
                 <v-btn title="Fullscreen" icon class="my-2" @click="openFullscreen" v-if="!fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
                 <v-btn title="Exit fullscreen" icon class="my-2" @click="exitFullscreen" v-if="fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
                 <v-btn title="Review settings" icon @click="settingsDialog = true;"><v-icon>mdi-cog</v-icon></v-btn>
-                
+                <v-btn 
+                    icon
+                    title="Text to speech"
+                    :disabled="!textToSpeechAvailable"
+                    @click="textToSpeech"
+                >
+                    <v-icon>mdi-bullhorn</v-icon>
+                </v-btn>
                 
                 <v-menu offset-y left class="rounded-lg">
                     <template v-slot:activator="{ on, attrs }">
@@ -342,10 +349,13 @@
 
 <script>
     const moment = require('moment');
+    import TextToSpeechService from './../../services/TextToSpeechService';
     import {formatNumber} from './../../helper.js';
     export default {
         data: function() {
             return {
+                textToSpeechService: null,
+                textToSpeechAvailable: false,
                 theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
                 hotkeyDialog: false,
                 textBlockKey: 0,
@@ -426,6 +436,7 @@
                     this.finish();
                 }
 
+                this.textToSpeechService = new TextToSpeechService(this.language, this.$cookie, this.updateTextToSpeechState);
                 window.addEventListener('keyup', this.hotkey);
             });
         },
@@ -433,6 +444,29 @@
             window.removeEventListener('keyup', this.hotkey);
         },
         methods: {
+            textToSpeech() {
+                var text = '';
+                var joinSeparator = this.languageSpaces ? ' ' : '';
+
+                if (this.reviews[this.currentReviewIndex].type == 'phrase') {
+                    if (this.reviews[this.currentReviewIndex].reading.length) {
+                        text = this.reviews[this.currentReviewIndex].reading;
+                    } else {
+                        text = JSON.parse(this.reviews[this.currentReviewIndex].words).join(joinSeparator);
+                    }
+                } else {
+                    if (this.reviews[this.currentReviewIndex].reading.length) {
+                        text = this.reviews[this.currentReviewIndex].reading;
+                    } else {
+                        text = this.reviews[this.currentReviewIndex].word;
+                    }
+                }
+
+                this.textToSpeechService.speak(text);
+            },
+            updateTextToSpeechState() {
+                this.textToSpeechAvailable = this.textToSpeechService.getLanguageVoices().length > 0;
+            },
             hotkey (event) {
                 if (!this.finished && !this.revealed && event.which == 13) {
                     this.reveal();
