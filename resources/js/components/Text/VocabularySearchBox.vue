@@ -12,7 +12,7 @@
                 <div class="dictionary-title-icon mr-1" style="background-color: #92B9E2">
                     <v-icon small>mdi-translate</v-icon>
                 </div>
-                DeepL <div class="search-result-word" :title="$props.searchTerm">{{ $props.searchTerm }}</div>
+                DeepL <div class="search-result-word default-font" :title="$props.searchTerm">{{ $props.searchTerm }}</div>
             </div>
             
             <!-- DeepL search result -->
@@ -44,7 +44,7 @@
                 <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
                     <v-icon small>mdi-list-box</v-icon>
                 </div>
-                {{ $props.searchTerm }} <div class="search-result-word">Dictionary search</div>
+                <span class="default-font">{{ $props.searchTerm }}</span> <div class="search-result-word">Dictionary search</div>
             </div>
 
             <div class="search-result-definition rounded pr-2">
@@ -54,7 +54,7 @@
 
         <!-- Dictionary no result message -->
         <div class="search-result disabled" v-if="!dictionarySearchLoading && !dictionarySearchResultsFound">
-            <div class="search-result-title">
+            <div class="search-result-title default-font">
                 <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
                     <v-icon small>mdi-list-box</v-icon>
                 </div>
@@ -96,7 +96,7 @@
                         <div class="dictionary-title-icon mr-1"  :style="{'background-color': searchResult.color}">
                             <v-icon small>mdi-list-box</v-icon>
                         </div>
-                        {{ searchResult.dictionary}}<div class="search-result-word" :title="record.word"> {{ record.word }} </div>
+                        {{ searchResult.dictionary}}<div class="search-result-word default-font" :title="record.word"> {{ record.word }} </div>
                     </div>
                     
                     <div class="search-result-definition rounded" v-for="(definition, definitionIndex) in record.definitions" :key="definitionIndex" @click="addDefinitionToInput(definition)">
@@ -105,7 +105,7 @@
                 
                     <template v-if="record.otherForms.length">
                         <div class="vocab-box-subheader">Other forms:</div>
-                        <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-wrap default-font">
                             <div v-for="(form, formIndex) in record.otherForms" :key="formIndex">
                                 {{ form }}<span class="mr-2" v-if="formIndex < record.otherForms.length - 1">, </span>
                             </div>

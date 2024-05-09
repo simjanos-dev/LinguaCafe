@@ -26,7 +26,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(chapter, index) in chapters" :key="index">
-                                <td>{{ chapter.name }}</td>
+                                <td class="default-font">{{ chapter.name }}</td>
                                 <td class="text-center">{{ chapter.wordCount.total }}</td>
                                 <td class="text-center">{{ chapter.wordCount.unique }}</td>
                                 <td class="text-center"><span class="rounded-pill highlighted">{{ chapter.wordCount.highlighted }}</span></td>
