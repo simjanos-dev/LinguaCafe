@@ -202,7 +202,7 @@
                 <!-- Main tab -->
                 <template v-if="tab === 0">
                     <v-btn icon @click="addSelectedWordToAnki"><v-icon>mdi-cards</v-icon></v-btn>
-                    <v-btn icon @click="textToSpeech"><v-icon>mdi-bullhorn</v-icon></v-btn>
+                    <v-btn icon :disabled="!$props.textToSpeechAvailable" @click="textToSpeech"><v-icon>mdi-bullhorn</v-icon></v-btn>
                     <v-btn icon :disabled="!$props.inflections.length" @click="tab = 1;"><v-icon>mdi-list-box</v-icon></v-btn>
                 </template>
 
