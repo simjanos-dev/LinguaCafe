@@ -23,7 +23,7 @@
                         <template v-if="$props.type === 'word'">
                             <div class="vocab-box-subheader mb-2 mt-0"><span class="rounded-pill py-1 px-3">Word</span></div>
                             <!-- With base word -->
-                            <div class="expression mb-2 text-center" v-if="baseWord !== ''">
+                            <div class="expression mb-2 text-center default-font" v-if="baseWord !== ''">
                                 <ruby>
                                     {{ baseWord }}
                                     <rt v-if="($props.language == 'japanese' || $props.language == 'chinese')">
@@ -41,7 +41,7 @@
                             
                             <!-- No base word -->
                             <div 
-                                class="expression mb-2 text-center" 
+                                class="expression mb-2 text-center default-font" 
                                 v-if="baseWord == ''"
                             >
                                 <ruby>
@@ -57,7 +57,7 @@
                         <template v-if="$props.type !== 'word'">
                             <div class="vocab-box-subheader mb-2 mt-0"><span class="rounded-pill py-1 px-3">Phrase</span></div>
                             <!-- Phrase text -->
-                            <div class="expression mb-2">
+                            <div class="expression mb-2 default-font">
                                 <template v-for="(word, index) in phrase" v-if="word.word !== 'NEWLINE'">
                                     <span :class="{'mr-2': word.spaceAfter}">{{ word.word }}</span>
                                 </template>
@@ -66,7 +66,7 @@
                             <!-- Phrase reading -->
                             <template v-if="($props.language == 'japanese' || $props.language == 'chinese')">
                                 <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Reading</span></div>
-                                <div class="expression mb-2 mt-4">{{ reading }}</div>
+                                <div class="expression mb-2 mt-4 default-font">{{ reading }}</div>
                             </template>
                         </template>
                         
@@ -84,16 +84,6 @@
                                     {{ kanji }}
                                 </div>
                             </div>
-                        </template>
-                        -->
-
-                        <!-- Definitions -->
-                        <!--
-                        <template v-if="translationList.length">
-                            <div class="vocab-box-subheader mb-2 mt-4"><span class="rounded-pill py-1 px-3">Definitions</span></div>
-                            <ul id="definitions" class="ma-0">
-                                <li v-for="(translation, index) in translationList" :key="index">{{ translation }}</li>
-                            </ul>
                         </template>
                         -->
 
@@ -164,7 +154,7 @@
                         <!-- Search field -->
                         <v-text-field 
                             placeholder="Dictionary search"
-                            class="dictionary-search-field mt-2 mb-3"
+                            class="dictionary-search-field mt-2 mb-3 default-font"
                             filled
                             dense
                             rounded
@@ -210,7 +200,7 @@
                         <!-- Word text fields -->
                         <div class="d-flex" v-if="$props.type == 'word'">
                             <v-text-field 
-                                :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
+                                :class="{'default-font': true, 'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                                 hide-details
                                 label="Lemma"
                                 filled
@@ -221,7 +211,7 @@
                                 @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
-                                :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
+                                :class="{'default-font': true, 'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                                 hide-details
                                 label="Word"
                                 disabled
@@ -237,7 +227,7 @@
                         <!-- Reading fields -->
                         <div class="d-flex" v-if="$props.type == 'word' && ($props.language == 'japanese' || $props.language == 'chinese')">
                             <v-text-field 
-                                class="my-2"
+                                class="my-2 default-font"
                                 hide-details
                                 label="Lemma reading"
                                 filled
@@ -248,7 +238,7 @@
                                 @keydown.stop=";"
                             ></v-text-field>
                             <v-text-field 
-                                class="my-2"
+                                class="my-2 default-font"
                                 hide-details
                                 label="Reading"
                                 filled
@@ -263,7 +253,7 @@
                         <!-- Phrase fields -->
                         <v-textarea
                             v-if="$props.type !== 'word' && ($props.language == 'japanese' || $props.language == 'chinese')"
-                            class="my-2"
+                            class="my-2 default-font"
                             label="Reading"
                             filled
                             dense
@@ -282,7 +272,7 @@
                 <v-tab-item :value="2">
                     <v-simple-table
                         v-if="$props.inflections.length"
-                        class="border rounded-lg no-hover mx-auto" 
+                        class="border rounded-lg no-hover mx-auto default-font" 
                     >
                         <thead>
                             <tr>

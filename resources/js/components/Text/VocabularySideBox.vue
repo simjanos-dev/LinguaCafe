@@ -85,7 +85,7 @@
                 <!-- Word text fields -->
                 <div class="d-flex" v-if="$props.type == 'word'">
                     <v-text-field 
-                        :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
+                        :class="{'default-font': true, 'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                         hide-details
                         placeholder="Lemma"
                         title="Lemma"
@@ -98,7 +98,7 @@
                     ></v-text-field>
                     <v-icon class="mt-1 mx-1">mdi-arrow-right</v-icon>
                     <v-text-field 
-                        :class="{'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
+                        :class="{'default-font': true, 'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                         hide-details
                         placeholder="Word"
                         title="Word"
@@ -115,7 +115,7 @@
                 <!-- Reading fields -->
                 <div class="d-flex" v-if="$props.type == 'word' && ($props.language == 'japanese' || $props.language == 'chinese')">
                     <v-text-field 
-                        class="my-2"
+                        class="default-font my-2"
                         hide-details
                         placeholder="Lemma reading"
                         title="Lemma reading"
@@ -128,7 +128,7 @@
                     ></v-text-field>
                     <v-icon class="mt-1 mx-1">mdi-arrow-right</v-icon>
                     <v-text-field 
-                        class="my-2"
+                        class="default-font my-2"
                         hide-details
                         placeholder="Reading"
                         title="Reading"
@@ -144,7 +144,7 @@
                 <!-- Phrase text -->
                 <v-textarea
                     v-if="$props.type !== 'word'"
-                    class="my-2"
+                    class="default-font my-2"
                     label="Phrase"
                     filled
                     dense
@@ -160,7 +160,7 @@
                 <!-- Phrase reading -->
                 <v-textarea
                     v-if="$props.type !== 'word' && ($props.language == 'japanese' || $props.language == 'chinese')"
-                    class="my-2"
+                    class="default-font my-2"
                     label="Reading"
                     filled
                     dense
@@ -221,7 +221,7 @@
                 <!-- Search field -->
                 <v-text-field 
                     placeholder="Dictionary search"
-                    class="dictionary-search-field mt-2 mb-3"
+                    class="dictionary-search-field default-font mt-2 mb-3"
                     width="100%"
                     prepend-inner-icon="mdi-magnify"
                     filled
@@ -265,7 +265,7 @@
             <v-tab-item :value="1">
                 <v-simple-table
                     v-if="$props.inflections.length"
-                    class="border rounded-lg no-hover mx-auto" 
+                    class="border rounded-lg no-hover mx-auto default-font" 
                 >
                     <thead>
                         <tr>

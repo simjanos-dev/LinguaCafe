@@ -22,10 +22,10 @@
                             </div>
                             
                             <!-- Glossary entry word-->
-                            <div class="word" v-if="word.base_word == ''">
+                            <div class="word default-font" v-if="word.base_word == ''">
                                 {{ word.word }} <template v-if="word.reading.length">({{ word.reading }})</template>
                             </div>
-                            <div class="word" v-if="word.base_word !== ''">
+                            <div class="word default-font" v-if="word.base_word !== ''">
                                 {{ word.base_word }} <template v-if="word.base_word_reading.length">({{ word.base_word_reading }})</template>
                                 <i class="fas fa-long-arrow-alt-right mx-2"></i> 
                                 {{ word.word }} <template v-if="word.reading.length">({{ word.reading }})</template>
