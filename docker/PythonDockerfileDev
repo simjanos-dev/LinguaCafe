@@ -8,6 +8,8 @@ RUN apt-get update -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+
 RUN pip install -U --no-cache-dir \
         setuptools \
         wheel \
@@ -22,6 +24,8 @@ RUN pip install -U --no-cache-dir \
         bottle \
 #spacy
         spacy \
+#stanza integration for spacy
+        stanza \
 #chinese reading
         pinyin \
 #subtitle file parser
@@ -33,7 +37,6 @@ RUN python3 -m spacy download de_core_news_sm \
     && python3 -m spacy download nb_core_news_sm \
     && python3 -m spacy download es_core_news_sm \
     && python3 -m spacy download nl_core_news_sm \
-    && python3 -m spacy download fi_core_news_sm \
     && python3 -m spacy download fr_core_news_sm \
     && python3 -m spacy download it_core_news_sm \
     && python3 -m spacy download sv_core_news_sm \
@@ -48,5 +51,6 @@ RUN python3 -m spacy download de_core_news_sm \
     && python3 -m spacy download pt_core_news_sm \
     && python3 -m spacy download ro_core_news_sm \
     && python3 -m spacy download sl_core_news_sm \
-    && python3 -m spacy download xx_ent_wiki_sm
+    && python3 -m spacy download xx_ent_wiki_sm \
+    && python3 -c 'import stanza; stanza.download("fi", processors="tokenize,mwt,lemma")'
 
