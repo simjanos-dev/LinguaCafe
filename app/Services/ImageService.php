@@ -25,6 +25,10 @@ class ImageService {
             abort(500, 'The file does not exist, or it belongs to a different user.');
         }
 
-        return Storage::path('/images/book_images/' . $fileName);
+        if ($fileName === 'default.jpg') {
+            return Storage::disk('default-files')->path('/images/book_images/' . $fileName);
+        } else {
+            return Storage::path('/images/book_images/' . $fileName);
+        }
     }
 }
