@@ -35,7 +35,7 @@
         <v-simple-table class="no-hover border rounded-lg" v-if="fonts.length">
             <thead>
                 <tr>
-                    <th class="text-center" colspan="2">Font</th>
+                    <th class="text-center">Font</th>
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
