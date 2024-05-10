@@ -52,7 +52,7 @@ COPY ./ /var/www/html
 COPY --from=node_build /build/public /var/www/html/public
 
 RUN addgroup --gid 1000 laravel \
-    && adduser --ingroup laravel --shell /bin/sh laravel \
+    && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel \
     && chown -R laravel /var/www/html
 USER laravel
 
