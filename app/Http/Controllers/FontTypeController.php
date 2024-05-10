@@ -30,7 +30,17 @@ class FontTypeController extends Controller {
     }
 
     public function getFontTypeFile($fileName, GetFontTypeFileRequest $request) {
-        $imagePath = Storage::path('/fonts/' . $fileName);
+        /*
+            Files that start with the word Default are 
+            default files stored in the public folder.
+        */
+        
+        if (mb_strpos($fileName, 'Default') === 0) {
+            $imagePath = Storage::disk('default-files')->path('/fonts/' . $fileName);
+        } else {
+            $imagePath = Storage::path('/fonts/' . $fileName);
+        }
+        
         return response()->file($imagePath);
     }
 

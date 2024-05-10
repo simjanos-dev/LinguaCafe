@@ -40,9 +40,8 @@ class FontTypeSeeder extends Seeder
             'Welsh',
         ];
 
-        $fontType = DB
-            ::table('font_types')
-            ->where('filename', 'NotoSansJP-Regular.otf')
+        $fontType = FontType
+            ::where('filename', 'DefaultNotoSansJP.otf')
             ->first();
 
         if ($fontType) {
@@ -51,7 +50,7 @@ class FontTypeSeeder extends Seeder
         } else {
             $fontType = new FontType();
             $fontType->name = 'NotoSans JP';
-            $fontType->filename = 'NotoSansJP-Regular.otf';
+            $fontType->filename = 'DefaultNotoSansJP.otf';
             $fontType->languages = json_encode($notoSansJpLanguages);
             $fontType->default = true;
             $fontType->save();
@@ -62,9 +61,8 @@ class FontTypeSeeder extends Seeder
             'Chinese'
         ];
 
-        $fontType = DB
-            ::table('font_types')
-            ->where('filename', 'NotoSansSC-Regular.ttf')
+        $fontType = FontType
+            ::where('filename', 'DefaultNotoSansSC.ttf')
             ->first();
 
         if ($fontType) {
@@ -73,7 +71,7 @@ class FontTypeSeeder extends Seeder
         } else {
             $fontType = new FontType();
             $fontType->name = 'NotoSans ZH';
-            $fontType->filename = 'NotoSansSC-Regular.ttf';
+            $fontType->filename = 'DefaultNotoSansSC.ttf';
             $fontType->languages = json_encode($notoSansZhLanguages);
             $fontType->default = true;
             $fontType->save();

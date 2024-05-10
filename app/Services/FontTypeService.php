@@ -32,7 +32,11 @@ class FontTypeService {
     }
 
     public function uploadFontType($fontFile, $fontName, $fontLanguages) {
-        $fileName = $fontFile->getClientOriginalName();
+        /*
+            File names that start with Default must be renamed. 
+            Those file names are reserved for default font names.
+        */
+        $fileName = str_replace('Default', 'NotDefault', $fontFile->getClientOriginalName());
 
         if (Storage::exists('fonts/' . $fileName)) {
             throw new \Exception('The font file already exists on the server.');
