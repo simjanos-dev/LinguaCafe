@@ -6,8 +6,6 @@ RUN npm install && npm run prod
 
 FROM php:8.2-apache
 
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         curl \
@@ -41,10 +39,6 @@ RUN printf 'max_execution_time = 600\n' >> /usr/local/etc/php/conf.d/uploads.ini
 # copy apache config
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-COPY --chown=www-data:www-data ./ /var/www/html
-
-# set project directory owner
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
     # enable htaccess
 RUN a2enmod rewrite
     # install composer
@@ -54,9 +48,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # despite being in the composer.json
 # RUN composer require guzzlehttp/guzzle
 
-RUN composer install --optimize-autoloader --no-dev
+COPY ./ /var/www/html
+COPY --from=node_build /build/public /var/www/html/public
 
-COPY --from=node_build --chown=www-data:www-data /build/public /var/www/html/public
+RUN addgroup --gid 1000 laravel \
+    && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel \
+    && chown -R laravel /var/www/html
+USER laravel
+
+RUN composer install --optimize-autoloader --no-dev
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
 CMD ["apache2-foreground"]
