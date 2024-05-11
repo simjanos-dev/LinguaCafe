@@ -1,9 +1,11 @@
 FROM php:8.2-apache
+FROM node:20-alpine as node_build
 
-RUN curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh \
-    && chmod +x ./nodesource_setup.sh \
-    && ./nodesource_setup.sh \
-    && rm ./nodesource_setup.sh
+COPY --from=node_build /build/public /var/www/html/public
+
+RUN addgroup --gid 1000 laravel \
+    && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel
+USER laravel
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \

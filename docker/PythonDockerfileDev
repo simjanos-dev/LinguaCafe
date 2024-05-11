@@ -8,6 +8,10 @@ RUN apt-get update -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN addgroup --gid 1000 laravel \
+    && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel
+USER laravel
+
 RUN pip install -U --no-cache-dir \
         setuptools \
         wheel \
@@ -50,3 +54,5 @@ RUN python3 -m spacy download de_core_news_sm \
     && python3 -m spacy download sl_core_news_sm \
     && python3 -m spacy download xx_ent_wiki_sm
 
+
+CMD [ "export PYTHONPATH=\"${HOME}/.local/bin:${PYTHONPATH}\"" ]
