@@ -6,6 +6,7 @@
             v-model="vocabularyEditDialog.active" 
             :item-id="vocabularyEditDialog.itemId" 
             :item-type="vocabularyEditDialog.itemType" 
+            :language-spaces="languageSpaces"
             :language="$props.language"
             @saved="loadVocabularySearchPage"
         ></vocabulary-edit-dialog>
@@ -16,7 +17,7 @@
             v-model="vocabularyExportDialog.active" 
             :sample-words="words"
             :language="$props.language"
-            :languageSpaces="languageSpaces"
+            :language-spaces="languageSpaces"
             @export-to-csv="exportToCsv"
         ></vocabulary-export-dialog>
 
