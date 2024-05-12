@@ -134,12 +134,12 @@
                                 </template>
 
                                 <!-- Language with spaces -->
-                                <template v-if="sampleWord.type == 'phrase' && languageSpace">
+                                <template v-if="sampleWord.type == 'phrase' && languageSpaces">
                                     {{ JSON.parse(sampleWord.word).join(' ') }}
                                 </template>
 
                                 <!-- Language without spaces -->
-                                <template v-if="sampleWord.type == 'phrase' && !languageSpace">
+                                <template v-if="sampleWord.type == 'phrase' && !languageSpaces">
                                     {{ JSON.parse(sampleWord.word).join('') }}
                                 </template>
                             </td>
@@ -194,7 +194,7 @@
         props: {
             value : Boolean,
             language: String,
-            languageSpace: Boolean,
+            languageSpaces: Boolean,
             sampleWords: Array
         },
         emits: ['input'],
