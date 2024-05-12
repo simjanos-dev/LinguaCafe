@@ -545,6 +545,7 @@
                 if (wordIndex === -1) {
                     if (wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
                         this.closeHoverBox();
+                        this.removePhraseHover();
                     }
 
                     return;
