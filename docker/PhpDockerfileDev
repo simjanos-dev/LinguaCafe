@@ -1,11 +1,11 @@
 FROM php:8.2-apache
-FROM node:20-alpine as node_build
 
-COPY --from=node_build /build/public /var/www/html/public
+RUN curl -sL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh \
+    && chmod +x ./nodesource_setup.sh \
+    && ./nodesource_setup.sh \
+    && rm ./nodesource_setup.sh
 
-RUN addgroup --gid 1000 laravel \
-    && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel
-USER laravel
+
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -32,28 +32,28 @@ RUN docker-php-ext-install pdo pdo_mysql fileinfo \
     && docker-php-source delete
 
 #php config
-RUN printf 'max_execution_time = 600\n' >> /usr/local/etc/php/conf.d/uploads.ini
-RUN printf 'upload_max_filesize = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
-RUN printf 'post_max_size = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
-RUN printf 'memory_limit = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
+RUN printf 'max_execution_time = 600\n' >> /usr/local/etc/php/conf.d/uploads.ini \
+    && printf 'upload_max_filesize = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini \
+    && printf 'post_max_size = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini \
+    && printf 'memory_limit = 500M\n' >> /usr/local/etc/php/conf.d/uploads.ini
 
 # copy apache config
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-# set project directory owner
-RUN chown -R www-data:www-data /var/www/html
-
-# enable htaccess
+    # enable htaccess
 RUN a2enmod rewrite
 
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
+    # install composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # for some reason i have to install this manually,
 # despite being in the composer.json
 # RUN composer require guzzlehttp/guzzle
 
+RUN addgroup --gid 1000 laravel \
+    && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel
+USER laravel
 
-ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
+
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
 CMD ["apache2-foreground"]
