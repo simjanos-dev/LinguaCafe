@@ -452,11 +452,11 @@
                     var text = '';
 
                     this.vocabBox.phrase.forEach((phraseWord, index) => {
-                        text += phraseWord.word;
-
                         if (index) {
                             text += ' ';
                         }
+
+                        text += phraseWord.word;
                     });
                 }
 
