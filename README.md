@@ -34,18 +34,23 @@ LinguaCafe uses RAM based on how many and which languages do you use. If you use
 
 ## Installation
 
-The installation process may seem a bit strange to some people. It is just a simple docker compose file, except that the git pull command pulls some empty folder structure, and some default files. You might understand it better, if you take a look at the `deploy` branch.
+#### Step 1: Install docker desktop and git.
 
-Step 1: Install docker desktop and git.
+>[!IMPORTANT]
+>
+> On MacOS you might need actual Docker Desktop instead of just basic Docker, because it allows you to use Rosetta to run images without support for Arm64 like our Python image, which uses Spacy models that only work in Amd64.
 
-Step 2: Run the following commands from the location where you want to store your files:
+#### Step 2: Create linguacafe folder and download the docker-compose.yml file.
 
-##### Linux and MacOs:
+Create a folder for linguacafe, and a storage subfolder. Then download the [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/deploy/docker-compose.yml) file, and place in inside your linguacafe folder. Your folder structure should look like this:
 ```
-git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe && cd linguacafe
+.
+├── linguacafe
+│   ├── storage
+│   ├── docker-compose.yml
 ```
 
-If you want to change the default MySQL database and user, you can create a `.env` file and add these lines to it before starting your servers for the first time:
+If you want to change the default MySQL database and user, you can create a `.env` file inside your linguacafe folder and add these lines to it before starting your servers for the first time:
 ```
 DB_DATABASE="linguacafe"
 DB_USERNAME="linguacafe"
@@ -57,202 +62,54 @@ MacOs users with Apple silicon must also create a `.env` file, and add the follo
 PLATFORM="linux/amd64"
 ```
 
-Run the remaining commands:
+#### Step 3: Run this command to download the docker images and start your server:
 ```
-chmod -R 777 ./ && docker compose up -d
-```
-
-##### Windows:
-Windows install commands are the same, except it does not need permission changes:
-
-```
-git clone -b deploy https://github.com/simjanos-dev/LinguaCafe.git linguacafe 
-cd linguacafe
 docker compose up -d
 ```
 
-Alternatively, for Windows, you can download [this installation script](/install_linguacafe.bat) and run it instead of running the commands yourself. Since this is a .bat file, Windows defender will warn you about it being potentially a malware.
+**Windows:**
 
+For Windows, you can download [this installation script](/install_linguacafe.bat) and run it instead of running any of the commands yourself. Since this is a .bat file, Windows defender will warn you about it being potentially a malware.
+
+#### Step 4: Admin settings
 Your server now should be running and accessible on http://localhost:9191. 
 
-Step 3: Follow the instructions on this page in the `Importing dictionaries` section below to import dictionaries that you want to use.
+Although your server is set up and functional, please read the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup), because there are a few additional steps before you can use linguacafe, like installing languages and importing dictionaries.
 
 ## Updating to the latest version 
 
-Always check this section and the update's release notes before updating, any important changes will be here.
+Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#backup).
 
-Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://simjanos-dev.github.io/LinguaCafeHome/#user-manual)
+If you are below v0.9, please use the migration guide provided [here](/migration.md) instead of this command.
 
-If you are below v0.5.2, please use the migration guide provided [here](/migration.md) instead of this command.
-
-#### v0.9 Mac changes
-
-If you are a Mac user with Apple silicon, and you had to uncomment a line in the `docker-compose.yml` file before, please follow these instructions before you update:
-
-Step 1: Comment the the line again at the end of the `docker-compose.yml` file :
+If you are below v0.12, please run this command from your linguacafe directory (this won't be neccessary anymore in the future):
 ```
-volumes:
-    - ./storage:/var/www/html/storage
-networks:
-    - linguacafe
-# platform: linux/amd64
+sudo chmod -R 777 ./
 ```
 
-Step 2: Create a `.env` file in the linguacafe, and add the this line to it:
-
+Run these commands to update and start your server:
 ```
-PLATFORM="linux/amd64"
-```
-
-This change will will simplify the update process, and prevent any possible conflict errors with the git pull command in the future.
-
-##### Linux and MacOs:
-```
-git pull && docker compose pull && docker compose up -d --force-recreate
+docker compose pull
+docker compose up -d
 ```
 
 ##### Windows
 On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version, or run the commands separately:
-```
-git pull
-docker compose pull
-docker compose up -d --force-recreate
-```
-
-## Importing dictionaries
-Step 1: Download the dictionaries that you want to use from the provided links below.
-
-Step 2: Copy the dictionary files to your `linguacafe/storage/app/dictionaries` folder.
-
-Step 3: Go to the Admin -> Dictionaries page in LinguaCafe. Click on the `Import dictionary` button.
-
-Step 4: This dialog will list all your importable dictionaries that are found in your `dictionaries` folder. Click on the `import` button for the dictionary that you want to import.
-
-After the import process is finished, your dictionary should be working.
-
-#### JMDict
-Languages: Japanese
-
-Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
-
-All these 4 files are required to import JMDict:
-- jmdict_processed.txt
-- kanjidic2.xml
-- radical-strokes.txt
-- radicals.txt
-
-This dictionary contains kanji and radicals for the Japanese language. Some Japanese features do not work without importing this dictionary.
-
-#### CC-CEDICT
-Languages: Chinese
-
-Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
-
-#### HanDeDict
-Languages: Chinese
-
-Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
-
-#### Kengdic
-Languages: Korean
-
-Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
-
-#### Eurfa
-Languages: Welsh
-
-Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
-
-#### Wiktionary
-Languages: Chinese, Czech, Finnish, French, German, Greek, Italian, Japanese, Korean, Latin, Norwegian, Russian, Spanish, Ukrainian, Welsh
-
-Download: [GitHub release](https://github.com/simjanos-dev/LinguaCafe/releases/tag/dictionaries)
-
-#### <span>Dict</span>.cc
-Languages: Czech, Dutch, English, Finnish, French, German, Greek, Italian, Norwegian, Russian, Spanish, Swedish
-
-Download: [dict.cc](https://www1.dict.cc/translation_file_request.php?l=e)
-
-This dictionary's license only allow personal use.
-
-#### Custom dictionary
-You can also import a custom dictionary file in the form of a .csv file.
-
-#### DeepL translate
-DeepL is a machine translation service that let's you translate up to 500.000 characters/month for free and is supported by LinguaCafe. You can set your DeepL Translate API key in the admin API settings.
-
-You must enable DeepL translate for each language on the Admin -> Dictionaries page.
-
-## Jellyfin configuration
-You can use the network configuration from this example to connect Jellyfin's network with LinguaCafe. There are probably multiple ways to do it, the only requirement is that linguacafe-webserver should be able to reach Jellyfin's server to make API requests.
-
-```
-version: '3.5'
-networks:
-    linguacafe_linguacafe:
-        external: true
-
-services:
-    jellyfin:
-        image: jellyfin/jellyfin
-        container_name: jellyfin
-        user: 1000:1000
-        volumes:
-            - /path/to/config:/config
-            - /path/to/cache:/cache
-            - /path/to/media:/media:ro
-        restart: 'unless-stopped'
-        ports:
-            - 8096:8096
-        networks:
-            - linguacafe_linguacafe
-```
-
-You must name your subtitle files in a way that Jellyfin will recognize as languages. These worked for me:  
-```
-Series Name - S01E01.ja.ass  
-Series Name - S01E01.de.ass  
-Movie name.es.ass  
-```  
-
-Language codes for subtitle filenames that Jellyfin recognizes: Chinese: `zh`, Czech: `cs`, Dutch: `nl`, English: `en`, Finnish: `fi`, French: `fr`, German: `de`, Greek: `el`, Italian: `it`, Japanese: `ja`, Korean: `ko`, Latin: `la`, Norwegian: `no`, Russian: `ru`, Spanish: `es`, Swedish: `sv`, Ukrainian: `uk`, Welsh: `cy`
-
-[Jellyfin external file naming](https://jellyfin.org/docs/general/server/media/external-files/)
-
-#### Possible error codes in browser console while importing from Jellyfin:
-`unsupported language code: spa`: This means that Jellyfin recognized the language of the subtitle, but it is not supported by LinguaCafe yet. If you find one of these, please open a GitHub Issue, this should be fixed.  
-
-`unsupported language code: unrecognized by jellyfin: japaaaneseee`: This means that Jellyfin did not recognize `japaaaneseee` as a language, and it can only be fixed by renaming the file following Jellyfin's naming conventions.  
-
-If you have file naming issues and renamed a file, make sure you refresh metadata in Jellyfin before reloading LinguaCafe.
-
-## Jellyfin API usage
-Step 1: Create an API key in Jellyfin. You can do this on the Dashboard -> API Keys menu.
-
-Step 2: Set the created API key in LinguaCafe on to the Admin->API menu.
-
-Step 3: Set the Jellyfin host in LinguaCafe on to the Admin->API menu. If you used the pre-written configs, it should be the default http://jellyfin:8096.
-
-Step 4: Save the settings.
-
-Now you can import subtitles from Jellyfin.
-
-## Anki
-Anki is supported, if your server and Anki run on the same PC (this will not be a requirement in the future) and have [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed.
 
 ## Active development disclaimer
-LinguaCafe is still in active development. There are missing features, and you might encounter some bugs while using the software. Please test it before you start actively using it, and make sure it is up to your expectations.
 
-At this time only one user/server is supported.
+>[!NOTE]
+> LinguaCafe is still in active development, you might encounter some bugs while using the software. Please test it before you start actively using it, and make sure it is up to your expectations.
+> At this time only one user/server is supported.
 
 ## Contact information
 [Discord invite](https://discord.gg/wZYZYrdaeP)
 
 Discord user: linguacafe_47757
 
-Reddit user: /u/linguacafe
-
 Subreddit: /r/linguacafe
+
+E-mail: simjanos.dev@gmail.com
 
 ## Attributions
 LinguaCafe uses many public resources. I am very thankful for these projects and for all the people who were working on them. They helped me greatly to create LinguaCafe.

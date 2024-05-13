@@ -1,3 +1,24 @@
+## Migrating from v0.8 to v0.9 on Mac
+
+If you are a Mac user with Apple silicon, and you had to uncomment a line in the `docker-compose.yml` file before, please follow these instructions before you updateto v0.9:
+
+Step 1: Comment the the line again at the end of the `docker-compose.yml` file :
+```
+volumes:
+    - ./storage:/var/www/html/storage
+networks:
+    - linguacafe
+# platform: linux/amd64
+```
+
+Step 2: Create a `.env` file in the linguacafe, and add the this line to it:
+
+```
+PLATFORM="linux/amd64"
+```
+
+This change will will simplify the update process, and prevent any possible conflict errors with the git pull command in the future.
+
 ## Migrating from v0.5 or v0.5.1 to higher
 There was an issue again with docker, this time it is an easy fix. Please create a backup of your database, and run this command instead of the one provided in the general update guide:
 ```
