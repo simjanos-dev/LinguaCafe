@@ -1,0 +1,54 @@
+name: linguacafe
+
+networks:
+    linguacafe:
+        driver: bridge
+
+services:
+    webserver:
+        image: ghcr.io/simjanos-dev/linguacafe-webserver:${VERSION:-latest}
+        container_name: linguacafe-webserver
+        restart: unless-stopped
+        depends_on:
+            - mysql
+        volumes:
+            - ./storage:/var/www/html/storage
+        environment:
+            DB_DATABASE: ${DB_DATABASE:-linguacafe}
+            DB_USERNAME: ${DB_USERNAME:-linguacafe}
+            DB_PASSWORD: ${DB_PASSWORD:-linguacafe}
+        ports:
+            - "${PORT:-9191}:80"
+        networks:
+            - linguacafe
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+    mysql:
+        image: mysql:8.0
+        container_name: linguacafe-database
+        restart: unless-stopped
+        tty: true
+        volumes:
+            - ./database:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE:-linguacafe}
+            MYSQL_USER: ${DB_USERNAME:-linguacafe}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-linguacafe}
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-linguacafe}
+            SERVICE_NAME: linguacafe
+        command: mysqld --general-log=1 --general-log-file=/var/lib/mysql/general-log.log
+        networks:
+            - linguacafe
+    python:
+        container_name: linguacafe-python-service
+        command: "python3 /app/tokenizer.py"
+        restart: unless-stopped
+        tty: true
+        image: ghcr.io/simjanos-dev/linguacafe-python-service:${VERSION:-latest}
+        environment:
+            PYTHONPATH: "/var/www/html/storage/app/model"
+        volumes:
+            - ./storage:/var/www/html/storage
+        networks:
+            - linguacafe
+        platform: ${PLATFORM:-}
