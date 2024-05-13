@@ -27,7 +27,6 @@ class FontTypeSeeder extends Seeder
             'Latin',
             'Macedonian',
             'Norwegian',
-            'Polish',
             'Portuguese',
             'Romanian',
             'Russian',
@@ -73,6 +72,27 @@ class FontTypeSeeder extends Seeder
             $fontType->name = 'NotoSans ZH';
             $fontType->filename = 'DefaultNotoSansSC.ttf';
             $fontType->languages = json_encode($notoSansZhLanguages);
+            $fontType->default = true;
+            $fontType->save();
+        }
+
+        // OpenSans
+        $poltawskiNowLanguages = [
+            'Polish',
+        ];
+
+        $fontType = FontType
+            ::where('filename', 'DefaultOpenSans.ttf')
+            ->first();
+
+        if ($fontType) {
+            $fontType->languages = json_encode($poltawskiNowLanguages);
+            $fontType->save();
+        } else {
+            $fontType = new FontType();
+            $fontType->name = 'OpenSans';
+            $fontType->filename = 'DefaultOpenSans.ttf';
+            $fontType->languages = json_encode($poltawskiNowLanguages);
             $fontType->default = true;
             $fontType->save();
         }

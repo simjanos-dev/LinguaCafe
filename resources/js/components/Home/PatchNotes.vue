@@ -82,6 +82,9 @@
                     <li>
                         Fixed a bug that caused text importing to fail in Japanese, if the last word was combined with the previous word during post processing.
                     </li>
+                    <li>
+                        Polish language had a font type that displayed incorrect letters.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
