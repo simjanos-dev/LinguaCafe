@@ -194,6 +194,11 @@ class TextBlock
                 if ($this->tokenizedWords[$wordIndex]->pos == 'VERB' && $this->tokenizedWords[$wordIndex]->w !== $this->tokenizedWords[$wordIndex]->l && $this->tokenizedWords[$wordIndex + 1]->pos == 'AUX') {
                     do {
                         $wordIndex ++;
+
+                        if ($wordIndex === $wordCount) {
+                            break;
+                        }
+
                         if ($this->tokenizedWords[$wordIndex]->pos == 'AUX') {
                             $word->word .= $this->tokenizedWords[$wordIndex]->w;
                             $word->reading .= $this->tokenizedWords[$wordIndex]->r;

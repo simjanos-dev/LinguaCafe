@@ -10,7 +10,10 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        Added book length to the library table view.
+                        Docker installation and update process has been improved. It does not require git and chmod commands anymore (except once for already existing users).
+                    </li>
+                    <li>
+                        Added book length to the library list view.
                     </li>
                     <li>
                         Added word inflections table for Japanese.
@@ -75,6 +78,9 @@
                     </li>
                     <li>
                         Symbols won't be combined anymore with words in Japanese. This only applies to texts that are imported after this update.
+                    </li>
+                    <li>
+                        Fixed a bug that caused text importing to fail in Japanese, if the last word was combined with the previous word during post processing.
                     </li>
                 </ul>
 
