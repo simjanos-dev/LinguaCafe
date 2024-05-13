@@ -42,7 +42,7 @@ LinguaCafe uses RAM based on how many and which languages do you use. If you use
 
 #### Step 2: Create linguacafe folder and download the docker-compose.yml file.
 
-Create a folder for linguacafe, and a storage subfolder. Then download the [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/deploy/docker-compose.yml) file, and place in inside your linguacafe folder. Your folder structure should look like this:
+Create a folder for linguacafe, and a storage subfolder. Then download the [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/main/docker-compose.yml) file, and place in inside your linguacafe folder. Your folder structure should look like this:
 ```
 .
 ├── linguacafe
@@ -84,7 +84,7 @@ If you are below v0.9, please use the migration guide provided [here](/migration
 
 If you are below v0.12, please run this command from your linguacafe directory (this won't be neccessary anymore in the future):
 ```
-sudo chmod -R 777 ./
+sudo chmod -R 777 ./storage
 ```
 
 Run these commands to update and start your server:
