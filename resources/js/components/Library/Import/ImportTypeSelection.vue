@@ -19,7 +19,7 @@
             </div>
 
             <!-- E-book -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('e-book')">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('e-book')" v-if="language !== 'thai'">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-book</v-icon>
                 </div>
@@ -27,7 +27,7 @@
             </div>
         
             <!-- Youtube -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('youtube')">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('youtube')" v-if="language !== 'thai'">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-youtube</v-icon>
                 </div>
@@ -35,7 +35,7 @@
             </div>
 
             <!-- Jellyfin subtitle -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('jellyfin-subtitle')">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('jellyfin-subtitle')" v-if="language !== 'thai'">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-movie</v-icon>
                 </div>
@@ -43,7 +43,7 @@
             </div>
 
             <!-- Subtitle file -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('subtitle-file')">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('subtitle-file')" v-if="language !== 'thai'">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-subtitles</v-icon>
                 </div>
@@ -51,7 +51,7 @@
             </div>
 
             <!-- Website -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('website')" v-if="websiteImportSupported">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('website')" v-if="language !== 'thai' && websiteImportSupported">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-web</v-icon>
                 </div>

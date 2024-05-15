@@ -305,6 +305,7 @@ def tokenizeTextSimple(words, language, sentenceIndexStart = 0):
             tokenizedWords.append({'w': word, 'r': '', 'l': '', 'lr': '', 'pos': '','si': sentenceIndex + sentenceIndexStart, 'g': ''})
             wordIndex = wordIndex + 1
     
+    tokenizedWords = postProcessWords(tokenizedWords, language)
     return tokenizedWords
 
 # Tokenizes a text with spacy.
@@ -352,7 +353,68 @@ def tokenizeText(words, language, sentenceIndexStart = 0):
                 lemma = get_separable_lemma(token)
             
             tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': sentenceIndex + sentenceIndexStart, 'g': gender})
+    tokenizedWords = postProcessWords(tokenizedWords, language)
     return tokenizedWords
+
+def postProcessWords(unprocessedWords, language):
+    
+    wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
+        '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
+        '«', '»', "'", '’', '–', 'NEWLINE', 'newline', ' ', "\r", "\n", "\r\n", '	', "\r\n　", ';', ',', '!', '\'', 
+        '"', '‘', '_', '…', '/', '*', '&', '“', '”', '•', '©', '...', '●', '¡', '¿', '€', '$', '%', '˚', '°', '=', '!=', '-', '+']
+    words = list()
+
+    wordCount = len(unprocessedWords);
+    wordIndex = 0
+    while wordIndex < wordCount:
+        word = unprocessedWords[wordIndex]
+        originalWord = str(unprocessedWords[wordIndex]['w'])
+        verbCombined = False
+
+        if language == 'japanese' and wordIndex < wordCount - 1 and unprocessedWords[wordIndex]['w'] not in wordsToSkip and unprocessedWords[wordIndex + 1]['w'] not in wordsToSkip:
+            # combine 2 verbs after eachother into one word
+            if unprocessedWords[wordIndex]['pos'] == 'VERB' and unprocessedWords[wordIndex + 1]['pos'] == 'VERB':
+                #print('japanese conjugate', unprocessedWords[wordIndex]['w'], unprocessedWords[wordIndex]['l'], unprocessedWords[wordIndex + 1]['l'])
+                wordIndex = wordIndex + 1;
+                word['w'] = word['w'] + str(unprocessedWords[wordIndex]['w'])
+                word['r'] = word['r'] + str(unprocessedWords[wordIndex]['r'])
+                word['lr'] = str(unprocessedWords[wordIndex - 1]['r']) + str(unprocessedWords[wordIndex]['lr'])
+                word['l'] = str(unprocessedWords[wordIndex - 1]['w']) + str(unprocessedWords[wordIndex]['l'])
+
+            # Combine VERB + AUX and VERB + SCONJ. It's more logical for the user.
+            if unprocessedWords[wordIndex]['pos'] == 'VERB' and unprocessedWords[wordIndex]['w'] != unprocessedWords[wordIndex]['l'] and unprocessedWords[wordIndex + 1]['pos'] == 'AUX':
+                verbCombined = True
+                #print('japanese conjugate', unprocessedWords[wordIndex]['w'], unprocessedWords[wordIndex]['l'], unprocessedWords[wordIndex + 1]['l'])
+                while wordIndex < wordCount - 1 and unprocessedWords[wordIndex + 1]['pos'] == 'AUX':
+                    wordIndex = wordIndex + 1
+                    word['w'] = word['w'] + str(unprocessedWords[wordIndex]['w'])
+                    word['r'] = word['r'] + str(unprocessedWords[wordIndex]['r'])
+            elif unprocessedWords[wordIndex]['pos'] == 'VERB' and unprocessedWords[wordIndex]['w'] != unprocessedWords[wordIndex]['l'] and unprocessedWords[wordIndex + 1]['pos'] == 'SCONJ':
+                verbCombined = True
+                #print('japanese conjugate', unprocessedWords[wordIndex]['w'], unprocessedWords[wordIndex]['l'], unprocessedWords[wordIndex + 1]['l'])
+                while wordIndex < wordCount - 1 and unprocessedWords[wordIndex + 1]['pos'] == 'SCONJ':
+                    wordIndex = wordIndex + 1
+                    word['w'] = word['w'] + str(unprocessedWords[wordIndex]['w'])
+                    word['r'] = word['r'] + str(unprocessedWords[wordIndex]['r'])
+
+
+        testnlp = spacy.load("ja_core_news_sm")
+
+        if verbCombined:
+            oldLemma = word['l']
+            word['l'] = ''
+            for doc in testnlp.pipe([originalWord], disable=["parser", "ner"]):
+                for token in doc:
+                    word['l'] = word['l'] + token.lemma_
+
+            print('new lemma generated. ', word['w'], ': ', oldLemma, ' -> ', word['l'])
+
+        # if verbCombined:
+        #     test = japanese_nlp.vocab.morphology.lemmatizer(word['w'], word['pos'], morphology=None)
+        #     print('combined lemma', word['w'], test[0])
+        words.append(word)
+        wordIndex = wordIndex + 1
+    return words
 
 # loads n .epub file
 def loadBook(file):
