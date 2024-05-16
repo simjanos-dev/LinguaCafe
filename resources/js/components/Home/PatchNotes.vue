@@ -5,7 +5,7 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.12 <v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-title>v0.12<v-spacer /> 2024.05.17.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -94,17 +94,6 @@
                     </li>
                     <li>
                         Laravel now produces more detailed logs, and logs both to the log file and the docker terminal.
-                    </li>
-                </ul>
-            </v-card-text>
-        </v-card>
-        <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.11.1 <v-spacer /> 2024.04.27.</v-card-title>
-            <v-card-text>
-                <b>Bug fixes:</b>
-                <ul>
-                    <li>
-                        Fixed "Hide all highlighting" and "Hide new word highlighting" settings.
                     </li>
                 </ul>
             </v-card-text>
