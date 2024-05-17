@@ -12,6 +12,9 @@
                     <li>
                         Example sentence text overflowed the review card.
                     </li>
+                    <li>
+                        Added missing folder creation for linguacafe/storage/app/temp. Not having it caused ebook file imports, and Japanese language install to fail.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>
