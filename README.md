@@ -82,7 +82,7 @@ Please **backup** linguacafe before updating, otherwise you can lose your data i
 
 If you are below v0.9, please use the migration guide provided [here](/migration.md) instead of this command.
 
-If you are below v0.12, please run this command from your linguacafe directory (this won't be neccessary anymore in the future):
+If you are below v0.12 and using Linux or MacOS, please run this command from your linguacafe directory (this won't be neccessary anymore in the future):
 ```
 sudo chmod -R 777 ./storage
 ```
