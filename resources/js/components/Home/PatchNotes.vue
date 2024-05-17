@@ -5,6 +5,18 @@
         </div>
         
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.12.1<v-spacer /> 2024.05.17.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Example sentence text overflowed the review card.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12<v-spacer /> 2024.05.17.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
