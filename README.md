@@ -94,7 +94,7 @@ docker compose up -d
 ```
 
 ##### Windows
-On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version, or run the commands separately:
+On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version, or run the commands separately.
 
 ## Active development disclaimer
 
