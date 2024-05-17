@@ -97,7 +97,7 @@ If you are below v0.12 and using Windows please delete these folders **after upd
 ```
 linguacafe/storage/logs
 linguacafe/storage/framework
-storage/app/model
+linguacafe/storage/app/model
 ```
 
 If you run into any problem updating, please contact me on discord, I will try to help.
