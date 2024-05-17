@@ -87,6 +87,15 @@ If you are below v0.12 and using Linux or MacOS, please run this command from yo
 sudo chmod -R 777 ./storage
 ```
 
+If you are below v0.12 and using Windows follow this step instead. Please delete these folders **after updating**. You will have to install your languages again if you had any installed.
+```
+linguacafe/storage/logs
+linguacafe/storage/framework
+storage/app/model
+```
+
+If you run into any problem updating, please contact me on discord, I will try to help.
+
 Run these commands to update and start your server:
 ```
 docker compose pull
