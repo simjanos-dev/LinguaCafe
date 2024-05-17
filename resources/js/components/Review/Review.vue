@@ -207,16 +207,15 @@
 
                                     <!-- Example sentence plain text mode -->
                                     <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
-                                        <div class="
-                                        " :style="{'font-size': (settings.fontSize) + 'px'}">
-                                            <span 
+                                        <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
+                                            <span
                                                 v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
                                                 :class="{'selected-font': true, 'mr-2': word.spaceAfter}"
                                             >{{ word.word }}</span>
                                         </div>
                                     </template>
                                 </div>
-                                
+
                                 <!-- Single word  mode -->
                                 <div class="single-word selected-font" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
                                     <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
