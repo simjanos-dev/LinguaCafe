@@ -483,6 +483,10 @@
                 if (this.$props.plainTextMode) {
                     return;
                 }
+                document.body.classList.add("disableScroll")
+                const parent = document.getElementById("reader-content")
+                parent.classList.add("disableScroll")
+                document.documentElement.classList.add("disableScroll")
 
                 this.touchTimer = setTimeout(() => {
                     this.startSelection(parseInt(element.attributes['wordindex'].nodeValue));
@@ -673,6 +677,10 @@
 
             },
             finishSelection: function() {
+                document.body.classList.remove("disableScroll")
+                document.documentElement.classList.remove("disableScroll")
+                const parent = document.getElementById("reader-content")
+                parent.classList.remove("disableScroll")
                 if (this.touchTimer) {
                     clearTimeout(this.touchTimer);
                     this.touchTimer = null;

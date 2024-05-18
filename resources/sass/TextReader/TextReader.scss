@@ -87,12 +87,20 @@
 
         #reader-content {
             position: relative;
-            scroll-behavior: smooth;
             height: 100%;
-            overflow-y: auto;
-            overflow-x: visible !important;
+
+            &.reader-content-scroll-behaviour {
+                overflow-y: auto;
+                overflow-x: visible !important;
+                scroll-behavior: smooth;
+            }
+
+            &.disableScroll {
+                overflow: hidden !important;
+                overscroll-behavior: none;
+            }
         }
-        
+
         #chapter-name {
             min-height: 42px;
             line-height: 42px;

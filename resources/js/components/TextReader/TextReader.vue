@@ -45,28 +45,30 @@
             ></text-reader-glossary>
 
             <!-- Text -->
-            <v-card 
+            <v-card
                 :outlined="theme !== 'eink'"
                 :flat="theme == 'eink'"
                 v-if="!finished"
                 id="reader"
                 :class="{
-                    'plain-text-mode': settings.plainTextMode, 
-                    'vertical-text': settings.verticalText, 
+                    'plain-text-mode': settings.plainTextMode,
+                    'vertical-text': settings.verticalText,
                     'rounded-lg': true,
                     'ml-2': true,
-                }" 
+                }"
                 :style="{
                     'height': $vuetify.breakpoint.mdAndUp ? 'calc(100% - 24px - 24px)' : 'calc(100% - 24px - 24px - 64px)',
-                    'padding-right': settings.vocabularySidebar && vocabularySidebarFits ? '400px !important' : '0px'
+                    'padding-right': settings.vocabularySidebar && vocabularySidebarFits ? '400px !important' : '0px',
+                    'overscroll-behavior': 'none'
                 }"
             >
             <v-card-text id="reader-content" :class="{
-                'vocab-box-area': true, 
+                'vocab-box-area': true,
                 'px-6': $vuetify.breakpoint.smAndUp,
                 'px-3': $vuetify.breakpoint.xsOnly,
                 'pt-4': $vuetify.breakpoint.smAndUp,
                 'pt-3': $vuetify.breakpoint.xsOnly,
+                'reader-content-scroll-behaviour': true,
                 }">
                     <div id="chapter-name" class="mb-4" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
                         {{ lessonName }}

@@ -586,3 +586,8 @@ div.v-data-table {
 #navigation-drawer.eink {
     transition-duration: 0s !important;
 }
+
+.disableScroll {
+    overflow: hidden !important;
+    overscroll-behavior:none;
+}
