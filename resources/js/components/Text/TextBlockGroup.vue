@@ -516,13 +516,13 @@
                 if (this.ongoingSelection.length) {
                     event.preventDefault();
                 }
-                
-                if (this.touchTimer) {
+
+                if (this.touchTimer && this.ongoingSelection.length) {
                     clearTimeout(this.touchTimer);
                     this.touchTimer = null;
                     return;
                 }
-                
+
                 var touch = event.changedTouches[0];
                 var element = document.elementFromPoint( touch.clientX, touch.clientY );
 
