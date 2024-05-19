@@ -329,7 +329,7 @@
                 </v-row>
 
                 <!-- Text to speech section -->
-                <div class="subheader subheader-margin-top d-flex mb-2">
+                <div class="subheader subheader-margin-top d-flex mb-2" v-if="textToSpeechVoices.length">
                     Text to speech
                 </div>
                 
