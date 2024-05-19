@@ -513,6 +513,10 @@
 
             },
             updateSelectionTouchEvent: function(event) {
+                if (this.ongoingSelection.length) {
+                    event.preventDefault();
+                }
+                
                 if (this.touchTimer) {
                     clearTimeout(this.touchTimer);
                     this.touchTimer = null;
