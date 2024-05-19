@@ -3,7 +3,22 @@
         <div class="subheader">
             Patch notes
         </div>
-        
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.12.2<v-spacer /> 2024.05.19.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Disabled touch scrolling while selecting text.
+                    </li>
+                    <li>
+                        Fixed a bug that prevented reading and reviewing in browsers that do not support TTS, like Opera.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.1<v-spacer /> 2024.05.17.</v-card-title>
             <v-card-text>
@@ -121,36 +136,6 @@
                 <ul>
                     <li>
                         Fixed a bug that caused practice review mode to be always turned off.
-                    </li>
-                </ul>
-            </v-card-text>
-        </v-card>
-
-        <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.11.2 <v-spacer /> 2024.04.27.</v-card-title>
-            <v-card-text>
-                <b>Bug fixes:</b>
-                <ul>
-                    <li>
-                        Fixed annoying multi word text selection bug.
-                    </li>
-                    <li>
-                        Fixed furigana.
-                    </li>
-                    <li>
-                        Fixed plain text mode.
-                    </li>
-                </ul>
-            </v-card-text>
-        </v-card>
-
-        <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.11.1 <v-spacer /> 2024.04.27.</v-card-title>
-            <v-card-text>
-                <b>Bug fixes:</b>
-                <ul>
-                    <li>
-                        Fixed "Hide all highlighting" and "Hide new word highlighting" settings.
                     </li>
                 </ul>
             </v-card-text>
