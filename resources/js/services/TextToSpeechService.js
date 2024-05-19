@@ -38,17 +38,23 @@ class TextToSpeechService {
         this.language = language;
         this.voices = this.getLanguageVoices();
         
-        window.speechSynthesis.addEventListener("voiceschanged", (event) => {
-            this.voices = this.getLanguageVoices();
+        if (window.speechSynthesis !== undefined) {
+            window.speechSynthesis.addEventListener("voiceschanged", (event) => {
+                this.voices = this.getLanguageVoices();
 
-            if (voicesLoaded !== null) {
-                voicesLoaded();
-            }
-        });
+                if (voicesLoaded !== null) {
+                    voicesLoaded();
+                }
+            });
+        }
     }
 
     getLanguageVoices() {
         var languageVoices = [];
+        if (window.speechSynthesis === undefined) {
+            return languageVoices;
+        }
+
         var allVoices = speechSynthesis.getVoices();
 
         allVoices.forEach((voice) => {
@@ -62,6 +68,10 @@ class TextToSpeechService {
     }
 
     getSelectedVoice() {
+        if (window.speechSynthesis === undefined) {
+            return null;
+        }
+
         if (this.cookieHandler.get(this.language + '-text-to-speech-voice') !== null) {
             var selectedVoiceName = this.cookieHandler.get(this.language + '-text-to-speech-voice');
             var selectedVoice = null;
@@ -82,6 +92,10 @@ class TextToSpeechService {
 
     getVoiceNames() {
         var voiceNames = [];
+
+        if (window.speechSynthesis === undefined) {
+            return voiceNames;
+        }
 
         this.voices.forEach((voice) => {
             voiceNames.push(voice.name);
