@@ -26,7 +26,9 @@ class EncounteredWord extends Model
         'example_sentence',
         'lookup_count',
         'read_count',
-        'relearning'
+        'relearning',
+        'created_at',
+        'updated_at',
     ];
 
     public function setStage($stage, $ignoreAchivement = false) {
