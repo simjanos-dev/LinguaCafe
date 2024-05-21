@@ -516,6 +516,15 @@
 
             },
             updateSelectionTouchEvent: function(event) {
+                if (!event.cancelable) {
+                    if (this.touchTimer) {
+                        clearTimeout(this.touchTimer);
+                        this.touchTimer = null;
+                    }
+                    
+                    return;
+                }
+                
                 if (this.ongoingSelection.length) {
                     event.preventDefault();
                 }
@@ -528,9 +537,12 @@
                     wordIndex = element.getAttribute('wordindex');
                 }
 
-                if (this.touchTimer && (wordIndex === null || parseInt(wordIndex) === this.touchStartWordIndex)) {
-                    clearTimeout(this.touchTimer);
-                    this.touchTimer = null;
+                if (this.touchTimer) {
+                    if ((wordIndex === null || parseInt(wordIndex) !== this.touchStartWordIndex)) {
+                        clearTimeout(this.touchTimer);
+                        this.touchTimer = null;
+                    }
+
                     return;
                 }
 
