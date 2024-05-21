@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 use App\Models\Phrase;
 
 /*
@@ -329,6 +330,8 @@ class TextBlock
             $encounteredWord['example_sentence'] = '';
             $encounteredWord['stage'] = 2;
             $encounteredWord['translation'] = '';
+            $encounteredWord['created_at'] =  Carbon::now();
+            $encounteredWord['updated_at'] = Carbon::now();
 
             
             if (in_array($this->processedWords[$wordIndex]->word, $wordsToSkip, true) || is_numeric($this->processedWords[$wordIndex]->word)) {

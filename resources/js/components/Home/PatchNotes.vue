@@ -10,10 +10,13 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Review page displayed no text when the user finished reviewing, and it only had one card in total.
+                        Review page displayed no text after the user finished reviewing, and it only had one card in total.
                     </li>
                     <li>
                         Fixed and enabled Thai import options.
+                    </li>
+                    <li>
+                        Added missing created_at and updated_at fields to imported words.
                     </li>
                 </ul>
             </v-card-text>
