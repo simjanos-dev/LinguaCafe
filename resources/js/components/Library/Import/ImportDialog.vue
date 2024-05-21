@@ -125,6 +125,7 @@
                             <import-options
                                 v-if="stepperPage > 3"
                                 :language="$props.language"
+                                :type="importType"
                                 @import-options-changed="importOptionsChanged"
                             ></import-options>
                         </v-stepper-content>
@@ -231,6 +232,7 @@
                 isImportOptionsValid: false,
                 isLibraryValid: false,
                 textProcessingMethod: 'detailed',
+                eBookChapterSortMethod: 'default',
                 maximumCharactersPerChapter: 200,
                 importType: '',
 
@@ -292,10 +294,11 @@
                 }
                 
             },
-            importOptionsChanged(data) {
-                this.textProcessingMethod = data.textProcessingMethod;
-                this.isImportOptionsValid = data.isValid;
-                this.maximumCharactersPerChapter = data.maximumCharactersPerChapter;
+            importOptionsChanged(newOptions) {
+                this.textProcessingMethod = newOptions.textProcessingMethod;
+                this.isImportOptionsValid = newOptions.isValid;
+                this.maximumCharactersPerChapter = newOptions.maximumCharactersPerChapter;
+                this.eBookChapterSortMethod = newOptions.eBookChapterSortMethod;
             },
             stepForward() {
                 this.stepperPage++;
@@ -338,6 +341,7 @@
                 }
 
                 data.set('textProcessingMethod', this.textProcessingMethod);
+                data.set('eBookChapterSortMethod', this.eBookChapterSortMethod);
                 data.set('bookId', this.bookId);
                 data.set('bookName', this.bookName);
                 data.set('chapterName', this.chapterName);

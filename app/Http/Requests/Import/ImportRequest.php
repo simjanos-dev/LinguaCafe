@@ -25,6 +25,7 @@ class ImportRequest extends FormRequest
     {
         return [
             'importType' => 'required|string',
+            'eBookChapterSortMethod' => 'required|string',
             'textProcessingMethod' => 'required|string',
             'bookId' => 'required|numeric|gte:-1',
             'bookName' => 'nullable|string',

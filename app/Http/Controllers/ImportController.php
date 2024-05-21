@@ -37,6 +37,7 @@ class ImportController extends Controller {
         $userId = Auth::user()->id;
         $importType = $request->post('importType');
         $textProcessingMethod = $request->post('textProcessingMethod');
+        $eBookChapterSortMethod = $request->post('eBookChapterSortMethod');
         $bookId = $request->post('bookId');
         $bookName = $request->post('bookName');
         $chapterName = $request->post('chapterName');
@@ -64,7 +65,7 @@ class ImportController extends Controller {
         try {
             if ($importMethod === 'e-book') {
                 // e-book
-                $this->importService->importBook($chunkSize, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
+                $this->importService->importBook($chunkSize, $eBookChapterSortMethod, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'text') {
                 // text
                 $this->importService->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
