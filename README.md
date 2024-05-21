@@ -57,6 +57,12 @@ DB_USERNAME="linguacafe"
 DB_PASSWORD="linguacafe"
 ```
 
+You can also use a remote MySql server. In this case, you must create the database itself before starting the server.
+```
+DB_HOST="linguacafe-database-host"
+DB_PORT=3306
+```
+
 MacOs users with Apple silicon must also create a `.env` file, and add the following line:
 ```
 PLATFORM="linux/amd64"
