@@ -18,7 +18,7 @@ class ImportService {
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
 
-    public function importBook($chunkSize, $textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
+    public function importBook($chunkSize, $eBookChapterSortMethod, $textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
         $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
@@ -27,6 +27,7 @@ class ImportService {
         $text = Http::post($this->pythonService . ':8678/tokenizer/import-book', [
             'language' => $selectedLanguage,
             'textProcessingMethod' => $textProcessingMethod,
+            'chapterSortMethod' => $eBookChapterSortMethod,
             'importFile' => $file,
             'chunkSize' => $chunkSize
         ]);

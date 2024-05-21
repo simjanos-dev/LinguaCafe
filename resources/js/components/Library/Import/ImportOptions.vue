@@ -23,15 +23,54 @@
                 class="mt-0"
             >
                 <v-radio
-                    label="Simple"
                     value="simple"
                     :disabled="!simpleProcessingMethodEnabled"
-                ></v-radio>
+                >
+                    <template v-slot:label>
+                        <div>Simple</div>
+                    </template>
+                </v-radio>
                 <v-radio
                     value="detailed"
                 >
                     <template v-slot:label>
                         <div>Detailed</div>
+                    </template>
+                </v-radio>
+            </v-radio-group>
+
+            <!-- E-book chapter order -->
+            <label class="font-weight-bold mt-2" v-if="$props.type === 'e-book'">
+                E-book chapter order
+                <v-menu offset-y nudge-top="-12px">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                    </template>
+                    <v-card outlined class="rounded-lg pa-4" width="320px">
+                        For some rare cases the chapter order can be incorrect after importing an e-book. If it 
+                        happened to you, please delete the imported book, and import it again with the Spine option.
+                    </v-card>
+                </v-menu>
+            </label>
+
+            <v-radio-group
+                v-if="$props.type === 'e-book'"
+                v-model="eBookChapterSortMethod"
+                @change="importOptionsChanged"
+                class="mt-0"
+            >
+                <v-radio
+                    value="default"
+                >
+                    <template v-slot:label>
+                        <div>Default</div>
+                    </template>
+                </v-radio>
+                <v-radio
+                    value="spine"
+                >
+                    <template v-slot:label>
+                        <div>Spine</div>
                     </template>
                 </v-radio>
             </v-radio-group>
@@ -65,6 +104,7 @@
             return {
                 simpleProcessingMethodEnabled: this.$props.language == 'norwegian' || this.$props.language == 'german',
                 processingMethod: 'detailed',
+                eBookChapterSortMethod: 'default',
                 isFormValid: false,
                 maximumCharactersPerChapter: (this.$props.language == 'chinese' || this.$props.language == 'japanese') ? 1500 : 3000,
                 defaultMaximumCharactersPerChapter: (this.$props.language == 'chinese' || this.$props.language == 'japanese') ? 1500 : 3000,
@@ -85,7 +125,8 @@
             }
         },
         props: {
-            language: String
+            language: String,
+            type: String,
         },
         mounted() {
             this.importOptionsChanged();
@@ -97,6 +138,7 @@
                 this.$emit('import-options-changed', {
                     textProcessingMethod: this.processingMethod,
                     maximumCharactersPerChapter: this.maximumCharactersPerChapter,
+                    eBookChapterSortMethod: this.eBookChapterSortMethod,
                     isValid: valid
                 });
             }

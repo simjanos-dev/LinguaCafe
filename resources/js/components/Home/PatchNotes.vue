@@ -10,6 +10,7 @@
                 <b>New features:</b>
                 <ul>
                     <li>Added support for using remote MySQL server.</li>
+                    <li>Added an import option for e-books that lets users order the chapters based on the e-book's spine metadata. In some rare cases, this will fix incorrect chapter order for imported e-books.</li>
                 </ul>
 
                 <b>Bug fixes:</b>

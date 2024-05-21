@@ -372,12 +372,23 @@ def tokenizeText(text, language, sentenceIndexStart = 0):
 
     return tokenizedWords
 
-# loads n .epub file
-def loadBook(file):
+# loads an .epub file
+def loadBook(file, sortMethod):
     # rp and rt tags are used in adding prononciation over words, we need to remove the content of the tags
     cleaner = lxml.html.clean.Cleaner(allow_tags=[''], remove_unknown_tags=False, kill_tags = ['rp','rt'], page_structure=False)
     content = ''
-    for item in epub.read_epub(file).get_items():
+    book = epub.read_epub(file)
+    items = list(book.get_items())
+
+    # select sorting method for chapters
+    if sortMethod == 'default':
+        sortedItems = items
+    elif sortMethod == 'spine':
+        sortedItems = list()
+        for item in enumerate(book.spine):
+            sortedItems.append(book.get_item_with_id(item[1][0]))
+
+    for item in sortedItems:
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
             epubPage = cleaner.clean_html(item.get_content()).decode('utf-8')
             # needed to removed extra div created by cleaner...
@@ -412,9 +423,10 @@ def importBook():
     textProcessingMethod = request.json.get('textProcessingMethod')
     importFile = request.json.get('importFile')
     language = request.json.get('language')
+    chapterSortMethod = request.json.get('chapterSortMethod')
     
     # load book
-    content = loadBook(importFile)
+    content = loadBook(importFile, chapterSortMethod)
     content = content.replace('\r\n', ' NEWLINE ')
     content = content.replace('\n', ' NEWLINE ')
 
