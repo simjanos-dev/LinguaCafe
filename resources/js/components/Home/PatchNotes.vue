@@ -18,6 +18,9 @@
                     <li>
                         Added missing created_at and updated_at fields to imported words.
                     </li>
+                    <li>
+                        Fixed touch multi word selection with Apple pencils.
+                    </li>
                 </ul>
             </v-card-text>
         </v-card>

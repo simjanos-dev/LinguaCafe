@@ -324,6 +324,7 @@
                 // text selection
                 phraseLengthLimit: 14,
                 touchTimer: null,
+                touchStartWordIndex: -1,
                 selection: [],
                 ongoingSelection: [],
                 selectedPhrase: -1,
@@ -484,8 +485,10 @@
                     return;
                 }
 
+                var wordIndex = parseInt(element.attributes['wordindex'].nodeValue);
+                this.touchStartWordIndex = wordIndex;
                 this.touchTimer = setTimeout(() => {
-                    this.startSelection(parseInt(element.attributes['wordindex'].nodeValue));
+                    this.startSelection(wordIndex);
                 }, 500);
             },
             startSelectionMouseEvent(event) {
@@ -517,18 +520,18 @@
                     event.preventDefault();
                 }
                 
-                if (this.touchTimer) {
-                    clearTimeout(this.touchTimer);
-                    this.touchTimer = null;
-                    return;
-                }
-                
                 var touch = event.changedTouches[0];
                 var element = document.elementFromPoint( touch.clientX, touch.clientY );
 
                 var wordIndex = null;
                 if (element !== null && element.classList.contains('word') || element.classList.contains('rubyword')) {
                     wordIndex = element.getAttribute('wordindex');
+                }
+
+                if (this.touchTimer && (wordIndex === null || parseInt(wordIndex) === this.touchStartWordIndex)) {
+                    clearTimeout(this.touchTimer);
+                    this.touchTimer = null;
+                    return;
                 }
 
                 if (wordIndex !== null && this.ongoingSelection.length) {
