@@ -5,6 +5,21 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.13<v-spacer /> 2024.06.??.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Review page displayed no text when the user finished reviewing, and it only had one card in total.
+                    </li>
+                    <li>
+                        Fixed and enabled Thai import options.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.2<v-spacer /> 2024.05.19.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>

@@ -103,23 +103,15 @@ class TextBlock
         return $wordCount;
     }
 
-    private function preProcessText() {
-        $text = $this->rawText;
-        $text = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
-
-        if ($this->language === 'thai') {
-            $text = str_replace(' ', ' THAINEWSENTENCE ', $text);
-        }
-
-        return $text;
-    }
-
     /* 
         Sends the raw text to python tokenizer service, and stores the result.
     */
     public function tokenizeRawText() {
+        $text = $this->rawText;
+        $text = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
+
         $this->tokenizedWords = Http::post($this->pythonService . ':8678/tokenizer', [
-            'raw_text' => $this->preProcessText(),
+            'raw_text' => $text,
             'language' => $this->language,
         ]);
 
@@ -160,7 +152,6 @@ class TextBlock
         $wordCount = count($this->tokenizedWords);
         $wordsToSkip = config('linguacafe.words_to_skip');
 
-        $thaiSentenceIndex = 0;
         for ($wordIndex = 0; $wordIndex < $wordCount; $wordIndex++) {
             $word = new \stdClass();
             $word->user_id = $userId;
@@ -216,18 +207,6 @@ class TextBlock
                             $wordIndex --; break;
                         }
                     } while($this->tokenizedWords[$wordIndex]->pos == 'SCONJ');
-                }
-            }
-
-            // thai post processing
-            if ($this->language == 'thai') { 
-                if ($word->word == 'NEWLINE') {
-                    $thaiSentenceIndex ++;
-                } else if ($word->word == 'THAINEWSENTENCE') {
-                    $thaiSentenceIndex ++;
-                    continue;
-                } else {
-                    $word->sentence_index = $thaiSentenceIndex;
                 }
             }
 
