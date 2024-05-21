@@ -44,7 +44,7 @@
             </template>
 
             <!-- Review finished -->
-            <template v-if="totalReviews > 1">
+            <template v-if="totalReviews > 0">
                 <!-- Card title -->
                 <v-card-title>
                     <v-icon large color="success" class="mr-1">mdi-bookmark-check</v-icon>Congratulations!
@@ -390,7 +390,7 @@
                 fullscreen: false,
                 currentReviewIndex: -1,
                 reviews: [],
-                totalReviews: [],
+                totalReviews: 0,
                 correctReviews: 0,
                 language: '',
                 languageSpaces: false,

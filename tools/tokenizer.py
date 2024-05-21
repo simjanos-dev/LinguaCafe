@@ -308,22 +308,28 @@ def tokenizeTextSimple(words, language, sentenceIndexStart = 0):
     return tokenizedWords
 
 # Tokenizes a text with spacy.
-def tokenizeText(words, language, sentenceIndexStart = 0):
+def tokenizeText(text, language, sentenceIndexStart = 0):
     global hiraganaConverter
     tokenizedWords = list()
-    doc = getTokenizerDoc(language, words)
-    
 
+
+    # Mark thai new sentences. It is required because thai sentence indexing does not work in spacy.
+    if language == 'thai':
+        text = text.replace(' ', ' THAINEWSENTENCE ')
+        
+    doc = getTokenizerDoc(language, text)
+    
+    thaiSentenceIndex = 0
     for sentenceIndex, sentence in enumerate(doc.sents):
         for token in sentence:
             word = str(token.text)
             if word == ' ' or word == '' or word == ' ':
                 continue
             
-            #get lemma
+            # get lemma
             lemma = token.lemma_
             
-            #get hiragana reading
+            # get hiragana reading
             reading = list()
             lemmaReading = list()
             if language == 'japanese':
@@ -338,12 +344,12 @@ def tokenizeText(words, language, sentenceIndexStart = 0):
                 reading = ''.join(reading)
                 lemmaReading = ''.join(lemmaReading)
 
-            #get pinyin reading
+            # get pinyin reading
             if language == 'chinese':
                 reading = pinyin.get(word)
                 lemmaReading = pinyin.get(lemma)
 
-            #get gender
+            # get gender
             gender = ''
             if language in ('norwegian', 'german'):
                 gender = token.morph.get("Gender")
@@ -351,7 +357,19 @@ def tokenizeText(words, language, sentenceIndexStart = 0):
             if language == 'german' and token.pos_ == 'VERB':
                 lemma = get_separable_lemma(token)
             
-            tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': sentenceIndex + sentenceIndexStart, 'g': gender})
+            if language == 'thai':
+                if word == 'THAINEWSENTENCE':
+                    thaiSentenceIndex = thaiSentenceIndex + 1
+                    continue
+                else:
+                    if word == 'NEWLINE':
+                        thaiSentenceIndex = thaiSentenceIndex + 1
+                        
+                    tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': thaiSentenceIndex + sentenceIndexStart, 'g': gender})
+            else:
+                tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': sentenceIndex + sentenceIndexStart, 'g': gender})
+
+
     return tokenizedWords
 
 # loads n .epub file
@@ -577,7 +595,7 @@ def getYoutubeSubtitles():
 @route('/tokenizer/get-website-text', method='POST')
 def getWebsiteText():
     url = request.json.get('url')
-    article = Article(url)
+    article = Article(url, language='th')
     article.download()
     article.parse()
 
