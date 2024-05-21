@@ -7,6 +7,11 @@
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.13<v-spacer /> 2024.06.??.</v-card-title>
             <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>Added support for using remote MySQL server.</li>
+                </ul>
+
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
@@ -16,10 +21,10 @@
                         Fixed and enabled Thai import options.
                     </li>
                     <li>
-                        Added missing created_at and updated_at fields to imported words.
+                        Added missing created_at and updated_at fields to imported words in the database.
                     </li>
                     <li>
-                        Fixed touch multi word selection with Apple pencils.
+                        Fixed multi word touch selection with Apple pencils.
                     </li>
                 </ul>
             </v-card-text>

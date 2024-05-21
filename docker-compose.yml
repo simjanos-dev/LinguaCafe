@@ -17,6 +17,8 @@ services:
             DB_DATABASE: ${DB_DATABASE:-linguacafe}
             DB_USERNAME: ${DB_USERNAME:-linguacafe}
             DB_PASSWORD: ${DB_PASSWORD:-linguacafe}
+            DB_HOST: ${DB_HOST:-linguacafe-database}
+            DB_PORT: ${DB_PORT:-3306}
         ports:
             - "${PORT:-9191}:80"
         networks:
