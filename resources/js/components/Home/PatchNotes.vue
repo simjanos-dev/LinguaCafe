@@ -32,6 +32,18 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.12.3<v-spacer /> 2024.05.22.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed Polish font file name, which did not load previously.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.2<v-spacer /> 2024.05.19.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
