@@ -42,4 +42,21 @@
         border-width: 15px;
         margin-left: -15px;
     }
+
+    &.arrow-top {
+        &:after, &:before {
+            bottom: unset;
+            top: 100%;
+        }
+
+        &:after {
+            border-bottom-color: rgba(0, 0, 0, 0) !important;
+            border-top-color: var(--v-foreground-base);
+        }
+        
+        &:before {
+            border-bottom-color: rgba(0, 0, 0, 0) !important;
+            border-top-color: rgb(190, 190, 190);
+        }
+    }
 }

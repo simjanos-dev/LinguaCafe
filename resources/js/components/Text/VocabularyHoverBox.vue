@@ -2,7 +2,13 @@
     <v-card 
         outlined 
         id="vocab-hover-box" 
-        class="d-flex flex-wrap rounded-lg pa-3"
+        :class="{
+            'd-flex': true,
+            'flex-wrap': true,
+            'rounded-lg': true,
+            'pa-3': true,
+            'arrow-top': $props.arrowPosition == 'top',
+        }"
         :style="{
             'position': 'absolute',
             'left': $props.positionLeft + 'px',
@@ -72,6 +78,7 @@
             deeplTranslation: String,
             positionLeft: Number,
             positionTop: Number,
+            arrowPosition: String,
             reading: String
         },
         mounted() {

@@ -107,13 +107,16 @@
         <!-- Vocabulary popup box -->
         <vocabulary-hover-box
             v-if="hoverVocabBox.active && !vocabBox.active && !hoverVocabBox.disabledWhileSelecting"
+            ref="hoverVocabBox"
             :key="'hover-vocab-box' + hoverVocabBox.key"
             :user-translation="hoverVocabBox.userTranslation"
             :dictionary-translation="hoverVocabBox.dictionaryTranslation"
             :deepl-translation="hoverVocabBox.deeplTranslation"
             :positionLeft="hoverVocabBox.positionLeft"
             :positionTop="hoverVocabBox.positionTop"
+            :arrowPosition="hoverVocabBox.arrowPosition"
             :reading="hoverVocabBox.reading"
+            @update-position="updateHoverVocabularyBoxPosition"
         ></vocabulary-hover-box>
 
         <!-- Vocabulary popup box -->
@@ -268,6 +271,7 @@
                     deeplTranslation: '',
                     positionLeft: 0,
                     positionTop: 0,
+                    arrowPosition: 'top',
                 },
 
                 // vocabulary box
@@ -402,6 +406,14 @@
             vocabularyHoverBoxDelay: {
                 type: Number,
                 default: 300
+            },
+            vocabularyHoverBoxPreferredPosition: {
+                type: String,
+                default: 'bottom'
+            },
+            vocabularyHoverBoxPositionCorrections: {
+                type: Boolean,
+                default: true,
             },
             autoHighlightWords: {
                 type: Boolean,
@@ -915,7 +927,9 @@
                             this.hoverVocabBox.dictionaryTranslation = 'dictionary-search-disabled';
                             this.hoverVocabBox.deeplTranslation = '';
                             this.hoverVocabBox.active = true;
-                            this.updateHoverVocabularyBoxPosition(data.hoveredWords);
+                            this.$nextTick(() => {
+                                this.updateHoverVocabularyBoxPosition();
+                            });
                         }, this.$props.vocabularyHoverBoxDelay);
                         return;
                     }
@@ -923,7 +937,9 @@
                     // call the hover vocabulary search function with a delay
                     this.hoverVocabBox.hoverVocabularyDelayTimeout = setTimeout(() => {
                         this.hoverVocabBox.active = true;
-                        this.updateHoverVocabularyBoxPosition(data.hoveredWords);
+                        this.$nextTick(() => {
+                            this.updateHoverVocabularyBoxPosition();
+                        });
 
                         if (data.hoveredWords.length === 1) {
                             var term = data.hoveredWords[0].word;
@@ -950,21 +966,28 @@
                     }, this.$props.vocabularyHoverBoxDelay);
                 }
             },
-            updateHoverVocabularyBoxPosition(hoveredWords) {
+            updateHoverVocabularyBoxPosition() {
+                var hoverVocabBoxElement = document.getElementById('vocab-hover-box');
+                if (hoverVocabBoxElement === null) {
+                    return;
+                }
+
                 var margin = 8;
                 var hoverVocabBoxWidth = 300;
+                var hoverVocabBoxHeight = hoverVocabBoxElement.getBoundingClientRect().height;
                 var vocabBoxAreaElement = document.getElementsByClassName('vocab-box-area')[0];
                 var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
 
 
-                if (hoveredWords.length == 1) {
-                    var hoveredWordPositions = document.querySelector('[wordindex="' + hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                if (this.hoverVocabBox.hoveredWords.length == 1) {
+                    var hoveredWordPositions = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
                 } else {
-                    var hoveredWordPositions = document.querySelector('[wordindex="' + hoveredWords[parseInt(hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                    var hoveredWordPositions = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[parseInt(this.hoverVocabBox.hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                var hoveredWordPositions = document.querySelector('[wordindex="' + hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                var hoveredWordPositions = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
 
+                // set horizontal position
                 this.hoverVocabBox.positionLeft = hoveredWordPositions.right - vocabBoxArea.left - hoverVocabBoxWidth / 2 - (hoveredWordPositions.right - hoveredWordPositions.left) / 2;
                 if (this.hoverVocabBox.positionLeft < margin) {
                     this.hoverVocabBox.positionLeft = margin;
@@ -972,7 +995,53 @@
                     this.hoverVocabBox.positionLeft = vocabBoxArea.right - vocabBoxArea.left - hoverVocabBoxWidth - margin;
                 }
 
-                this.hoverVocabBox.positionTop = hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
+                // set vertical position
+                
+                // set preferred location
+                this.hoverVocabBox.arrowPosition = this.$props.vocabularyHoverBoxPreferredPosition;
+
+                // correct preferred location based on available space
+                
+                /*
+                    Is there enough space on the bottom? If not, move the hover box to the top.
+                    
+                    There is a special case, when there is not enough space on the bottom, however the top half of the screen is smaller
+                    than the bottom one. However, overflow by the hover box on the top does not affect the scrollbar, while on the bottom it
+                    does, so it won't be corrected.
+                */
+                if (
+                    this.$props.vocabularyHoverBoxPositionCorrections && 
+                    this.hoverVocabBox.arrowPosition == 'bottom' && 
+                    (vocabBoxArea.height + vocabBoxAreaElement.scrollTop) - (hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25) < hoverVocabBoxHeight
+                ) {
+                    this.hoverVocabBox.arrowPosition = 'top';
+                }
+
+                /*
+                    Is there enough space on the top?
+                */
+                if (
+                    this.$props.vocabularyHoverBoxPositionCorrections && 
+                    this.hoverVocabBox.arrowPosition == 'top' && 
+                    hoveredWordPositions.top - 25 - 30 < hoverVocabBoxHeight
+                ) {
+                    /*
+                        If there's not enuogh space on the top, move the hover box to the bottom, but only if there's enough space on the bottom,
+                        otherwise prefer to use the top position, because that does not cause scroll issues.
+                    */
+                    if ((vocabBoxArea.height + vocabBoxAreaElement.scrollTop) - (hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25) >= hoverVocabBoxHeight) {
+                        this.hoverVocabBox.arrowPosition = 'bottom';
+                    }
+                }
+
+                // set hover vocabulary box's location based on preference and correction
+                if (this.hoverVocabBox.arrowPosition == 'top') {
+                    this.hoverVocabBox.positionTop = hoveredWordPositions.top - vocabBoxArea.top + vocabBoxAreaElement.scrollTop - hoverVocabBoxHeight - 25;
+                } else {
+                    this.hoverVocabBox.positionTop = hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
+                }
+
+                
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
@@ -1355,6 +1424,9 @@
 
                     this.hoverVocabBox.dictionaryTranslation = response.data.definitions.join(';');
                     this.hoverVocabBox.key ++;
+                    this.$nextTick(() => {
+                        this.updateHoverVocabularyBoxPosition();
+                    });
                 });
 
                 // make deepl search
@@ -1376,6 +1448,9 @@
 
                         this.hoverVocabBox.deeplTranslation = response.data.definition;
                         this.hoverVocabBox.key ++;
+                        this.$nextTick(() => {
+                            this.updateHoverVocabularyBoxPosition();
+                        }); 
                     }).catch(() => {
                         this.hoverVocabBox.deeplTranslation = 'DeepL error';
                     });
@@ -1900,7 +1975,6 @@
             },
             updateExampleSentence() {
                 var exampleSentence = this.getExampleSentence();
-                console.log(exampleSentence);
 
                 var targetType = this.selection.length > 1 ? 'phrase' : 'word';
                 var targetId = this.uniqueWords[this.selection[0].uniqueWordIndex].id;

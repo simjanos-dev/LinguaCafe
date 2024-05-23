@@ -11,6 +11,7 @@
                 <ul>
                     <li>Added support for using remote MySQL server.</li>
                     <li>Added an import option for e-books that lets users order the chapters based on the e-book's spine metadata. In some rare cases, this will fix incorrect chapter order for imported e-books.</li>
+                    <li>Added an option to set preferred hover vocabulary position. Now it can appear both above or below the hovered words based on the selected setting.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -26,6 +27,16 @@
                     </li>
                     <li>
                         Fixed multi word touch selection with Apple pencils.
+                    </li>
+                    <li>
+                        Hover vocabulary now will move above the hovered word if there's no space to be displayed below it.
+                    </li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>
+                        Hover vocabulary's dictionary search results have been limited to 9 instead of 15. I'll add a setting for this in the future.
                     </li>
                 </ul>
             </v-card-text>

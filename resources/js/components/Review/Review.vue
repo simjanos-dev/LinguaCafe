@@ -202,6 +202,8 @@
                                         :vocabulary-hover-box="settings.vocabularyHoverBox"
                                         :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
                                         :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                                        :vocabulary-hover-box-preferred-position="settings.vocabularyHoverBoxPreferredPosition"
+                                        :vocabulary-hover-box-position-corrections="false"
                                         :vocabulary-bottom-sheet="settings.vocabularyBottomSheet"
                                     />
 
@@ -384,6 +386,7 @@
                     vocabularyHoverBox: true,
                     vocabularyHoverBoxSearch: true,
                     vocabularyHoverBoxDelay: 300,
+                    vocabularyHoverBoxPreferredPosition: 'bottom',
                     vocabularyBottomSheet: true,
                 },
                 transitionDuration: this.$cookie.get('theme') === 'eink' ? 0 : 400,
