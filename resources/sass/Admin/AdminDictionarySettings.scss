@@ -2,40 +2,6 @@
     #import-button-text-short {
         display: none;
     }
-
-    #dictionaries-mobile {
-        display: none;
-        font-size: 13px;
-        overflow: hidden;
-        
-        .expansion-card-content {
-            width: 100%;
-            padding: 0px 16px;
-        }
-
-        .expansion-card-title {
-            overflow: hidden;
-        }
-
-        table {
-            table-layout: fixed;
-
-            td, th {
-                padding: 0px 8px !important;
-                word-wrap: break-word;
-            }
-        }
-
-        th:nth-child(1),
-        td:nth-child(1) {
-            width: 130px;
-        }
-
-        th:nth-child(2),
-        td:nth-child(2) {
-            width: calc(100% - 130px);
-        }
-    }
 }
 
 #supported-dictionaries {
@@ -69,19 +35,6 @@
 
 #import-stepper .v-stepper__wrapper {
     overflow: visible;
-}
-
-@media (max-width: 991px) {
-    #admin-dictionary-settings {
-        #dictionaries {
-            th:nth-child(3),
-            td:nth-child(3),
-            th:nth-child(5),
-            td:nth-child(5) {
-                display: none;
-            }       
-        }
-    }
 }
 
 @media (max-width: 700px) {

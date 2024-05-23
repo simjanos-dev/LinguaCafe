@@ -12,6 +12,7 @@
                     <li>Added support for using remote MySQL server.</li>
                     <li>Added an import option for e-books that lets users order the chapters based on the e-book's spine metadata. In some rare cases, this will fix incorrect chapter order for imported e-books.</li>
                     <li>Added an option to set preferred hover vocabulary position. Now it can appear both above or below the hovered words based on the selected setting.</li>
+                    <li>Added filtering, sorting and pagination to the admin dictionary settings page.</li>
                 </ul>
 
                 <b>Bug fixes:</b>

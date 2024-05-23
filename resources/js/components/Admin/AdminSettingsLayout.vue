@@ -1,6 +1,6 @@
 <template>
     <v-container v-if="isAdmin">
-        <v-tabs v-model="tab" background-color="white" class="rounded-lg border overflow-hidden" @change="tabChanged">
+        <v-tabs v-model="tab" background-color="foreground" class="rounded-lg border overflow-hidden" @change="tabChanged">
             <v-tab>Users</v-tab>
             <v-tab>Languages</v-tab>
             <v-tab>Dictionaries</v-tab>
