@@ -91,6 +91,7 @@
                         :vocabulary-hover-box="settings.vocabularyHoverBox"
                         :vocabulary-hover-box-search="settings.vocabularyHoverBoxSearch"
                         :vocabulary-hover-box-delay="settings.vocabularyHoverBoxDelay"
+                        :vocabulary-hover-box-preferred-position="settings.vocabularyHoverBoxPreferredPosition"
                         :vocabulary-sidebar="settings.vocabularySidebar"
                         :vocabulary-bottom-sheet="settings.vocabularyBottomSheet"
                         :auto-highlight-words="settings.autoHighlightWords"
@@ -203,6 +204,7 @@
                     vocabularyHoverBox: true,
                     vocabularyHoverBoxSearch: true,
                     vocabularyHoverBoxDelay: 300,
+                    vocabularyHoverBoxPreferredPosition: 'bottom',
                     autoHighlightWords: true
                 },
                 fullscreenMode: false,

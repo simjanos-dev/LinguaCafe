@@ -179,7 +179,7 @@ class DictionaryController extends Controller
     public function searchDefinitionsForHoverVocabulary(Request $request) {
         $language = $request->post('language');
         $term = $request->post('term');
-        $limit = 15;
+        $limit = 9;
         $searchResults = [];
         
         $dictionaries = Dictionary

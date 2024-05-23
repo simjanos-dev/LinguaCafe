@@ -296,7 +296,7 @@
                     </v-col>
                 </v-row>
 
-                <!-- Vocabulary hover box dictionary search -->
+                <!-- Hover vocabulary box dictionary search -->
                 <v-row>
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Hover vocabulary dictionary search:</v-col>
                     <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
@@ -325,6 +325,24 @@
                             @change="saveSettings"
                         >
                         </v-slider>
+                    </v-col>
+                </v-row>
+
+                <!-- Hover vocabulary preferred position -->
+                <v-row>
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Preferred position:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="settings.vocabularyHoverBoxPreferredPosition"
+                            :items="vocabularyHoverBoxPreferredPositionData"
+                            item-text="name"
+                            item-value="value"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
                     </v-col>
                 </v-row>
 
@@ -396,9 +414,20 @@
                     vocabularyHoverBox: 'vocabulary-hover-box',
                     vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
+                    vocabularyHoverBoxPreferredPosition: 'vocabulary-hover-box-preferred-position',
                     autoHighlightWords: 'auto-highlight-words'
                 },
                 settings: {},
+                vocabularyHoverBoxPreferredPositionData: [
+                    {
+                        name: 'Below the hovered word',
+                        value: 'bottom'
+                    },
+                    {
+                        name: 'Above the hovered word',
+                        value: 'top'
+                    },
+                ],
                 vocabBoxScrollIntoViewData: [
                     {
                         name: 'Disabled',
@@ -437,6 +466,7 @@
             this.loadSetting('vocabularyHoverBox', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
+            this.loadSetting('vocabularyHoverBoxPreferredPosition', 'string', 'bottom');
             this.loadSetting('autoHighlightWords', 'boolean', true);
             this.settingsLoaded = true;
             this.saveSettings();
@@ -491,6 +521,7 @@
                 this.saveSetting('vocabularyHoverBox');
                 this.saveSetting('vocabularyHoverBoxSearch');
                 this.saveSetting('vocabularyHoverBoxDelay');
+                this.saveSetting('vocabularyHoverBoxPreferredPosition');
                 this.saveSetting('autoHighlightWords');
 
                 // save text to speech

@@ -169,6 +169,24 @@
                     </v-col>
                 </v-row>
 
+                <!-- Hover vocabulary preferred position -->
+                <v-row>
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Preferred position:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-select
+                            v-model="settings.vocabularyHoverBoxPreferredPosition"
+                            :items="vocabularyHoverBoxPreferredPositionData"
+                            item-text="name"
+                            item-value="value"
+                            dense
+                            rounded
+                            filled
+                            hide-details
+                            @change="saveSettings"
+                        ></v-select>
+                    </v-col>
+                </v-row>
+
                 <!-- Text to speech section -->
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Text to speech
@@ -226,6 +244,7 @@
                     vocabularyHoverBox: 'vocabulary-hover-box',
                     vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
+                    vocabularyHoverBoxPreferredPosition: 'vocabulary-hover-box-preferred-position',
                     vocabularyBottomSheet: 'vocabulary-bottom-sheet',
                     reviewSentenceMode: 'review-sentence-mode',
                 },
@@ -244,6 +263,16 @@
                     },
                 ],
                 settings: {},
+                vocabularyHoverBoxPreferredPositionData: [
+                    {
+                        name: 'Below the hovered word',
+                        value: 'bottom'
+                    },
+                    {
+                        name: 'Above the hovered word',
+                        value: 'top'
+                    },
+                ],
             }
         },
         props: {
@@ -255,6 +284,7 @@
             this.loadSetting('vocabularyHoverBox', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
             this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
+            this.loadSetting('vocabularyHoverBoxPreferredPosition', 'string', 'bottom');
             this.loadSetting('vocabularyBottomSheet', 'boolean', true);
             this.loadSetting('reviewSentenceMode', 'string', 'plain-text');
             
@@ -296,6 +326,7 @@
                 this.saveSetting('vocabularyHoverBox');
                 this.saveSetting('vocabularyHoverBoxSearch');
                 this.saveSetting('vocabularyHoverBoxDelay');
+                this.saveSetting('vocabularyHoverBoxPreferredPosition');
                 this.saveSetting('vocabularyBottomSheet');
                 this.saveSetting('reviewSentenceMode');
 
