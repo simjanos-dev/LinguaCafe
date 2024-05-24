@@ -10,7 +10,8 @@ services:
         container_name: linguacafe-webserver
         restart: unless-stopped
         depends_on:
-            - mysql
+            mysql:
+                condition: service_healthy
         volumes:
             - ./storage:/var/www/html/storage
         environment:
@@ -30,6 +31,11 @@ services:
         container_name: linguacafe-database
         restart: unless-stopped
         tty: true
+        healthcheck:
+            test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$MYSQL_ROOT_PASSWORD']
+            interval: 10s
+            timeout: 5s
+            retries: 10
         volumes:
             - ./database:/var/lib/mysql
         environment:
