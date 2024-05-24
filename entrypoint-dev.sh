@@ -6,7 +6,7 @@ folder_paths="
     ./storage/app/fonts
     ./storage/app/images/book_images
     ./storage/app/public
-    ./storage/app/temp
+    ./storage/app/temp/dictionaries
     ./storage/framework/cache/data
     ./storage/framework/sessions
     ./storage/framework/testing

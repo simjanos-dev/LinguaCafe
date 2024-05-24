@@ -59,6 +59,7 @@
                 :items="dictionaries"
                 :loading="loading"
                 :search="dictionaryTableFilter"
+                :items-per-page="9"
             >
 
                 <!-- Source language -->
