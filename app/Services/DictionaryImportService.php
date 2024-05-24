@@ -14,11 +14,17 @@ use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use League\Csv\Reader;
 
 class DictionaryImportService {
 
     public function __construct() {
+    }
+
+    private function deleteTempDictionaryFiles() {
+        $tempDictionaryFiles = Storage::allFiles('temp/dictionaries');
+        Storage::delete($tempDictionaryFiles);
     }
 
     /*
@@ -28,13 +34,9 @@ class DictionaryImportService {
     public function getImportableDictionaryList($supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes) {
         $dictionariesFound = [];
         $files = Storage::files('dictionaries');
-
+        
         // jmdict dictionary
-        if (Storage::exists('dictionaries/jmdict_processed.txt') &&
-            Storage::exists('dictionaries/kanjidic2.xml') &&
-            Storage::exists('dictionaries/radical-strokes.txt') &&
-            Storage::exists('dictionaries/radicals.txt')) {
-            
+        if (Storage::exists('dictionaries/jmdict.zip')) {
             $dictionary = new \stdClass();
             $dictionary->name = 'JMDict';
             $dictionary->databaseName = 'dict_jp_jmdict';
@@ -44,7 +46,7 @@ class DictionaryImportService {
             $dictionary->expectedRecordCount = 207690;
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
-            $dictionary->fileName = 'multiple files';
+            $dictionary->fileName = 'jmdict.zip';
             $dictionary->imported = false;
 
             // check if jmdict is imported
@@ -675,7 +677,7 @@ class DictionaryImportService {
     public function kanjiRadicalImport() {
         // init
         DB::beginTransaction();
-        $file = fopen(base_path() . '/storage/app/dictionaries/radicals.txt', 'r');
+        $file = fopen(base_path() . '/storage/app/temp/dictionaries/radicals.txt', 'r');
         $index = 0;
 
         // these kanjis has to be replaced with radicals
@@ -710,7 +712,7 @@ class DictionaryImportService {
         DB::statement('DELETE FROM dict_jp_kanji_radicals');
         
         // load radical stroke counts into an array
-        $radicalStrokesFiles = fopen(base_path() . '/storage/app/dictionaries/radical-strokes.txt', 'r');
+        $radicalStrokesFiles = fopen(base_path() . '/storage/app/temp/dictionaries/radical-strokes.txt', 'r');
         $radicalStrokeCountsData = [];
 
         while (($line = fgets($radicalStrokesFiles)) !== false) {
@@ -759,6 +761,9 @@ class DictionaryImportService {
 
         // finish
         DB::commit();
+
+        // delete temp files
+        $this->deleteTempDictionaryFiles();
     }
 
     /*
@@ -776,7 +781,7 @@ class DictionaryImportService {
 
         $doc = new \DOMDocument();
         $reader = new \XMLReader();
-        $reader->open(base_path() . '/storage/app/dictionaries/kanjidic2.xml');
+        $reader->open(base_path() . '/storage/app/temp/dictionaries/kanjidic2.xml');
         $index = 0;        
 
         DB::beginTransaction();
@@ -867,11 +872,29 @@ class DictionaryImportService {
         Imports jmdict dictionary file.
     */
     public function jmdictImport() {
-        $file = fopen(base_path() . '/storage/app/dictionaries/jmdict_processed.txt', 'r');
         DB::statement('DELETE FROM dict_jp_jmdict');
         DB::statement('DELETE FROM dict_jp_jmdict_words');
         DB::statement('DELETE FROM dict_jp_jmdict_readings');
 
+        // extract zip file
+        $filePath = Storage::path('dictionaries/jmdict.zip');
+        $extractPath = Storage::path('temp/dictionaries');
+        
+        // delete all temp dictionary files
+        $this->deleteTempDictionaryFiles();
+
+        // extract jmdict.zip file
+        $zip = new \ZipArchive();
+        $zipFile = $zip->open($filePath);
+        if ($zipFile === TRUE) {
+            $zip->extractTo($extractPath);
+            $zip->close();
+        } else {
+            throw new \Exception('JMDict zip file could not be extracted.');
+        }
+
+        // import jmdict file
+        $file = fopen(base_path() . '/storage/app/temp/dictionaries/jmdict_processed.txt', 'r');
         $index = 0;
         DB::beginTransaction();
         while (($line = fgets($file)) !== false) {
@@ -934,10 +957,10 @@ class DictionaryImportService {
         Converts jmdict to text. Should be moved to python.
     */
     public function jmdictXmlToText() {
-        $file = fopen(base_path() . '/storage/app/dictionaries/jmdict.txt', 'w');
+        $file = fopen(base_path() . '/storage/app/temp/dictionaries/jmdict.txt', 'w');
         $doc = new \DOMDocument();
         $reader = new \XMLReader();
-        $reader->open(base_path() . '/storage/app/dictionaries/JMdict_e.xml');
+        $reader->open(base_path() . '/storage/app/temp/dictionaries/JMdict_e.xml');
         $index = 0;
         
 

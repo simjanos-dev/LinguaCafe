@@ -18,7 +18,7 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Review page displayed no text after the user finished reviewing, and it only had one card in total.
+                        Review page displayed no text after the user finished reviewing if it only had one card in total.
                     </li>
                     <li>
                         Fixed and enabled Thai import options.
@@ -38,6 +38,9 @@
                 <ul>
                     <li>
                         Hover vocabulary's dictionary search results have been limited to 9 instead of 15. I'll add a setting for this in the future.
+                    </li>
+                    <li>
+                        JMDict dictionary files have been replaced with a single .zip file that contains them.
                     </li>
                 </ul>
             </v-card-text>
