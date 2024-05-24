@@ -34,8 +34,8 @@
             Dictionaries
             <v-spacer/>
             <v-btn rounded dark color="primary" @click="importDialog = true;">
-                <v-icon class="mr-1">mdi-database-import</v-icon>
-                <span id="import-button-text">Import dictionary</span>
+                <v-icon class="mr-1">mdi-database-plus</v-icon>
+                <span id="import-button-text">Add dictionary</span>
                 <span id="import-button-text-short">Import</span>
             </v-btn>
         </div>
@@ -61,6 +61,11 @@
                 :search="dictionaryTableFilter"
                 :items-per-page="9"
             >
+
+                <!-- Records -->
+                <template v-slot:item.records="{ item }">
+                    {{ item.records == '-' ? '-' : formatNumber(item.records) }}
+                </template>
 
                 <!-- Source language -->
                 <template v-slot:item.source_language="{ item }">
@@ -130,30 +135,38 @@
                     {
                         text: 'Name',
                         value: 'name',
+                        align: 'center',
                     },
                     {
                         text: 'Records',
                         value: 'records',
+                        align: 'center',
                     },
                     {
                         text: 'Database',
                         value: 'database_table_name',
+                        align: 'center',
                     },
                     {
-                        text: 'Source language',
+                        text: 'Source',
                         value: 'source_language',
+                        align: 'center',
                     },
                     {
-                        text: 'Target language',
+                        text: 'Target',
                         value: 'target_language',
+                        align: 'center',
                     },
                     {
                         text: 'Enabled',
                         value: 'enabled',
+                        align: 'center',
                     },
                     {
                         text: 'Actions',
                         value: 'actions',
+                        align: 'center',
+                        width: '110px',
                     },
                 ]
             }

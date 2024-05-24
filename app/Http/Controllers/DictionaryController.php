@@ -18,6 +18,9 @@ use App\Models\Setting;
 use App\Services\DictionaryImportService;
 
 
+// request classes
+use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
+
 class DictionaryController extends Controller
 {
     /*
@@ -614,18 +617,18 @@ class DictionaryController extends Controller
         return 'success';
     }
 
-    /*
-        Scans the /storage/app/dictionaries folder, 
-        and returns a list of importable dictionaries.
-    */
-    public function getImportableDictionaryList() {
-        
+    public function getDictionaryFileInformation(GetDictionaryFileInformationRequest $request) {
+        $dictionaryFile = $request->file('dictionaryFile');
         $dictCcLanguageCodes = config('linguacafe.languages.dict_cc_language_codes');
         $databaseLanguageCodes = config('linguacafe.languages.database_name_language_codes');
         $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
         
-        $dictionaryImportService = new DictionaryImportService();
-        $dictionariesFound = $dictionaryImportService->getImportableDictionaryList($supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
+        try {
+            $dictionaryImportService = new DictionaryImportService();
+            $dictionariesFound = $dictionaryImportService->getDictionaryFileInformation($dictionaryFile, $supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
         
         return json_encode($dictionariesFound);
     }
@@ -637,7 +640,7 @@ class DictionaryController extends Controller
         $dictionarySourceLanguage = $request->post('dictionarySourceLanguage');
         $dictionaryTargetLanguage = $request->post('dictionaryTargetLanguage');
         $dictionaryDatabaseName = $request->post('dictionaryDatabaseName');
-
+        
         // import jmdict files
         if ($dictionaryName == 'JMDict') {
             try {
@@ -646,9 +649,9 @@ class DictionaryController extends Controller
                 $dictionaryImportService->kanjiImport();
                 $dictionaryImportService->kanjiRadicalImport();
             } catch (\Throwable $t) {
-                return 'error';
+                return $t->getMessage();
             } catch (\Exception $e) {
-                return 'error';
+                return $e->getMessage();
             }
 
             return 'success';
