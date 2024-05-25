@@ -1,5 +1,5 @@
 <template>
-    <div id="admin-dictionary-settings">
+    <div id="admin-dictionary-settings" class="pb-16">
         <!-- Dialogs -->
         <admin-dictionary-import-dialog 
             v-if="importDialog"
@@ -39,7 +39,7 @@
                 <span id="import-button-text-short">Import</span>
             </v-btn>
         </div>
-        <v-card outlined class="rounded-lg pa-2 pb-0">
+        <v-card outlined class="rounded-lg pa-2 pb-0 mb-32">
             <v-card-title>
                 <v-text-field
                     v-model="dictionaryTableFilter"
@@ -59,7 +59,6 @@
                 :items="dictionaries"
                 :loading="loading"
                 :search="dictionaryTableFilter"
-                :items-per-page="9"
             >
 
                 <!-- Records -->
@@ -79,11 +78,13 @@
 
                 <!-- Enabled -->
                 <template v-slot:item.enabled="{ item, index }">
-                    <v-switch
-                        color="primary"
-                        v-model="item.enabled" 
-                        @change="saveDictionary(index)"
-                    ></v-switch>
+                    <div class="d-flex justify-center">
+                        <v-switch
+                            color="primary"
+                            v-model="item.enabled" 
+                            @change="saveDictionary(index)"
+                        ></v-switch>
+                    </div>
                 </template>
 
                 <!-- Actions -->

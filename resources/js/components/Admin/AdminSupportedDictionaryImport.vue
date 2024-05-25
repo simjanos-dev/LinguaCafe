@@ -295,6 +295,11 @@
                     this.$emit('back-to-dictionaries');
                 } else {
                     this.stepperPage --;
+
+                    if (this.stepperPage === 1) {
+                        this.dictionary = null;
+                        this.dictionaryFile = null;
+                    }
                 }
             },
             close() {
