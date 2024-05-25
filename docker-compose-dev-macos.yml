@@ -1,4 +1,3 @@
-version: '3'
 name: linguacafedev
 
 networks:
@@ -56,7 +55,6 @@ services:
             - linguacafedev
     python:
         container_name: linguacafe-python-service-dev
-        command: "python3 /app/tokenizer.py"
         restart: unless-stopped
         tty: true
         ports:
@@ -68,6 +66,4 @@ services:
             - ./storage/app:/var/www/html/storage/app
         networks:
             - linguacafedev
-        environment:
-            PYTHONPATH: "/var/www/html/storage/app/model"
         platform: linux/amd64
