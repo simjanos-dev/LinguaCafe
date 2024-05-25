@@ -13,7 +13,8 @@ services:
             context: .
             dockerfile: ./docker/PhpDockerfileDev
         depends_on:
-            - mysql
+            mysql:
+                condition: service_healthy
         volumes:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
@@ -36,6 +37,11 @@ services:
         container_name: linguacafe-database-dev
         restart: unless-stopped
         tty: true
+        healthcheck:
+            test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$MYSQL_ROOT_PASSWORD']
+            interval: 5s
+            timeout: 5s
+            retries: 10
         ports:
           - "3308:3306"
         volumes:
@@ -49,11 +55,11 @@ services:
         networks:
             - linguacafedev
     python:
-        container_name: linguacafe-python-service-dev 
+        container_name: linguacafe-python-service-dev
         command: "python3 /app/tokenizer.py"
         restart: unless-stopped
         tty: true
-        ports: 
+        ports:
             - "8678:8678"
         build:
             dockerfile: ./docker/PythonDockerfileDev
