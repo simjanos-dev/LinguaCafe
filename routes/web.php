@@ -120,7 +120,8 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/dictionary/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
     Route::post('/dictionary/test-csv-file', [App\Http\Controllers\DictionaryController::class, 'testDictionaryCsvFile']);
     Route::post('/dictionary/import-csv-file', [App\Http\Controllers\DictionaryController::class, 'importDictionaryCsvFile']);
-    Route::get('/dictionary/delete/{dictionaryName}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
+    Route::post('/dictionaries/create-deepl', [App\Http\Controllers\DictionaryController::class, 'createDeeplDictionary']);
+    Route::get('/dictionary/delete/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
     Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
 
     // vocabulary

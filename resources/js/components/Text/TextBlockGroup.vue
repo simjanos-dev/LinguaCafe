@@ -1446,7 +1446,7 @@
                             return;
                         }
 
-                        this.hoverVocabBox.deeplTranslation = response.data.definition;
+                        this.hoverVocabBox.deeplTranslation = response.data.definitions;
                         this.hoverVocabBox.key ++;
                         this.$nextTick(() => {
                             this.updateHoverVocabularyBoxPosition();

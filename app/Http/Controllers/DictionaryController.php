@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
-use \DeepL\Translator;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Http;
 use App\Models\Dictionary;
 use App\Models\ImportedDictionary;
 use App\Models\VocabularyJmdict;
@@ -18,8 +19,10 @@ use App\Models\Setting;
 use App\Services\DictionaryImportService;
 
 
+
 // request classes
 use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
+use App\Http\Requests\Dictionaries\CreateDeeplDictionaryRequest;
 
 class DictionaryController extends Controller
 {
@@ -294,14 +297,14 @@ class DictionaryController extends Controller
         $language = $request->post('language');
         $term = $request->post('term');
 
-        $deeplDictionary = Dictionary
+        $deeplDictionaries = Dictionary
             ::where('name', 'like', 'DeepL%')
             ->where('enabled', true)
             ->where('database_table_name','API')
             ->where('source_language', $language)
-            ->first();
+            ->get();
 
-        if (!$deeplDictionary) {
+        if (empty($deeplDictionaries)) {
             return response()->json([
                 'message' => 'DeepL dictionary is disabled.'
             ], 500);
@@ -310,51 +313,80 @@ class DictionaryController extends Controller
         // retrieve api key from database
         $apiKeySetting = Setting::where('name', 'deeplApiKey')->first();
         $apiKey = json_decode($apiKeySetting->value);
-
-        $hash = md5(mb_strtolower($term, 'UTF-8'));
         $languageCodes = config('linguacafe.languages.deepl_language_codes');
+        $hash = md5(mb_strtolower($term, 'UTF-8'));
 
-        // check if search term is already cached
-        $cache = DeeplCache
-            ::where('source_language', $language)
-            ->where('target_language', $deeplDictionary->target_language)
-            ->where('hash', $hash)
-            ->first();
-        
-        // make api call or retrieve definition from cache
-        if ($cache) {
-            $definition = $cache->definition;
-        } else {
-            // make api call
-            $deepl = new \DeepL\Translator($apiKey);
+        // collect cached definitions
+        $definitions = [];
+        $definitionsToRequest = [];
+        foreach ($deeplDictionaries as $index => $deeplDictionary) {
+            // check if search term is already cached
+            $cache = DeeplCache
+                ::where('source_language', $language)
+                ->where('target_language', $deeplDictionary->target_language)
+                ->where('hash', $hash)
+                ->first();
+            
+            // collect language pairs or retrieve definition from cache
+            if ($cache) {
+                $definitions[] = $cache->definition;
+            } else {
+                // save language pairs to be requested from deepl
 
-            // DeepL does not support 'EN-US' for source language 
-            // and 'PT-PT' for language, so I replace them
-            $sourceLanguage = $languageCodes[$language];
-            if ($sourceLanguage === 'EN-US') {
-                $sourceLanguage = 'EN';
+                // DeepL does not support 'EN-US' for source language 
+                // and 'PT-PT' for language, so I replace them
+                $sourceLanguage = $languageCodes[$language];
+                if ($sourceLanguage === 'EN-US') {
+                    $sourceLanguage = 'EN';
+                }
+
+                if ($sourceLanguage === 'PT-PT') {
+                    $sourceLanguage = 'PT';
+                }
+
+                $definitionsToRequest[] = [$index, $sourceLanguage, $languageCodes[$deeplDictionary->target_language], $deeplDictionary->target_language];
+                $definitions[] = '';
             }
-
-            if ($sourceLanguage === 'PT-PT') {
-                $sourceLanguage = 'PT';
-            }
-
-            $result = $deepl->translateText($term, $sourceLanguage, $languageCodes[$deeplDictionary->target_language]);
-            $definition = $result->text;
-
-            // create cache
-            $cache = new DeeplCache();
-            $cache->source_language = $language;
-            $cache->target_language = $deeplDictionary->target_language;
-            $cache->hash = $hash;
-            $cache->definition = $result->text;
-            $cache->save();
         }
 
-        // return translation
+        // request translations
+        $responses = Http::pool(function (Pool $pool) use ($apiKey, $definitionsToRequest, $term) {
+            foreach ($definitionsToRequest as $requestData) {
+                $pool->withHeaders([
+                    'Authorization' => 'DeepL-Auth-Key ' . $apiKey,
+                    'Content-Type' => 'application/json',
+                ])->post('https://api-free.deepl.com/v2/translate', [
+                    'text' => [$term],
+                    "source_lang" => $requestData[1],
+                    "target_lang" => $requestData[2],
+                ]);
+            }
+        });
+
+        // add translations to the definitions array, and cache them
+        foreach ($definitionsToRequest as $index => $requestData) {
+            if (!$responses[$index]->ok()) {
+                throw new \Exception('DeepL HTTP Request error');
+            }
+
+            // add translation to the definitions array
+            $definition = json_decode($responses[$index]->body());
+            $definition = $definition->translations[0]->text;
+            $definitions[$requestData[0]] = $definition;
+
+            // cache deepl result
+            $cache = new DeeplCache();
+            $cache->source_language = $language;
+            $cache->target_language = $requestData[3];
+            $cache->hash = $hash;
+            $cache->definition = $definition;
+            $cache->save();
+        }
+        
+        // return translations
         $result = new \stdClass();
         $result->term = $term;
-        $result->definition = $definition;
+        $result->definitions = implode(';', $definitions);
 
         return json_encode($result);
     }
@@ -527,9 +559,22 @@ class DictionaryController extends Controller
         return json_encode($returnData);
     }
 
-    /*
-        Imports a csv file into a custom dictionary database table.
-    */
+    public function createDeeplDictionary(CreateDeeplDictionaryRequest $request) {
+        $sourceLanguage = $request->post('sourceLanguage');
+        $targetLanguage = $request->post('targetLanguage');
+        $color = $request->post('color');
+        $name  = $request->post('name');
+
+        try {
+            $dictionaryImportService = new DictionaryImportService();
+            $dictionaryImportService->createDeeplDictionary($sourceLanguage, $targetLanguage, $color, $name);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json('DeepL dictionary has been created successfully.', 200);
+    }
+
     public function importDictionaryCsvFile(Request $request) {
         set_time_limit(2400);
         $skipHeader = boolval($request->post('skipHeader') === 'true');
@@ -778,10 +823,17 @@ class DictionaryController extends Controller
         return $recordCount;
     }
 
-    public function deleteDictionary($dictionaryTableName) {
+    public function deleteDictionary($dictionaryId) {
         try {
-            Schema::drop($dictionaryTableName);
-            Dictionary::where('database_table_name', $dictionaryTableName)->delete();
+            $dictionary = Dictionary
+                ::where('id', $dictionaryId)
+                ->first();
+            
+            if ($dictionary->database_table_name !== 'API') {
+                Schema::drop($dictionary->database_table_name);
+            }
+            
+            Dictionary::where('id', $dictionaryId)->delete();
         } catch (\Exception $exception) {
             return 'error';
         }

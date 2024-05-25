@@ -14,6 +14,8 @@
                     <li>Added an option to set preferred hover vocabulary position. Now it can appear both above or below the hovered words based on the selected setting.</li>
                     <li>Added filtering, sorting and pagination to the admin dictionary settings page.</li>
                     <li>Replaced the dictionary import process. Now users can import dictionaries by file upload, instead of having to copy files into the storage directory.</li>
+                    <li>Users now can delete and create DeepL dictionaries.</li>
+                    <li>Added support for deepl translation into multiple languages.</li>
                 </ul>
 
                 <b>Bug fixes:</b>

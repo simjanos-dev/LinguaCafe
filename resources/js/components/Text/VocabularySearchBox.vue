@@ -5,7 +5,7 @@
             v-if="$props.deeplEnabled"
             :class="{
                 'search-result': true, 
-                'disabled': !deeplSearchResult.length || deeplSearchResult === 'DeepL error' || deeplSearchResult == 'loading'
+                'disabled': deeplSearchResults === 'DeepL error' || deeplSearchResults == 'loading'
             }"
         >
             <div class="search-result-title">
@@ -17,23 +17,25 @@
             
             <!-- DeepL search result -->
             <div 
-                v-if="deeplSearchResult !== 'loading' && deeplSearchResult !== 'DeepL error'"
+                v-if="deeplSearchResults !== 'loading' && deeplSearchResults !== 'DeepL error' && deeplSearchResults.length"
+                v-for="(definition, index) in deeplSearchResults"
+                :key="'deepl-' + index"
                 class="search-result-definition rounded"
-                @click="addDefinitionToInput(deeplSearchResult)"
+                @click="addDefinitionToInput(definition)"
             >
-                {{ deeplSearchResult }} <v-icon v-if="deeplSearchResult.length" small>mdi-plus</v-icon>
+                {{ definition }} <v-icon small>mdi-plus</v-icon>
             </div>
 
             <!-- DeepL search error -->
             <div 
-                v-if="deeplSearchResult === 'DeepL error'"
+                v-if="deeplSearchResults === 'DeepL error'"
                 class="search-result-definition rounded"
             >
-                {{ deeplSearchResult }}
+                {{ deeplSearchResults }}
             </div>
 
             <!-- DeepL loading -->
-            <div v-if="deeplSearchResult == 'loading'" class="search-result-definition rounded pr-2">
+            <div v-if="deeplSearchResults == 'loading'" class="search-result-definition rounded pr-2">
                 loading <v-progress-circular indeterminate class="ml-1" size="20" width="3" color="#92B9E2"></v-progress-circular>
             </div>
         </div>
@@ -134,7 +136,7 @@
                 searchResults: [],
                 dictionarySearchLoading: false,
                 dictionarySearchResultsFound: true,
-                deeplSearchResult: '',
+                deeplSearchResults: [],
             };
         },
         mounted: function() {
@@ -163,14 +165,15 @@
 
                 // deepl search
                 if (this.$props.deeplEnabled) {
-                    this.deeplSearchResult = 'loading';
+                    this.deeplSearchResults = 'loading';
                     axios.post('/dictionaries/deepl/search', {
                         language: this.$props.language,
                         term: this.$props.searchTerm
                     }).then((response) => {
-                        this.deeplSearchResult = response.data.definition;
+                        this.deeplSearchResults = response.data.definitions.split(';');
+
                     }).catch(() => {
-                        this.deeplSearchResult = 'DeepL error';
+                        this.deeplSearchResults = 'DeepL error';
                     });
                 }
             },
