@@ -22,6 +22,15 @@ class SettingsSeeder extends Seeder
             ]);
         }
 
+        // deepl host settings
+        $setting = Setting::where('name', 'deeplHost')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'deeplHost',
+                'value' => json_encode('https://api-free.deepl.com/v2/translate')
+            ]);
+        }
+
         // jellyfin api settings
         $setting = Setting::where('name', 'jellyfinEnabled')->first();
         if (!$setting) {
