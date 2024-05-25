@@ -21,6 +21,19 @@
                     {{ formatNumber(cachedDeeplTranslations).replace('&nbsp;', '') }} cached translations.
                 </div>
 
+                <!-- DeepL host input -->
+                <label class="font-weight-bold mt-4">DeepL host</label>
+                <v-text-field 
+                    v-model="settings.deeplHost"
+                    class="mb-4"
+                    hide-details
+                    filled
+                    dense
+                    rounded
+                    placeholder="DeepL host"
+                    :disabled="saving || characterLimitLoading"
+                ></v-text-field>
+
                 <!-- DeepL API key input -->
                 <label class="font-weight-bold mt-4">DeepL API key</label>
                 <v-text-field 
@@ -298,6 +311,7 @@
                 axios.post('/settings/global/get', {
                     'settingNames': [
                         'deeplApiKey',
+                        'deeplHost',
                         'jellyfinHost',
                         'jellyfinApiKey',
                         'ankiConnectHost',
@@ -321,6 +335,7 @@
                 axios.post('/settings/global/update', {
                     'settings': {
                         'deeplApiKey': this.settings.deeplApiKey,
+                        'deeplHost': this.settings.deeplHost,
                         'jellyfinHost': this.settings.jellyfinHost,
                         'jellyfinApiKey': this.settings.jellyfinApiKey,
                         'ankiConnectHost': this.settings.ankiConnectHost,

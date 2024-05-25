@@ -130,12 +130,12 @@ class DictionaryController extends Controller
         $usage = 'error';
 
         // retrieve api key from database
-        $apiKeySetting = Setting::where('name', 'deeplApiKey')->first();
-        $apiKey = json_decode($apiKeySetting->value);
+        $deeplApiKeySetting = Setting::where('name', 'deeplApiKey')->first();
+        $deeplApiKey = json_decode($deeplApiKeySetting->value);
 
         // retrieve deepl usage
         try {
-            $deepl = new Translator($apiKey);
+            $deepl = new Translator($deeplApiKey);
             $usage = new \stdClass();
             $usage->limits = $deepl->getUsage();
             $usage->cachedDeeplTranslations = DeeplCache::select('id')->count('id');
@@ -312,8 +312,10 @@ class DictionaryController extends Controller
         }
 
         // retrieve api key from database
-        $apiKeySetting = Setting::where('name', 'deeplApiKey')->first();
-        $apiKey = json_decode($apiKeySetting->value);
+        $deeplApiKeySetting = Setting::where('name', 'deeplApiKey')->first();
+        $deeplApiKey = json_decode($deeplApiKeySetting->value);
+        $deeplHostSetting = Setting::where('name', 'deeplHost')->first();
+        $deeplHost = json_decode($deeplHostSetting->value);
         $languageCodes = config('linguacafe.languages.deepl_language_codes');
         $hash = md5(mb_strtolower($term, 'UTF-8'));
 
@@ -351,12 +353,12 @@ class DictionaryController extends Controller
         }
 
         // request translations
-        $responses = Http::pool(function (Pool $pool) use ($apiKey, $definitionsToRequest, $term) {
+        $responses = Http::pool(function (Pool $pool) use ($deeplApiKey, $deeplHost, $definitionsToRequest, $term) {
             foreach ($definitionsToRequest as $requestData) {
                 $pool->withHeaders([
-                    'Authorization' => 'DeepL-Auth-Key ' . $apiKey,
+                    'Authorization' => 'DeepL-Auth-Key ' . $deeplApiKey,
                     'Content-Type' => 'application/json',
-                ])->post('https://api-free.deepl.com/v2/translate', [
+                ])->post($deeplHost, [
                     'text' => [$term],
                     "source_lang" => $requestData[1],
                     "target_lang" => $requestData[2],
