@@ -381,12 +381,12 @@ def loadBook(file, sortMethod):
     items = list(book.get_items())
 
     # select sorting method for chapters
-    if sortMethod == 'default':
-        sortedItems = items
-    elif sortMethod == 'spine':
+    if sortMethod == 'spine':
         sortedItems = list()
         for item in enumerate(book.spine):
             sortedItems.append(book.get_item_with_id(item[1][0]))
+    else:
+        sortedItems = items
 
     for item in sortedItems:
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
