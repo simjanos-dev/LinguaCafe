@@ -49,12 +49,9 @@ services:
             - linguacafe
     python:
         container_name: linguacafe-python-service
-        command: "python3 /app/tokenizer.py"
         restart: unless-stopped
         tty: true
         image: ghcr.io/simjanos-dev/linguacafe-python-service:${VERSION:-latest}
-        environment:
-            PYTHONPATH: "/var/www/html/storage/app/model"
         volumes:
             - ./storage:/var/www/html/storage
         networks:
