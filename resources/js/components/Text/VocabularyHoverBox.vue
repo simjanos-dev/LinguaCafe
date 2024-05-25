@@ -49,8 +49,8 @@
     
             <!-- Deepl translations -->
             <template v-if="!['loading', 'deepl-disabled'].includes($props.deeplTranslation) && $props.deeplTranslation.length">
-                <li key="deepl-translation">
-                    <v-icon small>mdi-translate</v-icon> {{ $props.deeplTranslation }}
+                <li key="deepl-translation" v-for="(translation, index) in deeplTranslationList" :key="'deepl-' + index">
+                    <v-icon small>mdi-translate</v-icon> {{ translation }}
                 </li>
             </template>
 
@@ -69,7 +69,8 @@
         data: function() {
             return {
                 userTranslationList: [],
-                dictionaryTranslationList: []
+                dictionaryTranslationList: [],
+                deeplTranslationList: [],
             }
         },
         props: {
@@ -92,6 +93,12 @@
             if (this.$props.dictionaryTranslation.length) {
                 this.dictionaryTranslationList = this.$props.dictionaryTranslation.split(';');
             }
+
+            if (this.$props.deeplTranslation.length) {
+                this.deeplTranslationList = this.$props.deeplTranslation.split(';');
+            }
+
+            
         },
         methods: {
         }

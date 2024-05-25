@@ -4,17 +4,14 @@ namespace App\Services;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Http;
-use App\Models\Setting;
 use App\Models\Kanji;
+use App\Models\Dictionary;
 use App\Models\Radical;
-use App\Models\Lesson;
 use App\Models\VocabularyJmdict;
 use App\Models\VocabularyJmdictWord;
 use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use League\Csv\Reader;
 
 class DictionaryImportService {
@@ -1026,5 +1023,19 @@ class DictionaryImportService {
 
         fclose($file);
         echo('finished');
+    }
+
+    public function createDeeplDictionary($sourceLanguage, $targetLanguage, $color, $name) {
+        $dictionary = new Dictionary();
+        $dictionary->name = $name;
+        $dictionary->database_table_name = 'API';
+        $dictionary->source_language = $sourceLanguage;
+        $dictionary->target_language = $targetLanguage;
+        $dictionary->color = $color;
+        $dictionary->imported = true;
+        $dictionary->enabled = true;
+        $dictionary->save();
+
+        return true;
     }
 }

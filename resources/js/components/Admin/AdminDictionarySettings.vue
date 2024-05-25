@@ -77,12 +77,12 @@
                 </template>
 
                 <!-- Enabled -->
-                <template v-slot:item.enabled="{ item, index }">
+                <template v-slot:item.enabled="{ item }">
                     <div class="d-flex justify-center">
                         <v-switch
                             color="primary"
-                            v-model="item.enabled" 
-                            @change="saveDictionary(index)"
+                            v-model="dictionaries[item.index].enabled" 
+                            @change="saveDictionary(item.index)"
                         ></v-switch>
                     </div>
                 </template>
@@ -97,11 +97,11 @@
                         <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                     <v-btn 
-                        v-if="item.imported === '1'"
+                        v-if="item.imported"
                         icon 
                         title="Delete"
                         color="error"
-                        @click="deleteDictionary(item.name, item.database_table_name)"
+                        @click="deleteDictionary(item.id, item.name, item.database_table_name)"
                     >
                         <v-icon>mdi-delete</v-icon>
                     </v-btn>
@@ -122,7 +122,8 @@
                 deleteDialog: {
                     active: false,
                     databaseTableName: '',
-                    dictionaryName: ''
+                    dictionaryName: '',
+                    id: -1,
                 },
                 editDialog: {
                     active: false,
@@ -209,13 +210,14 @@
                 this.editDialog.active = true;
                 this.editDialog.id = id;
             },
-            deleteDictionary(dictionaryName, databaseTableName) {
+            deleteDictionary(dictionaryId, dictionaryName, databaseTableName) {
                 this.deleteDialog.active = true;
+                this.deleteDialog.id = dictionaryId;
                 this.deleteDialog.databaseTableName = databaseTableName;
                 this.deleteDialog.dictionaryName = dictionaryName;
             },
             deleteDictionaryConfirm(databaseTableName) {
-                axios.get('/dictionary/delete/' + this.deleteDialog.databaseTableName).then((response) => {
+                axios.get('/dictionary/delete/' + this.deleteDialog.id).then((response) => {
                     this.deleteDialog.active = false;
                     this.loadDictionaries();
 
@@ -235,9 +237,13 @@
                         data[dictionaryIndex].colorPicker = false;
                         data[dictionaryIndex].colorPickerMobile = false;
                         data[dictionaryIndex].expanded = false;
+                        data[dictionaryIndex].enabled = (data[dictionaryIndex].enabled === 1);
+                        data[dictionaryIndex].imported = (data[dictionaryIndex].imported === '1');
+                        data[dictionaryIndex].index = dictionaryIndex;
                     }
 
                     this.dictionaries = data;
+                    console.log(this.dictionaries);
                 });
             },
             formatNumber: formatNumber

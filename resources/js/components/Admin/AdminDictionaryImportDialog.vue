@@ -1,23 +1,30 @@
 <template>
     <v-dialog v-model="value" scrollable persistent width="1000px">
         <!-- External dictionary import -->
-        <template v-if="selectedDictionaryType === 'custom'">
-            <admin-external-dictionary-import 
-                :language="language"
-                @import-finished="importFinished" 
-                @back-to-dictionaries="backToDictionaries"
-                @close="close" 
-            ></admin-external-dictionary-import>
-        </template>
+        <admin-external-dictionary-import 
+            v-if="selectedDictionaryType === 'custom'"
+            :language="language"
+            @import-finished="importFinished" 
+            @back-to-dictionaries="backToDictionaries"
+            @close="close" 
+        ></admin-external-dictionary-import>
 
         <!-- Supported dictionary import -->
-        <template v-if="selectedDictionaryType === 'supported'">
-            <admin-supported-dictionary-import 
-                @import-finished="importFinished" 
-                @back-to-dictionaries="backToDictionaries" 
-                @close="close" 
-            ></admin-supported-dictionary-import>
-        </template>
+        <admin-supported-dictionary-import
+            v-if="selectedDictionaryType === 'supported'" 
+            @import-finished="importFinished" 
+            @back-to-dictionaries="backToDictionaries" 
+            @close="close" 
+        ></admin-supported-dictionary-import>
+
+        <!-- Deepl dictionary creation -->
+        <admin-deepl-dictionary-creation
+            v-if="selectedDictionaryType === 'deepl'"
+            :language="$props.language"
+            @import-finished="importFinished" 
+            @back-to-dictionaries="backToDictionaries" 
+            @close="close" 
+        ></admin-deepl-dictionary-creation>
 
         <!-- Dictionary selection list -->
         <v-card 
@@ -54,7 +61,6 @@
                     <v-radio
                         label="DeepL dictionary"
                         value="deepl"
-                        disabled
                     ></v-radio>
                 </v-radio-group>
             </v-card-text>

@@ -160,6 +160,7 @@ import AdminApiSettings from './components/Admin/AdminApiSettings';
 import AdminDictionaryImportDialog from './components/Admin/AdminDictionaryImportDialog';
 import AdminExternalDictionaryImport from './components/Admin/AdminExternalDictionaryImport';
 import AdminSupportedDictionaryImport from './components/Admin/AdminSupportedDictionaryImport';
+import AdminDeeplDictionaryCreation from './components/Admin/AdminDeeplDictionaryCreation';
 import AdminEditUserDialog from './components/Admin/AdminEditUserDialog';
 import AdminReviewSettings from './components/Admin/AdminReviewSettings';
 Vue.component('admin-user-settings', AdminUserSettings);
@@ -176,6 +177,7 @@ Vue.component('admin-api-settings', AdminApiSettings);
 Vue.component('admin-dictionary-import-dialog', AdminDictionaryImportDialog);
 Vue.component('admin-external-dictionary-import', AdminExternalDictionaryImport);
 Vue.component('admin-supported-dictionary-import', AdminSupportedDictionaryImport);
+Vue.component('admin-deepl-dictionary-creation', AdminDeeplDictionaryCreation);
 Vue.component('admin-edit-user-dialog', AdminEditUserDialog);
 Vue.component('admin-review-settings', AdminReviewSettings);
 
