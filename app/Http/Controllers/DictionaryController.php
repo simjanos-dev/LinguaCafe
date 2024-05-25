@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
+use \DeepL\Translator;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 use App\Models\Dictionary;
