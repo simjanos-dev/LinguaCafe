@@ -1,48 +1,82 @@
 <template>
-    <!-- Book list detailed -->
     <div id="book-list" class="table-layout">
-        <v-simple-table class="no-hover border rounded-lg mt-4" v-if="books.length">
-            <thead>
-                <tr>
-                    <th class="book-cover text-center">Cover</th>
-                    <th class="book-title text-center px-1" >Title</th>
-                    <th class="book-length text-center px-1" >Length</th>
-                    <th class="book-actions text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="book" v-for="(book, index) in books" :key="index">
-                    <td class="book-cover">
-                        <img
-                            class="cover-image rounded-lg ma-2"
-                            :src="'/images/book_images/' + book.cover_image"
-                        ></img>
-                    </td>
-                    
-                    <td class="book-title default-font">
-                        {{ book.name }}
-                    </td>
-                    
-                    <td class="book-length text-center">
-                        {{ formatNumber(book.word_count) }}
-                    </td>
+        <!-- Book list detailed -->
+        <v-card outlined class="border rounded-lg mt-4">
+            <v-card-title>
+                <v-text-field
+                    v-model="booksTextFilter"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    filled
+                    dense
+                    hide-details
+                    single-line
+                    rounded
+                ></v-text-field>
+            </v-card-title>
 
-                    <td class="book-actions">
-                        <v-btn icon title="Open book" @click="openBook(book.id)"><v-icon>mdi-book-open</v-icon></v-btn>
-                        <v-menu content-class="book-menu" rounded offset-y bottom left nudge-top="-5">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn icon v-bind="attrs" v-on="on"  title="Actions">
-                                    <v-icon>mdi-dots-horizontal</v-icon>
-                                </v-btn>
-                            </template>
-                            <v-btn class="menu-button" tile color="white" @click="showEditBookDialog(book)">Edit</v-btn>
-                            <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(book)">Review</v-btn>
-                            <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog(book)">Delete</v-btn>
-                        </v-menu>
-                    </td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+            <v-data-table
+                class="ma-4 mb-0 no-hover"
+                :headers="[
+                    {
+                        text: 'Cover',
+                        value: 'cover_image',
+                        align: 'center',
+                        width: '140px',
+                        sortable: false,
+                    },
+                    {
+                        text: 'Title',
+                        value: 'name',
+                        align: 'left',
+                    },
+                    {
+                        text: 'Length',
+                        value: 'word_count',
+                        align: 'center',
+                        width: '140px',
+                    },
+                    {
+                        text: 'Actions',
+                        value: 'actions',
+                        align: 'center',
+                        width: '140px',
+                        sortable: false,
+                    },
+                ]"
+                :items="books"
+                :search="booksTextFilter"
+            >
+                <!-- Cover image -->
+                <template v-slot:item.cover_image="{ item }">
+                    <img
+                        class="cover-image rounded-lg ma-2"
+                        :src="'/images/book_images/' + item.cover_image"
+                    ></img>
+                </template>
+                
+                <!-- Length -->
+                <template v-slot:item.word_count="{ item }">
+                    {{ formatNumber(item.word_count) }}
+                </template>
+                
+                <!-- Actions -->
+                <template v-slot:item.actions="{ item }">
+                    <v-btn icon title="Open book" @click="openBook(item.id)"><v-icon>mdi-book-open</v-icon></v-btn>
+                    <v-menu content-class="book-menu" rounded offset-y bottom left nudge-top="-5">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn icon v-bind="attrs" v-on="on"  title="Actions">
+                                <v-icon>mdi-dots-horizontal</v-icon>
+                            </v-btn>
+                        </template>
+                        <v-btn class="menu-button" tile color="white" @click="showEditBookDialog(item)">Edit</v-btn>
+                        <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog(item)">Review</v-btn>
+                        <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog(item)">Delete</v-btn>
+                    </v-menu>
+                </template>
+
+            </v-data-table>
+        </v-card>
     </div>
 </template>
 
@@ -51,7 +85,7 @@
     export default {
         data: function() {
             return {
-                
+                booksTextFilter: '',
             }
         },
         props: {

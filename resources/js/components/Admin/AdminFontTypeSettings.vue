@@ -42,6 +42,7 @@
                 {
                     text: 'Actions',
                     value: 'actions',
+                    sortable: false,
                 }
             ]"
             :items="fonts"
