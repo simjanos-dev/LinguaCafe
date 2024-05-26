@@ -13,7 +13,9 @@ class ModifyDictionariesTable2 extends Migration
      */
     public function up()
     {
-        DB::statement("UPDATE dictionaries SET imported = true WHERE database_table_name = 'API' AND name LIKE 'DeepL%'");
+        Schema::table('dictionaries', function (Blueprint $table) {
+            $table->dropColumn('imported');
+        });
     }
 
     /**

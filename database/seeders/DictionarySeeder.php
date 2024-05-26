@@ -23,7 +23,6 @@ class DictionarySeeder extends Seeder
                 'source_language' => 'japanese',
                 'target_language' => 'english',
                 'color' => '#74E39A',
-                'imported' => false,
                 'enabled' => false
             ]);
         }

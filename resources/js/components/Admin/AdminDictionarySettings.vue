@@ -97,7 +97,7 @@
                         <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                     <v-btn 
-                        v-if="item.imported"
+                        v-if="item.name !== 'JMDict'"
                         icon 
                         title="Delete"
                         color="error"
@@ -239,7 +239,6 @@
                         data[dictionaryIndex].colorPickerMobile = false;
                         data[dictionaryIndex].expanded = false;
                         data[dictionaryIndex].enabled = (data[dictionaryIndex].enabled === 1);
-                        data[dictionaryIndex].imported = (data[dictionaryIndex].imported === '1');
                         data[dictionaryIndex].index = dictionaryIndex;
                     }
 
