@@ -35,6 +35,9 @@
                     <li>
                         Hover vocabulary now will move above the hovered word if there's no space to be displayed below it.
                     </li>
+                    <li>
+                        Admin settings cannot be saved anymore if a field is left empty.
+                    </li>
                 </ul>
 
                 <b>Other changes:</b>
