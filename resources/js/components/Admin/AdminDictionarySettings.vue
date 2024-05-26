@@ -169,6 +169,7 @@
                         value: 'actions',
                         align: 'center',
                         width: '110px',
+                        sortable: false,
                     },
                 ]
             }
