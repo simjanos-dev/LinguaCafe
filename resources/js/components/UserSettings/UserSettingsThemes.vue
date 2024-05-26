@@ -20,72 +20,74 @@
         </div>
 
         <!-- Color table -->
-        <v-simple-table class="rounded-lg no-hover border mt-2" v-if="!loading">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Color</th>
-                    <th>Hex</th>
-                    <th>Reset</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(color, index) in (selectedTheme == 'light' ? lightTheme : darkTheme)" :key="selectedTheme + color.name">
-                    <td>{{ color.name }}</td>
-                    <td>
-                        <v-menu
-                            v-model="color.opened"
-                            width="290px"
-                            offset-y
-                            nudge-top="-10px"
-                            right
-                            :close-on-content-click="false"
-                        >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-card
-                                    class="border mx-auto"
-                                    outlined
-                                    :color="color.value"
-                                    width="48px"
-                                    height="26px"
-                                    @click="color.opened = true;"
-                                ></v-card>
-                            </template>
+        <v-form v-model="isFormValid">
+            <v-simple-table class="rounded-lg no-hover border mt-2" v-if="!loading">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Hex</th>
+                        <th>Reset</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(color, index) in (selectedTheme == 'light' ? lightTheme : darkTheme)" :key="selectedTheme + color.name">
+                        <td>{{ color.name }}</td>
+                        <td>
+                            <v-menu
+                                v-model="color.opened"
+                                width="290px"
+                                offset-y
+                                nudge-top="-10px"
+                                right
+                                :close-on-content-click="false"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-card
+                                        class="border mx-auto"
+                                        outlined
+                                        :color="color.value"
+                                        width="48px"
+                                        height="26px"
+                                        @click="color.opened = true;"
+                                    ></v-card>
+                                </template>
 
-                            <v-color-picker 
-                                mode="hexa" 
-                                hide-inputs 
-                                v-model="color.value" 
-                                @update:color="colorChanged(index, $event)" 
-                            /> 
-                        </v-menu>
-                    </td>
-                    <td>
-                        <v-text-field
-                            class="my-2"
-                            v-model="color.hex"
-                            ref="colorHex"
-                            filled
-                            rounded
-                            dense
-                            hide-details
-                            maxlength="7"
-                            :rules="[rules.hex]"
-                            @keyup="hexValueChanged(index)"
-                        ></v-text-field>
-                    </td>
-                    <td>
-                        <v-btn 
-                            icon 
-                            title="Restore default"
-                            @click="resetColor(index)"
-                        >
-                            <v-icon>mdi-restore</v-icon>
-                        </v-btn>
-                    </td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+                                <v-color-picker 
+                                    mode="hexa" 
+                                    hide-inputs 
+                                    v-model="color.value" 
+                                    @update:color="colorChanged(index, $event)" 
+                                /> 
+                            </v-menu>
+                        </td>
+                        <td>
+                            <v-text-field
+                                class="my-2"
+                                v-model="color.hex"
+                                ref="colorHex"
+                                filled
+                                rounded
+                                dense
+                                hide-details
+                                maxlength="7"
+                                :rules="[rules.hex]"
+                                @keyup="hexValueChanged(index)"
+                            ></v-text-field>
+                        </td>
+                        <td>
+                            <v-btn 
+                                icon 
+                                title="Restore default"
+                                @click="resetColor(index)"
+                            >
+                                <v-icon>mdi-restore</v-icon>
+                            </v-btn>
+                        </td>
+                    </tr>
+                </tbody>
+            </v-simple-table>
+        </v-form>
 
         <!-- Save result alerts -->
         <v-alert
@@ -107,7 +109,7 @@
                 rounded
                 color="primary"
                 :loading="saving"
-                :disabled="saving"
+                :disabled="saving || !isFormValid"
                 @click="save"
             >
                 Save
@@ -122,6 +124,7 @@
     export default {
         data: function() {
             return {
+                isFormValid: false,
                 loading: true,
                 saving: false,
                 saveResult: '',
