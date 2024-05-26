@@ -47,17 +47,9 @@ class DictionaryImportService {
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'jmdict.zip';
-            $dictionary->imported = false;
 
             // check if jmdict is imported
             $recordCount = DB::table('dict_jp_jmdict')->count();
-            /*
-                jmdict table always exist, so I check if it has been
-                imported with this arbitrary number.
-            */
-            if ($recordCount > 180000) {
-                $dictionary->imported = true;
-            }
         }
 
         // cc cedict dictionary
@@ -72,12 +64,6 @@ class DictionaryImportService {
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'cedict_ts.u8';
-            $dictionary->imported = false;
-
-            // check if cc cedict is imported
-            if (Schema::hasTable($dictionary->databaseName)) {
-                $dictionary->imported = true;
-            }
 
             // check record count
             $handle = fopen(Storage::path('temp/dictionaries/cedict_ts.u8'), "r");
@@ -106,12 +92,6 @@ class DictionaryImportService {
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'handedict.u8';
-            $dictionary->imported = false;
-
-            // check if cc cedict is imported
-            if (Schema::hasTable($dictionary->databaseName)) {
-                $dictionary->imported = true;
-            }
 
             // check record count
             $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path('temp/dictionaries/handedict.u8'));
@@ -129,12 +109,6 @@ class DictionaryImportService {
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'kengdic.tsv';
-            $dictionary->imported = false;
-
-            // check if kengdic is imported
-            if (Schema::hasTable($dictionary->databaseName)) {
-                $dictionary->imported = true;
-            }
 
             return $dictionary;
         }
@@ -151,12 +125,6 @@ class DictionaryImportService {
             $dictionary->firstUpdateInterval = 25000;
             $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'Eurfa_Welsh_Dictionary.csv';
-            $dictionary->imported = false;
-
-            // check if kengdic is imported
-            if (Schema::hasTable($dictionary->databaseName)) {
-                $dictionary->imported = true;
-            }
 
             return $dictionary;
         }
@@ -213,13 +181,6 @@ class DictionaryImportService {
                 $dictionary->firstUpdateInterval = 3000;
                 $dictionary->updateInterval = 10000;
                 $dictionary->fileName = $fileName;
-                $dictionary->imported = false;
-
-
-                // check if the dictionary has been imported
-                if (Schema::hasTable($dictionary->databaseName)) {
-                    $dictionary->imported = true;
-                }
 
                 return $dictionary;
             }
@@ -256,11 +217,6 @@ class DictionaryImportService {
                 $dictionary->firstUpdateInterval = 5000;
                 $dictionary->updateInterval = 10000;
                 $dictionary->fileName =  $fileName;
-
-                // check if the wiktionary has been imported
-                if (Schema::hasTable($dictionary->databaseName)) {
-                    $dictionary->imported = true;
-                }
 
                 return $dictionary;
             }
@@ -312,7 +268,6 @@ class DictionaryImportService {
                 'source_language' => 'chinese',
                 'target_language' => $targetLanguage,
                 'color' => '#EF4556',
-                'imported' => true,
                 'enabled' => true
             ]);
         }
@@ -387,7 +342,6 @@ class DictionaryImportService {
                 'source_language' => 'korean',
                 'target_language' => 'english',
                 'color' => '#DDBFE4',
-                'imported' => true,
                 'enabled' => true
             ]);
         }
@@ -460,7 +414,6 @@ class DictionaryImportService {
                 'source_language' => 'welsh',
                 'target_language' => 'english',
                 'color' => '#32DB4D',
-                'imported' => true,
                 'enabled' => true
             ]);
         }
@@ -524,7 +477,6 @@ class DictionaryImportService {
                 'source_language' => $sourceLanguage,
                 'target_language' => $targetLanguage,
                 'color' => '#FF981B',
-                'imported' => true,
                 'enabled' => true
             ]);
         }
@@ -591,7 +543,6 @@ class DictionaryImportService {
                 'source_language' => $language,
                 'target_language' => 'english',
                 'color' => '#E9CDA0',
-                'imported' => true,
                 'enabled' => true
             ]);
         }
@@ -1032,7 +983,6 @@ class DictionaryImportService {
         $dictionary->source_language = $sourceLanguage;
         $dictionary->target_language = $targetLanguage;
         $dictionary->color = $color;
-        $dictionary->imported = true;
         $dictionary->enabled = true;
         $dictionary->save();
 

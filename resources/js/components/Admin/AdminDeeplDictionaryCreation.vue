@@ -159,7 +159,7 @@
                     depressed 
                     color="primary" 
                     :loading="createResult === 'saving'" 
-                    :disabled="createResult === 'saving' || !isFormValid" 
+                    :disabled="createResult === 'saving' || !isFormValid || loading"
                     @click="createDeeplDictionary"
                 >Create</v-btn>
             </template>
