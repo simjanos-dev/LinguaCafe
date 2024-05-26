@@ -32,47 +32,47 @@
         </div>
 
         <!-- Font list -->
-        <v-simple-table class="no-hover border rounded-lg" v-if="fonts.length">
-            <thead>
-                <tr>
-                    <th class="text-center">Font</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(font, fontIndex) in fonts" :key="fontIndex">
-                    <!-- Font -->
-                    <td>
-                        {{ font.name }} {{ font.default ? '(default)' : '' }}
-                    </td>
+        <v-data-table
+            class="ma-4 mb-0 no-hover border"
+            :headers="[
+                {
+                    text: 'Font',
+                    value: 'name',
+                },
+                {
+                    text: 'Actions',
+                    value: 'actions',
+                }
+            ]"
+            :items="fonts"
+            :loading="loading"
+        >
 
-                    <!-- Actions -->
-                    <td class="text-center">
-                        <!-- Edit button -->
-                        <v-btn 
-                            rounded 
-                            depressed 
-                            icon
-                            @click="editFont(fontIndex)"
-                        >
-                            <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
+            <!-- Actions -->
+            <template v-slot:item.actions="{ item }">
+                <!-- Edit button -->
+                <v-btn 
+                    rounded 
+                    depressed 
+                    icon
+                    @click="editFont(item.index)"
+                >
+                    <v-icon>mdi-pencil</v-icon>
+                </v-btn>
 
-                        <!-- Delete button -->
-                        <v-btn 
-                            v-if="!font.default"
-                            rounded 
-                            depressed 
-                            icon
-                            color="error"
-                            @click="deleteFont(fontIndex)"
-                        >
-                            <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                    </td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+                <!-- Delete button -->
+                <v-btn 
+                    v-if="!item.default"
+                    rounded 
+                    depressed 
+                    icon
+                    color="error"
+                    @click="deleteFont(item.index)"
+                >
+                    <v-icon>mdi-delete</v-icon>
+                </v-btn>
+            </template>
+        </v-data-table>
     </div>
 </template>
 
@@ -125,6 +125,12 @@
                 this.fonts = [];
                 axios.get('/fonts/get').then((response) => {
                     this.fonts = response.data;
+
+                    this.fonts.forEach((value, index) => {
+                        value.index = index;
+                    });
+                    
+                    console.log('fonts', this.fonts);
                     this.loading = false;
                 });
 
