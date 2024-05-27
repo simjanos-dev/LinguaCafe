@@ -155,7 +155,7 @@
                 // dictionary search
                 this.dictionarySearchLoading = true;
                 this.dictionarySearchResultsFound = false;
-                axios.post('/dictionary/search', {
+                axios.post('/dictionaries/search', {
                     language: this.$props.language,
                     term: this.$props.searchTerm
                 }).then((response) => {

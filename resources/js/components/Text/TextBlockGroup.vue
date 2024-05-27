@@ -770,7 +770,7 @@
                 }
 
                 // search inflections
-                axios.post('/dictionary/search/inflections', {
+                axios.post('/dictionaries/search/inflections', {
                     term: term
                 }).then((response) => {
                     if (response.data === '[]' || response.data == '') {
@@ -1407,7 +1407,7 @@
 
 
                 // make dictionary search
-                axios.post('/dictionary/search-for-hover-vocabulary', {
+                axios.post('/dictionaries/search-for-hover-vocabulary', {
                     language: this.$props.language,
                     term: term
                 }).then((response) => {
