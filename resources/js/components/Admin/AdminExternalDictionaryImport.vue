@@ -316,8 +316,7 @@
                                 border="left"
                                 dark
                             >
-                                An error has occurred while importing the dictionary.<br><br>
-                                {{ importResult }}
+                                An error has occurred while importing the dictionary.
                             </v-alert>
                         </div>
                         
@@ -564,7 +563,15 @@
                 axios.post('/dictionaries/import-csv-file', formData).then((response) => {
                     this.importing = false;
                     this.stepperPage ++;
-                    this.importResult = response.data;
+                    if (response.status === 200) {
+                        this.importResult = 'success';
+                    } else {
+                        this.importResult = 'error';
+                    }
+                }).catch((error) => {
+                    this.importing = false;
+                    this.stepperPage ++;
+                    this.importResult = 'Error';
                 });
             },
             backToDictionaries() {

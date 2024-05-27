@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Auth;
-use League\Csv\Reader;
 use App\Models\Dictionary;
 
 // services
@@ -25,6 +22,7 @@ use App\Http\Requests\Dictionaries\SearchDefinitionsForHoverVocabularyRequest;
 use App\Http\Requests\Dictionaries\SearchDeeplRequest;
 use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
 use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
+use App\Http\Requests\Dictionaries\ImportDictionaryCsvFileRequest;
 
 class DictionaryController extends Controller
 {
@@ -175,25 +173,6 @@ class DictionaryController extends Controller
         return response()->json($inflections, 200);
     }
 
-    /*
-        This function tests a .csv file, and returns a sample of the data.
-        This makes it faster to test a file and notice any problems before
-        the user actually imports a large file.
-    */
-    public function testDictionaryCsvFile(TestDictionaryCsvFileRequest $request) {
-        $file = $request->file('dictionary');
-        $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
-        $skipHeader = boolval($request->post('skipHeader') === 'true');
-
-        try {
-            $sample = $this->dictionaryService->testDictionaryCsvFile($file, $delimiter, $skipHeader);
-        } catch (\Exception $e) {
-            abort(500, $e->getMessage());
-        }
-
-        return response()->json($sample, 200);
-    }
-
     public function createDeeplDictionary(CreateDeeplDictionaryRequest $request) {
         $sourceLanguage = $request->post('sourceLanguage');
         $targetLanguage = $request->post('targetLanguage');
@@ -209,91 +188,43 @@ class DictionaryController extends Controller
         return response()->json('DeepL dictionary has been created successfully.', 200);
     }
 
-    public function importDictionaryCsvFile(Request $request) {
-        set_time_limit(2400);
+    /*
+        This function tests a .csv file, and returns a sample of the data.
+        This makes it faster to test a file and notice any problems before
+        the user actually imports a large file.
+    */
+    public function testDictionaryCsvFile(TestDictionaryCsvFileRequest $request) {
+        $file = $request->file('dictionary');
+        $delimiter = $request->post('delimiter');
         $skipHeader = boolval($request->post('skipHeader') === 'true');
-        $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
+
+        try {
+            $sample = $this->dictionaryService->testDictionaryCsvFile($file, $delimiter, $skipHeader);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json($sample, 200);
+    }
+
+    public function importDictionaryCsvFile(ImportDictionaryCsvFileRequest $request) {
+        set_time_limit(2400);
+        $file = $request->file('dictionary');
+        $skipHeader = boolval($request->post('skipHeader') === 'true');
+        $delimiter = $request->post('delimiter');
         $dictionaryName = $request->post('dictionaryName');
         $databaseTableName = $request->post('databaseName');
         $sourceLanguage = $request->post('sourceLanguage');
         $targetLanguage = $request->post('targetLanguage');
         $color = $request->post('color');
 
-        if(!preg_match('/^[a-z0-9_]+$/', $databaseTableName)) {
-            return 'Database name can only contain lowercase letters, numbers and underscore!';
-        }
-
-        if(mb_strlen($dictionaryName) > 16) {
-            return 'Dictionary name can only contain up to 16 characters!';
-        }
-
-        if(mb_strlen($databaseTableName) > 40) {
-            return 'Database name can only contain up to 40 characters!';
-        }
-
-        // check if table exists
-        if (Schema::hasTable($databaseTableName)) {
-            return 'Database table name already exists';
-        }
-        
-        // create table
-        Schema::create($databaseTableName, function (Blueprint $table) {
-            $table->id();
-            $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('definitions', 2048)->collation('utf8mb4_bin');
-            $table->timestamps();
-        });
-
-        $dictionary = new Dictionary();
-        $dictionary->name = $dictionaryName;
-        $dictionary->database_table_name = $databaseTableName;
-        $dictionary->source_language = $sourceLanguage;
-        $dictionary->target_language = $targetLanguage;
-        $dictionary->color = $color;
-        $dictionary->enabled = true;
-        $dictionary->save();
-
-        // move file to a temp folder
-        $file = $request->file('dictionary');
-        $fileName = bin2hex(openssl_random_pseudo_bytes(30)) . '.csv';
-        $file->move(storage_path('app/temp'), $fileName);
-        
-        // try to read file and collect sample rows
         try {
-            DB::beginTransaction();
-            $csv = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
-            $csv->setDelimiter($delimiter);
-            $records = $csv->getRecords();
-            $uniqueWords = [];
-            foreach ($records as $index => $record) {
-                // ignore header
-                if ($skipHeader && !$index) {
-                    continue;
-                }
-
-                // check if both columns exist
-                if (!isset($record[0]) || !isset($record[1])) {
-                    throw new \Exception('Missing data.');
-                }
-
-                if (mb_strlen($record[0]) > 255 || mb_strlen($record[1]) > 2047) {
-                    continue;
-                }
-                
-                DB::table($databaseTableName)->insert([
-                    'word' => mb_strtolower($record[0], 'UTF-8'),
-                    'definitions' => $record[1]
-                ]);
-            }
-
-            DB::commit();
-        } catch (\Exception $exception) {
-            File::delete(storage_path('app/temp') . '/' . $fileName);
-            return 'error';
+            $this->dictionaryService->importDictionaryCsvFile($file, $skipHeader, $delimiter, $dictionaryName, $databaseTableName, $sourceLanguage, $targetLanguage, $color);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        File::delete(storage_path('app/temp') . '/' . $fileName);
-        return 'success';
+        return response()->json('Dictionary has been imported successfully.', 200);
     }
 
     public function getDictionaryFileInformation(GetDictionaryFileInformationRequest $request) {
