@@ -245,6 +245,66 @@ class DictionaryImportService {
         return $lineCount;
     }
 
+    public function importSupportedDictionary($dictionaryName, $dictionaryFileName, $dictionarySourceLanguage, $dictionaryTargetLanguage, $dictionaryDatabaseName) {
+        set_time_limit(2400);
+        
+        // import jmdict files
+        if ($dictionaryName == 'JMDict') {
+            $this->jmdictImport();
+            $this->kanjiImport();
+            $this->kanjiRadicalImport();
+
+            return true;
+        }
+
+        // import cc cedict or HanDeDict file
+        if ($dictionaryName == 'cc-cedict' || $dictionaryName == 'HanDeDict') {
+            $this->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
+
+            return true;
+        }
+
+        // import kengdic file
+        if ($dictionaryName == 'kengdic') {
+            $this->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+
+            return true;
+        }
+
+        // import eurfa files
+        if ($dictionaryName == 'eurfa') {
+            $this->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+
+            return true;
+        }
+        
+
+        // import dict cc files
+        if (str_contains($dictionaryName, 'dictcc')) {
+            $this->importDictCc(
+                $dictionaryName, 
+                $dictionarySourceLanguage, 
+                $dictionaryTargetLanguage,
+                $dictionaryFileName, 
+                $dictionaryDatabaseName
+            );
+
+            return true;
+        }
+
+        // import wiktionary files
+        if (str_contains($dictionaryName, 'wiktionary')) {
+            $this->importWiktionary(
+                $dictionaryName, 
+                $dictionarySourceLanguage, 
+                $dictionaryFileName, 
+                $dictionaryDatabaseName
+            );
+            
+            return true;
+        }
+    }
+    
     /*
         Imports a cc-cedict or HanDeDict dictionary file into the database.
         They are in the same format, HanDeDict is just translated to German.
