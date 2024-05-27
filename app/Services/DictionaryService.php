@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Client\Pool;
 use \DeepL\Translator;
+use League\Csv\Reader;
 
 // models
 use App\Models\Dictionary;
@@ -323,6 +325,53 @@ class DictionaryService {
         } else {
             return [];
         }
+    }
+
+    public function testDictionaryCsvFile($file, $delimiter, $skipHeader) {
+        $returnData = new \stdClass();
+        $returnData->status = 'success';
+        $returnData->sample = [];
+        $returnData->recordCount = 0;
+
+        // move file to a temp folder
+        $fileName = bin2hex(openssl_random_pseudo_bytes(30)) . '.csv';
+        $file->move(storage_path('app/temp'), $fileName);
+        
+        // try to read file and collect sample rows
+        try {
+            $csv = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
+            $csv->setDelimiter($delimiter);
+            $records = $csv->getRecords();
+            foreach ($records as $index => $record) {
+                // ignore header
+                if ($skipHeader && !$index) {
+                    continue;
+                }
+
+                // check if both columns exist
+                if (!isset($record[0]) || !isset($record[1])) {
+                    throw new \Exception('Missing data.');
+                }
+
+                $sampleData = new \stdClass();
+                $sampleData->word = mb_strtolower($record[0], 'UTF-8');
+                $sampleData->translation = $record[1];
+
+                // this loop runs through the whole file to test for errors
+                if (($skipHeader && $index <= 3) || (!$skipHeader && $index < 3)) {
+                    $returnData->sample[] = $sampleData;
+                }
+
+                $returnData->recordCount ++;
+            }
+        } catch (\Exception $exception) {
+            $returnData->sample = [];
+            $returnData->status = 'error';
+        }
+
+        File::delete(storage_path('app/temp') . '/' . $fileName);
+
+        return $returnData;
     }
 
     private function searchImportedDictionary($dictionaryTable, $term, $strict = false) {

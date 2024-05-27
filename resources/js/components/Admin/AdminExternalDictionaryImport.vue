@@ -537,7 +537,7 @@
                 formData.append("delimiter", this.dictionary.csvDelimiter);
                 formData.append("skipHeader", this.dictionary.csvSkipHeader);
 
-                axios.post('/dictionary/test-csv-file', formData).then((response) => {
+                axios.post('/dictionaries/test-csv-file', formData).then((response) => {
                     this.fileTestError = response.data.status !== 'success';
                     this.fileTestLoading = false;
 
@@ -561,7 +561,7 @@
                 formData.append("targetLanguage", this.dictionary.targetLanguage.toLowerCase());
                 formData.append("color", this.dictionary.color);
 
-                axios.post('/dictionary/import-csv-file', formData).then((response) => {
+                axios.post('/dictionaries/import-csv-file', formData).then((response) => {
                     this.importing = false;
                     this.stepperPage ++;
                     this.importResult = response.data;
