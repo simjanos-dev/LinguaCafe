@@ -326,19 +326,26 @@
         },
         methods: {
             loadDeeplCharacterLimits() {
-                axios.get('/dictionaries/deepl/get-usage').then((result) => {
+                axios.get('/dictionaries/deepl/get-usage').then((response) => {
                     this.characterLimitLoading = false;
-                    if (result.data == 'error') {
+                    if (response.status === 200) {
+                        this.characterLimitStatus = 'success';
+                        this.cachedDeeplTranslations = response.data.cachedDeeplTranslations;
+                        this.characterUsed = response.data.limits.character.count;
+                        this.characterLimit = response.data.limits.character.limit;
+                    } else {
                         if (this.settings.deeplApiKey === this.defaultDeeplApiKey) {
                             this.characterLimitStatus = 'default';
                         } else {
                             this.characterLimitStatus = 'error';
                         }
+                    }
+                }).catch((error) => {
+                    this.characterLimitLoading = false;
+                    if (this.settings.deeplApiKey === this.defaultDeeplApiKey) {
+                        this.characterLimitStatus = 'default';
                     } else {
-                        this.characterLimitStatus = 'success';
-                        this.cachedDeeplTranslations = result.data.cachedDeeplTranslations;
-                        this.characterUsed = result.data.limits.character.count;
-                        this.characterLimit = result.data.limits.character.limit;
+                        this.characterLimitStatus = 'error';
                     }
                 });
             },

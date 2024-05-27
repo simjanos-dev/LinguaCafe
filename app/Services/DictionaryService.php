@@ -2,8 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Dictionary;
 use Illuminate\Support\Facades\DB;
+use \DeepL\Translator;
+
+// models
+use App\Models\Dictionary;
+use App\Models\Setting;
+use App\Models\DeeplCache;
 
 class DictionaryService {
 
@@ -80,5 +85,18 @@ class DictionaryService {
         } else {
             return true;
         }
+    }
+
+    public function getDeeplCharacterLimit() {
+        // retrieve api key from database
+        $deeplApiKeySetting = Setting::where('name', 'deeplApiKey')->first();
+        $deeplApiKey = json_decode($deeplApiKeySetting->value);
+
+        $deepl = new Translator($deeplApiKey);
+        $usage = new \stdClass();
+        $usage->limits = $deepl->getUsage();
+        $usage->cachedDeeplTranslations = DeeplCache::select('id')->count('id');
+        
+        return $usage;
     }
 }
