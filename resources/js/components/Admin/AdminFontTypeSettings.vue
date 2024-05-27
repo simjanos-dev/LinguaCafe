@@ -43,6 +43,8 @@
                     text: 'Actions',
                     value: 'actions',
                     sortable: false,
+                    width: '120px',
+                    align: 'center',
                 }
             ]"
             :items="fonts"
