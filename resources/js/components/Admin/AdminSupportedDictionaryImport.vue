@@ -287,7 +287,14 @@
                     'dictionaryFileName': this.dictionary.fileName
                 }).then((response) => {
                     this.importing = false;
-                    this.importResult = response.data;
+                    if (response.status === 200) {
+                        this.importResult = 'success';
+                    } else {
+                        this.importResult = 'error';
+                    }
+                }).catch(() => {
+                    this.importing = false;
+                    this.importResult = 'error';
                 });
             },
             back() {

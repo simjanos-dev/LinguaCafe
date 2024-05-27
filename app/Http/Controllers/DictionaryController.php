@@ -23,6 +23,7 @@ use App\Http\Requests\Dictionaries\SearchDeeplRequest;
 use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
 use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportDictionaryCsvFileRequest;
+use App\Http\Requests\Dictionaries\ImportSupportedDictionaryRequest;
 
 class DictionaryController extends Controller
 {
@@ -219,7 +220,17 @@ class DictionaryController extends Controller
         $color = $request->post('color');
 
         try {
-            $this->dictionaryService->importDictionaryCsvFile($file, $skipHeader, $delimiter, $dictionaryName, $databaseTableName, $sourceLanguage, $targetLanguage, $color);
+            $this->dictionaryService->importDictionaryCsvFile(
+                $file, 
+                $skipHeader, 
+                $delimiter, 
+                $dictionaryName, 
+                $databaseTableName, 
+                $sourceLanguage, 
+                $targetLanguage, 
+                $color
+            );
+
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -234,7 +245,12 @@ class DictionaryController extends Controller
         $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
         
         try {
-            $dictionariesFound = $this->dictionaryImportService->getDictionaryFileInformation($dictionaryFile, $supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
+            $dictionariesFound = $this->dictionaryImportService->getDictionaryFileInformation(
+                $dictionaryFile, 
+                $supportedSourceLanguages, 
+                $dictCcLanguageCodes, 
+                $databaseLanguageCodes
+            );
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -242,7 +258,7 @@ class DictionaryController extends Controller
         return json_encode($dictionariesFound);
     }
 
-    public function importSupportedDictionary(Request $request) {
+    public function importSupportedDictionary(ImportSupportedDictionaryRequest $request) {
         set_time_limit(2400);
         $dictionaryName = $request->post('dictionaryName');
         $dictionaryFileName = $request->post('dictionaryFileName');
@@ -250,122 +266,39 @@ class DictionaryController extends Controller
         $dictionaryTargetLanguage = $request->post('dictionaryTargetLanguage');
         $dictionaryDatabaseName = $request->post('dictionaryDatabaseName');
         
-        // import jmdict files
-        if ($dictionaryName == 'JMDict') {
-            try {
-                $this->dictionaryImportService->jmdictImport();
-                $this->dictionaryImportService->kanjiImport();
-                $this->dictionaryImportService->kanjiRadicalImport();
-            } catch (\Throwable $t) {
-                return $t->getMessage();
-            } catch (\Exception $e) {
-                return $e->getMessage();
-            }
-
-            return 'success';
-        }
-
-        // import cc cedict or HanDeDict file
-        if ($dictionaryName == 'cc-cedict' || $dictionaryName == 'HanDeDict') {
-            try {
-                $this->dictionaryImportService->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
-            } catch (\Throwable $t) {
-                return 'error';
-            } catch (\Exception $e) {
-                return 'error';
-            }
-
-            return 'success';
-        }
-
-        // import kengdic file
-        if ($dictionaryName == 'kengdic') {
-            try {
-                $this->dictionaryImportService->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
-            } catch (\Throwable $t) {
-                return 'error';
-            } catch (\Exception $e) {
-                return 'error';
-            }
-
-            return 'success';
-        }
-
-        // import eurfa files
-        if ($dictionaryName == 'eurfa') {
-            try {
-                $this->dictionaryImportService->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
-            } catch (\Throwable $t) {
-                return $t->getMessage();
-                return 'error';
-            } catch (\Exception $e) {
-                return $e->getMessage();
-                return 'error';
-            }
-
-            return 'success';
-        }
-        
-
-        // import dict cc files
-        if (str_contains($dictionaryName, 'dictcc')) {
-            try {
-                $this->dictionaryImportService->importDictCc(
-                    $dictionaryName, 
-                    $dictionarySourceLanguage, 
-                    $dictionaryTargetLanguage,
-                    $dictionaryFileName, 
-                    $dictionaryDatabaseName
-                );
-            } catch (\Throwable $t) {
-                DB::
-                    table('dictionaries')
+        try {
+            $this->dictionaryImportService->importSupportedDictionary(
+                $dictionaryName, 
+                $dictionaryFileName, 
+                $dictionarySourceLanguage, 
+                $dictionaryTargetLanguage, 
+                $dictionaryDatabaseName
+            );
+        } catch (\Throwable $t) {
+            if ($dictionaryName !== 'JMDict') {
+                DB
+                    ::table('dictionaries')
                     ->where('database_table_name', $dictionaryDatabaseName)
                     ->delete();
 
                 Schema::dropIfExists($dictionaryDatabaseName);
-                return 'error';
-            } catch (\Exception $e) {
-                DB::
-                    table('dictionaries')
+            }
+            
+            abort(500, $t->getMessage());
+        } catch (\Exception $e) {
+            if ($dictionaryName !== 'JMDict') {
+                DB
+                    ::table('dictionaries')
                     ->where('database_table_name', $dictionaryDatabaseName)
                     ->delete();
 
                 Schema::dropIfExists($dictionaryDatabaseName);
-                return 'error';
             }
-
-            return 'success';
+            
+            abort(500, $e->getMessage());
         }
 
-        // import wiktionary files
-        if (str_contains($dictionaryName, 'wiktionary')) {
-            try {
-                $this->dictionaryImportService->importWiktionary(
-                    $dictionaryName, 
-                    $dictionarySourceLanguage, 
-                    $dictionaryFileName, 
-                    $dictionaryDatabaseName
-                );
-            } catch (\Throwable $t) {
-                DB::
-                    table('dictionaries')
-                    ->where('database_table_name', $dictionaryDatabaseName)
-                    ->delete();
-
-                Schema::dropIfExists($dictionaryDatabaseName);
-                return 'error';
-            } catch (\Exception $e) {
-                DB::
-                    table('dictionaries')
-                    ->where('database_table_name', $dictionaryDatabaseName)
-                    ->delete();
-                    
-                Schema::dropIfExists($dictionaryDatabaseName);
-                return 'error';
-            }
-            return 'success';
-        }
+        return response()->json('Dictionary has been imported successfully.', 200);
     }
 
     /*
