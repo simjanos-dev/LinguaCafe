@@ -24,6 +24,7 @@ use App\Http\Requests\Dictionaries\UpdateDictionaryRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsForHoverVocabularyRequest;
 use App\Http\Requests\Dictionaries\SearchDeeplRequest;
+use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
 
 class DictionaryController extends Controller
 {
@@ -162,44 +163,16 @@ class DictionaryController extends Controller
         return response()->json($result, 200);
     }
 
-    /* 
-        This function searches inflections from JMDict. 
-    */
-    public function searchInflections(Request $request) {
+    public function searchInflections(SearchInflectionsRequest $request) {
         $term = $request->term;
 
-        $ids = [];
-        // exact word matches
-        $search = VocabularyJmdict::select('id')->whereRelation('words', 'word', 'like', $term)->get()->toArray();
-        foreach ($search as $result) {
-            if (count($ids)) {
-                break;
-            }
-
-            if (!in_array($result, $ids, true)) {
-                array_push($ids, $result);
-            }
+        try {
+            $inflections = $this->dictionaryService->searchInflections($term);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        // exact reading matches
-        $search = VocabularyJmdict::select('id')->whereRelation('readings', 'reading', 'like', $term)->get()->toArray();
-        foreach ($search as $result) {
-            if (count($ids)) {
-                break;
-            }
-
-            if (!in_array($result, $ids, true)) {
-                array_push($ids, $result);
-            }
-        }
-
-        $search = VocabularyJmdict::select('conjugations')->whereIn('id', $ids)->first();
-        
-        if ($search) {
-            return json_encode($search->conjugations);   
-        } else {
-            return json_encode([]);
-        }
+        return response()->json($inflections, 200);
     }
 
     /*
