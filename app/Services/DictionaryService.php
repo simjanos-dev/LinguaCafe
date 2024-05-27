@@ -66,4 +66,19 @@ class DictionaryService {
 
         return true;
     }
+
+    public function isDeeplEnabled($language) {
+        $deeplDictionary = Dictionary
+            ::where('name', 'like', 'DeepL%')
+            ->where('enabled', true)
+            ->where('database_table_name','API')
+            ->where('source_language', $language)
+            ->first();
+
+        if (!$deeplDictionary) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

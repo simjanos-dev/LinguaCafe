@@ -97,25 +97,16 @@ class DictionaryController extends Controller
         return response()->json('Dictionary has been updated successfully.', 200);
     }
 
-    /*
-        Returns if any DeepL dictionary is enabled for the current user and selected language.
-    */
     public function isDeeplEnabled() {
-        $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
 
-        $deeplDictionary = Dictionary
-            ::where('name', 'like', 'DeepL%')
-            ->where('enabled', true)
-            ->where('database_table_name','API')
-            ->where('source_language', $language)
-            ->first();
-
-        if (!$deeplDictionary) {
-            return response()->json(false, 200);
+        try {
+            $response = $this->dictionaryService->isDeeplEnabled($language);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
         
-        return response()->json(true, 200);
+        return response()->json($response, 200);
     }
 
     /*
