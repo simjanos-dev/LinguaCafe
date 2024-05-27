@@ -197,12 +197,10 @@
                 this.saveDictionary(dictionaryIndex);
             },
             saveDictionary(dictionaryIndex) {
-                axios.post('/dictionary/update', {
+                axios.post('/dictionaries/update', {
                     id: this.dictionaries[dictionaryIndex].id,
-                    color: this.dictionaries[dictionaryIndex].color,
                     enabled: this.dictionaries[dictionaryIndex].enabled,
-                }).then((response) => {
-                });
+                }).then((response) => {});
 
                 this.dictionaries[dictionaryIndex].colorPicker = false;
                 this.dictionaries[dictionaryIndex].colorPickerMobile = false;

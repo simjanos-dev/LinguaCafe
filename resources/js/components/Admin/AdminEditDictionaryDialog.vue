@@ -267,14 +267,16 @@
         methods: {
             save() {
                 this.saveResult = 'saving';
-                axios.post('/dictionary/update', this.dictionary).then((response) => {
-                    if (response.data === 'success') {
+                axios.post('/dictionaries/update', this.dictionary).then((response) => {
+                    if (response.status === 200) {
                         this.saveResult = 'success';
                         this.$emit('dictionary-saved');
                         setTimeout(this.close, 1000);
                     } else {
                         this.saveResult = 'error';
                     }
+                }).catch((error) => {
+                    this.saveResult = 'error';
                 });
             },
             close() {

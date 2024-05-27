@@ -26,6 +26,7 @@ use App\Services\DictionaryImportService;
 use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
 use App\Http\Requests\Dictionaries\CreateDeeplDictionaryRequest;
 use App\Http\Requests\Dictionaries\GetDictionaryRequest;
+use App\Http\Requests\Dictionaries\UpdateDictionaryRequest;
 
 class DictionaryController extends Controller
 {
@@ -62,38 +63,38 @@ class DictionaryController extends Controller
         return response()->json($dictionary, 200);
     }
 
-    public function updateDictionary(Request $request) {
-        $dictionary = Dictionary
-            ::where('id', $request->post('id'))
-            ->first();
+    public function updateDictionary(UpdateDictionaryRequest $request) {
+        $dictionaryId = $request->post('id');
 
-        if (!$dictionary) {
-            return 'error';
-        }
+        $dictionaryData = [];
 
         if (isset($request->name)) {
-            $dictionary->name = $request->post('name');
+            $dictionaryData['name'] = $request->post('name');
         }
 
         if (isset($request->source_language)) {
-            $dictionary->source_language = $request->post('source_language');
+            $dictionaryData['source_language'] = $request->post('source_language');
         }
 
         if (isset($request->target_language)) {
-            $dictionary->target_language = $request->post('target_language');
+            $dictionaryData['target_language'] = $request->post('target_language');
         }
 
         if (isset($request->color)) {
-            $dictionary->color = $request->post('color');
+            $dictionaryData['color'] = $request->post('color');
         }
         
         if (isset($request->enabled)) {
-            $dictionary->enabled = $request->post('enabled');
+            $dictionaryData['enabled'] = $request->post('enabled');
         }
 
-        $dictionary->save();
+        try {
+            $this->dictionaryService->updateDictionary($dictionaryId, $dictionaryData);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
 
-        return 'success';
+        return response()->json('Dictionary has been updated successfully.', 200);
     }
 
     /*

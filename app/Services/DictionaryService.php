@@ -47,4 +47,23 @@ class DictionaryService {
 
         return $dictionary;
     }
+
+    public function updateDictionary($dictionaryId, $dictionaryData) {
+        $dictionary = Dictionary
+            ::where('id', $dictionaryId)
+            ->first();
+
+        if (!$dictionary) {
+            throw new \Exception('Dictionary not found.');
+        }
+
+        // update dictionary data
+        foreach ($dictionaryData as $field => $value) {
+            $dictionary->$field = $value;
+        }
+
+        $dictionary->save();
+
+        return true;
+    }
 }
