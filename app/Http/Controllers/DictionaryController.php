@@ -10,7 +10,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
 use App\Models\Dictionary;
-use App\Models\VocabularyJmdict;
 
 // services
 use App\Services\DictionaryService;
@@ -25,6 +24,7 @@ use App\Http\Requests\Dictionaries\SearchDefinitionsRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsForHoverVocabularyRequest;
 use App\Http\Requests\Dictionaries\SearchDeeplRequest;
 use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
+use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
 
 class DictionaryController extends Controller
 {
@@ -180,54 +180,18 @@ class DictionaryController extends Controller
         This makes it faster to test a file and notice any problems before
         the user actually imports a large file.
     */
-    public function testDictionaryCsvFile(Request $request) {
-        $skipHeader = boolval($request->post('skipHeader') === 'true');
-        $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
-
-        $returnData = new \stdClass();
-        $returnData->status = 'success';
-        $returnData->sample = [];
-        $returnData->recordCount = 0;
-
-        // move file to a temp folder
+    public function testDictionaryCsvFile(TestDictionaryCsvFileRequest $request) {
         $file = $request->file('dictionary');
-        $fileName = bin2hex(openssl_random_pseudo_bytes(30)) . '.csv';
-        $file->move(storage_path('app/temp'), $fileName);
-        
-        // try to read file and collect sample rows
+        $delimiter = $request->post('delimiter') === null ? ' ' : $request->post('delimiter');
+        $skipHeader = boolval($request->post('skipHeader') === 'true');
+
         try {
-            $csv = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
-            $csv->setDelimiter($delimiter);
-            $records = $csv->getRecords();
-            foreach ($records as $index => $record) {
-                // ignore header
-                if ($skipHeader && !$index) {
-                    continue;
-                }
-
-                // check if both columns exist
-                if (!isset($record[0]) || !isset($record[1])) {
-                    throw new \Exception('Missing data.');
-                }
-
-                $sampleData = new \stdClass();
-                $sampleData->word = mb_strtolower($record[0], 'UTF-8');
-                $sampleData->translation = $record[1];
-
-                // this loop runs through the whole file to test for errors
-                if (($skipHeader && $index <= 3) || (!$skipHeader && $index < 3)) {
-                    $returnData->sample[] = $sampleData;
-                }
-
-                $returnData->recordCount ++;
-            }
-        } catch (\Exception $exception) {
-            $returnData->sample = [];
-            $returnData->status = 'error';
+            $sample = $this->dictionaryService->testDictionaryCsvFile($file, $delimiter, $skipHeader);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        File::delete(storage_path('app/temp') . '/' . $fileName);
-        return json_encode($returnData);
+        return response()->json($sample, 200);
     }
 
     public function createDeeplDictionary(CreateDeeplDictionaryRequest $request) {
