@@ -276,6 +276,55 @@ class DictionaryService {
         return implode(';', $definitions);
     }
 
+    public function searchInflections($term) {
+        $ids = [];
+        
+        // exact word matches
+        $search = VocabularyJmdict
+            ::select('id')
+            ->whereRelation('words', 'word', 'like', $term)
+            ->get()
+            ->toArray();
+
+        foreach ($search as $result) {
+            if (count($ids)) {
+                break;
+            }
+
+            if (!in_array($result, $ids, true)) {
+                array_push($ids, $result);
+            }
+        }
+
+        // exact reading matches
+        $search = VocabularyJmdict
+            ::select('id')
+            ->whereRelation('readings', 'reading', 'like', $term)
+            ->get()
+            ->toArray();
+
+        foreach ($search as $result) {
+            if (count($ids)) {
+                break;
+            }
+
+            if (!in_array($result, $ids, true)) {
+                array_push($ids, $result);
+            }
+        }
+
+        $search = VocabularyJmdict
+            ::select('conjugations')
+            ->whereIn('id', $ids)
+            ->first();
+        
+        if ($search) {
+            return $search->conjugations;
+        } else {
+            return [];
+        }
+    }
+
     private function searchImportedDictionary($dictionaryTable, $term, $strict = false) {
         $records = [];
         
