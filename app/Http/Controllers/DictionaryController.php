@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
-use \DeepL\Translator;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 use App\Models\Dictionary;
@@ -109,28 +108,14 @@ class DictionaryController extends Controller
         return response()->json($response, 200);
     }
 
-    /*
-        Returns an object with DeepL's character limit.
-    */
     public function getDeeplCharacterLimit() {
-        $usage = 'error';
-
-        // retrieve api key from database
-        $deeplApiKeySetting = Setting::where('name', 'deeplApiKey')->first();
-        $deeplApiKey = json_decode($deeplApiKeySetting->value);
-
-        // retrieve deepl usage
         try {
-            $deepl = new Translator($deeplApiKey);
-            $usage = new \stdClass();
-            $usage->limits = $deepl->getUsage();
-            $usage->cachedDeeplTranslations = DeeplCache::select('id')->count('id');
+            $deeplLimit = $this->dictionaryService->getDeeplCharacterLimit();   
         } catch (\Exception $e) {
-            return 'error';
+            abort(500, $e->getMessage());
         }
-
         
-        return json_encode($usage);
+        return response()->json($deeplLimit, 200);
     }
 
     /*
