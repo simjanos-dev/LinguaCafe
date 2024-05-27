@@ -113,7 +113,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/dictionaries/deepl/search', [App\Http\Controllers\DictionaryController::class, 'searchDeepl']);
     Route::get('/dictionaries/deepl/is-enabled', [App\Http\Controllers\DictionaryController::class, 'isDeeplEnabled']);
     Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
-    Route::get('/dictionary/get/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'getDictionary']);
+    Route::get('/dictionaries/get/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'getDictionary']);
     Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
     Route::post('/dictionary/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);
     Route::post('/dictionary/search-for-hover-vocabulary', [App\Http\Controllers\DictionaryController::class, 'searchDefinitionsForHoverVocabulary']);

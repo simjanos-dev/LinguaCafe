@@ -933,8 +933,6 @@ class DictionaryImportService {
                             $entry->all_readings .= 'RE_RESTR' . $node->r_ele[$i]->re_restr[$j]->__toString();
                         }
                     }
-
-                    
                 }
             }
 

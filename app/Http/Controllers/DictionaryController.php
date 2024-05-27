@@ -17,55 +17,49 @@ use App\Models\ImportedDictionary;
 use App\Models\VocabularyJmdict;
 use App\Models\DeeplCache;
 use App\Models\Setting;
+
+// services
+use App\Services\DictionaryService;
 use App\Services\DictionaryImportService;
-
-
 
 // request classes
 use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
 use App\Http\Requests\Dictionaries\CreateDeeplDictionaryRequest;
+use App\Http\Requests\Dictionaries\GetDictionaryRequest;
 
 class DictionaryController extends Controller
 {
+    private $dictionaryService;
+    private $dictionaryImportService;
+    
+    public function __construct(DictionaryService $dictionaryService, DictionaryImportService $dictionaryImportService) {
+        $this->dictionaryService = $dictionaryService;
+        $this->dictionaryImportService = $dictionaryImportService;
+    }
+
     /*
         Returns a list of dictionaries.
     */
     public function getDictionaries() {
-        $dictionaries = Dictionary::get();
 
-        foreach ($dictionaries as $dictionary) {
-            if ($dictionary->database_table_name == 'API') {
-                $dictionary->records = '-';
-            } else {
-                $dictionary->records = DB
-                    ::table($dictionary->database_table_name)
-                    ->selectRaw('count(*) as record_count')
-                    ->get();
-
-                $dictionary->records = $dictionary->records[0]->record_count;
-            }
+        try {
+            $dictionaries = $this->dictionaryService->getDictionaries();
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        return json_encode($dictionaries);
+        return response()->json($dictionaries, 200);
     }
 
-    public function getDictionary($dictionaryId) {
-        $dictionary = Dictionary
-            ::where('id', $dictionaryId)
-            ->first();
-
-        if ($dictionary->database_table_name == 'API') {
-            $dictionary->records = '-';
-        } else {
-            $dictionary->records = DB
-                ::table($dictionary->database_table_name)
-                ->selectRaw('count(*) as record_count')
-                ->get();
-
-            $dictionary->records = $dictionary->records[0]->record_count;
+    public function getDictionary($dictionaryId, GetDictionaryRequest $request) {
+        
+        try {
+            $dictionary = $this->dictionaryService->getDictionary($dictionaryId);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        return json_encode($dictionary);
+        return response()->json($dictionary, 200);
     }
 
     public function updateDictionary(Request $request) {
@@ -569,8 +563,7 @@ class DictionaryController extends Controller
         $name  = $request->post('name');
 
         try {
-            $dictionaryImportService = new DictionaryImportService();
-            $dictionaryImportService->createDeeplDictionary($sourceLanguage, $targetLanguage, $color, $name);
+            $this->dictionaryImportService->createDeeplDictionary($sourceLanguage, $targetLanguage, $color, $name);
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -672,8 +665,7 @@ class DictionaryController extends Controller
         $supportedSourceLanguages = config('linguacafe.languages.supported_languages');
         
         try {
-            $dictionaryImportService = new DictionaryImportService();
-            $dictionariesFound = $dictionaryImportService->getDictionaryFileInformation($dictionaryFile, $supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
+            $dictionariesFound = $this->dictionaryImportService->getDictionaryFileInformation($dictionaryFile, $supportedSourceLanguages, $dictCcLanguageCodes, $databaseLanguageCodes);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -692,10 +684,9 @@ class DictionaryController extends Controller
         // import jmdict files
         if ($dictionaryName == 'JMDict') {
             try {
-                $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->jmdictImport();
-                $dictionaryImportService->kanjiImport();
-                $dictionaryImportService->kanjiRadicalImport();
+                $this->dictionaryImportService->jmdictImport();
+                $this->dictionaryImportService->kanjiImport();
+                $this->dictionaryImportService->kanjiRadicalImport();
             } catch (\Throwable $t) {
                 return $t->getMessage();
             } catch (\Exception $e) {
@@ -708,8 +699,7 @@ class DictionaryController extends Controller
         // import cc cedict or HanDeDict file
         if ($dictionaryName == 'cc-cedict' || $dictionaryName == 'HanDeDict') {
             try {
-                $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
+                $this->dictionaryImportService->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
             } catch (\Throwable $t) {
                 return 'error';
             } catch (\Exception $e) {
@@ -722,8 +712,7 @@ class DictionaryController extends Controller
         // import kengdic file
         if ($dictionaryName == 'kengdic') {
             try {
-                $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+                $this->dictionaryImportService->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
             } catch (\Throwable $t) {
                 return 'error';
             } catch (\Exception $e) {
@@ -736,8 +725,7 @@ class DictionaryController extends Controller
         // import eurfa files
         if ($dictionaryName == 'eurfa') {
             try {
-                $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+                $this->dictionaryImportService->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
             } catch (\Throwable $t) {
                 return $t->getMessage();
                 return 'error';
@@ -753,8 +741,7 @@ class DictionaryController extends Controller
         // import dict cc files
         if (str_contains($dictionaryName, 'dictcc')) {
             try {
-                $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importDictCc(
+                $this->dictionaryImportService->importDictCc(
                     $dictionaryName, 
                     $dictionarySourceLanguage, 
                     $dictionaryTargetLanguage,
@@ -785,8 +772,7 @@ class DictionaryController extends Controller
         // import wiktionary files
         if (str_contains($dictionaryName, 'wiktionary')) {
             try {
-                $dictionaryImportService = new DictionaryImportService();
-                $dictionaryImportService->importWiktionary(
+                $this->dictionaryImportService->importWiktionary(
                     $dictionaryName, 
                     $dictionarySourceLanguage, 
                     $dictionaryFileName, 

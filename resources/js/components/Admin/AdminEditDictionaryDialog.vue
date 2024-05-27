@@ -234,7 +234,7 @@
                 axios.get('/config/get/linguacafe.languages.supported_languages'),
                 axios.get('/config/get/linguacafe.languages.supported_target_languages'),
                 axios.get('/config/get/linguacafe.languages.deepl_supported_target_languages'),
-                axios.get('/dictionary/get/' + this.$props.dictionaryId),
+                axios.get('/dictionaries/get/' + this.$props.dictionaryId),
             ]).then(axios.spread((response1, response2, response3, response4) => {
                 this.loading = false;
                 this.dictionary = response4.data;
