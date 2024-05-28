@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Book;
+namespace App\Http\Requests\Books;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteBookRequest extends FormRequest
+class UpdateBookRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,6 +25,8 @@ class DeleteBookRequest extends FormRequest
     {
         return [
             'bookId' => 'required|numeric|gte:0',
+            'bookName' => 'required|string|max:128',
+            'bookCover' => 'file|mimes:jpg,jpeg,png'
         ];
     }
 }

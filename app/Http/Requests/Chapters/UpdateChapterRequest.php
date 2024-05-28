@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Image;
+namespace App\Http\Requests\Chapters;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetBookImageRequest extends FormRequest
+class UpdateChapterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,9 @@ class GetBookImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'fileName' => 'required|string',
+            'chapterName' => 'required|string|max:128',
+            'chapterText' => 'string|nullable',
+            'chapterId' => 'required|numeric|gte:0',
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'fileName' => $this->route('fileName'),
-        ]);
     }
 }

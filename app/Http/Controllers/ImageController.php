@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 // form requests
-use App\Http\Requests\Image\GetBookImageRequest;
-use App\Http\Requests\Image\GetKanjiImageRequest;
+use App\Http\Requests\Images\GetBookImageRequest;
+use App\Http\Requests\Images\GetKanjiImageRequest;
 
 // services
 use App\Services\ImageService;

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Chapter;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateChapterRequest extends FormRequest
+class CreateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,11 @@ class UpdateChapterRequest extends FormRequest
     public function rules()
     {
         return [
-            'chapterName' => 'required|string|max:128',
-            'chapterText' => 'string|nullable',
-            'chapterId' => 'required|numeric|gte:0',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'isAdmin' => 'required|boolean',
+            'password' => 'required|string|confirmed|min:8|max:32',
+            'password_confirmation' => 'required|string'
         ];
     }
 }
