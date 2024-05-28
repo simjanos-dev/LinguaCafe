@@ -10,7 +10,7 @@ use League\Csv\Reader;
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
 use App\Models\Book;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\ExampleSentence;
 use App\Models\Kanji;
 use App\Models\Radical;
@@ -83,9 +83,9 @@ class VocabularyService {
         
         $phrase->save();
 
-        // update phrase ids in lesson texts
+        // update phrase ids in chapter texts
         $phraseWords = array_unique($words);
-        $chapters = Lesson
+        $chapters = Chapter
             ::where('user_id', $userId)
             ->where('language', $language)
             ->get();
@@ -103,7 +103,7 @@ class VocabularyService {
             $textBlock->collectUniqueWords();
             $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
 
-            // save lesson words
+            // save chapter words
             if ($phraseIdsChanged) {
                 $chapter->setProcessedText($textBlock->processedWords);
                 $chapter->save();
@@ -192,7 +192,7 @@ class VocabularyService {
         }
 
         // remove phrase ids from text words
-        $chapters = Lesson
+        $chapters = Chapter
             ::where('user_id', $userId)
             ->where('language', $language)
             ->get();
@@ -201,7 +201,7 @@ class VocabularyService {
             $words = $chapter->getProcessedText();
             $chapterChanged = false;
 
-            // delete phrase id from lesson words
+            // delete phrase id from chapter words
             foreach ($words as $word) {
                 $index = array_search($phraseId, $word->phrase_ids);
                 if ($index !== false) {
@@ -212,7 +212,7 @@ class VocabularyService {
                 }
             }
 
-            // save lesson if changed
+            // save chapter if changed
             if ($chapterChanged) {
                 $chapter->setProcessedText($words);
                 $chapter->save();
@@ -312,7 +312,7 @@ class VocabularyService {
         $books = Book::where('user_id', $userId)->where('language', $language)->get();
         $bookIndex = -1;
         for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Lesson::select(['id', 'name'])->where('user_id', $userId)->where('language', $language)->where('book_id', $books[$i]->id)->get();
+            $books[$i]->chapters = Chapter::select(['id', 'name'])->where('user_id', $userId)->where('language', $language)->where('book_id', $books[$i]->id)->get();
             
             if (isset($bookId) && $books[$i]->id == $bookId) {
                 $bookIndex = $i;
@@ -515,7 +515,7 @@ class VocabularyService {
 
         // get words and phrases
         // from filtered chapters
-        $filteredChapters = Lesson::where('user_id', $userId)->where('language', $language);
+        $filteredChapters = Chapter::where('user_id', $userId)->where('language', $language);
         $filteredWords = [];
         $filteredPhraseIds = [];
         if ($bookId !== -1) {
@@ -530,7 +530,7 @@ class VocabularyService {
 
         if ($bookId !== -1) {
             foreach ($filteredChapters as $filteredChapter) {
-                $chapter = Lesson
+                $chapter = Chapter
                     ::where('user_id', $userId)
                     ->where('id', $filteredChapter->id)
                     ->first();

@@ -9,7 +9,7 @@ use App\Services\BookService;
 use App\Services\TextBlockService;
 
 use App\Models\Book;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\EncounteredWord;
 
 
@@ -29,7 +29,7 @@ class ChapterService {
             throw new \Exception('Book does not exist, or it belongs to a different user.');
         }
 
-        $chapters = Lesson
+        $chapters = Chapter
             ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])
             ->where('book_id', $bookId)
             ->where('user_id', $userId)
@@ -55,7 +55,7 @@ class ChapterService {
     }
 
     public function getChapterForEditor($userId, $chapterId) {
-        $chapter = Lesson::
+        $chapter = Chapter::
             select(['name', 'raw_text', 'type'])
             ->where('id', $chapterId)
             ->where('user_id', $userId)
@@ -71,7 +71,7 @@ class ChapterService {
     }
 
     public function getChapterForReader($userId, $language, $chapterId) {
-        $chapter = Lesson
+        $chapter = Chapter
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->where('language', $language)
@@ -86,7 +86,7 @@ class ChapterService {
             ->where('user_id', $userId)
             ->first();
 
-        $chapters = Lesson
+        $chapters = Chapter
             ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])
             ->where('user_id', $userId)
             ->where('book_id', $book->id)
@@ -94,7 +94,7 @@ class ChapterService {
 
         $words = $chapter->getProcessedText();
 
-        // get lesson word counts
+        // get chapter word counts
         $uniqueWordsForWordCounts = EncounteredWord
             ::select(['id', 'word', 'stage'])
             ->where('user_id', $userId)
@@ -120,11 +120,11 @@ class ChapterService {
         $data->uniqueWords = $textBlock->uniqueWords;
         $data->phrases = $textBlock->phrases;
         $data->bookName = $book->name;
-        $data->lessonId = $chapter->id;
-        $data->lessonName = $chapter->name;
+        $data->chapterId = $chapter->id;
+        $data->chapterName = $chapter->name;
         $data->bookId = $book->id;
         $data->language = $chapter->language;
-        $data->lessons = $chapters;
+        $data->chapters = $chapters;
         $data->wordCount = $chapter->word_count;
         
         return $data;
@@ -153,7 +153,7 @@ class ChapterService {
         DB::commit();
 
         // increase chapter read count
-        $chapter = Lesson
+        $chapter = Chapter
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->first();
@@ -183,7 +183,7 @@ class ChapterService {
             throw new \Exception('Book does not exist, or it belongs to a different user.');
         }
 
-        $chapter = new Lesson();
+        $chapter = new Chapter();
         $chapter->user_id = $userId;
         $chapter->name = $chapterName;
         $chapter->type = 'text';
@@ -205,7 +205,7 @@ class ChapterService {
         \DB::disableQueryLog();
         
         // retrieve chapter
-        $chapter = Lesson
+        $chapter = Chapter
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->first();
@@ -237,7 +237,7 @@ class ChapterService {
             ->pluck('id')
             ->toArray();
 
-        // update lesson word data
+        // update chapter word data
         $chapter->word_count = $textBlock->getWordCount();
         $chapter->unique_words = json_encode($textBlock->uniqueWords);
         $chapter->unique_word_ids = json_encode($uniqueWordIds);
@@ -252,7 +252,7 @@ class ChapterService {
     public function deleteChapter($userId, $chapterId) {
         
         // retrieve chapter
-        $chapter = Lesson
+        $chapter = Chapter
             ::where('user_id', $userId)
             ->where('id', $chapterId)
             ->first();

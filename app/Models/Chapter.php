@@ -4,42 +4,42 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Chapter;
+use App\Models\Phrase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class Book extends Model
+class Chapter extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
+        'book_id',
         'name',
-        'cover_image',
+        'read_count',
+        'word_count',
         'language',
+        'raw_text',
     ];
 
-    function getWordCounts($userId, $words) {
-        $chapters = Chapter::where('user_id', $userId)->where('book_id', $this->id)->get();
-        $bookUniqueWordIds = [];
-        
-        foreach ($chapters as $chapter) {
-            $uniqueWordIds = json_decode($chapter->unique_word_ids);
-            
-            foreach ($uniqueWordIds as $wordId) {
-                if (!in_array($wordId, $bookUniqueWordIds, true)) {
-                    array_push($bookUniqueWordIds, $wordId);
-                }
-            }
-        }
+    function getProcessedText() {
+        return json_decode(gzuncompress($this->processed_text));
+    }
 
+    function setProcessedText($processedText) {
+        $this->processed_text = gzcompress(json_encode($processedText), 1);
+    }
+
+    function getWordCounts($words) {
+        $uniqueWordIds = json_decode($this->unique_word_ids);
         $wordCounts = new \stdClass();
         $wordCounts->total = $this->word_count;
-        $wordCounts->unique = count($bookUniqueWordIds);
+        $wordCounts->unique = count($uniqueWordIds);
         $wordCounts->known = 0;
         $wordCounts->highlighted = 0;
         $wordCounts->new = 0;
         
-        foreach($bookUniqueWordIds as $wordId) {
+        foreach($uniqueWordIds as $wordId) {
             if ($words[$wordId]['stage'] < 0) {
                 $wordCounts->highlighted ++;
             }

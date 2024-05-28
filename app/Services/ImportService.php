@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 // modelx
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\Book;
 
 // services
@@ -125,23 +125,23 @@ class ImportService {
         foreach ($processedChunks as $chunkIndex => $chunk) {
             $chapterNameCalculated = count($processedChunks) > 1 ? $chapterName . ' ' . ($chunkIndex + 1) : $chapterName;
 
-            $lesson = new Lesson();
-            $lesson->user_id = $userId;
-            $lesson->name = $chapterNameCalculated;
-            $lesson->read_count = 0;
-            $lesson->word_count = 0;
-            $lesson->book_id = $book->id;
-            $lesson->language = $selectedLanguage;
-            $lesson->raw_text = $rawChunks[$chunkIndex];
-            $lesson->unique_words = '';
-            $lesson->setProcessedText([]);
+            $chapter = new Chapter();
+            $chapter->user_id = $userId;
+            $chapter->name = $chapterNameCalculated;
+            $chapter->read_count = 0;
+            $chapter->word_count = 0;
+            $chapter->book_id = $book->id;
+            $chapter->language = $selectedLanguage;
+            $chapter->raw_text = $rawChunks[$chunkIndex];
+            $chapter->unique_words = '';
+            $chapter->setProcessedText([]);
 
             if ($timestamps == null) {
-                $lesson->type = 'text';
-                $lesson->subtitle_timestamps = '';
+                $chapter->type = 'text';
+                $chapter->subtitle_timestamps = '';
             } else {
-                $lesson->type = 'subtitle';
-                $lesson->subtitle_timestamps = json_encode($timestamps[$chunkIndex]);
+                $chapter->type = 'subtitle';
+                $chapter->subtitle_timestamps = json_encode($timestamps[$chunkIndex]);
             }
 
             $textBlock = new TextBlockService();
@@ -160,12 +160,12 @@ class ImportService {
                 ->pluck('id')
                 ->toArray();
 
-            // update lesson word data
-            $lesson->setProcessedText($textBlock->processedWords);
-            $lesson->word_count = $textBlock->getWordCount();
-            $lesson->unique_words = json_encode($textBlock->uniqueWords);
-            $lesson->unique_word_ids = json_encode($uniqueWordIds);
-            $lesson->save();
+            // update chapter word data
+            $chapter->setProcessedText($textBlock->processedWords);
+            $chapter->word_count = $textBlock->getWordCount();
+            $chapter->unique_words = json_encode($textBlock->uniqueWords);
+            $chapter->unique_word_ids = json_encode($uniqueWordIds);
+            $chapter->save();
         }
 
         // update book words

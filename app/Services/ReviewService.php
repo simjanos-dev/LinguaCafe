@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use App\Models\Book;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
 
@@ -29,7 +29,7 @@ class ReviewService {
 
         // check if chapter exists
         if ($chapterId !== -1) {
-            $chapter = Lesson
+            $chapter = Chapter
                 ::where('user_id', $userId)
                 ->where('book_id', $bookId)
                 ->where('id', $chapterId)
@@ -70,13 +70,13 @@ class ReviewService {
         $uniquePhraseIds = [];
         if ($chapterId !== -1 || $bookId !== -1) {
             if ($chapterId !== -1) {
-                $chapterIds = Lesson
+                $chapterIds = Chapter
                     ::where('id', $chapterId)
                     ->where('user_id', $userId)
                     ->pluck('id')
                     ->toArray();
             } else {
-                $chapterIds = Lesson
+                $chapterIds = Chapter
                     ::where('book_id', $bookId)
                     ->where('user_id', $userId)
                     ->pluck('id')
@@ -84,12 +84,12 @@ class ReviewService {
             }
 
             foreach ($chapterIds as $chapterId) {
-                $lesson = Lesson
+                $chapter = Chapter
                     ::where('user_id', $userId)
                     ->where('id', $chapterId)
                     ->first();
 
-                $words = $lesson->getProcessedText();
+                $words = $chapter->getProcessedText();
                 
                 foreach ($words as $word) {
                     if (!in_array(mb_strtolower($word->word), $uniqueWords, true)) {

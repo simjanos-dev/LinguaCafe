@@ -29,7 +29,7 @@ class CreateEncounteredWordsTable extends Migration
             // -10 -> -1 strength
             // 0 learned
             // 1 ignored
-            // 2 newly encountered. only used in reading mode, changed to 0 when finishing lesson
+            // 2 newly encountered. only used in reading mode, changed to 0 when finishing chapter
         });
     }
 

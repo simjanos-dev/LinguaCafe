@@ -21,9 +21,9 @@ class ModifyLessonsTable4 extends Migration
         DB::statement("ALTER TABLE lessons DROP COLUMN highlighted_word_count");
         DB::statement("ALTER TABLE lessons DROP COLUMN new_word_count");
         
-        $lessons = Lesson::all();
-        foreach ($lessons as $lesson) {
-            $uniqueWords = EncounteredWord::select(['id'])->where('language', $lesson->language)->whereIn('word', json_decode($lesson->unique_words))->get();
+        $chapters = Lesson::all();
+        foreach ($chapters as $chapter) {
+            $uniqueWords = EncounteredWord::select(['id'])->where('language', $chapter->language)->whereIn('word', json_decode($chapter->unique_words))->get();
             $uniqueWordIds = [];
 
             foreach($uniqueWords as $word) {
@@ -32,8 +32,8 @@ class ModifyLessonsTable4 extends Migration
                 }
             }
 
-            $lesson->unique_word_ids = json_encode($uniqueWordIds);
-            $lesson->save();
+            $chapter->unique_word_ids = json_encode($uniqueWordIds);
+            $chapter->save();
         }
     }
 
