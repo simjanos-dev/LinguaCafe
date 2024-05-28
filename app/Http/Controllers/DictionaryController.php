@@ -24,6 +24,7 @@ use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
 use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportSupportedDictionaryRequest;
+use App\Http\Requests\Dictionaries\GetDictionaryRecordCountRequest;
 
 class DictionaryController extends Controller
 {
@@ -301,16 +302,13 @@ class DictionaryController extends Controller
         return response()->json('Dictionary has been imported successfully.', 200);
     }
 
-    /*
-        Returns the number of records in a dictionary database table.
-        It is used to display import progress bar.
-    */
-    public function getDictionaryRecordCount($dictionaryTableName) {
-        if (!Schema::hasTable($dictionaryTableName)) {
-            return 0;
+    public function getDictionaryRecordCount($dictionaryTableName, GetDictionaryRecordCountRequest $request) {
+        try {
+            $recordCount = $this->dictionaryService->getDictionaryRecordCount($dictionaryTableName);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        $recordCount = DB::table($dictionaryTableName)->count();
         return $recordCount;
     }
 
@@ -320,7 +318,7 @@ class DictionaryController extends Controller
                 ::where('id', $dictionaryId)
                 ->first();
             
-            if ($dictionary->database_table_name !== 'API') {
+            if($dictionary->database_table_name !== 'API') {
                 Schema::drop($dictionary->database_table_name);
             }
             

@@ -449,6 +449,16 @@ class DictionaryService {
         return true;
     }
 
+    public function getDictionaryRecordCount($dictionaryTableName) {
+        if (!Schema::hasTable($dictionaryTableName)) {
+            throw new \Exception('Table not found.');
+        }
+
+        $recordCount = DB::table($dictionaryTableName)->count();
+        
+        return $recordCount;
+    }
+
     private function searchImportedDictionary($dictionaryTable, $term, $strict = false) {
         $records = [];
         
