@@ -5,17 +5,18 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use League\Csv\Writer;
 use League\Csv\Reader;
-use League\Csv\Statement;
 
-
+// models
 use App\Models\EncounteredWord;
 use App\Models\Phrase;
 use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\ExampleSentence;
-use App\Models\TextBlock;
 use App\Models\Kanji;
 use App\Models\Radical;
+
+// services
+use App\Services\TextBlockService;
 
 class VocabularyService {
     private $itemsPerPage;
@@ -97,7 +98,7 @@ class VocabularyService {
 
             $words = $chapter->getProcessedText();
 
-            $textBlock = new TextBlock();
+            $textBlock = new TextBlockService();
             $textBlock->setProcessedWords($words);
             $textBlock->collectUniqueWords();
             $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
@@ -122,7 +123,7 @@ class VocabularyService {
                 continue;
             }
 
-            $textBlock = new TextBlock();
+            $textBlock = new TextBlockService();
             $textBlock->setProcessedWords(json_decode($exampleSentence->words));
             $textBlock->collectUniqueWords();
             $textBlock->updatePhraseIds($phrase);
@@ -257,7 +258,7 @@ class VocabularyService {
             throw new \Exception('Example sentence does not exist, or it belongs to a different user.');
         }
         
-        $textBlock = new TextBlock();
+        $textBlock = new TextBlockService();
         $textBlock->setProcessedWords(json_decode($exampleSentence->words));
         $textBlock->uniqueWords = json_decode($exampleSentence->unique_words);
         $textBlock->prepareTextForReader();
@@ -293,7 +294,7 @@ class VocabularyService {
             }
         }
         
-        $textBlock = new TextBlock();
+        $textBlock = new TextBlockService();
         $textBlock->setProcessedWords($exampleSentenceWords);
         $textBlock->collectUniqueWords();
         $textBlock->updateAllPhraseIds();

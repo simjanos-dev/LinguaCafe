@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Services;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +15,7 @@ use App\Models\Phrase;
     component or saved to the database.
 
     Example for function order to turn raw text into interactive text:
-    $textBlock = new TextBlock();
+    $textBlock = new TextBlockService();
     $textBlock->rawText = $rawText;
     $textBlock->tokenizeRawText();
     $textBlock->processTokenizedWords();
@@ -27,7 +26,7 @@ use App\Models\Phrase;
     $textBlock->indexPhrases();
     $textBlockDataForVueComponent = $textBlock->getReaderData();
 */
-class TextBlock
+class TextBlockService
 {
     use HasFactory;
 

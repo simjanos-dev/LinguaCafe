@@ -3,15 +3,14 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 use App\Services\GoalService;
 use App\Services\BookService;
+use App\Services\TextBlockService;
 
 use App\Models\Book;
 use App\Models\Lesson;
 use App\Models\EncounteredWord;
-use App\Models\TextBlock;
 
 
 class ChapterService {
@@ -108,7 +107,7 @@ class ChapterService {
             $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($uniqueWordsForWordCounts);
         }
 
-        $textBlock = new TextBlock();
+        $textBlock = new TextBlockService();
         $textBlock->setProcessedWords($words);
         $textBlock->collectUniqueWords();
         $textBlock->prepareTextForReader();
@@ -220,7 +219,7 @@ class ChapterService {
         $chapter->name = $chapterName;
         
         // process text
-        $textBlock = new TextBlock();
+        $textBlock = new TextBlockService();
         $textBlock->rawText = $chapterText;
         $textBlock->tokenizeRawText();
         $textBlock->processTokenizedWords();

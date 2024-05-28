@@ -5,9 +5,13 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\TextBlock;
+
+// modelx
 use App\Models\Lesson;
 use App\Models\Book;
+
+// services
+use App\Services\TextBlockService;
 
 class ImportService {
 
@@ -140,7 +144,7 @@ class ImportService {
                 $lesson->subtitle_timestamps = json_encode($timestamps[$chunkIndex]);
             }
 
-            $textBlock = new TextBlock();
+            $textBlock = new TextBlockService();
             $textBlock->tokenizedWords = $chunk;
             $textBlock->processTokenizedWords();
             $textBlock->collectUniqueWords();
