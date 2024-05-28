@@ -25,6 +25,7 @@ use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportSupportedDictionaryRequest;
 use App\Http\Requests\Dictionaries\GetDictionaryRecordCountRequest;
+use App\Http\Requests\Dictionaries\DeleteDictionaryRequest;
 
 class DictionaryController extends Controller
 {
@@ -309,24 +310,16 @@ class DictionaryController extends Controller
             abort(500, $e->getMessage());
         }
 
-        return $recordCount;
+        return response()->json($recordCount, 200);
     }
 
-    public function deleteDictionary($dictionaryId) {
+    public function deleteDictionary($dictionaryId, DeleteDictionaryRequest $request) {
         try {
-            $dictionary = Dictionary
-                ::where('id', $dictionaryId)
-                ->first();
-            
-            if($dictionary->database_table_name !== 'API') {
-                Schema::drop($dictionary->database_table_name);
-            }
-            
-            Dictionary::where('id', $dictionaryId)->delete();
-        } catch (\Exception $exception) {
-            return 'error';
+            $this->dictionaryService->deleteDictionary($dictionaryId);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        return 'success';
+        return response()->json('Dictionary has been deleted successfully.', 200);
     }
 }
