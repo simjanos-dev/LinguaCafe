@@ -56,7 +56,6 @@ class GoalService {
         $goal = Goal
             ::where('user_id', $userId)
             ->where('language', $language)
-            // ->where('type', 'read_words')
             ->where('type', $type)
             ->first();
         
@@ -84,6 +83,47 @@ class GoalService {
 
         $achievement->achieved_quantity += $achievedQuantity;
         $achievement->save();
+
+        return true;
+    }
+
+    public function getGoals($userId, $language) {
+        $goals = Goal
+            ::where('user_id', $userId)
+            ->where('language', $language)
+            ->get();
+
+        foreach ($goals as $goal) {
+            $goal->todaysQuantity = $goal->getTodaysQuantity();
+        }
+
+        return $goals;
+    }
+
+    public function updateGoal($userId, $goalId, $newGoalQuantity) {
+        $goal = Goal
+            ::where('user_id', $userId)
+            ->where('id', $goalId)
+            ->first();
+
+        if (!$goal) {
+            throw new \Exception('Goal not found.');
+        }
+
+        $goal->quantity = $newGoalQuantity;
+        $goal->save();
+
+        // also update today's goal achievement
+        $achievement = GoalAchievement
+            ::where('user_id', $userId)
+            ->where('goal_id', $goal->id)
+            ->where('day', Carbon::today()->format('Y-m-d'))
+            ->first();
+
+        if ($achievement) {
+            $achievement->goal_quantity = $newGoalQuantity;
+            $achievement->save();
+        }
 
         return true;
     }
