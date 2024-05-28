@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-use App\Models\Goal;
+
+// models
 use App\Models\Setting;
-use App\Models\GoalAchievement;
+
+// services
+use App\Services\GoalService;
 
 class EncounteredWord extends Model
 {
@@ -35,30 +38,7 @@ class EncounteredWord extends Model
        
         // if it's a newly saved word, update today's achievement
         if ($this->stage >= 0 && $stage < 0 && !$ignoreAchivement) {
-            $goal = Goal::where('user_id', $this->user_id)
-                ->where('language', $this->language)
-                ->where('type', 'learn_words')
-                ->first();
-            
-            $achievement = GoalAchievement::where('user_id', $this->user_id)
-            ->where('language', $this->language)
-            ->where('goal_id', $goal->id)
-            ->where('day', Carbon::now()->toDateString())
-            ->first();
-
-            if (!$achievement) {
-                $achievement = new GoalAchievement();
-                $achievement->language = $this->language;
-                $achievement->user_id = $this->user_id;
-                $achievement->goal_id = $goal->id;
-                $achievement->achieved_quantity = 0;
-                $achievement->goal_quantity = $goal->quantity;
-                $achievement->day = Carbon::now()->toDateString();
-            }
-            
-
-            $achievement->achieved_quantity++;
-            $achievement->save();
+            (new GoalService())->updateGoalAchievement($this->user_id, $this->language, 'learn_words', 1);
         }
         
         if ($this->stage >= 0 && $stage < 0 && $stage !== -7) {

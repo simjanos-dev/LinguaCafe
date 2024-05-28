@@ -61,7 +61,7 @@ class GoalService {
             ->first();
         
         if (!$goal) {
-            throw new \Exception('There was no goal found in the database with the given type, user id and language. This error should never occurr.');
+            throw new \Exception('There was no goal found in the database with the given type, user id and language. This error should never occur.');
         }
 
         $achievement = GoalAchievement
