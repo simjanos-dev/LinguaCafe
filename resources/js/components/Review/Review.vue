@@ -584,7 +584,7 @@
 
                 if (!this.practiceMode) {
                     if (increaseReviewAchievement) {
-                        axios.get('/goals/achievement/review/update');
+                        axios.post('/goals/achievement/review/update');
                     }
 
                     axios.post(url, saveData).then(() => {
