@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 
 // request classes
-use App\Http\Requests\Book\GetBookWordCountsRequest;
-use App\Http\Requests\Book\CreateBookRequest;
-use App\Http\Requests\Book\UpdateBookRequest;
-use App\Http\Requests\Book\DeleteBookRequest;
+use App\Http\Requests\Books\GetBookWordCountsRequest;
+use App\Http\Requests\Books\CreateBookRequest;
+use App\Http\Requests\Books\UpdateBookRequest;
+use App\Http\Requests\Books\DeleteBookRequest;
 
 // services
 use App\Services\BookService;

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Image;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetKanjiImageRequest extends FormRequest
+class UpdatePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,8 @@ class GetKanjiImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'fileName' => 'required|string',
+            'password' => 'required|string|confirmed|min:8|max:32',
+            'password_confirmation' => 'required|string'
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'fileName' => $this->route('fileName'),
-        ]);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Chapter;
+namespace App\Http\Requests\Books;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetChaptersForBookRequest extends FormRequest
+class DeleteBookRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

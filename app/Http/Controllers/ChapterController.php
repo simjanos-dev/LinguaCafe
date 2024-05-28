@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 
 // request classes
-use App\Http\Requests\Chapter\GetChaptersForBookRequest;
-use App\Http\Requests\Chapter\GetChapterForEditorRequest;
-use App\Http\Requests\Chapter\GetChapterForReaderRequest;
-use App\Http\Requests\Chapter\FinishChapterRequest;
-use App\Http\Requests\Chapter\UpdateChapterRequest;
-use App\Http\Requests\Chapter\CreateChapterRequest;
-use App\Http\Requests\Chapter\DeleteChapterRequest;
+use App\Http\Requests\Chapters\GetChaptersForBookRequest;
+use App\Http\Requests\Chapters\GetChapterForEditorRequest;
+use App\Http\Requests\Chapters\GetChapterForReaderRequest;
+use App\Http\Requests\Chapters\FinishChapterRequest;
+use App\Http\Requests\Chapters\UpdateChapterRequest;
+use App\Http\Requests\Chapters\CreateChapterRequest;
+use App\Http\Requests\Chapters\DeleteChapterRequest;
 
 // services
 use App\Services\ChapterService;

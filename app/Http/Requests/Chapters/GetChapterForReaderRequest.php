@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Book;
+namespace App\Http\Requests\Chapters;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBookRequest extends FormRequest
+class GetChapterForReaderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class UpdateBookRequest extends FormRequest
     public function rules()
     {
         return [
-            'bookId' => 'required|numeric|gte:0',
-            'bookName' => 'required|string|max:128',
-            'bookCover' => 'file|mimes:jpg,jpeg,png'
+            'chapterId' => 'required|numeric|gte:0',
         ];
     }
 }

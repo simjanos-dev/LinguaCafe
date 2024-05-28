@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Chapter;
+namespace App\Http\Requests\Chapters;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetChapterForReaderRequest extends FormRequest
+class GetChaptersForBookRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class GetChapterForReaderRequest extends FormRequest
     public function rules()
     {
         return [
-            'chapterId' => 'required|numeric|gte:0',
+            'bookId' => 'required|numeric|gte:0',
         ];
     }
 }

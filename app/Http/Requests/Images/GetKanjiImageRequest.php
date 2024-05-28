@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Book;
+namespace App\Http\Requests\Images;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetBookWordCountsRequest extends FormRequest
+class GetKanjiImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,14 @@ class GetBookWordCountsRequest extends FormRequest
     public function rules()
     {
         return [
-            'bookId' => 'required|numeric|gte:0'
+            'fileName' => 'required|string',
         ];
     }
 
     protected function prepareForValidation()
     {
         $this->merge([
-            'bookId' => $this->route('bookId'),
+            'fileName' => $this->route('fileName'),
         ]);
     }
 }

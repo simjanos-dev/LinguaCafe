@@ -10,9 +10,9 @@ use App\Services\GoalService;
 use App\Services\UserService;
 
 // request classes
-use App\Http\Requests\User\UpdatePasswordRequest;
-use App\Http\Requests\User\CreateUserRequest;
-use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Requests\Users\UpdatePasswordRequest;
+use App\Http\Requests\Users\CreateUserRequest;
+use App\Http\Requests\Users\UpdateUserRequest;
 
 class UserController extends Controller {
     private $userService;
