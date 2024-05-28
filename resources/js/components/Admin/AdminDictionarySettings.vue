@@ -220,9 +220,13 @@
                     this.deleteDialog.active = false;
                     this.loadDictionaries();
 
-                    if (response.data !== 'success') {
+                    if (response.status !== 200) {
                         this.errorDialog.active = true;
                     }
+                }).catch(() => {
+                    this.deleteDialog.active = false;
+                    this.loadDictionaries();
+                    this.errorDialog.active = true;
                 });
             },
             loadDictionaries() {

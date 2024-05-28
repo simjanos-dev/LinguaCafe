@@ -459,6 +459,24 @@ class DictionaryService {
         return $recordCount;
     }
 
+    public function deleteDictionary($dictionaryId) {
+        $dictionary = Dictionary
+            ::where('id', $dictionaryId)
+            ->first();
+
+        if (!$dictionary) {
+            throw new \Exception('Dictionary does not exist.');
+        }
+
+        if($dictionary->database_table_name !== 'API') {
+            Schema::drop($dictionary->database_table_name);
+        }
+        
+        Dictionary::where('id', $dictionaryId)->delete();
+
+        return true;
+    }
+
     private function searchImportedDictionary($dictionaryTable, $term, $strict = false) {
         $records = [];
         
