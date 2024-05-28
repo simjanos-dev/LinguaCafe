@@ -6,7 +6,7 @@
         ></text-reader-hotkey-information-dialog>
 
         <!-- Toolbar -->
-        <div id="reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}" v-if="lessonId !== null">
+        <div id="reader-box" :style="{'max-width': maximumTextWidthData[settings.maximumTextWidth]}" v-if="chapterId !== null">
             <div id="toolbar-box">
                 <div v-if="!finished" id="toolbar" :class="{'d-flex': true}" :style="{'top': toolbarTop + 'px'}">
                     <v-btn title="Fullscreen" icon @click="fullscreen" v-if="!fullscreenMode"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
@@ -33,8 +33,8 @@
             
             <!-- Chapters -->
             <text-reader-chapter-list
-                :chapters="lessons"
-                :current-chapter-id="lessonId"
+                :chapters="chapters"
+                :current-chapter-id="chapterId"
                 v-model="dialogs.chapters"
             ></text-reader-chapter-list>
 
@@ -69,7 +69,7 @@
                 'pt-3': $vuetify.breakpoint.xsOnly,
                 }">
                     <div id="chapter-name" class="mb-4" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
-                        {{ lessonName }}
+                        {{ chapterName }}
                     </div>
 
                     <text-block-group
@@ -132,10 +132,10 @@
                 
                 <!-- Text -->
                 <v-card-text>
-                    You have finished reading this chapter: <b>{{ lessonName }}</b>, and you have read <b>{{ formatNumber(wordCount) }}</b> words. Keep up the good work, and your 
+                    You have finished reading this chapter: <b>{{ chapterName }}</b>, and you have read <b>{{ formatNumber(wordCount) }}</b> words. Keep up the good work, and your 
                     <span class="text-capitalize">{{ language }}</span> skills will improve steadily. Consistency is key!
 
-                    <template v-if="nextLesson === -1">
+                    <template v-if="nextChapter === -1">
                         <br><br>
                         This was the last chapter in this book.
                     </template>
@@ -154,11 +154,11 @@
                         Library
                     </v-btn>
                     <v-btn 
-                        v-if="nextLesson !== -1"
+                        v-if="nextChapter !== -1"
                         rounded 
                         depressed 
                         color="primary" 
-                        :to="'/chapters/read/' + nextLesson" 
+                        :to="'/chapters/read/' + nextChapter" 
                     >
                         <v-icon class="mr-1">mdi-page-next-outline</v-icon>
                         Next chapter
@@ -214,18 +214,18 @@
                 learnedWords: 0,
                 progressedWords: 0,
                 glossary: [],
-                nextLesson: -1,
+                nextChapter: -1,
 
-                // lesson data
+                // chapter data
                 type: 'text',
                 subtitleTimestamps: [],
                 bookName: null,
-                lessonId: null,
+                chapterId: null,
                 wordCount: 0,
-                lessonName: null,
+                chapterName: null,
                 bookId: null,
                 language: null,
-                lessons: [],
+                chapters: [],
             }
         },
         props: {
@@ -267,21 +267,21 @@
                 };
                 
                 this.bookName = data.bookName;
-                this.lessonId = data.lessonId;
+                this.chapterId = data.chapterId;
                 this.wordCount = data.wordCount;
-                this.lessonName = data.lessonName;
+                this.chapterName = data.chapterName;
                 this.bookId = data.bookId;
                 this.language = data.language;
-                this.lessons = data.lessons;
+                this.chapters = data.chapters;
 
                 document.getElementById('app').addEventListener('mouseup', this.finishSelection);
                 window.addEventListener('resize', this.updateToolbarPosition);
                 window.addEventListener('resize', this.vocabularySidebarTest);
                 window.addEventListener('scroll', this.updateToolbarPosition);
                 document.getElementById('fullscreen-box').addEventListener('fullscreenchange', this.updateFullscreen);
-                for (let i = 0; i < this.lessons.length; i++) {
-                    if (this.lessons[i].id == this.lessonId && i < this.lessons.length - 1) {
-                        this.nextLesson = this.lessons[i + 1].id;
+                for (let i = 0; i < this.chapters.length; i++) {
+                    if (this.chapters[i].id == this.chapterId && i < this.chapters.length - 1) {
+                        this.nextChapter = this.chapters[i + 1].id;
                         break;
                     }
                 }
@@ -402,7 +402,7 @@
                     uniqueWords: JSON.stringify(this.text.uniqueWords),
                     sentences: JSON.stringify(this.text.sentences),
                     language: this.language,
-                    chapterId: this.lessonId,
+                    chapterId: this.chapterId,
                     autoMoveWordsToKnown: this.settings.autoMoveWordsToKnown
                 }).catch((error) => {
                     this.finishError = true;

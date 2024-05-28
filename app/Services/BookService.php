@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 use App\Models\EncounteredWord;
-use App\Models\Lesson;
+use App\Models\Chapter;
 use App\Models\Book;
 
 class BookService {
@@ -60,7 +60,7 @@ class BookService {
 
     public function updateBookWordCount($userId, $bookId) {
         // calculate book word count
-        $bookWordCount = Lesson
+        $bookWordCount = Chapter
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->sum('word_count');
@@ -143,7 +143,7 @@ class BookService {
             throw new \Exception('Book does not exist, or it belongs to a different user.');
         }
 
-        Lesson
+        Chapter
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->delete();
