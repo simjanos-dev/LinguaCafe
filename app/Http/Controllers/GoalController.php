@@ -12,53 +12,42 @@ use App\Models\EncounteredWord;
 
 use App\Services\GoalService;
 
+// request classes
+use App\Http\Requests\Goals\UpdateGoalRequest;
+
 class GoalController extends Controller
 {
-    /*
-        Returns a list of goals for the selected language. 
-        It is used on the home page to display daily goals.
-    */
-    public function getGoals() {
-        $selectedLanguage = Auth::user()->selected_language;
-        $goals = Goal::where('user_id', Auth::user()->id)->where('language', $selectedLanguage)->get();
-
-        foreach ($goals as $goal) {
-            $goal->todaysQuantity = $goal->getTodaysQuantity();
-        }
-
-        return json_encode($goals);
+    private $goalService;
+    
+    public function __construct(GoalService $goalService) {
+        $this->goalService = $goalService;
     }
 
-    /*
-        Updates a goal's quantity.
-    */
-    public function updateGoal(Request $request) {
+    public function getGoals() {
+        $userId = Auth::user()->id;
+        $language = Auth::user()->selected_language;
+
+        try {
+            $goals = $this->goalService->getGoals($userId, $language);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json($goals, 200);
+    }
+
+    public function updateGoal(UpdateGoalRequest $request) {
+        $userId = Auth::user()->id;
         $goalId = $request->post('goalId');
         $newGoalQuantity = $request->post('newGoalQuantity');
 
-        $goal = Goal
-            ::where('user_id', Auth::user()->id)
-            ->where('id', $goalId)
-            ->first();
-
-        if (!$goal) {
-            return;
+        try {
+            $this->goalService->updateGoal($userId, $goalId, $newGoalQuantity);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
         }
 
-        $goal->quantity = $newGoalQuantity;
-        $goal->save();
-
-        // also update today's goal achievement
-        $achievement = GoalAchievement
-            ::where('user_id', Auth::user()->id)
-            ->where('goal_id', $goal->id)
-            ->where('day', Carbon::today()->format('Y-m-d'))
-            ->first();
-
-        if ($achievement) {
-            $achievement->goal_quantity = $newGoalQuantity;
-            $achievement->save();
-        }
+        return response()->json('Goal has been updated successfully.', 200);
     }
 
     /*
@@ -186,6 +175,6 @@ class GoalController extends Controller
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
 
-        (new GoalService())->updateGoalAchievement($userId, $language, 'review', 1);
+        $this->goalService->updateGoalAchievement($userId, $language, 'review', 1);
     }
 }
