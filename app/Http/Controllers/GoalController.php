@@ -89,6 +89,12 @@ class GoalController extends Controller
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
 
-        $this->goalService->updateGoalAchievement($userId, $language, 'review', 1);
+        try {
+            $this->goalService->updateGoalAchievement($userId, $language, 'review', 1);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json('Goals have been updated successfully.', 200);
     }
 }

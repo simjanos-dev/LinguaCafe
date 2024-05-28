@@ -93,7 +93,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/goal/update', [App\Http\Controllers\GoalController::class, 'updateGoal']);
     Route::post('/goals/get-calendar-data', [App\Http\Controllers\GoalController::class, 'getCalendarData']);
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
-    Route::get ('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
+    Route::post('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
 
     // settings
     Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);
