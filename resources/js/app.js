@@ -109,7 +109,7 @@ Vue.component('text-reader-settings', TextReaderSettings);
 Vue.component('text-reader-glossary', TextReaderGlossary);
 Vue.component('text-reader-chapter-list', TextReaderChapterList);
 
-// media player
+// Jellyfin
 import JellyfinSubtitleList from './components/Library/Import/ImportSource/JellyfinSubtitleList';
 Vue.component('jellyfin-subtitle-list', JellyfinSubtitleList);
 

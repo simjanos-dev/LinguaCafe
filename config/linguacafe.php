@@ -254,6 +254,7 @@ return [
             'fin' => 'finnish',
             'fre' => 'french',
             'ita' => 'italian',
+            'lit' => 'lithuanian',
             'kor' => 'korean',
             'swe' => 'swedish',
             'ukr' => 'ukrainian',
