@@ -53,6 +53,19 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.12.4<v-spacer /> 2024.05.29.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed unusable Spanish goals after creating the first user.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+        
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.3<v-spacer /> 2024.05.22.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
