@@ -102,6 +102,16 @@
                     >
                         {{ error }}
                     </v-alert>
+
+                    <v-alert
+                        class="rounded-lg mt-4 mb-0"
+                        color="primary"
+                        type="info"
+                        border="left"
+                        dark
+                    >
+                        If logging in with the correct login information fails, please reload browser the page. There is a known bug that will be fixed soon.
+                    </v-alert>
                 </v-form>
             </v-card-text>
 
