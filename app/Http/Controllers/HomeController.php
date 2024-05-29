@@ -28,9 +28,9 @@ class HomeController extends Controller {
         $selectedLanguage = Auth::user()->selected_language;
         $userCount = User::count();
         $userName = Auth::user()->name;
-        $isAdmin = Auth::user()->is_admin;
-        $theme = $_COOKIE['theme'] ?? 'light';
-
+        $isAdmin = Auth::user()->is_admin === 1;
+        $theme = $_COOKIE['theme'] ?? 'dark';
+        
         return view('home', [
             'language' => $selectedLanguage,
             'userCount' => $userCount,

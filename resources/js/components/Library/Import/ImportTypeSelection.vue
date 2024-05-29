@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!loading">
         <label class="font-weight-bold">Select an import option</label>
         <div class="import-type-group flex-wrap">
             <!--Plain text -->
@@ -35,7 +35,7 @@
             </div>
 
             <!-- Jellyfin subtitle -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('jellyfin-subtitle')">
+            <div class="import-type-button rounded-lg mx-2 mb-4" @click="selectImportType('jellyfin-subtitle')" v-if="jellyfinEnabled">
                 <div class="import-type-button-icon-box">
                     <v-icon large>mdi-movie</v-icon>
                 </div>
@@ -56,29 +56,6 @@
                     <v-icon large>mdi-web</v-icon>
                 </div>
                 <span>Website</span>
-            </div>
-
-            <!-- Website not supported or loading data -->
-            <div class="import-type-button rounded-lg mx-2 mb-4" v-if="!websiteImportSupported">
-                <div class="import-type-button-icon-box">
-                    <v-icon large v-if="loading">mdi-web</v-icon>
-                    <div class="pt-4" v-if="!loading">Language not supported</div>
-                </div>
-                <span>
-                    <!-- Loading -->
-                    <v-progress-circular
-                        v-if="loading"
-                        indeterminate
-                        color="primary"
-                        size="16"
-                        width="2"
-                    ></v-progress-circular>
-
-                    <!-- Not supported label -->
-                    <template v-if="!loading">
-                        Website
-                    </template>
-                </span>
             </div>
 
             <!--
@@ -112,6 +89,14 @@
             -->
         </div>
     </div>
+    <div class="h-100 d-flex justify-center" v-else>
+        <v-progress-linear
+            indeterminate
+            color="primary"
+            height="4"
+            rounded
+        ></v-progress-linear>
+    </div>
 </template>
 
 <script>
@@ -120,16 +105,25 @@
             return {
                 loading: true,
                 websiteImportSupported: false,
+                jellyfinEnabled: false,
             }
         },
         props: {
             language: String
         },
         mounted() {
-            axios.get('/config/get/linguacafe.languages.website_import_supported_languages').then((response) => {
-                this.websiteImportSupported = response.data.includes(this.$props.language);
+            axios.all([
+                axios.get('/config/get/linguacafe.languages.website_import_supported_languages'),
+                axios.post('/settings/global/get', {
+                    'settingNames': [
+                        'jellyfinEnabled',
+                    ]
+                }),
+            ]).then(axios.spread((response1, response2) => {
+                this.websiteImportSupported = response1.data.includes(this.$props.language);
+                this.jellyfinEnabled = response2.data.jellyfinEnabled;
                 this.loading = false;
-            });
+            }));
         },
         methods: {
             selectImportType(type) {

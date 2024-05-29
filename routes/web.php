@@ -36,7 +36,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     });
 
     // users
-    Route::get('/users/is-admin',  [App\Http\Controllers\UserController::class, 'isAdmin']); // Adding a isAdmin check endpoint which is used on the admin settings adminLayout page.
     Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
     Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
     Route::get ('/users/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);

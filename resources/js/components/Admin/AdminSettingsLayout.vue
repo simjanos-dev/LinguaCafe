@@ -29,8 +29,8 @@
             </v-tab-item>
         </v-tabs-items>
     </v-container>
-    <v-container v-else-if="!loading">
-        You do not have permission to access this section.
+    <v-container v-else>
+        You do not have permission to access this page.
     </v-container>
 </template>
 
@@ -39,7 +39,6 @@
         data: function() {
             return {
                 tab: 0,
-                isAdmin: false,
                 loading: true,
                 tabIndexes: {
                     'users': 0,
@@ -60,13 +59,10 @@
             }
         },
         props: {
-            language: String
+            language: String,
+            isAdmin: Boolean,
         },
         beforeMount() {
-            axios.get('/users/is-admin').then((response) => {
-                this.isAdmin = response.data;
-                this.loading = false;
-            });
         },
         mounted() {
             if (this.$route.params.page !== undefined) {

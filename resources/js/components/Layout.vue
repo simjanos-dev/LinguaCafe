@@ -98,7 +98,7 @@
             </v-bottom-navigation>
         </template>
         <v-main :style="{background: $vuetify.theme.currentTheme.background}" :class="{ eink: theme == 'eink'}">
-            <router-view :user-count="$props._userCount" :language="selectedLanguage" :key="$route.fullPath"></router-view>
+            <router-view :is-admin="$props._isAdmin" :user-count="$props._userCount" :language="selectedLanguage" :key="$route.fullPath"></router-view>
         </v-main>
     </v-app>
 </template>
@@ -203,6 +203,7 @@
             }
         },
         mounted() {
+            console.log(this.$props._isAdmin);
             // load default and selected font types into the dom
             var fontTypeService = new FontTypeService(this.selectedLanguage, this.$cookie, () => {
                 fontTypeService.loadSelectedFontTypeIntoDom();

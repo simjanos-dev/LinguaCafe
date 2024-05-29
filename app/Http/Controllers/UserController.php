@@ -22,14 +22,9 @@ class UserController extends Controller {
 
     }
 
-    public function isAdmin() {
-        $isAdmin = Auth::user()->is_admin;
-        return response($isAdmin, 200);
-    }
-
     public function isUserPasswordChanged() {
         $passwordChanged = Auth::user()->password_changed;
-        return response($passwordChanged, 200);
+        return response()->json($passwordChanged, 200);
     }
 
     public function getUsers() {
