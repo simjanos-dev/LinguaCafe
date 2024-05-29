@@ -1,7 +1,7 @@
 <template>
     <div id="admin-user-settings">
         <!-- Add or edit user dialog -->
-        <admin-edit-user-dialog 
+        <admin-edit-user-dialog
             v-if="editDialog.active"
             v-model="editDialog.active"
             :_user-id="editDialog.userId"
@@ -10,12 +10,12 @@
             :_is-admin="editDialog.isAdmin"
             @user-saved="closeUserDialog"
         ></admin-edit-user-dialog>
-        
+
         <!-- Title subheader -->
         <div class="d-flex subheader mt-4 mb-4 px-2 ">
             Users
             <v-spacer />
-            <v-btn rounded dark color="primary" @click="addUser" disabled>
+            <v-btn rounded dark color="primary" @click="addUser" >
                 <v-icon class="mr-1">mdi-plus</v-icon>
                 Add user
             </v-btn>
@@ -41,15 +41,15 @@
                         {{ user.is_admin ? 'Yes' : 'No' }}
                     </td>
                     <td class="text-center">
-                        <v-btn 
-                            icon 
+                        <v-btn
+                            icon
                             title="Edit"
                             @click="editUser(user)"
                         >
                             <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-                        <v-btn 
-                            icon 
+                        <v-btn
+                            icon
                             title="Delete"
                             color="error"
                         >

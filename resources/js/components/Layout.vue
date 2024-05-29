@@ -1,6 +1,6 @@
 <template>
    <v-app :class="{'eink': theme == 'eink', 'dark': theme == 'dark'}">
-        
+
         <!-- Dialogs -->
         <start-review-dialog v-model="startReviewDialog" />
         <logout-dialog v-model="logoutDialog"/>
@@ -9,13 +9,13 @@
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
             <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
             <v-navigation-drawer
-                id="navigation-drawer" 
-                app 
+                id="navigation-drawer"
+                app
                 dense
-                :class="{'eink': theme == 'eink'}" 
-                :mini-variant="$vuetify.breakpoint.md || navbarCollapsed" 
-                :permanent="$vuetify.breakpoint.mdAndUp" 
-                v-model="drawer" 
+                :class="{'eink': theme == 'eink'}"
+                :mini-variant="$vuetify.breakpoint.md || navbarCollapsed"
+                :permanent="$vuetify.breakpoint.mdAndUp"
+                v-model="drawer"
                 color="foreground"
             >
                 <!-- Logo -->
@@ -27,10 +27,10 @@
 
                 <v-list nav shaped dense class="pl-0">
                     <!-- Navigation buttons -->
-                    <v-list-item 
-                        class="navigation-button" 
-                        v-for="(item, index) in navigation" 
-                        :key="index" 
+                    <v-list-item
+                        class="navigation-button"
+                        v-for="(item, index) in navigation"
+                        :key="index"
                         :to="item.url"
                         @click="navigationClick(item.name, $event)"
                     >
@@ -72,7 +72,7 @@
                             <v-icon>mdi-palette</v-icon>
                         </v-btn>
                         <v-btn id="language" rounded text class="mini-drawer-button" @click="languageSelectionDialog = true" title="Select language">
-                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="31" height="20"></v-img> 
+                            <v-img :src="'/images/flags/' + selectedLanguage.toLowerCase() + '.png'" max-width="31" height="20"></v-img>
                         </v-btn>
                     </template>
                 </template>
@@ -84,9 +84,9 @@
                     <span>More</span>
                     <v-icon>mdi-menu</v-icon>
                 </v-btn><v-spacer></v-spacer>
-                <v-btn 
+                <v-btn
                     class="text-decoration-none"
-                    grow 
+                    grow
                     v-for="(item, index) in navigation"
                     :key="index"
                     :to="item.url"
@@ -97,7 +97,6 @@
                 </v-btn>
             </v-bottom-navigation>
         </template>
-        
         <v-main :style="{background: $vuetify.theme.currentTheme.background}" :class="{ eink: theme == 'eink'}">
             <router-view :user-count="$props._userCount" :language="selectedLanguage" :key="$route.fullPath"></router-view>
         </v-main>
@@ -159,12 +158,6 @@
                         bottomNav: false,
                     },
                     {
-                        name: 'Admin settings',
-                        url: '/admin',
-                        icon: 'mdi-shield-lock',
-                        bottomNav: false,
-                    },
-                    {
                         name: 'User manual',
                         url: '/user-manual',
                         icon: 'mdi-account-question',
@@ -180,6 +173,7 @@
                 default: '',
             },
             _userCount: Number,
+            _isAdmin: Boolean,
         },
         beforeMount() {
             if (this.$props._selectedLanguage == 'japanese') {
@@ -187,6 +181,15 @@
                     name: 'Kanji',
                     url: '/kanji/search',
                     icon: 'mdi-ideogram-cjk',
+                    bottomNav: false,
+                });
+            }
+
+            if(this.$props._isAdmin == true) {
+                this.navigation.push({
+                    name: 'Admin settings',
+                    url: '/admin',
+                    icon: 'mdi-shield-lock',
                     bottomNav: false,
                 });
             }

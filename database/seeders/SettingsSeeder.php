@@ -32,6 +32,14 @@ class SettingsSeeder extends Seeder
         }
 
         // jellyfin api settings
+        $setting = Setting::where('name', 'jellyfinEnabled')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'jellyfinEnabled',
+                'value' => json_encode(false)
+            ]);
+        }
+
         $setting = Setting::where('name', 'jellyfinApiKey')->first();
         if (!$setting) {
             DB::table('settings')->insert([

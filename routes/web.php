@@ -26,12 +26,17 @@ Auth::routes([
 Route::group(['middleware' => 'web'], function () {
     Route::post('/users/create', [App\Http\Controllers\UserController::class, 'createUser']);
 });
-
 Route::group(['middleware' => ['auth', 'web']], function () {
-    Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+
+    Route::group(['middleware' => 'admin'], function () {
+        Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+        Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
+        // Add other routes that need admin permission here.
+        // Or break this up into multple groups so that we can keep them organised in their relevant sections
+    });
 
     // users
-    Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+    Route::get('/users/is-admin',  [App\Http\Controllers\UserController::class, 'isAdmin']); // Adding a isAdmin check endpoint which is used on the admin settings adminLayout page.
     Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
     Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
     Route::get ('/users/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
@@ -69,7 +74,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/vocabulary/search/{text}/{stage}/{book}/{chapter}/{translation}/{phrases}/{orderBy}/{page}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/kanji/search', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/kanji/{character}', [App\Http\Controllers\HomeController::class, 'index']);
-    
+
     // home
     Route::post('/statistics/get', [App\Http\Controllers\HomeController::class, 'getStatistics']);
     Route::get('/config/get/{configPath}', [App\Http\Controllers\HomeController::class, 'getConfig']);
@@ -98,8 +103,8 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateGlobalSettings']);
     Route::post('/settings/user/get', [App\Http\Controllers\SettingsController::class, 'getUserSettingsByName']);
     Route::post('/settings/user/update', [App\Http\Controllers\SettingsController::class, 'updateUserSettings']);
-    
-    // images 
+
+    // images
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
     Route::get('/images/kanji/{fileName}', [App\Http\Controllers\ImageController::class, 'getKanjiImage']);
 
@@ -136,7 +141,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get ('/vocabulary/example-sentence/{targetType}/{targetId}', [App\Http\Controllers\VocabularyController::class, 'getExampleSentence']);
     Route::post('/kanji/search', [App\Http\Controllers\VocabularyController::class, 'searchKanji']);
     Route::post('/kanji/details', [App\Http\Controllers\VocabularyController::class, 'getKanjiDetails']);
-    
+
     // review
     Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'getReviewItems']);
     Route::post('/reviews/update', [App\Http\Controllers\ReviewController::class, 'updateReadWordsGoal']);
@@ -146,7 +151,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/flashcards/delete', [App\Http\Controllers\FlashcardController::class, 'deleteFlashcardCollection']);
     Route::post('/flashcards/get', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollection']);
     Route::post('/flashcards/save', [App\Http\Controllers\FlashcardController::class, 'saveFlashcardCollection']);
-    
+
     // anki
     Route::post('/anki/add-card', [App\Http\Controllers\AnkiController::class, 'addCardToAnki']);
 
@@ -156,7 +161,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/books/create', [App\Http\Controllers\BookController::class, 'createBook']);
     Route::post('/books/update', [App\Http\Controllers\BookController::class, 'updateBook']);
     Route::post('/books/delete', [App\Http\Controllers\BookController::class, 'deleteBook']);
-    
+
     // chapters
     Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChaptersForBook']);
     Route::post('/chapters/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);

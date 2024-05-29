@@ -13,7 +13,7 @@ use App\Services\StatisticsService;
 use App\Http\Requests\Home\GetConfigRequest;
 
 class HomeController extends Controller {
-    
+
     private $statisticsService;
     private $goalService;
 
@@ -28,12 +28,14 @@ class HomeController extends Controller {
         $selectedLanguage = Auth::user()->selected_language;
         $userCount = User::count();
         $userName = Auth::user()->name;
+        $isAdmin = Auth::user()->is_admin;
         $theme = $_COOKIE['theme'] ?? 'light';
-        
+
         return view('home', [
             'language' => $selectedLanguage,
             'userCount' => $userCount,
             'userName' => $userName,
+            'isAdmin' => $isAdmin,
             'theme' => $theme
         ]);
     }
@@ -62,7 +64,7 @@ class HomeController extends Controller {
 
     public function getUserManualTree() {
         $manualTree = [];
-        
+
         $path = public_path('./../manual/');
         $files = scandir($path);
 
@@ -92,7 +94,7 @@ class HomeController extends Controller {
                         $subPageName = str_replace("\r\n", '', $subPageName);
                         $subPageName = str_replace("\n", '', $subPageName);
                         $subPageName = str_replace("\n", '', $subPageName);
-                        
+
                         $subPage = new \stdClass();
                         $subPage->id = $index;
                         $subPage->name = $subPageName;
@@ -102,10 +104,10 @@ class HomeController extends Controller {
                         $index ++;
                     }
                 }
-            
+
                 fclose($handle);
             }
-            
+
             if (count($subPages)) {
                 $page->children = $subPages;
             }

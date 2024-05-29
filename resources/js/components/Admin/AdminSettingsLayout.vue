@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container v-if="isAdmin">
         <v-tabs v-model="tab" background-color="foreground" class="rounded-lg border overflow-hidden" @change="tabChanged">
             <v-tab>Users</v-tab>
             <v-tab>Languages</v-tab>
@@ -29,6 +29,9 @@
             </v-tab-item>
         </v-tabs-items>
     </v-container>
+    <v-container v-else-if="!loading">
+        You do not have permission to access this section.
+    </v-container>
 </template>
 
 <script>
@@ -36,6 +39,8 @@
         data: function() {
             return {
                 tab: 0,
+                isAdmin: false,
+                loading: true,
                 tabIndexes: {
                     'users': 0,
                     'languages': 1,
@@ -56,6 +61,12 @@
         },
         props: {
             language: String
+        },
+        beforeMount() {
+            axios.get('/users/is-admin').then((response) => {
+                this.isAdmin = response.data;
+                this.loading = false;
+            });
         },
         mounted() {
             if (this.$route.params.page !== undefined) {
