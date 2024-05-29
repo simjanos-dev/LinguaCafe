@@ -50,7 +50,7 @@ class UserService {
         $user->password = Hash::make($password);
         $user->save();
 
-        (new GoalService())->createGoalsForLanguage($user->id, 'japanese');
+        (new GoalService())->createGoalsForLanguage($user->id, 'spanish');
 
         return true;
     }
