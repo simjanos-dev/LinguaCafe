@@ -26,7 +26,6 @@ class EncounteredWord extends Model
         'base_word',
         'base_word_reading',
         'translation',
-        'example_sentence',
         'lookup_count',
         'read_count',
         'relearning',

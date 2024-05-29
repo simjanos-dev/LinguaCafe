@@ -458,7 +458,6 @@ class VocabularyService {
                 $encounteredWord->base_word_reading = '';
                 $encounteredWord->stage = 0;
                 $encounteredWord->kanji = '';
-                $encounteredWord->example_sentence = '';
 
                 $createdWords ++;
             } else {

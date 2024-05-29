@@ -326,7 +326,6 @@ class TextBlockService
             $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
             $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
             $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
-            $encounteredWord['example_sentence'] = '';
             $encounteredWord['stage'] = 2;
             $encounteredWord['translation'] = '';
             $encounteredWord['created_at'] =  Carbon::now();

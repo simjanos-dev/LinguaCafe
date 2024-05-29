@@ -1830,7 +1830,6 @@
                     reading: this.vocabBox.reading,
                     base_word: this.vocabBox.baseWord,
                     base_word_reading: this.vocabBox.baseWordReading,
-                    example_sentence: selectedWord.example_sentence,
                     lookup_count: selectedWord.lookup_count,
                 };
 
