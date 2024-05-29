@@ -205,8 +205,6 @@ const PatchNotes = require('./components/Home/PatchNotes.vue').default;
 const Attributions = require('./components/Home/Attributions.vue').default;
 const Library = require('./components/Library/Library.vue').default;
 const TextReader = require('./components/TextReader/TextReader.vue').default;
-const FlashcardCollectionList = require('./components/FlashcardCollectionList.vue').default;
-const FlashcardCollection = require('./components/FlashcardCollection.vue').default;
 const Review = require('./components/Review/Review.vue').default;
 const Vocabulary = require('./components/Vocabulary/Vocabulary.vue').default;
 const KanjiList = require('./components/Kanji/KanjiList.vue').default;
@@ -226,8 +224,6 @@ const router = new VueRouter({
         { path: '/login', component: LoginForm },
         { path: '/books/:bookId?', component: Library },
         { path: '/chapters/read/:chapterId', component: TextReader },
-        { path: '/flashcards', component: FlashcardCollectionList },
-        { path: '/flashcards/edit/:flashcardCollectionId?', component: FlashcardCollection },
         { path: '/review/:practiceMode?/:bookId?/:chapterId?', component: Review },
         { path: '/vocabulary/search', component: Vocabulary },
         { path: '/vocabulary/search/:text/:stage/:book/:chapter/:translation/:phrases/:orderBy/:page', component: Vocabulary },

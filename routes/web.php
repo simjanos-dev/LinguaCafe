@@ -66,8 +66,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/chapters/read/{id}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/create/{bookId}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/edit/{bookId}/{chapterId}', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/flashcards', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/flashcards/edit/{flashcardCollectionId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/review/{practiceMode?}/{bookId?}/{chapterId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/vocabulary/search', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/vocabulary/search/{text}/{stage}/{book}/{chapter}/{translation}/{phrases}/{orderBy}/{page}', [App\Http\Controllers\HomeController::class, 'index']);
@@ -144,12 +142,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     // review
     Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'getReviewItems']);
     Route::post('/reviews/update', [App\Http\Controllers\ReviewController::class, 'updateReadWordsGoal']);
-
-    // flash cards
-    Route::post('/flashcards', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollections']);
-    Route::post('/flashcards/delete', [App\Http\Controllers\FlashcardController::class, 'deleteFlashcardCollection']);
-    Route::post('/flashcards/get', [App\Http\Controllers\FlashcardController::class, 'getFlashcardCollection']);
-    Route::post('/flashcards/save', [App\Http\Controllers\FlashcardController::class, 'saveFlashcardCollection']);
 
     // anki
     Route::post('/anki/add-card', [App\Http\Controllers\AnkiController::class, 'addCardToAnki']);

@@ -145,12 +145,6 @@
                         icon: 'mdi-playlist-check',
                         bottomNav: false,
                     },
-                    // {
-                    //     name: 'Flashcards',
-                    //     url: '/flashcards',
-                    //     icon: 'mdi-cards',
-                    //     bottomNav: true,
-                    // },
                     {
                         name: 'User settings',
                         url: '/user-settings',
