@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column justify-center flex-nowrap">
-        <!-- Media player info -->
+        <!-- Jellyfin info -->
         <v-alert
             v-if="!$props.subtitleLoading"
             class="media-player-subtitle-info mt-12 mb-6 rounded-lg"
@@ -10,9 +10,7 @@
             dark
         >
             Choose a subtitle from the media currently being played on your Jellyfin server. 
-            You can import them seamlessly into LinguaCafe for later reading and also 
-            conveniently control your media player within LinguaCafe, allowing you to jump 
-            to specific subtitles or stop the video.
+            You can import them seamlessly into LinguaCafe for later reading.
         </v-alert>
 
         <!-- Subtitle list -->

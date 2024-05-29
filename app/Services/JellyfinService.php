@@ -1,41 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\TextBlock;
-use App\Models\Phrase;
-use App\Models\MediaPlayerCache;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
-class MediaPlayerController extends Controller
-{
-    // production
-    private $apiKey = '0000';
-    private $apiHost = 'http://jellyfin:8096';
-    private $enabled = false;
+class JellyfinService {
 
     private $jellyfinLanguageCodes = [];
+    private $apiKey;
+    private $apiHost;
 
-    function __construct() {
+    public function __construct() {
         $this->jellyfinLanguageCodes = config('linguacafe.languages.jellyfin_language_codes');
 
-        // retrieve api key and host from database
-        $setting = Setting::where('name', 'jellyfinEnabled')->first();
-        $this->enabled = json_decode($setting->value);
         $setting = Setting::where('name', 'jellyfinApiKey')->first();
         $this->apiKey = json_decode($setting->value);
         $setting = Setting::where('name', 'jellyfinHost')->first();
         $this->apiHost = json_decode($setting->value);
     }
 
-    /*
-        Makes a request to the jellyfin api and returns the response.
-    */
-    private function makeJellyfinRequest ($method, $url) {
+    public function makeRequest($method, $url) {
         $response = '';
 
         if ($method == 'GET') {
@@ -53,22 +38,9 @@ class MediaPlayerController extends Controller
         return $response->json();
     }
 
-    /*
-        Makes a jellyfin api call.
-    */
-    public function jellyfinRequest (Request $request) {
-        return $this->makeJellyfinRequest($request->method, $request->url);
-    }
-
-    /*
-        Returns a list of subtitles of the media currently being played
-        on the jellyfin server.
-    */
     public function getJellyfinCurrentlyPlayedSubtitles () {
-        $selectedLanguage = Auth::user()->selected_language;
-
         $calculatedSessions = [];
-        $sessions = $this->makeJellyfinRequest('GET', '/Sessions');
+        $sessions = $this->makeRequest('GET', '/Sessions');
         for ($sessionCounter = 0; $sessionCounter < count($sessions); $sessionCounter++) {
             if (!array_key_exists("NowPlayingItem", $sessions[$sessionCounter])) {
                 continue;
@@ -93,7 +65,7 @@ class MediaPlayerController extends Controller
             } else {
                 $session->movieName = $sessions[$sessionCounter]['NowPlayingItem']['Name'];
             }
-
+            
             $session->runTimeTicks = $sessions[$sessionCounter]['NowPlayingItem']['RunTimeTicks'];
             $session->nowPlayingItemId = $sessions[$sessionCounter]['NowPlayingItem']['Id'];
             $session->sessionId = $sessions[$sessionCounter]['Id'];
@@ -102,7 +74,7 @@ class MediaPlayerController extends Controller
 
             $calculatedSessions[] = $session;
 
-            $mediaSource = $this->makeJellyfinRequest('GET', '/Items/' . $session->nowPlayingItemId . '/PlaybackInfo?userId=' . $session->userId);
+            $mediaSource = $this->makeRequest('GET', '/Items/' . $session->nowPlayingItemId . '/PlaybackInfo?userId=' . $session->userId);
             $mediaSource = $mediaSource['MediaSources'][0];
 
             for ($subtitleCounter = 0; $subtitleCounter < count($mediaSource['MediaStreams']); $subtitleCounter++) {
@@ -111,15 +83,15 @@ class MediaPlayerController extends Controller
                     continue;
                 }
 
-                $subtitleText = $this->makeJellyfinRequest('GET', '/Videos/' . $session->nowPlayingItemId . '/' . $session->mediaSourceId . '/Subtitles/ ' . $mediaSource['MediaStreams'][$subtitleCounter]['Index'] . '/0/Stream.js');
-
+                $subtitleText = $this->makeRequest('GET', '/Videos/' . $session->nowPlayingItemId . '/' . $session->mediaSourceId . '/Subtitles/ ' . $mediaSource['MediaStreams'][$subtitleCounter]['Index'] . '/0/Stream.js');
+                
                 // add language for subtitles that Jellyfin did not recognise
                 if (!isset($mediaSource['MediaStreams'][$subtitleCounter]['Language'])) {
                     $mediaSource['MediaStreams'][$subtitleCounter]['Language'] = 'unrecognised by jellyfin: ' . $mediaSource['MediaStreams'][$subtitleCounter]['Title'];
                 }
-
+                
                 // retrieve language. if not possible, use the jellyfin language code instead,
-                // so it can be viewed as an error message in the console and added to
+                // so it can be viewed as an error message in the console and added to 
                 // jellyfinLanguageCodes.
                 if (array_key_exists($mediaSource['MediaStreams'][$subtitleCounter]['Language'], $this->jellyfinLanguageCodes)) {
                     $language = $this->jellyfinLanguageCodes[$mediaSource['MediaStreams'][$subtitleCounter]['Language']];
@@ -128,7 +100,7 @@ class MediaPlayerController extends Controller
                     $language = $mediaSource['MediaStreams'][$subtitleCounter]['Language'];
                     $supportedLanguage = false;
                 }
-
+                
                 $subtitle = new \stdClass();
                 $subtitle->language = $language;
                 $subtitle->supportedLanguage = $supportedLanguage;
@@ -138,6 +110,6 @@ class MediaPlayerController extends Controller
             }
         }
 
-        return json_encode($calculatedSessions);
+        return $calculatedSessions;
     }
 }
