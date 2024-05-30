@@ -134,8 +134,8 @@
                                 Importing your selected text. Please be patient, it can take several minutes based on:
                                 <ul>
                                     <li>How long is the text you are importing.</li>
-                                    <li>How many new word it contains.</li>
-                                    <li>How many phrases you have saved that has to be indexed in the text.</li>
+                                    <li>How many new words it contains.</li>
+                                    <li>How many phrases you have saved that have to be indexed in the text.</li>
                                     <li>How fast is your computer.</li>
                                 </ul>
                             </v-alert>
