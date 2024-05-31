@@ -5,7 +5,7 @@
     <link href="/css/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="/manifest.json"> 
-    
+    <link rel="icon" type="image/png" href="/icon512rounded.png">
     @if ($theme === 'dark')
         <meta name="theme-color" content="#28272C" />
     @else

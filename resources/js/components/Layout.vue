@@ -19,10 +19,9 @@
                 color="foreground"
             >
                 <!-- Logo -->
-                <div id="logo" class="my-5">
-                    <span v-if="$vuetify.breakpoint.lgAndUp && !navbarCollapsed">
-                            Lingua Cafe
-                    </span>
+                <div id="logo" class="d-flex justify-center my-5" v-if="$vuetify.breakpoint.lgAndUp && !navbarCollapsed">
+                    <img src="/icon512rounded.png" class="mr-2" width="32px" height="32px"/>
+                    <span class="text--text">Lingua Cafe</span>
                 </div>
 
                 <v-list nav shaped dense class="pl-0">

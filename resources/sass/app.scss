@@ -360,18 +360,8 @@ a.v-btn.menu-button {
 #navigation-drawer {
     height: 100% !important;
 
-    #logo {
-        color: #a4a4a4;
-        font-size: 24px;
-        text-align: center;
-        
-        .v-icon {
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            border-radius: 8px;
-            color: #a4a4a4;
-        }
+    #logo span{
+        font-size: 24px !important;
     }
 
     div.navigation-button,
