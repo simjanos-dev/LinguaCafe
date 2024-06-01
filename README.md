@@ -34,7 +34,7 @@ LinguaCafe uses RAM based on how many and which languages do you use. If you use
 
 ## Installation
 
-#### Step 1: Install docker desktop and git.
+#### Step 1: Install docker desktop.
 
 >[!IMPORTANT]
 >
