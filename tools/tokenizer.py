@@ -1,3 +1,5 @@
+from pprint import pprint
+from fugashi import Tagger
 from bottle import route, request, response, run, BaseRequest, HTTPResponse
 BaseRequest.MEMFILE_MAX = 1024 * 1024 * 100
 from spacy.language import Language
@@ -357,7 +359,7 @@ def tokenizeText(words, language, sentenceIndexStart = 0):
     return tokenizedWords
 
 def postProcessWords(unprocessedWords, language):
-    
+    tagger = Tagger('-Owakati')
     wordsToSkip = ['。', '、', ':', '？', '！', '＜', '＞', '：', ' ', '「', '」', '（', '）', '｛', '｝', '≪', '≫', '〈', '〉',
         '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
         '«', '»', "'", '’', '–', 'NEWLINE', 'newline', ' ', "\r", "\n", "\r\n", '	', "\r\n　", ';', ',', '!', '\'', 
@@ -374,6 +376,7 @@ def postProcessWords(unprocessedWords, language):
         if language == 'japanese' and wordIndex < wordCount - 1 and unprocessedWords[wordIndex]['w'] not in wordsToSkip and unprocessedWords[wordIndex + 1]['w'] not in wordsToSkip:
             # combine 2 verbs after eachother into one word
             if unprocessedWords[wordIndex]['pos'] == 'VERB' and unprocessedWords[wordIndex + 1]['pos'] == 'VERB':
+                verbCombined = True
                 #print('japanese conjugate', unprocessedWords[wordIndex]['w'], unprocessedWords[wordIndex]['l'], unprocessedWords[wordIndex + 1]['l'])
                 wordIndex = wordIndex + 1;
                 word['w'] = word['w'] + str(unprocessedWords[wordIndex]['w'])
@@ -397,17 +400,19 @@ def postProcessWords(unprocessedWords, language):
                     word['w'] = word['w'] + str(unprocessedWords[wordIndex]['w'])
                     word['r'] = word['r'] + str(unprocessedWords[wordIndex]['r'])
 
+        fugashiWord = tagger(word['w'])
+        if len(fugashiWord) > 0 and fugashiWord[0].feature.lemma is not None:
+            word['lr'] = word['l']
+            word['l'] = fugashiWord[0].feature.lemma
+            word['r'] = 'newlemma'
+        
 
-        testnlp = spacy.load("ja_core_news_sm")
+        #     oldLemma = word['l']
+        #     word['l'] = ''
+        #     for doc in testnlp.pipe([originalWord], disable=["parser", "ner"]):
+        #         for token in doc:
+        #             word['l'] = word['l'] + token.lemma_
 
-        if verbCombined:
-            oldLemma = word['l']
-            word['l'] = ''
-            for doc in testnlp.pipe([originalWord], disable=["parser", "ner"]):
-                for token in doc:
-                    word['l'] = word['l'] + token.lemma_
-
-            print('new lemma generated. ', word['w'], ': ', oldLemma, ' -> ', word['l'])
 
         # if verbCombined:
         #     test = japanese_nlp.vocab.morphology.lemmatizer(word['w'], word['pos'], morphology=None)
