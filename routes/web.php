@@ -26,40 +26,68 @@ Auth::routes([
 Route::group(['middleware' => 'web'], function () {
     Route::post('/users/create', [App\Http\Controllers\UserController::class, 'createUser']);
 });
+
 Route::group(['middleware' => ['auth', 'web']], function () {
 
     Route::group(['middleware' => 'admin'], function () {
+        // users
         Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
+        Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
+
+        // languages
+        Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
+        Route::get ('/languages/installed/list', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
+        Route::delete ('/languages/installed/delete', [App\Http\Controllers\LanguageController::class, 'deleteInstalledLanguages']);
+        Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
+        Route::get('/languages/get-admin-language-settings-data', [App\Http\Controllers\LanguageController::class, 'getAdminLanguageSettingsData']);
+        Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
+        
+        // dictionaries
         Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
-        // Add other routes that need admin permission here.
-        // Or break this up into multple groups so that we can keep them organised in their relevant sections
+        
+        // vue routes    
+        Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
+        Route::get('/admin/{page?}', [App\Http\Controllers\HomeController::class, 'index']);
+
+        // fonts
+        Route::get ('/fonts/get', [App\Http\Controllers\FontTypeController::class, 'getInstalledFontTypes']);
+        Route::post('/fonts/upload', [App\Http\Controllers\FontTypeController::class, 'uploadFontType']);
+        Route::post('/fonts/update', [App\Http\Controllers\FontTypeController::class, 'updateFontType']);
+        Route::post('/fonts/delete', [App\Http\Controllers\FontTypeController::class, 'deleteFontType']);
+        Route::get('/fonts/get-fonts-for-language/{language}', [App\Http\Controllers\FontTypeController::class, 'getFontTypesForLanguage']);
+        Route::get('/fonts/file/{fileName}', [App\Http\Controllers\FontTypeController::class, 'getFontTypeFile']);
+
+        // settings
+        Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateGlobalSettings']);
+
+        // dictionaries
+        Route::post('/dictionaries/get-supported-dictionary-file-information', [App\Http\Controllers\DictionaryController::class, 'getDictionaryFileInformation']);
+        Route::post('/dictionaries/import', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
+        Route::get('/dictionaries/get-record-count/{dictionaryTableName}', [App\Http\Controllers\DictionaryController::class, 'getDictionaryRecordCount']);
+        Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
+        Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
+        Route::get('/dictionaries/get/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'getDictionary']);
+        Route::post('/dictionaries/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
+        Route::post('/dictionaries/test-csv-file', [App\Http\Controllers\DictionaryController::class, 'testDictionaryCsvFile']);
+        Route::post('/dictionaries/import-csv-file', [App\Http\Controllers\DictionaryController::class, 'importDictionaryCsvFile']);
+        Route::post('/dictionaries/create-deepl', [App\Http\Controllers\DictionaryController::class, 'createDeeplDictionary']);
+        Route::get('/dictionaries/delete/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
+        Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
     });
 
     // users
-    Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
     Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
     Route::get ('/users/is-password-changed', [App\Http\Controllers\UserController::class, 'isUserPasswordChanged']);
-
-    // languages
-    Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
-    Route::get ('/languages/installed/list', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
-    Route::delete ('/languages/installed/delete', [App\Http\Controllers\LanguageController::class, 'deleteInstalledLanguages']);
-    Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
-    Route::get('/languages/get-admin-language-settings-data', [App\Http\Controllers\LanguageController::class, 'getAdminLanguageSettingsData']);
-    Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
 
     // jellyfin
     Route::get('/jellyfin/subtitles', [App\Http\Controllers\JellyfinController::class, 'getJellyfinCurrentlyPlayedSubtitles']);
 
-    // vue routes
-    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
+    // vue routes    
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-settings', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/admin/{page?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/user-manual/{currentPage?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/attributions', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/patch-notes', [App\Http\Controllers\HomeController::class, 'index']);
-    Route::get('/media-player', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/books/{bookId?}', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/book/create', [App\Http\Controllers\HomeController::class, 'index']);
     Route::get('/chapters/{id}', [App\Http\Controllers\HomeController::class, 'index']);
@@ -79,14 +107,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     // user manual
     Route::get('/manual/get-menu-tree', [App\Http\Controllers\HomeController::class, 'getUserManualTree']);
     Route::get('/manual/get-manual-file/{fileName}', [App\Http\Controllers\HomeController::class, 'getUserManualFile']);
-    
-    // fonts
-    Route::get ('/fonts/get', [App\Http\Controllers\FontTypeController::class, 'getInstalledFontTypes']);
-    Route::post('/fonts/upload', [App\Http\Controllers\FontTypeController::class, 'uploadFontType']);
-    Route::post('/fonts/update', [App\Http\Controllers\FontTypeController::class, 'updateFontType']);
-    Route::post('/fonts/delete', [App\Http\Controllers\FontTypeController::class, 'deleteFontType']);
-    Route::get('/fonts/get-fonts-for-language/{language}', [App\Http\Controllers\FontTypeController::class, 'getFontTypesForLanguage']);
-    Route::get('/fonts/file/{fileName}', [App\Http\Controllers\FontTypeController::class, 'getFontTypeFile']);
 
     // goals
     Route::post('/goals/get', [App\Http\Controllers\GoalController::class, 'getGoals']);
@@ -97,7 +117,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // settings
     Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);
-    Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateGlobalSettings']);
     Route::post('/settings/user/get', [App\Http\Controllers\SettingsController::class, 'getUserSettingsByName']);
     Route::post('/settings/user/update', [App\Http\Controllers\SettingsController::class, 'updateUserSettings']);
 
@@ -106,23 +125,11 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get('/images/kanji/{fileName}', [App\Http\Controllers\ImageController::class, 'getKanjiImage']);
 
     // dictionaries
-    Route::post('/dictionaries/get-supported-dictionary-file-information', [App\Http\Controllers\DictionaryController::class, 'getDictionaryFileInformation']);
-    Route::post('/dictionaries/import', [App\Http\Controllers\DictionaryController::class, 'importSupportedDictionary']);
-    Route::get('/dictionaries/get-record-count/{dictionaryTableName}', [App\Http\Controllers\DictionaryController::class, 'getDictionaryRecordCount']);
-    Route::get('/dictionaries/deepl/get-usage', [App\Http\Controllers\DictionaryController::class, 'getDeeplCharacterLimit']);
     Route::post('/dictionaries/deepl/search', [App\Http\Controllers\DictionaryController::class, 'searchDeepl']);
     Route::get('/dictionaries/deepl/is-enabled', [App\Http\Controllers\DictionaryController::class, 'isDeeplEnabled']);
-    Route::get('/dictionaries/get', [App\Http\Controllers\DictionaryController::class, 'getDictionaries']);
-    Route::get('/dictionaries/get/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'getDictionary']);
-    Route::post('/dictionaries/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
     Route::post('/dictionaries/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);
     Route::post('/dictionaries/search-for-hover-vocabulary', [App\Http\Controllers\DictionaryController::class, 'searchDefinitionsForHoverVocabulary']);
     Route::post('/dictionaries/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);
-    Route::post('/dictionaries/test-csv-file', [App\Http\Controllers\DictionaryController::class, 'testDictionaryCsvFile']);
-    Route::post('/dictionaries/import-csv-file', [App\Http\Controllers\DictionaryController::class, 'importDictionaryCsvFile']);
-    Route::post('/dictionaries/create-deepl', [App\Http\Controllers\DictionaryController::class, 'createDeeplDictionary']);
-    Route::get('/dictionaries/delete/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
-    Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
 
     // vocabulary
     Route::get ('/vocabulary/words/get/{wordId}', [App\Http\Controllers\VocabularyController::class, 'getUniqueWord']);
