@@ -52,6 +52,10 @@ class HomeController extends Controller {
     }
 
     public function getConfig($configPath, GetConfigRequest $request) {
+        if (strpos($configPath, 'linguacafe') !== 0) {
+            abort(500, 'The requested config is not publicly available.');
+        }
+        
         if (!config()->has($configPath)) {
             abort(500, 'Requested config value does not exist.');
         }
