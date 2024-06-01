@@ -51,9 +51,21 @@
                 </ul>
             </v-card-text>
         </v-card>
+        
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.12.5<v-spacer /> 2024.06.01.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Fixed a serious security issue.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.12.4<v-spacer /> 2024.05.29.</v-card-title>
+            <v-card-title>v0.12.5<v-spacer /> 2024.05.29.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
                 <ul>
