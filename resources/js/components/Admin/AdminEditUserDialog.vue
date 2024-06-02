@@ -93,6 +93,17 @@
                     ></v-switch>
 
                     <v-alert
+                        v-if="$props._isCurrentUser && !isAdmin"
+                        class="rounded-lg mt-4 mb-0"
+                        color="error"
+                        type="error"
+                        border="left"
+                        dark
+                    >
+                        This is your current user, and this action will remove your own admin rights.
+                    </v-alert>
+
+                    <v-alert
                         v-if="errorMessage !== '' && errorMessage !== 'success'"
                         class="rounded-lg mt-4 mb-0"
                         color="error"
@@ -133,6 +144,10 @@
             _userId: {
                 type: Number,
                 default: -1
+            },
+            _isCurrentUser: {
+                type: Boolean,
+                default: false
             },
             _name: {
                 type: String,

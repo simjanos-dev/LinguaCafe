@@ -28,8 +28,10 @@ class UserController extends Controller {
     }
 
     public function getUsers() {
+        $userId = Auth::user()->id;
+
         try {
-            $users = $this->userService->getUsers();
+            $users = $this->userService->getUsers($userId);
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -84,6 +86,6 @@ class UserController extends Controller {
             abort(500, $e->getMessage());
         }
 
-        return response()->json('User has been created successfully.', 200);
+        return response()->json('User has been updated successfully.', 200);
     }
 }

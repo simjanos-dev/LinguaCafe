@@ -5,6 +5,7 @@
             v-if="editDialog.active"
             v-model="editDialog.active"
             :_user-id="editDialog.userId"
+            :_is-current-user="editDialog.isCurrentUser"
             :_name="editDialog.name"
             :_email="editDialog.email"
             :_is-admin="editDialog.isAdmin"
@@ -48,13 +49,13 @@
                         >
                             <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-                        <v-btn
+                        <!-- <v-btn
                             icon
                             title="Delete"
                             color="error"
                         >
                             <v-icon>mdi-delete</v-icon>
-                        </v-btn>
+                        </v-btn> -->
                     </td>
                 </tr>
             </tbody>
@@ -70,6 +71,7 @@
                 editDialog: {
                     active: false,
                     userId: -1,
+                    isCurrentUser: false,
                     name: '',
                     email: '',
                     isAdmin: 0,
@@ -85,6 +87,7 @@
         methods: {
             addUser() {
                 this.editDialog.userId = -1;
+                this.editDialog.isCurrentUser = false;
                 this.editDialog.active = true;
                 this.editDialog.name = '';
                 this.editDialog.email = '';
@@ -92,6 +95,7 @@
             },
             editUser(user) {
                 this.editDialog.userId = user.id;
+                this.editDialog.isCurrentUser = user.is_current_user;
                 this.editDialog.active = true;
                 this.editDialog.name = user.name;
                 this.editDialog.email = user.email;

@@ -13,13 +13,14 @@ class UserService {
     public function __construct() {
     }
 
-    public function getUsers() {
+    public function getUsers($userId) {
         $users = User
             ::select(['id', 'name', 'email', 'is_admin', 'password_changed', 'created_at'])
             ->get();
 
         foreach ($users as $user) {
             $user->created_at_text = Carbon::parse($user->created_at)->format('Y-m-d');
+            $user->is_current_user = $user->id === $userId;
         }
 
         return $users;
@@ -64,6 +65,14 @@ class UserService {
 
         if ($user) {
             throw new \Exception('An other user already exists with this email address.');
+        }
+
+        // check if user can be set to not admin
+        if (!$isAdmin) {
+            $adminCount = User::where('is_admin', true)->count();
+            if ($adminCount < 2) {
+                throw new \Exception('You cannot remove admin rights from the last admin user.');
+            }
         }
 
         // retrieve user
