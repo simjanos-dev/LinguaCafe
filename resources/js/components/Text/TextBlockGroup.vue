@@ -427,12 +427,7 @@
             window.addEventListener('keydown', this.hotkeyHandle);
             window.addEventListener('mousemove', this.closeHoverBox);
 
-            axios.post('/settings/global/get', {
-                'settingNames': [
-                    'ankiAutoAddCards',
-                    'ankiShowNotifications'
-                ]
-            }).then((response) => {
+            axios.get('/settings/get-anki-settings').then((response) => {
                 this.ankiAutoAddCards = response.data.ankiAutoAddCards;
                 this.ankiShowNotifications = response.data.ankiShowNotifications;
             });
@@ -1551,6 +1546,10 @@
                 }
 
                 axios.post('/anki/add-card', data).catch((error) => {
+                        if (!this.ankiShowNotifications) {
+                            return;
+                        }
+
                         this.snackBars.push({id: this.snackbarId, content: data.word + ': ' + error.response.data.message, type: 'error'});
                         var snackbarToRemove = this.snackbarId;
                         this.snackbarId ++;

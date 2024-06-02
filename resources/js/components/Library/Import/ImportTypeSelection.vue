@@ -114,14 +114,10 @@
         mounted() {
             axios.all([
                 axios.get('/config/get/linguacafe.languages.website_import_supported_languages'),
-                axios.post('/settings/global/get', {
-                    'settingNames': [
-                        'jellyfinEnabled',
-                    ]
-                }),
+                axios.get('/settings/is-jellyfin-enabled'),
             ]).then(axios.spread((response1, response2) => {
                 this.websiteImportSupported = response1.data.includes(this.$props.language);
-                this.jellyfinEnabled = response2.data.jellyfinEnabled;
+                this.jellyfinEnabled = response2.data;
                 this.loading = false;
             }));
         },

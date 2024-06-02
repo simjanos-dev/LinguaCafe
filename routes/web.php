@@ -38,15 +38,12 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::post('/languages/install', [App\Http\Controllers\LanguageController::class, 'installLanguage']);
         Route::get ('/languages/installed/list', [App\Http\Controllers\LanguageController::class, 'getInstalledLanguages']);
         Route::delete ('/languages/installed/delete', [App\Http\Controllers\LanguageController::class, 'deleteInstalledLanguages']);
-        Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
         Route::get('/languages/get-admin-language-settings-data', [App\Http\Controllers\LanguageController::class, 'getAdminLanguageSettingsData']);
-        Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
         
         // dictionaries
         Route::post('/dictionary/update', [App\Http\Controllers\DictionaryController::class, 'updateDictionary']);
         
-        // vue routes    
-        Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
+        // vue routes            
         Route::get('/admin/{page?}', [App\Http\Controllers\HomeController::class, 'index']);
 
         // fonts
@@ -54,11 +51,10 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::post('/fonts/upload', [App\Http\Controllers\FontTypeController::class, 'uploadFontType']);
         Route::post('/fonts/update', [App\Http\Controllers\FontTypeController::class, 'updateFontType']);
         Route::post('/fonts/delete', [App\Http\Controllers\FontTypeController::class, 'deleteFontType']);
-        Route::get('/fonts/get-fonts-for-language/{language}', [App\Http\Controllers\FontTypeController::class, 'getFontTypesForLanguage']);
-        Route::get('/fonts/file/{fileName}', [App\Http\Controllers\FontTypeController::class, 'getFontTypeFile']);
 
         // settings
         Route::post('/settings/global/update', [App\Http\Controllers\SettingsController::class, 'updateGlobalSettings']);
+        Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);
 
         // dictionaries
         Route::post('/dictionaries/get-supported-dictionary-file-information', [App\Http\Controllers\DictionaryController::class, 'getDictionaryFileInformation']);
@@ -74,6 +70,12 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::get('/dictionaries/delete/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
         Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
     });
+
+    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
+
+    // languages
+    Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
+    Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);
 
     // users
     Route::post('/users/update-password', [App\Http\Controllers\UserController::class, 'updatePassword']);
@@ -115,10 +117,16 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/goals/achievement/update', [App\Http\Controllers\GoalController::class, 'updateCalendarData']);
     Route::post('/goals/achievement/review/update', [App\Http\Controllers\GoalController::class, 'updateReviewGoalAchievement']);
 
+    // fonts
+    Route::get('/fonts/get-fonts-for-language/{language}', [App\Http\Controllers\FontTypeController::class, 'getFontTypesForLanguage']);
+    Route::get('/fonts/file/{fileName}', [App\Http\Controllers\FontTypeController::class, 'getFontTypeFile']);
+
     // settings
-    Route::post('/settings/global/get', [App\Http\Controllers\SettingsController::class, 'getGlobalSettingsByName']);
     Route::post('/settings/user/get', [App\Http\Controllers\SettingsController::class, 'getUserSettingsByName']);
     Route::post('/settings/user/update', [App\Http\Controllers\SettingsController::class, 'updateUserSettings']);
+    Route::get('/settings/is-jellyfin-enabled', [App\Http\Controllers\SettingsController::class, 'isJellyfinEnabled']);
+    Route::get('/settings/get-anki-settings', [App\Http\Controllers\SettingsController::class, 'getAnkiSettings']);
+    
 
     // images
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);

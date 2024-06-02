@@ -22,6 +22,26 @@ class SettingsController extends Controller
         $this->settingsService = $settingsService;
     }
 
+    public function isJellyfinEnabled() {
+        try {
+            $isJellyfinEnabled = $this->settingsService->isJellyfinEnabled();
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json($isJellyfinEnabled, 200);
+    }
+
+    public function getAnkiSettings() {
+        try {
+            $ankiSettings = $this->settingsService->getAnkiSettings();
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json($ankiSettings, 200);
+    }
+
     // returns an array of global settings
     public function getGlobalSettingsByName(GetGlobalSettingsByNameRequest $request) {
         $settingNames = $request->post('settingNames');
