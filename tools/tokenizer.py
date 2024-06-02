@@ -22,6 +22,7 @@ import importlib
 import shutil
 import subprocess
 from newspaper import Article
+import spacy_stanza
 
 # create emtpy sapce models
 multi_nlp = None
@@ -122,7 +123,7 @@ def getTokenizerDoc(language, words):
     if language == 'finnish':
         global finnish_nlp
         if finnish_nlp == None:
-            finnish_nlp = spacy.load("fi_core_news_sm", disable = ['ner', 'parser'])
+            finnish_nlp = spacy_stanza.load_pipeline("fi", processors="tokenize,lemma")
             finnish_nlp.add_pipe("custom_sentence_splitter", first=True)
         doc = finnish_nlp(words)
     
