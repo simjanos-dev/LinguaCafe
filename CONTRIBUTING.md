@@ -115,14 +115,12 @@ If there is a change in docker-compose yml file, or in one of the dockerfiles, y
 
 Windows, Linux and regular MacOs:
 ```
-git pull
-docker compose -f ./docker-compose-dev.yml build
+docker compose -f ./docker-compose-dev.yml build --no-cache
 ```
 
 MacOs with Apple silicon processors
 ```
-git pull
-docker compose -f ./docker-compose-dev-macos.yml build
+docker compose -f ./docker-compose-dev-macos.yml build --no-cache
 ```
 
 #### Testing http requests
