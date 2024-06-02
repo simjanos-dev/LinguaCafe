@@ -30,6 +30,8 @@ Route::group(['middleware' => 'web'], function () {
 Route::group(['middleware' => ['auth', 'web']], function () {
 
     Route::group(['middleware' => 'admin'], function () {
+        Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
+        
         // users
         Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
         Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
@@ -70,8 +72,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
         Route::get('/dictionaries/delete/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
         Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
     });
-
-    Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
 
     // languages
     Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
@@ -126,7 +126,6 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/settings/user/update', [App\Http\Controllers\SettingsController::class, 'updateUserSettings']);
     Route::get('/settings/is-jellyfin-enabled', [App\Http\Controllers\SettingsController::class, 'isJellyfinEnabled']);
     Route::get('/settings/get-anki-settings', [App\Http\Controllers\SettingsController::class, 'getAnkiSettings']);
-    
 
     // images
     Route::get('/images/book_images/{fileName}', [App\Http\Controllers\ImageController::class, 'getBookImage']);
