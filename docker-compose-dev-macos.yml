@@ -66,4 +66,6 @@ services:
             - ./storage/app:/var/www/html/storage/app
         networks:
             - linguacafedev
+        environment:
+            PYTHONPATH: "/var/www/html/storage/app/model"
         platform: linux/amd64
