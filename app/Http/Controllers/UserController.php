@@ -13,6 +13,7 @@ use App\Services\UserService;
 use App\Http\Requests\Users\UpdatePasswordRequest;
 use App\Http\Requests\Users\CreateUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
+use App\Http\Requests\Users\AuthenticateUserRequest;
 
 class UserController extends Controller {
     private $userService;
@@ -37,6 +38,36 @@ class UserController extends Controller {
         }
 
         return response()->json($users, 200);
+    }
+
+    public function showLoginForm() {
+        $userCount = User::count();
+        $theme = $_COOKIE['theme'] ?? 'light';
+
+        if (Auth::check()) {
+            return redirect()->intended('/');
+        }
+
+        return view('auth.login', [
+            'userCount' => $userCount,
+            'theme' => $theme
+        ]);
+    }
+    
+    public function authenticateUser(AuthenticateUserRequest $request) {
+        $email = $request->post('email');
+        $password = $request->post('password');
+
+        if (Auth::attempt([
+            'email' => $email,
+            'password' => $password,
+        ])) {
+            $request->session()->regenerate();
+ 
+            return response()->json('User has been logged in successfully.', 200);
+        } else {
+            return response()->json('Login error.', 500);
+        }
     }
 
     public function updatePassword(UpdatePasswordRequest $request) {

@@ -196,7 +196,6 @@
             }
         },
         mounted() {
-            console.log(this.$props._isAdmin);
             // load default and selected font types into the dom
             var fontTypeService = new FontTypeService(this.selectedLanguage, this.$cookie, () => {
                 fontTypeService.loadSelectedFontTypeIntoDom();

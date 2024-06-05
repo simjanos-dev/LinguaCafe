@@ -35,6 +35,7 @@
                         maxlength="64"
                         :rules="[rules.nameLength]"
                         :disabled="saving"
+                        @keyup.enter="save"
                     ></v-text-field>
                     
                     <!-- E-mail -->
@@ -48,6 +49,7 @@
                         maxlength="64"
                         :rules="[rules.email]"
                         :disabled="saving"
+                        @keyup.enter="save"
                     ></v-text-field>
 
                     <template v-if="userId == -1">
@@ -64,6 +66,7 @@
                             style="overflow: hidden;"
                             :rules="[rules.password]"
                             :disabled="saving"
+                            @keyup.enter="save"
                         ></v-text-field>
 
                         <!-- Password confirmation -->
@@ -78,6 +81,7 @@
                             maxlength="32"
                             :rules="[rules.passwordMatch]"
                             :disabled="saving"
+                            @keyup.enter="save"
                         ></v-text-field>
                     </template>
 

@@ -69,8 +69,12 @@ class UserService {
 
         // check if user can be set to not admin
         if (!$isAdmin) {
-            $adminCount = User::where('is_admin', true)->count();
-            if ($adminCount < 2) {
+            $otherAdminAccounts = User
+                ::where('id', '<>', $userId)
+                ->where('is_admin', true)
+                ->count();
+
+            if ($otherAdminAccounts === 0) {
                 throw new \Exception('You cannot remove admin rights from the last admin user.');
             }
         }

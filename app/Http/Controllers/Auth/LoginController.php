@@ -39,14 +39,4 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function showLoginForm() {
-        $userCount = User::count();
-        $theme = $_COOKIE['theme'] ?? 'light';
-
-        return view('auth.login', [
-            'userCount' => $userCount,
-            'theme' => $theme
-        ]);
-    }
-
 }

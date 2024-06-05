@@ -23,6 +23,9 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
+                        Login page sometimes showed an error despite a successful login, especially after creating the first user.
+                    </li>
+                    <li>
                         Review page displayed no text after the user finished reviewing if it only had one card in total.
                     </li>
                     <li>
