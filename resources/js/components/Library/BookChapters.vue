@@ -118,7 +118,7 @@
                         </td>
                         <td class="text-center px-1">
                             <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">
-                                <template v-if="$props.wordCountDisplayType == 0">
+                                <template v-if="$props.wordCountDisplayType < 2">
                                     {{ formatNumber(chapter.wordCount.highlighted) }}
                                 </template>
                                 <template v-else>
@@ -128,7 +128,7 @@
                         </td>
                         <td class="text-center px-1">
                             <div class="info-table-value new-words px-2 rounded-xl mx-auto">
-                                <template v-if="$props.wordCountDisplayType == 0">
+                                <template v-if="$props.wordCountDisplayType < 2">
                                     {{ formatNumber(chapter.wordCount.new) }}
                                 </template>
                                 <template v-else>
@@ -239,7 +239,7 @@
                                     <td>Highlighted words:</td>
                                     <td class="text-center">
                                         <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">
-                                            <template v-if="wordCountDisplayType == 0">
+                                            <template v-if="wordCountDisplayType < 2">
                                                 {{ formatNumber(chapter.wordCount.highlighted) }}
                                             </template>
                                             <template v-else>
@@ -252,7 +252,7 @@
                                     <td>New words:</td>
                                     <td class="text-center">
                                         <div class="info-table-value new-words px-2 rounded-xl mx-auto">
-                                            <template v-if="wordCountDisplayType == 0">
+                                            <template v-if="wordCountDisplayType < 2">
                                                 {{ formatNumber(chapter.wordCount.new) }}
                                             </template>
                                             <template v-else>

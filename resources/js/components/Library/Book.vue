@@ -71,7 +71,7 @@
                                 <td width="200px">Highlighted words</td>
                                 <td class="text-center">
                                     <div class="info-table-value highlighted-words px-2 rounded-xl">
-                                        <template v-if="wordCountDisplayType == 0">
+                                        <template v-if="wordCountDisplayType < 2">
                                             {{ formatNumber(book.wordCount.highlighted) }}
                                         </template>
                                         <template v-else>
@@ -84,7 +84,7 @@
                                 <td width="200px">New words</td>
                                 <td class="text-center">
                                     <div class="info-table-value new-words px-2 rounded-xl">
-                                        <template v-if="wordCountDisplayType == 0">
+                                        <template v-if="wordCountDisplayType < 2">
                                             {{ formatNumber(book.wordCount.new) }}
                                         </template>
                                         <template v-else>
@@ -113,9 +113,14 @@
                     mandatory 
                     rounded 
                     dense
+                    @change="saveWordCountDisplayType"
+                    title="Word count display type"
                 >
                     <v-btn small class="px-1" min-width="40px">
                         <v-icon small>mdi-numeric</v-icon>
+                    </v-btn>
+                    <v-btn small class="px-1" min-width="40px">
+                        Mixed
                     </v-btn>
                     <v-btn small class="px-1" min-width="40px">
                         <v-icon small>mdi-percent</v-icon>
@@ -151,9 +156,16 @@
             book: Object
         },
         mounted() {
+            if (this.$cookie.get('word-count-display-type') !== null) {
+                this.wordCountDisplayType = parseInt(this.$cookie.get('word-count-display-type'));
+            }
+
             this.loadBookWordCounts();
         },
         methods: {
+            saveWordCountDisplayType() {
+                this.$cookie.set('word-count-display-type', this.wordCountDisplayType, 3650);
+            },
             addChapter() {
                 this.editBookChapterDialog.active = true;
                 this.editBookChapterDialog.bookId = this.book.id;
