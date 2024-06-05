@@ -54,7 +54,7 @@ class UserController extends Controller {
         ]);
     }
     
-    public function authenticateUser(Request $request) {
+    public function authenticateUser(AuthenticateUserRequest $request) {
         $email = $request->post('email');
         $password = $request->post('password');
 
