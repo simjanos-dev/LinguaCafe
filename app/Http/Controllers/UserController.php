@@ -37,6 +37,37 @@ class UserController extends Controller {
         return response()->json($users, 200);
     }
 
+    public function showLoginForm() {
+        $userCount = User::count();
+        $theme = $_COOKIE['theme'] ?? 'light';
+
+        if (Auth::check()) {
+            return redirect()->intended('/');
+        }
+
+        return view('auth.login', [
+            'userCount' => $userCount,
+            'theme' => $theme
+        ]);
+    }
+    
+    public function authenticateUser(Request $request) {
+        $email = $request->post('email');
+        $password = $request->post('password');
+
+        if (Auth::attempt([
+            'email' => $email,
+            'password' => $password,
+        ])) {
+            $request->session()->regenerate();
+            Auth::logoutOtherDevices($password);
+ 
+            return response()->json('User has been logged in successfully.', 200);
+        } else {
+            return response()->json('Login error.', 500);
+        }
+    }
+
     public function updatePassword(UpdatePasswordRequest $request) {
         $user = Auth::user();
         $password = $request->post('password');

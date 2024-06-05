@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 Auth::routes([
     'register' => false,
     'reset' => false,
-    'verify' => false
+    'verify' => false,
+    'login' => false,
 ]);
 
 /*
@@ -27,6 +28,10 @@ Route::group(['middleware' => 'web'], function () {
     Route::post('/users/create', [App\Http\Controllers\UserController::class, 'createUser']);
 });
 
+// login
+Route::get('/login', [App\Http\Controllers\UserController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\UserController::class, 'authenticateUser']);
+ 
 Route::group(['middleware' => ['auth', 'web']], function () {
     Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
 

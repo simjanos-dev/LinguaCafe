@@ -102,16 +102,6 @@
                     >
                         {{ error }}
                     </v-alert>
-
-                    <v-alert
-                        class="rounded-lg mt-4 mb-0"
-                        color="primary"
-                        type="info"
-                        border="left"
-                        dark
-                    >
-                        If logging in with the correct login information fails, please reload browser the page. There is a known bug that will be fixed soon.
-                    </v-alert>
                 </v-form>
             </v-card-text>
 
@@ -167,24 +157,6 @@
         mounted: function() {
         },
         methods: {
-            createFirstUser() {
-                this.loading = true;
-                axios.post('/login', {
-                    email: this.email,
-                    password: this.password,
-                    remember: true
-                }).then((response) => {
-                    if(response.data.length) {
-                        this.error = 'Invalid e-mail or password';
-                        this.loading = false;
-                    } else {
-                        window.location.href = "/";
-                    }
-                }).catch((error) => {
-                    this.loading = false;
-                    this.error = 'An error has occurred while creating the user.';
-                });
-            },
             addUserDialogSaved() {
                 this.addUserDialog = false;
                 this.firstUserAdded = true;
@@ -200,15 +172,15 @@
                     password: this.password,
                     remember: true
                 }).then((response) => {
-                    if(response.data.length) {
+                    if(response.status === 200) {
+                        window.location.href = "/";
+                    } else {
                         this.error = 'Invalid email or password';
                         this.loading = false;
-                    } else {
-                        window.location.href = "/";
                     }
                 }).catch((error) => {
-                    this.loading = false;
                     this.error = 'Invalid email or password';
+                    this.loading = false;
                 });
             },
             updateTheme() {
