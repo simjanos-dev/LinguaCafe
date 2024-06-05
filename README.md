@@ -82,6 +82,28 @@ Your server now should be running and accessible on http://localhost:9191.
 
 Although your server is set up and functional, please read the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup), because there are a few additional steps before you can use linguacafe, like installing languages and importing dictionaries.
 
+#### Install error troubleshooting
+<details>
+<summary><b>Mysql error while running the `docker compose up -d` command.</b></summary>
+
+Some Apple silicon users have encountered error messages like these: 
+```
+[+] Pulling 1/3 on
+✘ mysql Error context canceled 1.0s
+⠏ webserver [⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀] Pulling 1.0s
+⠏ python Pulling 1.0s
+no matching manifest for linux/arm64/v8 in the manifest list entries
+```
+
+We do not know why, but pulling the images individually fixes this error.
+
+Run these commands, then run `docker compose up -d` again:
+```
+docker pull --platform linux/arm64 ghcr.io/simjanos-dev/linguacafe-webserver:latest
+docker pull --platform linux/amd64 ghcr.io/simjanos-dev/linguacafe-python-service:latest
+```
+</details>
+
 ## Updating to the latest version 
 
 Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#backup).
