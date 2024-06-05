@@ -17,13 +17,14 @@
                     <li>Added filtering, sorting and pagination to the dictionary settings, font settings and library pages.</li>
                     <li>Replaced the dictionary import process. Now users can import dictionaries by file upload, instead of having to copy files into the storage directory.</li>
                     <li>Users now can delete and create DeepL dictionaries.</li>
-                    <li>Added support for deepl translation into multiple languages.</li>
+                    <li>Added support for DeepL translation into multiple languages.</li>
+                    <li>Added an option for % display of word counts on the chapters page.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
-                        Login page sometimes showed an error despite a successful login, especially after creating the first user.
+                        Login page sometimes showed an error despite a successful login, mostly after creating the first user.
                     </li>
                     <li>
                         Review page displayed no text after the user finished reviewing if it only had one card in total.
@@ -38,7 +39,7 @@
                         Fixed multi word touch selection with Apple pencils.
                     </li>
                     <li>
-                        Hover vocabulary now will move above the hovered word if there's no space to be displayed below it.
+                        Hover vocabulary now will move if there's not enough space for it to be displayed inside the reading area.
                     </li>
                     <li>
                         Admin settings cannot be saved anymore if a field is left empty.

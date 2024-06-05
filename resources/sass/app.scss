@@ -86,6 +86,21 @@
     }
 }
 
+// toggle button
+.v-item-group .v-btn.v-btn--active {
+    background-color: var(--v-primary-base) !important;
+    border-color: var(--v-primary-base) !important;
+    color: var(--v-foreground-base) !important;
+    
+    i {
+        color: var(--v-foreground-base) !important;
+    }
+
+    &:before {
+        opacity: 0;
+    }
+}
+
 // tab item
 .v-window.v-item-group:not(.no-background), 
 .v-window:not(.no-background) .v-window-item, 

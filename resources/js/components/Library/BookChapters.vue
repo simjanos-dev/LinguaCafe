@@ -108,9 +108,34 @@
                         <td class="default-font">{{ chapter.name }}</td>
                         <td class="text-center px-1">{{ formatNumber(chapter.wordCount.total) }}</td>
                         <td class="text-center px-1">{{ formatNumber(chapter.wordCount.unique) }}</td>
-                        <td class="text-center px-1">{{ formatNumber(chapter.wordCount.known) }}</td>
-                        <td class="text-center px-1"><div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">{{ formatNumber(chapter.wordCount.highlighted) }}</div></td>
-                        <td class="text-center px-1"><div class="info-table-value new-words px-2 rounded-xl mx-auto">{{ formatNumber(chapter.wordCount.new) }}</div></td>
+                        <td class="text-center px-1">
+                            <template v-if="$props.wordCountDisplayType == 0">
+                                {{ formatNumber(chapter.wordCount.known) }}
+                            </template>
+                            <template v-else>
+                                {{ (chapter.wordCount.known / chapter.wordCount.unique * 100).toFixed(1) }}%
+                            </template>
+                        </td>
+                        <td class="text-center px-1">
+                            <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">
+                                <template v-if="$props.wordCountDisplayType == 0">
+                                    {{ formatNumber(chapter.wordCount.highlighted) }}
+                                </template>
+                                <template v-else>
+                                    {{ (chapter.wordCount.highlighted / chapter.wordCount.unique * 100).toFixed(1) }}%
+                                </template>
+                            </div>
+                        </td>
+                        <td class="text-center px-1">
+                            <div class="info-table-value new-words px-2 rounded-xl mx-auto">
+                                <template v-if="$props.wordCountDisplayType == 0">
+                                    {{ formatNumber(chapter.wordCount.new) }}
+                                </template>
+                                <template v-else>
+                                    {{ (chapter.wordCount.new / chapter.wordCount.unique * 100).toFixed(1) }}%
+                                </template>
+                            </div>
+                        </td>
                         <td class="text-center">
                             <v-btn icon :to="'/chapters/read/' + chapter.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
                             <v-menu rounded offset-y bottom left nudge-top="-5">
@@ -150,6 +175,7 @@
                 </template>
             </tbody>
         </v-simple-table>
+        
         <!-- Mobile chapter list -->
         <div class="book-chapter-information-mobile-table border rounded-lg">
             <!-- Chapter skeletons -->
@@ -192,25 +218,48 @@
                             <tbody>
                                 <tr>
                                     <td>Total words:</td>
-                                    <td>{{ formatNumber(chapter.wordCount.total) }}</td>
+                                    <td class="text-center">{{ formatNumber(chapter.wordCount.total) }}</td>
                                 </tr>
                                 <tr>
                                     <td>Unique words:</td>
-                                    <td>{{ formatNumber(chapter.wordCount.unique) }}</td>
+                                    <td class="text-center">{{ formatNumber(chapter.wordCount.unique) }}</td>
                                 </tr>
                                 <tr>
                                     <td>Known words:</td>
-                                    <td>{{ formatNumber(chapter.wordCount.known) }}</td>
+                                    <td class="text-center">
+                                        <template v-if="$props.wordCountDisplayType == 0">
+                                            {{ formatNumber(chapter.wordCount.known) }}
+                                        </template>
+                                        <template v-else>
+                                            {{ (chapter.wordCount.known / chapter.wordCount.unique * 100).toFixed(1) }}%
+                                        </template>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Highlighted words:</td>
-                                    <td>
-                                        <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">{{ formatNumber(chapter.wordCount.highlighted) }}</div>
+                                    <td class="text-center">
+                                        <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">
+                                            <template v-if="wordCountDisplayType == 0">
+                                                {{ formatNumber(chapter.wordCount.highlighted) }}
+                                            </template>
+                                            <template v-else>
+                                                {{ (chapter.wordCount.highlighted / chapter.wordCount.unique * 100).toFixed(1) }}%
+                                            </template>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>New words:</td>
-                                    <div class="info-table-value new-words px-2 rounded-xl mx-auto">{{ formatNumber(chapter.wordCount.new) }}</div>
+                                    <td class="text-center">
+                                        <div class="info-table-value new-words px-2 rounded-xl mx-auto">
+                                            <template v-if="wordCountDisplayType == 0">
+                                                {{ formatNumber(chapter.wordCount.new) }}
+                                            </template>
+                                            <template v-else>
+                                                {{ (chapter.wordCount.new / chapter.wordCount.unique * 100).toFixed(1) }}%
+                                            </template>
+                                        </div>
+                                    </td>
                                 </tr>
 
                                 <td class="text-center px-1"></td>
@@ -291,6 +340,7 @@
         },
         props: {
             bookId: Number,
+            wordCountDisplayType: Number,
         },
         mounted() {
             this.loadChapters();
