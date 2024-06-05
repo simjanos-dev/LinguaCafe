@@ -54,7 +54,7 @@ class UserController extends Controller {
         ]);
     }
     
-    public function authenticateUser(AuthenticateUserRequest $request) {
+    public function authenticateUser(Request $request) {
         $email = $request->post('email');
         $password = $request->post('password');
 
@@ -63,6 +63,7 @@ class UserController extends Controller {
             'password' => $password,
         ])) {
             $request->session()->regenerate();
+            Auth::logoutOtherDevices($password);
  
             return response()->json('User has been logged in successfully.', 200);
         } else {

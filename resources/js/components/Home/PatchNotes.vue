@@ -58,6 +58,18 @@
         </v-card>
         
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.12.6<v-spacer /> 2024.06.05.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>
+                        Using the same LinguaCafe user on multiple devices with multiple languages caused database corruption in some very rare edge cases. Now whenever a user logs in on a device, other devices will be logged out to avoid this issue. This is a temporary solution.
+                    </li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.5<v-spacer /> 2024.06.01.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
@@ -70,7 +82,7 @@
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.12.5<v-spacer /> 2024.05.29.</v-card-title>
+            <v-card-title>v0.12.4<v-spacer /> 2024.05.29.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
                 <ul>
