@@ -13,13 +13,21 @@
     }
 }
 
-#text-reader-settings div.row {
-    .switch-container {
-        height: 50px !important;
+#text-reader-settings {
+    .v-window {
+        padding-top: 12px !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
     }
 
-    .slider-container {
-        height: 60px !important;
+    div.row {
+        .switch-container {
+            height: 50px !important;
+        }
+
+        .slider-container {
+            height: 60px !important;
+        }
     }
 }
 

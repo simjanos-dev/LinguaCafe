@@ -19,6 +19,8 @@
                     <li>Users now can delete and create DeepL dictionaries.</li>
                     <li>Added support for DeepL translation into multiple languages.</li>
                     <li>Added an option for % display of word counts on the chapters page.</li>
+                    <li>Added tabs to the text reader's settings dialog.</li>
+                    <li>Added an auto level words option, which automatically levels up words which the user did not click on while reading.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -43,6 +45,9 @@
                     </li>
                     <li>
                         Admin settings cannot be saved anymore if a field is left empty.
+                    </li>
+                    <li>
+                        Removed whitespace from the beginning of the tab selector UI element on mobile.
                     </li>
                 </ul>
 

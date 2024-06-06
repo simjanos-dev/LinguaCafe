@@ -101,6 +101,11 @@
     }
 }
 
+// tabs
+.v-slide-group__prev {
+    display: none !important;
+}
+
 // tab item
 .v-window.v-item-group:not(.no-background), 
 .v-window:not(.no-background) .v-window-item, 
@@ -506,9 +511,6 @@ a.v-btn.primary, a.v-btn.success, a.v-btn.error , a.v-btn.info, a.v-btn.purple {
 }
 
 div.v-data-table {
-    th {
-    }
-
     &.no-background {
         background-color: rgba(0, 0, 0, 0);
     }
