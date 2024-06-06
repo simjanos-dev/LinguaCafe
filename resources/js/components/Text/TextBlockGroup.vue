@@ -243,9 +243,9 @@
 
                 // text
                 words: [],
-                uniqueWords: this.$props._text.uniqueWords,
+                uniqueWords: JSON.parse(JSON.stringify(this.$props._text.uniqueWords)),
                 uniqueWordMap: new Map(),
-                phrases: this.$props._text.phrases,
+                phrases: JSON.parse(JSON.stringify(this.$props._text.phrases)),
 
                 textBlockKey: 0,
                 snackBars: [
@@ -1497,6 +1497,7 @@
                 let uniqueWordIndex = this.uniqueWordMap.get(word.toLowerCase());
 
                 this.uniqueWords[uniqueWordIndex].lookup_count ++;
+                this.uniqueWords[uniqueWordIndex].definitions_checked  = true;
                 for (var i  = 0; i < this.words.length; i++) {
                     if (this.words[i].word.toLowerCase() == word) {
                         this.words[i].lookup_count ++;
@@ -1505,6 +1506,7 @@
             },
             updatePhraseLookupCount(phraseIndex) {
                 this.phrases[phraseIndex].lookup_count ++;
+                this.phrases[phraseIndex].definitions_checked  = true;
             },
             updateSelectedWordLookupCount(id) {
 
@@ -1589,6 +1591,7 @@
                     words: [],
                     reading: this.vocabBox.reading,
                     translation: '',
+                    definitions_checked: true,
                 };
 
                 for (var i = 0; i < this.selection.length; i++) {
@@ -2082,6 +2085,34 @@
                 }
 
                 return trimmedSearchTerm;
+            },
+            getLeveledUpWordsAndPhrases() {
+                let data = {
+                    wordIds: [],
+                    phraseIds: [],
+                    wordsAndPhrases: [],
+                }
+
+                // collect words
+                this.uniqueWords.forEach((word) => {
+                    if (!word.definitions_checked && word.stage < 0) {
+                        data.wordIds.push(word.id);
+                        data.wordsAndPhrases.push(word);
+                        data.wordsAndPhrases[data.wordsAndPhrases.length - 1].type = 'word';
+                    }
+                });
+
+                // collect phrases
+                this.phrases.forEach((phrase) => {
+                    if (!phrase.definitions_checked && phrase.stage < 0) {
+                        data.phraseIds.push(phrase.id);
+                        data.wordsAndPhrases.push(phrase);
+                        data.wordsAndPhrases[data.wordsAndPhrases.length - 1].type = 'phrase';
+                    }
+                });
+                
+                console.log(data);
+                return data;
             }
         }
     }

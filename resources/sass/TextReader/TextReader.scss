@@ -104,15 +104,19 @@
     }
 }
 
-#finished-box {
-    #finished-stats {
-        width: 360px;
-        margin: auto;
-        margin-bottom: 20px;
+.finished-box {
+    .finished-stage-level {
+        display: inline-block;
+        background-color: var(--v-highlightedWordLevel7-base);
+        color: var(--v-text-base);
+        min-width: 46px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+    }
 
-        td:nth-child(2), th {
-            text-align: center;
-        }
+    .finished-stage-arrow {
+        margin-bottom: 2px;
     }
 }
 
@@ -121,10 +125,6 @@
     #reader-box{
         max-width: calc(100% - 8px);
     }
-}
-
-@media (max-width: 767px) {
-    
 }
 
 @media (max-width: 650px) {

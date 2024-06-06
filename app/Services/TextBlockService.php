@@ -481,6 +481,7 @@ class TextBlockService
 
         for ($phraseIndex = 0; $phraseIndex < count($this->phrases); $phraseIndex++) {
             $this->phrases[$phraseIndex]->words = json_decode($this->phrases[$phraseIndex]->words);
+            $this->phrases[$phraseIndex]->definitions_checked = false;
         }
 
         for ($wordIndex = 0; $wordIndex < count($this->words); $wordIndex ++) {
@@ -555,6 +556,10 @@ class TextBlockService
         }
 
         $this->uniqueWords = $encounteredWords;
+
+        foreach ($this->uniqueWords as $uniqueWord) {
+            $uniqueWord->definitions_checked = false;
+        }
     }
 
     /*

@@ -332,6 +332,13 @@
 }
 
 
+// text reader finished
+.finished-box {
+    .finished-stage-level {
+        color: var(--v-textDark-base);
+    }
+}
+
 // text reader chapter list
 #app.dark #text-reader-chapter-list {
     span.highlighted{

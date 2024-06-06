@@ -29,7 +29,7 @@ class ChapterController extends Controller {
         
         try {
             $chapters = $this->chapterService->getChaptersForBook($userId, $bookId);
-        } catch (\Exemption $e) {
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
@@ -42,7 +42,7 @@ class ChapterController extends Controller {
 
         try {
             $chapter = $this->chapterService->getChapterForEditor($userId, $chapterId);
-        } catch (\Exemption $e) {
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
@@ -53,10 +53,11 @@ class ChapterController extends Controller {
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
         $chapterId = $request->chapterId;
+        $languagesWithoutSpaces = config('linguacafe.languages.languages_without_spaces');
         
         try {
-            $chapter = $this->chapterService->getChapterForReader($userId, $language, $chapterId);
-        } catch (\Exemption $e) {
+            $chapter = $this->chapterService->getChapterForReader($userId, $language, $languagesWithoutSpaces, $chapterId);
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
@@ -67,12 +68,14 @@ class ChapterController extends Controller {
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
         $uniqueWords = json_decode($request->uniqueWords);
+        $leveledUpWords = json_decode($request->leveledUpWords);
+        $leveledUpPhrases = json_decode($request->leveledUpPhrases);
         $autoMoveWordsToKnown = boolval($request->autoMoveWordsToKnown);
         $chapterId = $request->chapterId;
 
         try {
-            $this->chapterService->finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $language);
-        } catch (\Exemption $e) {
+            $this->chapterService->finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $leveledUpWords, $leveledUpPhrases, $language);
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
@@ -87,7 +90,7 @@ class ChapterController extends Controller {
 
         try {
             $this->chapterService->createChapter($userId, $bookId, $chapterName, $chapterText);
-        } catch (\Exemption $e) {
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
@@ -102,7 +105,7 @@ class ChapterController extends Controller {
 
         try {
             $this->chapterService->updateChapter($userId, $chapterId, $chapterName, $chapterText);
-        } catch (\Exemption $e) {
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
@@ -115,7 +118,7 @@ class ChapterController extends Controller {
 
         try {
             $this->chapterService->deleteChapter($userId, $chapterId);
-        } catch (\Exemption $e) {
+        } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 

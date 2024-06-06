@@ -9,6 +9,7 @@ use App\Services\BookService;
 use App\Services\TextBlockService;
 
 use App\Models\Book;
+use App\Models\Phrase;
 use App\Models\Chapter;
 use App\Models\EncounteredWord;
 
@@ -70,7 +71,7 @@ class ChapterService {
         return $chapter;
     }
 
-    public function getChapterForReader($userId, $language, $chapterId) {
+    public function getChapterForReader($userId, $language, $languagesWithoutSpaces, $chapterId) {
         $chapter = Chapter
             ::where('id', $chapterId)
             ->where('user_id', $userId)
@@ -124,13 +125,14 @@ class ChapterService {
         $data->chapterName = $chapter->name;
         $data->bookId = $book->id;
         $data->language = $chapter->language;
+        $data->languageSpaces = !in_array($language, $languagesWithoutSpaces, true);
         $data->chapters = $chapters;
         $data->wordCount = $chapter->word_count;
         
         return $data;
     }
 
-    public function finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $language) {
+    public function finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $leveledUpWords, $leveledUpPhrases, $language) {
         // automove words that the user sees the first time,
         // but they already know it to learned stage.
         DB::beginTransaction();
@@ -167,6 +169,38 @@ class ChapterService {
 
         // updage today's reading achievement
         (new GoalService())->updateGoalAchievement($userId, $language, 'read_words', $chapter->word_count);
+
+        // level up phrases
+        foreach ($leveledUpPhrases as $phraseId) {
+            $phrase = Phrase
+                ::where('id', $phraseId)
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->first();
+
+            if (!$phrase) {
+                throw new \Exception('Leveled up phrase not found.');
+            }
+
+            $phrase->setStage($phrase->stage + 1);
+            $phrase->save();
+        }
+
+        // level up words
+        foreach ($leveledUpWords as $wordId) {
+            $word = EncounteredWord
+                ::where('id', $wordId)
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->first();
+
+            if (!$word) {
+                throw new \Exception('Leveled up word not found.');
+            }
+
+            $word->setStage($word->stage + 1);
+            $word->save();  
+        }
 
         return true;
     }
