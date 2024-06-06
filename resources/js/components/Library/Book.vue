@@ -24,7 +24,6 @@
                     <v-card-title class="book-title pa-3">
                         <div class="book-title-text default-font">{{ book.name }}</div>
                         <v-spacer></v-spacer>
-                        <v-btn icon @click.stop="closeBook"><v-icon>mdi-arrow-left</v-icon></v-btn>
                         <v-menu content-class="book-menu" rounded offset-y bottom left nudge-top="-5">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
@@ -34,6 +33,7 @@
                             <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog()">Review</v-btn>
                             <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog()">Delete</v-btn>
                         </v-menu>
+                        <v-btn icon @click.stop="closeBook"><v-icon>mdi-close</v-icon></v-btn>
                     </v-card-title>
 
                     <!-- Word counts loading animation -->

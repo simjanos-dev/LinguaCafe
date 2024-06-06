@@ -36,275 +36,110 @@
             :chapter-name="startReviewDialog.chapterName">
         </start-review-dialog>
         
-        <!-- Desktop chapter list -->
-        <v-simple-table class="book-chapter-information-table no-hover">
-            <thead>
-                <tr>
-                    <th class="text-center">Chapter</th>
-                    <th class="text-center px-1" >Total</th>
-                    <th class="text-center px-1" >Unique</th>
-                    <th class="text-center px-1" >Known</th>
-                    <th class="text-center px-1" >Highlighted</th>
-                    <th class="text-center px-1" >New</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Chapter list skeleton loader -->
-                <template v-if="chaptersLoading">
-                    <tr v-for="index in 4" :key="index" class="skeleton-row">
-                        <td>
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                        <td class="text-center">
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                        <td class="text-center">
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                        <td class="text-center">
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                        <td class="text-center">
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                        <td class="text-center">
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                        <td class="text-center">
-                            <v-skeleton-loader
-                                class="rounded-pill mr-2"
-                                type="card"
-                            ></v-skeleton-loader>
-                            <v-skeleton-loader
-                                class="rounded-pill"
-                                type="card"
-                            ></v-skeleton-loader>
-                        </td>
-                    </tr>
-                </template>
 
-                <!-- Chapter list -->
-                <template v-if="!chaptersLoading">
-                    <tr v-for="(chapter, index) in chapters" :key="index">
-                        <td class="default-font">{{ chapter.name }}</td>
-                        <td class="text-center px-1">{{ formatNumber(chapter.wordCount.total) }}</td>
-                        <td class="text-center px-1">{{ formatNumber(chapter.wordCount.unique) }}</td>
-                        <td class="text-center px-1">
-                            <template v-if="$props.wordCountDisplayType == 0">
-                                {{ formatNumber(chapter.wordCount.known) }}
-                            </template>
-                            <template v-else>
-                                {{ (chapter.wordCount.known / chapter.wordCount.unique * 100).toFixed(1) }}%
-                            </template>
-                        </td>
-                        <td class="text-center px-1">
-                            <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">
-                                <template v-if="$props.wordCountDisplayType < 2">
-                                    {{ formatNumber(chapter.wordCount.highlighted) }}
-                                </template>
-                                <template v-else>
-                                    {{ (chapter.wordCount.highlighted / chapter.wordCount.unique * 100).toFixed(1) }}%
-                                </template>
-                            </div>
-                        </td>
-                        <td class="text-center px-1">
-                            <div class="info-table-value new-words px-2 rounded-xl mx-auto">
-                                <template v-if="$props.wordCountDisplayType < 2">
-                                    {{ formatNumber(chapter.wordCount.new) }}
-                                </template>
-                                <template v-else>
-                                    {{ (chapter.wordCount.new / chapter.wordCount.unique * 100).toFixed(1) }}%
-                                </template>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <v-btn icon :to="'/chapters/read/' + chapter.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
-                            <v-menu rounded offset-y bottom left nudge-top="-5">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
-                                </template>
-                                <v-btn
-                                    width="100"
-                                    class="menu-button"
-                                    tile
-                                    color="white"
-                                    @click="showEditChapterDialog(chapter.id)"
-                                >
-                                    Edit
-                                </v-btn>
-                                <v-btn
-                                    width="100"
-                                    class="menu-button"
-                                    tile
-                                    color="white"
-                                    @click="showStartReviewDialog(book.id, book.name, chapter.id, chapter.name)"
-                                >
-                                    Review
-                                </v-btn>
-                                <v-btn
-                                    width="100"
-                                    class="menu-button"
-                                    tile
-                                    color="white"
-                                    @click="showDeleteChapterDialog(chapter)"
-                                >
-                                    Delete
-                                </v-btn>
-                            </v-menu>
-                        </td>
-                    </tr>
+        <!-- Chapter list -->
+        <v-data-table
+            class="my-4 mb-0 no-hover"
+            :headers="[
+                { text: 'Chapter', value: 'name'},
+                { text: 'Total', value: 'wordCount.total', align: 'center'},
+                { text: 'Unique', value: 'wordCount.unique', align: 'center'},
+                { text: 'Known', value: 'wordCount.known', align: 'center'},
+                { text: 'Highlighted', value: 'wordCount.highlighted', align: 'center'},
+                { text: 'New', value: 'wordCount.new', align: 'center'},
+                { text: 'Actions', value: 'actions', sortable: false},
+            ]"
+            :items="chapters"
+            :loading="chaptersLoading"
+            :items-per-page="-1"
+            hide-default-footer
+        >
+            <!-- Total words -->
+            <template v-slot:item.wordCount.total="{ item }">
+                {{ formatNumber(item.wordCount.total) }}
+            </template>
+
+            <!-- Unique words -->
+            <template v-slot:item.wordCount.unique="{ item }">
+                {{ formatNumber(item.wordCount.unique) }}
+            </template>
+
+            <!-- Known words -->
+            <template v-slot:item.wordCount.known="{ item }">
+                <template v-if="$props.wordCountDisplayType == 0">
+                    {{ formatNumber(item.wordCount.known) }}
                 </template>
-            </tbody>
-        </v-simple-table>
-        
-        <!-- Mobile chapter list -->
-        <div class="book-chapter-information-mobile-table border rounded-lg">
-            <!-- Chapter skeletons -->
-            <template v-if="chaptersLoading">
-            <v-card
-                    v-for="index in 4" :key="index"
-                    class="expansion-card"
-                    elevation="0"
-                >
-                <v-card-title class="expansion-card-title py-3 px-2" @click="toggleExpansion(index)">
-                    <v-skeleton-loader
-                        class="rounded-pill"
-                        type="card"
-                    ></v-skeleton-loader>
-                    
+                <template v-else>
+                    {{ (item.wordCount.known / item.wordCount.unique * 100).toFixed(1) }}%
+                </template>
+            </template>
+
+            <!-- Highlighted words -->
+            <template v-slot:item.wordCount.highlighted="{ item }">
+                <div class="highlighted-words px-2 rounded-xl mx-auto">
+                    <template v-if="$props.wordCountDisplayType < 2">
+                        {{ formatNumber(item.wordCount.highlighted) }}
+                    </template>
+                    <template v-else>
+                        {{ (item.wordCount.highlighted / item.wordCount.unique * 100).toFixed(1) }}%
+                    </template>
+                </div>
+            </template>
+
+
+            <!-- New words -->
+            <template v-slot:item.wordCount.new="{ item }">
+                <div class="new-words px-2 rounded-xl mx-auto">
+                    <template v-if="$props.wordCountDisplayType < 2">
+                        {{ formatNumber(item.wordCount.new) }}
+                    </template>
+                    <template v-else>
+                        {{ (item.wordCount.new / item.wordCount.unique * 100).toFixed(1) }}%
+                    </template>
+                </div>
+            </template>
+
+            <!-- Actions -->
+            <template v-slot:item.actions="{ item }">
+                <div class="d-flex justify-center">
                     <v-spacer />
-                    
-                    <v-skeleton-loader
-                        class="rounded-pill"
-                        type="card"
-                    ></v-skeleton-loader>
-                </v-card-title>
-            </v-card>
+                    <v-btn icon :to="'/chapters/read/' + item.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
+                        <v-menu rounded offset-y bottom left nudge-top="-5">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
+                            </template>
+                            <v-btn
+                                width="100"
+                                class="menu-button"
+                                tile
+                                color="white"
+                                @click="showEditChapterDialog(item.id)"
+                            >
+                                Edit
+                            </v-btn>
+                            <v-btn
+                                width="100"
+                                class="menu-button"
+                                tile
+                                color="white"
+                                @click="showStartReviewDialog(book.id, book.name, item.id, item.name)"
+                            >
+                                Review
+                            </v-btn>
+                            <v-btn
+                                width="100"
+                                class="menu-button"
+                                tile
+                                color="white"
+                                @click="showDeleteChapterDialog(chapter)"
+                            >
+                                Delete
+                            </v-btn>
+                        </v-menu>
+                    </v-btn>
+                </div>
             </template>
-
-            <!-- Chapters -->
-            <template v-if="!chaptersLoading">
-                <v-card
-                    v-for="(chapter, index) in chapters" :key="index"
-                    :class="{'expansion-card': true, 'open': chapter.expanded}"
-                    elevation="0"
-                >
-                    <v-card-title class="expansion-card-title default-font py-3 px-2" @click="toggleExpansion(index)">
-                        {{ chapter.name }}
-                        <v-spacer />
-                        <v-icon class="mr-4">{{ chapter.expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-                    </v-card-title>
-                    <v-card-text class="expansion-card-content">
-                        <v-simple-table dense class="expansion-table no-hover no-lines">
-                            <tbody>
-                                <tr>
-                                    <td>Total words:</td>
-                                    <td class="text-center">{{ formatNumber(chapter.wordCount.total) }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Unique words:</td>
-                                    <td class="text-center">{{ formatNumber(chapter.wordCount.unique) }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Known words:</td>
-                                    <td class="text-center">
-                                        <template v-if="$props.wordCountDisplayType == 0">
-                                            {{ formatNumber(chapter.wordCount.known) }}
-                                        </template>
-                                        <template v-else>
-                                            {{ (chapter.wordCount.known / chapter.wordCount.unique * 100).toFixed(1) }}%
-                                        </template>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Highlighted words:</td>
-                                    <td class="text-center">
-                                        <div class="info-table-value highlighted-words px-2 rounded-xl mx-auto">
-                                            <template v-if="wordCountDisplayType < 2">
-                                                {{ formatNumber(chapter.wordCount.highlighted) }}
-                                            </template>
-                                            <template v-else>
-                                                {{ (chapter.wordCount.highlighted / chapter.wordCount.unique * 100).toFixed(1) }}%
-                                            </template>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>New words:</td>
-                                    <td class="text-center">
-                                        <div class="info-table-value new-words px-2 rounded-xl mx-auto">
-                                            <template v-if="wordCountDisplayType < 2">
-                                                {{ formatNumber(chapter.wordCount.new) }}
-                                            </template>
-                                            <template v-else>
-                                                {{ (chapter.wordCount.new / chapter.wordCount.unique * 100).toFixed(1) }}%
-                                            </template>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <td class="text-center px-1"></td>
-                            </tbody>
-                        </v-simple-table>
-                        <div class="d-flex mt-4">
-                            <v-spacer />
-                            <v-btn rounded text :to="'/chapters/read/' + chapter.id" title="Read">Read</v-btn>
-                            <v-menu rounded offset-y bottom left nudge-top="-5">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
-                                </template>
-                                <v-btn
-                                    width="100"
-                                    class="menu-button"
-                                    tile
-                                    color="white"
-                                    @click="showEditChapterDialog(chapter.id)"
-                                >
-                                    Edit
-                                </v-btn>
-                                <v-btn
-                                    width="100"
-                                    class="menu-button"
-                                    tile
-                                    color="white"
-                                    @click="showStartReviewDialog(book.id, book.name, chapter.id, chapter.name)"
-                                >
-                                    Review
-                                </v-btn>
-                                <v-btn
-                                    width="100"
-                                    class="menu-button"
-                                    tile
-                                    color="white"
-                                    @click="showDeleteChapterDialog(chapter)"
-                                >
-                                    Delete
-                                </v-btn>
-                            </v-menu>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </template>
-        </div>
+        </v-data-table>
     </v-container>
 </template>
 
