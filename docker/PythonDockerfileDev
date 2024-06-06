@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM python:slim
 
 WORKDIR /app
 RUN apt-get update -y \
