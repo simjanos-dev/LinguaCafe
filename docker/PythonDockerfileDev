@@ -6,6 +6,8 @@ RUN addgroup --gid 1000 laravel \
     && adduser --ingroup laravel --disabled-password --gecos "" --shell /bin/sh laravel
 USER laravel
 
+ENV PYTHONPATH="/var/www/html/storage/app/model"
+
 RUN pip install -U --no-cache-dir \
         setuptools \
         wheel \
