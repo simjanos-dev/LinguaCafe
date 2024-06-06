@@ -26,6 +26,7 @@ class FinishChapterRequest extends FormRequest
         return [
             'chapterId' => 'required|numeric|gte:0',
             'uniqueWords' => 'required|json',
+            'autoLevelUpWords' => 'required|boolean',
             'leveledUpWords' => 'required|json',
             'leveledUpPhrases' => 'required|json',
             'autoMoveWordsToKnown' => 'required|boolean',

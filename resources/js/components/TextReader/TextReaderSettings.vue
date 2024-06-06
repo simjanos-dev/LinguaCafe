@@ -197,6 +197,27 @@
                     </v-col>
                 </v-row>
 
+                <!-- Auto level up words -->
+                <v-row>
+                    <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Auto level up words:</v-col>
+                    <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                        <v-menu offset-y left nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="mr-2" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                Clicking the 'Finished reading' button will automatically level up any words and phrases for which you haven't opened the vocabulary box.
+                            </v-card>
+                        </v-menu>
+
+                        <v-switch
+                            color="primary"
+                            v-model="settings.autoLevelUpWords"
+                            @change="saveSettings"
+                        ></v-switch>
+                    </v-col>
+                </v-row>
+
                 <!-- Vocabulary box section-->
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Vocabulary box
@@ -415,7 +436,8 @@
                     vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
                     vocabularyHoverBoxPreferredPosition: 'vocabulary-hover-box-preferred-position',
-                    autoHighlightWords: 'auto-highlight-words'
+                    autoHighlightWords: 'auto-highlight-words',
+                    autoLevelUpWords: 'auto-level-up-words'
                 },
                 settings: {},
                 vocabularyHoverBoxPreferredPositionData: [
@@ -468,6 +490,7 @@
             this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
             this.loadSetting('vocabularyHoverBoxPreferredPosition', 'string', 'bottom');
             this.loadSetting('autoHighlightWords', 'boolean', true);
+            this.loadSetting('autoLevelUpWords', 'boolean', false);
             this.settingsLoaded = true;
             this.saveSettings();
 
@@ -523,6 +546,7 @@
                 this.saveSetting('vocabularyHoverBoxDelay');
                 this.saveSetting('vocabularyHoverBoxPreferredPosition');
                 this.saveSetting('autoHighlightWords');
+                this.saveSetting('autoLevelUpWords');
 
                 // save text to speech
                 if (this.textTospeechSelectedVoice !== null) {

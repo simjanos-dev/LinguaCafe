@@ -148,7 +148,7 @@
                         </template>
 
                         <!-- Leveled up words -->
-                        <template v-if="leveledUpWordsAndPhrases.wordsAndPhrases.length">
+                        <template v-if="settings.autoLevelUpWords && leveledUpWordsAndPhrases.wordsAndPhrases.length">
                             <div class="subheader mt-8">Leveled up words</div>
                             <v-data-table
                                 class="no-hover"
@@ -192,6 +192,7 @@
                     <v-btn 
                         rounded 
                         depressed 
+                        :disabled="saving"
                         color="primary" 
                         @click="$router.push('/books/' + bookId)"
                     >
@@ -202,6 +203,7 @@
                         v-if="nextChapter !== -1"
                         rounded 
                         depressed 
+                        :disabled="saving"
                         color="primary" 
                         :to="'/chapters/read/' + nextChapter" 
                     >
@@ -250,7 +252,8 @@
                     vocabularyHoverBoxSearch: true,
                     vocabularyHoverBoxDelay: 300,
                     vocabularyHoverBoxPreferredPosition: 'bottom',
-                    autoHighlightWords: true
+                    autoHighlightWords: true,
+                    autoLevelUpWords: false
                 },
                 fullscreenMode: false,
                 newlySavedWords: 0,
@@ -459,6 +462,7 @@
 
                 axios.post('/chapters/finish', {
                     uniqueWords: JSON.stringify(this.$refs.interactiveText.uniqueWords),
+                    autoLevelUpWords: this.settings.autoLevelUpWords,
                     leveledUpWords: JSON.stringify(this.leveledUpWordsAndPhrases.wordIds),
                     leveledUpPhrases: JSON.stringify(this.leveledUpWordsAndPhrases.phraseIds),
                     phrases: JSON.stringify(this.$refs.interactiveText.phrases),

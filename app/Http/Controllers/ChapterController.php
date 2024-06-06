@@ -67,14 +67,15 @@ class ChapterController extends Controller {
     public function finishChapter(FinishChapterRequest $request) {
         $userId = Auth::user()->id;
         $language = Auth::user()->selected_language;
-        $uniqueWords = json_decode($request->uniqueWords);
-        $leveledUpWords = json_decode($request->leveledUpWords);
-        $leveledUpPhrases = json_decode($request->leveledUpPhrases);
-        $autoMoveWordsToKnown = boolval($request->autoMoveWordsToKnown);
+        $uniqueWords = json_decode($request->post('uniqueWords'));
+        $autoLevelUpWords = $request->post('autoLevelUpWords');
+        $leveledUpWords = json_decode($request->post('leveledUpWords'));
+        $leveledUpPhrases = json_decode($request->post('leveledUpPhrases'));
+        $autoMoveWordsToKnown = boolval($request->post('autoMoveWordsToKnown'));
         $chapterId = $request->chapterId;
 
         try {
-            $this->chapterService->finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $leveledUpWords, $leveledUpPhrases, $language);
+            $this->chapterService->finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $autoLevelUpWords, $leveledUpWords, $leveledUpPhrases, $language);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }

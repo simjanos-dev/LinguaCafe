@@ -132,7 +132,7 @@ class ChapterService {
         return $data;
     }
 
-    public function finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $leveledUpWords, $leveledUpPhrases, $language) {
+    public function finishChapter($userId, $chapterId, $autoMoveWordsToKnown, $uniqueWords, $autoLevelUpWords, $leveledUpWords, $leveledUpPhrases, $language) {
         // automove words that the user sees the first time,
         // but they already know it to learned stage.
         DB::beginTransaction();
@@ -171,6 +171,10 @@ class ChapterService {
         (new GoalService())->updateGoalAchievement($userId, $language, 'read_words', $chapter->word_count);
 
         // level up phrases
+        if (!$autoLevelUpWords) {
+            return true;
+        }
+
         foreach ($leveledUpPhrases as $phraseId) {
             $phrase = Phrase
                 ::where('id', $phraseId)
