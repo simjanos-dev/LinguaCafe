@@ -23,43 +23,49 @@
         </div>
 
         <!-- User list -->
-        <v-simple-table id="User" class="no-hover border rounded-lg">
-            <thead>
-                <tr>
-                    <th class="text-center">Name</th>
-                    <th class="text-center">E-mail</th>
-                    <th class="text-center">Created</th>
-                    <th class="text-center">Admin</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(user, userIndex) in users">
-                    <td class="text-center">{{ user.name }}</td>
-                    <td class="text-center">{{ user.email }}</td>
-                    <td class="text-center">{{ user.created_at_text }}</td>
-                    <td class="text-center">
-                        {{ user.is_admin ? 'Yes' : 'No' }}
-                    </td>
-                    <td class="text-center">
-                        <v-btn
-                            icon
-                            title="Edit"
-                            @click="editUser(user)"
-                        >
-                            <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                        <!-- <v-btn
-                            icon
-                            title="Delete"
-                            color="error"
-                        >
-                            <v-icon>mdi-delete</v-icon>
-                        </v-btn> -->
-                    </td>
-                </tr>
-            </tbody>
-        </v-simple-table>
+        <v-card outlined class="rounded-lg pa-2 pb-0 mb-32">
+            <v-card-title>
+                <v-text-field
+                    v-model="usersFilter"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    filled
+                    dense
+                    hide-details
+                    single-line
+                    rounded
+                ></v-text-field>
+            </v-card-title>
+            <v-data-table
+                class="my-4 mb-0 no-hover"
+                :headers="[
+                    { text: 'Name', value: 'name' },
+                    { text: 'E-mail', value: 'email' },
+                    { text: 'Created', value: 'created_at_text', align: 'center' },
+                    { text: 'Admin', value: 'is_admin', align: 'center' },
+                    { text: 'Actions', value: 'actions', align: 'center', sortable: false },
+                ]"
+                :items="users"
+                :loading="loading"
+                :search="usersFilter"
+            >
+                <!-- Admin -->
+                <template v-slot:item.is_admin="{ item }">
+                    {{ item.is_admin ? 'Yes' : 'No' }}
+                </template>
+
+                <!-- Actions -->
+                <template v-slot:item.actions="{ item }">
+                    <v-btn
+                        icon
+                        title="Edit"
+                        @click="editUser(item)"
+                    >
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                </template>
+            </v-data-table>
+        </v-card>
     </div>
 </template>
 
@@ -68,6 +74,8 @@
     export default {
         data: function() {
             return {
+                loading: false,
+                usersFilter: '',
                 editDialog: {
                     active: false,
                     userId: -1,
@@ -107,7 +115,9 @@
             },
             loadUsers() {
                 this.users = [];
+                this.loading = true;
                 axios.get('/users/get').then((response) => {
+                    this.loading = false;
                     this.users = response.data;
                 });
             }

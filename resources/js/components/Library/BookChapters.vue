@@ -42,12 +42,12 @@
             class="my-4 mb-0 no-hover"
             :headers="[
                 { text: 'Chapter', value: 'name'},
-                { text: 'Total', value: 'wordCount.total', align: 'center'},
-                { text: 'Unique', value: 'wordCount.unique', align: 'center'},
-                { text: 'Known', value: 'wordCount.known', align: 'center'},
-                { text: 'Highlighted', value: 'wordCount.highlighted', align: 'center'},
-                { text: 'New', value: 'wordCount.new', align: 'center'},
-                { text: 'Actions', value: 'actions', sortable: false},
+                { text: 'Total', value: 'wordCount.total', align: 'center' },
+                { text: 'Unique', value: 'wordCount.unique', align: 'center' },
+                { text: 'Known', value: 'wordCount.known', align: 'center' },
+                { text: 'Highlighted', value: 'wordCount.highlighted', align: 'center' },
+                { text: 'New', value: 'wordCount.new', align: 'center' },
+                { text: 'Actions', value: 'actions', sortable: false },
             ]"
             :items="chapters"
             :loading="chaptersLoading"

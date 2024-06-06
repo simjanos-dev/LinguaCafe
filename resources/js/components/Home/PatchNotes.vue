@@ -14,7 +14,7 @@
                     <li>Added support for multiple users.</li>
                     <li>Added an import option for e-books that lets users order the chapters based on the e-book's spine metadata. In some rare cases, this will fix incorrect chapter order for imported e-books.</li>
                     <li>Added an option to set preferred hover vocabulary position. Now it can appear both above or below the hovered words based on the selected setting.</li>
-                    <li>Added filtering, sorting and pagination to the dictionary settings, font settings, library and chapters pages.</li>
+                    <li>Added filtering, sorting and pagination to the user settings, dictionary settings, font settings, library and chapters pages.</li>
                     <li>Replaced the dictionary import process. Now users can import dictionaries by file upload, instead of having to copy files into the storage directory.</li>
                     <li>Users now can delete and create DeepL dictionaries.</li>
                     <li>Added support for DeepL translation into multiple languages.</li>
