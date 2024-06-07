@@ -23,8 +23,8 @@ services:
             DB_DATABASE: linguacafe-dev
             DB_USERNAME: linguacafe-dev
             DB_PASSWORD: linguacafe-dev
-            DB_HOST: ${DB_HOST:-linguacafe-database-dev}
-            DB_PORT: ${DB_PORT:-3306}
+            DB_HOST: linguacafe-database-dev
+            DB_PORT: 3306
         ports:
             - "3000:3000"
             - "81:80"
