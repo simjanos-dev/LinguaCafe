@@ -82,7 +82,6 @@ Vue.component('edit-goal-dialog', EditGoalDialog);
 Vue.component('statistics', Statistics);
 
 // text
-import TextBlock from './components/Text/TextBlock.vue';
 import TextBlockGroup from './components/Text/TextBlockGroup.vue';
 import VocabularyBox from './components/Text/VocabularyBox.vue';
 import VocabularyBottomSheet from './components/Text/VocabularyBottomSheet.vue';
@@ -90,7 +89,6 @@ import VocabularyHoverBox from './components/Text/VocabularyHoverBox.vue';
 import VocabularySideBox from './components/Text/VocabularySideBox.vue';
 import VocabularySearchBox from './components/Text/VocabularySearchBox.vue';
 import DeletePhraseDialog from './components/Text/DeletePhraseDialog.vue';
-Vue.component('text-block', TextBlock);
 Vue.component('text-block-group', TextBlockGroup);
 Vue.component('vocabulary-box', VocabularyBox);
 Vue.component('vocabulary-bottom-sheet', VocabularyBottomSheet);

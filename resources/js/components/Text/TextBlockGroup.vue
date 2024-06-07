@@ -247,7 +247,6 @@
                 uniqueWordMap: new Map(),
                 phrases: JSON.parse(JSON.stringify(this.$props._text.phrases)),
 
-                textBlockKey: 0,
                 snackBars: [
                 ],
                 snackbarId: 1,
@@ -1472,7 +1471,6 @@
                 this.unselectAllWordsProcess();
                 this.removePhraseHover();
                 this.hoverVocabBox.disabledWhileSelecting = false;
-                this.textBlockKey ++;
             },
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
