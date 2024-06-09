@@ -22,6 +22,7 @@
                     <li>Added tabs to the text reader's settings dialog.</li>
                     <li>Added an auto level words option, which automatically levels up words which the user did not click on while reading.</li>
                     <li>Added a hotkey to the text reader to toggle plain text mode.</li>
+                    <li>Added settings to hide the subtitle timestamps and to change the space between subtitles.</li>
                 </ul>
 
                 <b>Bug fixes:</b>

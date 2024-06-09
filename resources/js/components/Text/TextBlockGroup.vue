@@ -62,7 +62,11 @@
             >
             
             <template v-for="(word, wordIndex) in words"><!--
-                --><div class="subtitle-timestamp rounded-pill py-1 mt-12 mb-1" v-if="word.subtitleIndex !== -1"><!--
+                --><div 
+                        v-if="word.subtitleIndex !== -1"
+                        :class="['subtitle-timestamp', $props.showSubtitleTimestamps ? '' : 'hidden', 'rounded-pill', 'py-1']" 
+                        :style="{'margin-top': word.subtitleIndex > 0 ? ($props.spaceBetweenSubtitles * 3) + 'px' : '0px'}"
+                    ><!--
                     -->{{ subtitleTimestamps[word.subtitleIndex].start }}<!--
                 --></div><!--
                 --><br v-if="word.word === 'NEWLINE'" /><!--
@@ -417,6 +421,14 @@
             autoHighlightWords: {
                 type: Boolean,
                 default: true
+            },
+            showSubtitleTimestamps: {
+                type: Boolean,
+                default: true
+            },
+            spaceBetweenSubtitles: {
+                type: Number,
+                default: 20
             }
         },
         mounted() {

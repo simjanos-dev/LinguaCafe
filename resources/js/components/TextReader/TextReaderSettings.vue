@@ -220,6 +220,37 @@
                                 ></v-switch>
                             </v-col>
                         </v-row>
+
+                        <!-- Show subtitle timestamps -->
+                        <v-row>
+                            <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">Show subtitle timestamps:</v-col>
+                            <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                                <v-switch
+                                    color="primary"
+                                    v-model="settings.showSubtitleTimestamps"
+                                    @change="saveSettings"
+                                ></v-switch>
+                            </v-col>
+                        </v-row>
+
+                        <!-- Space between subtitles -->
+                        <v-row>
+                            <v-col cols="12" sm="3" class="d-flex align-center mt-0 mt-md-0 mb-md-5 pb-0 pb-sm-0 pb-md-3">Space between subtitles:</v-col>
+                            <v-col class="slider-container d-flex pt-xs-0 pt-sm-0 pt-md-3 align-center">
+                                <v-slider
+                                    v-model="settings.spaceBetweenSubtitles"
+                                    :tick-labels="['Small', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'Large']"
+                                    :tick-size="0"
+                                    :min="0"
+                                    :max="40"
+                                    step="2"
+                                    thumb-label="always"
+                                    thumb-size="38"
+                                    track-color="#c5c5c5"
+                                    @change="saveSettings"
+                                ></v-slider>
+                            </v-col>
+                        </v-row>
                     </v-tab-item>
 
                     <!-- Vocabulary box section-->
@@ -440,7 +471,9 @@
                     vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
                     vocabularyHoverBoxPreferredPosition: 'vocabulary-hover-box-preferred-position',
                     autoHighlightWords: 'auto-highlight-words',
-                    autoLevelUpWords: 'auto-level-up-words'
+                    autoLevelUpWords: 'auto-level-up-words',
+                    showSubtitleTimestamps: 'show-subtitle-timestamps',
+                    spaceBetweenSubtitles: 'space-between-subtitles'
                 },
                 settings: {},
                 vocabularyHoverBoxPreferredPositionData: [
@@ -494,6 +527,9 @@
             this.loadSetting('vocabularyHoverBoxPreferredPosition', 'string', 'bottom');
             this.loadSetting('autoHighlightWords', 'boolean', true);
             this.loadSetting('autoLevelUpWords', 'boolean', false);
+            this.loadSetting('showSubtitleTimestamps', 'boolean', true);
+            this.loadSetting('spaceBetweenSubtitles', 'integer', 20);
+            
             this.settingsLoaded = true;
             this.saveSettings();
 
@@ -550,6 +586,8 @@
                 this.saveSetting('vocabularyHoverBoxPreferredPosition');
                 this.saveSetting('autoHighlightWords');
                 this.saveSetting('autoLevelUpWords');
+                this.saveSetting('showSubtitleTimestamps');
+                this.saveSetting('spaceBetweenSubtitles');
 
                 // save text to speech
                 if (this.textTospeechSelectedVoice !== null) {

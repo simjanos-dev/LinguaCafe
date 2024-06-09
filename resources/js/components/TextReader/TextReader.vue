@@ -95,6 +95,8 @@
                         :vocabulary-sidebar="settings.vocabularySidebar"
                         :vocabulary-bottom-sheet="settings.vocabularyBottomSheet"
                         :auto-highlight-words="settings.autoHighlightWords"
+                        :show-subtitle-timestamps="settings.showSubtitleTimestamps"
+                        :space-between-subtitles="settings.spaceBetweenSubtitles"
                         :vocabulary-sidebar-fits="vocabularySidebarFits"
                         :hotkeys-enabled="true"
                         @increase-font-size="increaseFontSize"
@@ -254,7 +256,9 @@
                     vocabularyHoverBoxDelay: 300,
                     vocabularyHoverBoxPreferredPosition: 'bottom',
                     autoHighlightWords: true,
-                    autoLevelUpWords: false
+                    autoLevelUpWords: false,
+                    showSubtitleTimestamps: true,
+                    spaceBetweenSubtitles: 20,
                 },
                 fullscreenMode: false,
                 newlySavedWords: 0,

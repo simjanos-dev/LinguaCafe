@@ -34,6 +34,12 @@
         text-align: center;
         font-size: 15px;
         font-weight: bold;
+
+        &.hidden {
+            opacity: 0;
+            height: 0px;
+            padding: 0px !important;
+        }
     }
 
     .text-block {
