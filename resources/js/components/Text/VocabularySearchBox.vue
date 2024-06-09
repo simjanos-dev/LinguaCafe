@@ -46,7 +46,7 @@
                 <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
                     <v-icon small>mdi-list-box</v-icon>
                 </div>
-                <span class="default-font">{{ $props.searchTerm }}</span> <div class="search-result-word">Dictionary search</div>
+                <span class="default-font" :title="$props.searchTerm">{{ $props.searchTerm }}</span> <div class="search-result-word">Dictionary search</div>
             </div>
 
             <div class="search-result-definition rounded pr-2">
@@ -56,7 +56,7 @@
 
         <!-- Dictionary no result message -->
         <div class="search-result disabled" v-if="!dictionarySearchLoading && !dictionarySearchResultsFound">
-            <div class="search-result-title default-font">
+            <div class="search-result-title default-font" :title="$props.searchTerm">
                 <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
                     <v-icon small>mdi-list-box</v-icon>
                 </div>
@@ -73,7 +73,7 @@
             <!-- Regular record -->
             <template v-if="searchResult.dictionary !== 'JMDict'">
                 <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                    <div class="search-result-title">
+                    <div class="search-result-title" :title="record.word">
                         <div class="dictionary-title-icon mr-1"  :style="{'background-color': searchResult.color}">
                             <v-icon small>mdi-list-box</v-icon>
                         </div>
@@ -94,7 +94,7 @@
             <!-- JMDict record -->
             <template v-if="searchResult.dictionary == 'JMDict'">
                 <div v-for="(record, recordIndex) in searchResult.records" :key="recordIndex">
-                    <div class="search-result-title">
+                    <div class="search-result-title" :title="record.word">
                         <div class="dictionary-title-icon mr-1"  :style="{'background-color': searchResult.color}">
                             <v-icon small>mdi-list-box</v-icon>
                         </div>

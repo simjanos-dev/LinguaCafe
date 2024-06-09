@@ -28,6 +28,9 @@
             line-height: 28px;
             font-size: 14px;
             margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             
             .dictionary-title-icon {
                 display: inline-block;
