@@ -29,12 +29,15 @@
                     <span class="primary--text" style="width: 170px;">s</span><span>Scroll down</span>
                 </div>
 
-                <label class="font-weight-bold mt-4 mb-0">Text size</label>
+                <label class="font-weight-bold mt-4 mb-0">Text</label>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">i</span><span>Decrease font size</span>
                 </div>
                 <div class="hotkey d-flex">
                     <span class="primary--text" style="width: 170px;">o</span><span>Increase font size</span>
+                </div>
+                <div class="hotkey d-flex">
+                    <span class="primary--text" style="width: 170px;">p</span><span>Toggle plain text mode</span>
                 </div>
 
                 <label class="font-weight-bold mt-4 mb-0">Set level</label>

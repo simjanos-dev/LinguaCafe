@@ -90,10 +90,10 @@
                     --><template v-if="$props.language == 'japanese'"><!--
                         --><ruby class="rubyword selected-font" :wordindex="wordIndex"><!--
                             -->{{ word.word }}<!--
-                            --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                            --><rt v-if="word.stage == 2 && furiganaOnNewWords && word.furigana.length && word.word !== word.furigana && !plainTextMode" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
                                 -->{{ word.furigana }}<!--
                             --></rt><!--
-                            --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.furigana.length && word.word !== word.furigana" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
+                            --><rt v-if="word.stage < 0 && furiganaOnHighlightedWords && word.furigana.length && word.word !== word.furigana && !plainTextMode" :style="{'font-size': (fontSize - 4) + 'px'}"><!--
                                 -->{{ word.furigana }}<!--
                             --></rt><!--
                         --></ruby>
@@ -1179,6 +1179,14 @@
                     case 68:
                         event.preventDefault();
                         this.selectNextWord(event.ctrlKey, event.shiftKey);
+                        break;
+
+                    // plain text mode
+                    case 80:
+                        event.preventDefault();
+                        this.unselectAllWords();
+                        this.closeHoverBox();
+                        this.$emit('toggle-plain-text-mode');
                         break;
                 }
             },

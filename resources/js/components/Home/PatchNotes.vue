@@ -21,6 +21,7 @@
                     <li>Added an option for % display of word counts on the chapters page.</li>
                     <li>Added tabs to the text reader's settings dialog.</li>
                     <li>Added an auto level words option, which automatically levels up words which the user did not click on while reading.</li>
+                    <li>Added a hotkey to the text reader to toggle plain text mode.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -48,6 +49,9 @@
                     </li>
                     <li>
                         Removed whitespace from the beginning of the tab selector UI element on mobile.
+                    </li>
+                    <li>
+                        Removed furigana from text on plain text mode.
                     </li>
                 </ul>
 

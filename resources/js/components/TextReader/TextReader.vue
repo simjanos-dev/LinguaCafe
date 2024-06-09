@@ -99,6 +99,7 @@
                         :hotkeys-enabled="true"
                         @increase-font-size="increaseFontSize"
                         @decrease-font-size="decreaseFontSize"
+                        @toggle-plain-text-mode="togglePlainTextMode"
                     ></text-block-group>
                     <div :class="{
                         'd-flex': true, 
@@ -453,6 +454,10 @@
             },
             decreaseFontSize() {
                 this.settings.fontSize --; 
+                this.toolbarSettingChanged();
+            },
+            togglePlainTextMode() {
+                this.settings.plainTextMode = !this.settings.plainTextMode;
                 this.toolbarSettingChanged();
             },
             finish() {
