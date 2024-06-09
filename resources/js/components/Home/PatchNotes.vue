@@ -54,7 +54,7 @@
                         Removed furigana from text on plain text mode.
                     </li>
                     <li>
-                        Fixed a problem when a user selected a long phrase, and the search result overflowed its box. I hid the whole search term if it was too long, and users now can see the whole search term by hovering over the shortened search term.
+                        Fixed a problem when a user selected a long phrase, and the search result overflowed its box. I hid the whole search result if it was too long, and users now can see the whole search result by hovering over the shortened form.
                     </li>
                 </ul>
 
