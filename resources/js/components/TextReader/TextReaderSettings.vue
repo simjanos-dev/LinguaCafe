@@ -1,6 +1,6 @@
 <template>
     <v-dialog v-model="value" persistent scrollable max-width="1000">
-        <v-card 
+        <v-card
             id="text-reader-settings"
             outlined
             class="rounded-lg"
@@ -103,7 +103,7 @@
                             <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.hideAllHighlights" 
+                                    v-model="settings.hideAllHighlights"
                                     @change="saveSettings('hideAllHighlights')"
                                 ></v-switch>
                             </v-col>
@@ -115,7 +115,7 @@
                             <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.hideNewWordHighlights" 
+                                    v-model="settings.hideNewWordHighlights"
                                     @change="saveSettings"
                                 ></v-switch>
                             </v-col>
@@ -127,7 +127,7 @@
                             <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.verticalText" 
+                                    v-model="settings.verticalText"
                                     @change="saveSettings"
                                     disabled
                                 ></v-switch>
@@ -140,7 +140,7 @@
                             <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.furiganaOnHighlightedWords" 
+                                    v-model="settings.furiganaOnHighlightedWords"
                                     @change="saveSettings"
                                 ></v-switch>
                             </v-col>
@@ -152,7 +152,7 @@
                             <v-col cols="4" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.furiganaOnNewWords" 
+                                    v-model="settings.furiganaOnNewWords"
                                     @change="saveSettings"
                                 ></v-switch>
                             </v-col>
@@ -286,13 +286,13 @@
                                     </template>
                                     <v-card outlined class="rounded-lg pa-4" width="320px">
                                         An always visible sidebar vocabulary in a fixed position, that replaces the popup vocabulary. <br><br>
-                                        This option is only available for devices with at least 960px screen width, and it is also only available in subtitle reader if the media controls are hidden. 
+                                        This option is only available for devices with at least 960px screen width, and it is also only available in subtitle reader if the media controls are hidden.
                                     </v-card>
                                 </v-menu>
 
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.vocabularySidebar" 
+                                    v-model="settings.vocabularySidebar"
                                     @change="saveSettings"
                                 ></v-switch>
                             </v-col>
@@ -311,13 +311,13 @@
                                     </template>
                                     <v-card outlined class="rounded-lg pa-4" width="320px">
                                         A bottom sheet vocabulary designed for mobile screens, that replaces the popup vocabulary. <br><br>
-                                        This option is only available for devices with less than or equal to 768px screen width. 
+                                        This option is only available for devices with less than or equal to 768px screen width.
                                     </v-card>
                                 </v-menu>
 
                                 <v-switch
                                     color="primary"
-                                    v-model="settings.vocabularyBottomSheet" 
+                                    v-model="settings.vocabularyBottomSheet"
                                     @change="saveSettings"
                                 ></v-switch>
                             </v-col>
@@ -401,7 +401,7 @@
                         <div class="subheader subheader-margin-top d-flex mb-2" v-if="textToSpeechVoices.length">
                             Text to speech
                         </div>
-                        
+
                         <!-- Text to speech -->
                         <v-row v-if="textToSpeechVoices.length">
                             <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">TTS voice:</v-col>
@@ -418,6 +418,22 @@
                                     @change="saveSettings"
                                 ></v-select>
                             </v-col>
+                            <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">TTS speed:</v-col>
+                            <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                                    <v-slider
+                                        v-model="settings.textToSpeechSpeed"
+                                        :tick-labels="['0.3', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '2']"
+                                        :tick-size="0"
+                                        :max="2"
+                                        :min="0.3"
+                                        thumb-label="always"
+                                        thumb-size="38"
+                                        step="0.1"
+                                        track-color="#c5c5c5"
+                                        class="align-center"
+                                        @change="saveSettings"
+                                    />
+                                </v-col>
                         </v-row>
                     </v-tab-item>
                 </v-tabs-items>
@@ -435,12 +451,12 @@
 <script>
     import TextToSpeechService from './../../services/TextToSpeechService';
     import FontTypeService from './../../services/FontTypeService';
-    export default {    
-        emits: ['input'],   
+    export default {
+        emits: ['input'],
         data: function() {
             return {
                 /*
-                    Text to speech and font type settings are handled differently, 
+                    Text to speech and font type settings are handled differently,
                     because they are a separate setting for every language.
                 */
                 fontTypeService: new FontTypeService(this.$props.language, this.$cookie, this.fontTypesLoaded),
@@ -473,7 +489,8 @@
                     autoHighlightWords: 'auto-highlight-words',
                     autoLevelUpWords: 'auto-level-up-words',
                     showSubtitleTimestamps: 'show-subtitle-timestamps',
-                    spaceBetweenSubtitles: 'space-between-subtitles'
+                    spaceBetweenSubtitles: 'space-between-subtitles',
+                    textToSpeechSpeed: 'text-to-speech-speed'
                 },
                 settings: {},
                 vocabularyHoverBoxPreferredPositionData: [
@@ -529,7 +546,8 @@
             this.loadSetting('autoLevelUpWords', 'boolean', false);
             this.loadSetting('showSubtitleTimestamps', 'boolean', true);
             this.loadSetting('spaceBetweenSubtitles', 'integer', 20);
-            
+            this.loadSetting('textToSpeechSpeed', 'float', 1.0)
+
             this.settingsLoaded = true;
             this.saveSettings();
 
@@ -588,6 +606,7 @@
                 this.saveSetting('autoLevelUpWords');
                 this.saveSetting('showSubtitleTimestamps');
                 this.saveSetting('spaceBetweenSubtitles');
+                this.saveSetting('textToSpeechSpeed')
 
                 // save text to speech
                 if (this.textTospeechSelectedVoice !== null) {
@@ -608,7 +627,7 @@
             },
             changeSetting(name, value, emitResult = false) {
                 this.settings[name] = value
-                
+
                 if (this.settings.fontSize < 12) {
                     this.settings.fontSize = 12;
                 }
@@ -634,6 +653,10 @@
 
                     if (type == 'integer') {
                         this.settings[name] = parseInt(this.$cookie.get(this.cookieNames[name]));
+                    }
+
+                    if (type === 'float') {
+                        this.settings[name] = parseFloat(this.$cookie.get(this.cookieNames[name]))
                     }
 
                     if (type == 'string') {
