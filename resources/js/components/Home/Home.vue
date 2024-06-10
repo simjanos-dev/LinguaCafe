@@ -21,12 +21,12 @@
 
                     <div class="d-flex mt-4">
                         <v-spacer />
-                        <v-btn 
-                            rounded 
+                        <v-btn
+                            rounded
                             depressed
                             color="error"
                             @click="passwordChangeDialog = true;"
-                        >   
+                        >
                             <v-icon class="mr-2">mdi-lock-reset</v-icon>
                             Change password
                         </v-btn>
@@ -34,7 +34,7 @@
                 </v-alert>
             </template>
 
-            <calendar 
+            <calendar
                 ref="calendar"
                 @achievement-quantity-change="updateGoals"
             ></calendar>
@@ -45,7 +45,7 @@
             <statistics
                 ref="statistics"
             ></statistics>
-            
+
             <div class="subheader subheader-margin-top d-flex">
                 About
             </div>
@@ -98,10 +98,11 @@
 <script>
     import {formatNumber} from './../../helper.js';
     const moment = require('moment');
+    import { DefaultLocalStorageManager } from './../../services/LocalStorageManagerService';
     export default {
         data: function() {
             return {
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                theme: DefaultLocalStorageManager.loadSetting('theme') || 'light',
                 passwordChanged: true,
                 passwordChangeDialog: false
             }

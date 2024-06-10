@@ -9,16 +9,16 @@
                 :chapter-id="editBookChapterDialog.chapterId"
                 @chapter-saved="chapterSaved"
             ></edit-book-chapter-dialog>
-            
+
             <div class="book-box">
                 <!-- Cover image -->
                 <div class="cover-image-box">
-                    <img 
-                        class="cover-image" 
+                    <img
+                        class="cover-image"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
                 </div>
-                
+
                 <!-- Title bar -->
                 <v-card-text class="book-information pa-0 pl-3">
                     <v-card-title class="book-title pa-3">
@@ -108,10 +108,10 @@
             <v-card-title class="book-title pa-3">
                 Chapters
                 <v-spacer />
-                <v-btn-toggle 
-                    v-model="wordCountDisplayType" 
-                    mandatory 
-                    rounded 
+                <v-btn-toggle
+                    v-model="wordCountDisplayType"
+                    mandatory
+                    rounded
                     dense
                     @change="saveWordCountDisplayType"
                     title="Word count display type"
@@ -141,10 +141,12 @@
 
 <script>
     import {formatNumber} from './../../helper.js';
+    import { DefaultLocalStorageManager } from './../../services/LocalStorageManagerService';
+
     export default {
         data: function() {
             return {
-                wordCountDisplayType: 0,
+                wordCountDisplayType: DefaultLocalStorageManager.loadSetting('word-count-display-type') || 0,
                 editBookChapterDialog: {
                     active: false,
                     bookId: -1,
@@ -156,15 +158,11 @@
             book: Object
         },
         mounted() {
-            if (this.$cookie.get('word-count-display-type') !== null) {
-                this.wordCountDisplayType = parseInt(this.$cookie.get('word-count-display-type'));
-            }
-
             this.loadBookWordCounts();
         },
         methods: {
             saveWordCountDisplayType() {
-                this.$cookie.set('word-count-display-type', this.wordCountDisplayType, 3650);
+                DefaultLocalStorageManager.saveSetting('word-count-display-type', this.wordCountDisplayType);
             },
             addChapter() {
                 this.editBookChapterDialog.active = true;

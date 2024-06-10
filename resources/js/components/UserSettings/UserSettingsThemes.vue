@@ -53,12 +53,12 @@
                                     ></v-card>
                                 </template>
 
-                                <v-color-picker 
-                                    mode="hexa" 
-                                    hide-inputs 
-                                    v-model="color.value" 
-                                    @update:color="colorChanged(index, $event)" 
-                                /> 
+                                <v-color-picker
+                                    mode="hexa"
+                                    hide-inputs
+                                    v-model="color.value"
+                                    @update:color="colorChanged(index, $event)"
+                                />
                             </v-menu>
                         </td>
                         <td>
@@ -76,8 +76,8 @@
                             ></v-text-field>
                         </td>
                         <td>
-                            <v-btn 
-                                icon 
+                            <v-btn
+                                icon
                                 title="Restore default"
                                 @click="resetColor(index)"
                             >
@@ -104,7 +104,7 @@
         <!-- Save button -->
         <div class="d-flex w-full mt-4 mb-16">
             <v-spacer />
-            <v-btn 
+            <v-btn
                 depressed
                 rounded
                 color="primary"
@@ -128,7 +128,7 @@
                 loading: true,
                 saving: false,
                 saveResult: '',
-                selectedTheme: ThemeService.getCurrentTheme(this.$cookie) === 'dark' ? 'dark' : 'light',
+                selectedTheme: ThemeService.getCurrentTheme() === 'dark' ? 'dark' : 'light',
                 themes: [
                     {
                         name: 'Light theme',
@@ -141,7 +141,7 @@
                 ],
                 lightTheme: [],
                 darkTheme: [],
-        
+
 
                 rules: {
                     hex: value => {
@@ -165,7 +165,7 @@
             axios.post('/settings/user/get', {settingNames: ThemeService.themeColorNames}).then((response) => {
                 var savedColors = response.data;
                 this.loading = false;
-                                
+
                 ThemeService.themeColorNames.forEach((value) => {
                     var theme = value.split('-')[0].replace('Theme', '');
                     var colorName = value.split('-')[1];
@@ -173,14 +173,14 @@
 
                     if (theme === 'light') {
                         this.lightTheme.push({
-                            'name': colorName, 
+                            'name': colorName,
                             'value': colorValue,
                             'opened': false,
                             'hex': colorValue,
                         });
                     } else {
                         this.darkTheme.push({
-                            'name': colorName, 
+                            'name': colorName,
                             'value': colorValue,
                             'opened': false,
                             'hex': colorValue,
@@ -202,7 +202,7 @@
                 if (!this.$refs.colorHex[index].validate()) {
                     return;
                 }
-                
+
                 console.log('hex value changed');
                 if (this.selectedTheme == 'light') {
                     this.lightTheme[index].value = this.lightTheme[index].hex;
@@ -229,7 +229,7 @@
                 this.lightTheme.forEach((value, key) => {
                     colorSettings['lightTheme-' + value.name] = value.value;
                 });
-                
+
                 this.darkTheme.forEach((value, key) => {
                     colorSettings['darkTheme-' + value.name] = value.value;
                 });
@@ -241,8 +241,8 @@
 
                     this.saveResult = '';
                     this.saving = false;
-                    
-                    ThemeService.loadTheme(defaultThemes, this.$cookie, this.$vuetify);
+
+                    ThemeService.loadTheme(defaultThemes, this.$vuetify);
                 }).catch((error) => {
                     this.saveResult = 'error';
                     this.saving = false;

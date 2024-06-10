@@ -1,6 +1,6 @@
 <template>
     <v-dialog v-model="value" scrollable persistent max-width="1000">
-        <v-card 
+        <v-card
             id="review-settings"
             outlined
             class="rounded-lg"
@@ -77,7 +77,7 @@
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Vocabulary box
                 </div>
-                
+
                 <!-- Vocabulary bottom sheet -->
                 <v-row>
                     <v-col cols="8" md="4" class="switch-container d-flex align-center mt-0 mb-md-5 ">
@@ -91,13 +91,13 @@
                             </template>
                             <v-card outlined class="rounded-lg pa-4" width="320px">
                                 A bottom sheet vocabulary designed for mobile screens, that replaces the popup vocabulary. <br><br>
-                                This option is only available for devices with less than or equal to 768px screen width. 
+                                This option is only available for devices with less than or equal to 768px screen width.
                             </v-card>
                         </v-menu>
 
                         <v-switch
                             color="primary"
-                            v-model="settings.vocabularyBottomSheet" 
+                            v-model="settings.vocabularyBottomSheet"
                             @change="saveSettings"
                         ></v-switch>
                     </v-col>
@@ -191,13 +191,13 @@
                 <div class="subheader subheader-margin-top d-flex mb-2">
                     Text to speech
                 </div>
-                
+
                 <!-- Text to speech -->
                 <v-row v-if="textToSpeechVoices.length">
                     <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">TTS voice:</v-col>
                     <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
                         <v-select
-                            v-model="textTospeechSelectedVoice"
+                            v-model="textToSpeechSelectedVoice"
                             :items="textToSpeechVoices"
                             item-text="name"
                             item-value="name"
@@ -222,72 +222,56 @@
 <script>
     import TextToSpeechService from './../../services/TextToSpeechService';
     import FontTypeService from './../../services/FontTypeService';
-    export default {    
-        emits: ['input'],   
+    import { defaultSettings, DefaultLocalStorageManager } from './../../services/LocalStorageManagerService';
+
+    export default {
+        emits: ['input'],
         data: function() {
             return {
                 /*
-                    Text to speech and font type settings are handled differently, 
+                    Text to speech and font type settings are handled differently,
                     because they are a separate setting for every language.
                 */
-
-                fontTypeService: new FontTypeService(this.$props.language, this.$cookie, this.fontTypesLoaded),
-                fontTypes: [],
-                selectedFontType: null,
-                textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.textToSpeechVoicesChanged),
-                textToSpeechVoices: [],
-                textTospeechSelectedVoice: null,
-
-                settingsLoaded: false,
-                cookieNames: {
-                    fontSize: 'font-size',
-                    vocabularyHoverBox: 'vocabulary-hover-box',
-                    vocabularyHoverBoxSearch: 'vocabulary-hover-box-search',
-                    vocabularyHoverBoxDelay: 'vocabulary-hover-delay',
-                    vocabularyHoverBoxPreferredPosition: 'vocabulary-hover-box-preferred-position',
-                    vocabularyBottomSheet: 'vocabulary-bottom-sheet',
-                    reviewSentenceMode: 'review-sentence-mode',
+            fontTypeService: new FontTypeService(this.$props.language, this.fontTypesLoaded),
+            fontTypes: [],
+            selectedFontType: null,
+            textToSpeechService: new TextToSpeechService(this.$props.language, this.textToSpeechVoicesChanged),
+            textToSpeechVoices: [],
+            textToSpeechSelectedVoice: null,
+            settingsLoaded: false,
+            settings: { ...defaultSettings },
+            vocabularyHoverBoxPreferredPositionData: [
+                {
+                    name: 'Below the hovered word',
+                    value: 'bottom'
                 },
-                sentenceModes: [
-                    {
-                        name: 'Disabled',
-                        value: 'disabled',
-                    },
-                    {
-                        name: 'Plain text',
-                        value: 'plain-text',
-                    },
-                    {
-                        name: 'Interactive text',
-                        value: 'interactive-text',
-                    },
-                ],
-                settings: {},
-                vocabularyHoverBoxPreferredPositionData: [
-                    {
-                        name: 'Below the hovered word',
-                        value: 'bottom'
-                    },
-                    {
-                        name: 'Above the hovered word',
-                        value: 'top'
-                    },
-                ],
-            }
-        },
+                {
+                    name: 'Above the hovered word',
+                    value: 'top'
+                },
+            ],
+            sentenceModes: [
+                {
+                    name: 'Disabled',
+                    value: 'disabled',
+                },
+                {
+                    name: 'Plain text',
+                    value: 'plain-text',
+                },
+                {
+                    name: 'Interactive text',
+                    value: 'interactive-text',
+                },
+            ],
+        }
+    },
         props: {
             value : Boolean,
             language: String,
         },
         mounted() {
-            this.loadSetting('fontSize', 'integer', 20);
-            this.loadSetting('vocabularyHoverBox', 'boolean', true);
-            this.loadSetting('vocabularyHoverBoxSearch', 'boolean', true);
-            this.loadSetting('vocabularyHoverBoxDelay', 'integer', 300);
-            this.loadSetting('vocabularyHoverBoxPreferredPosition', 'string', 'bottom');
-            this.loadSetting('vocabularyBottomSheet', 'boolean', true);
-            this.loadSetting('reviewSentenceMode', 'string', 'plain-text');
-            
+            this.settings = DefaultLocalStorageManager.loadAndParseSettings(this.settings);
             this.settingsLoaded = true;
             this.saveSettings();
         },
@@ -303,7 +287,7 @@
                 // set selected voice
                 var selectedVoice = this.textToSpeechService.getSelectedVoice();
                 if (selectedVoice !== null) {
-                    this.textTospeechSelectedVoice = selectedVoice.name;
+                    this.textToSpeechSelectedVoice = selectedVoice.name;
                 }
 
                 // get list of voice
@@ -322,17 +306,11 @@
                     this.settings.fontSize = 30;
                 }
 
-                this.saveSetting('fontSize');
-                this.saveSetting('vocabularyHoverBox');
-                this.saveSetting('vocabularyHoverBoxSearch');
-                this.saveSetting('vocabularyHoverBoxDelay');
-                this.saveSetting('vocabularyHoverBoxPreferredPosition');
-                this.saveSetting('vocabularyBottomSheet');
-                this.saveSetting('reviewSentenceMode');
+                DefaultLocalStorageManager.saveSettings(this.settings);
 
                 // save text to speech
-                if (this.textTospeechSelectedVoice !== null) {
-                    this.$cookie.set(this.$props.language + '-text-to-speech-voice', this.textTospeechSelectedVoice, 3650);
+                if (this.textToSpeechSelectedVoice !== null) {
+                    localStorage.setItem(`${this.$props.language}-text-to-speech-voice`, JSON.stringify(this.textToSpeechSelectedVoice));
                 }
 
                 // save font
@@ -342,15 +320,14 @@
                 }
 
                 this.$emit('changed', this.settings);
-                
                 this.$forceUpdate();
             },
             saveSetting(name) {
-                this.$cookie.set(this.cookieNames[name], this.settings[name], 3650);
+                DefaultLocalStorageManager.saveSetting(name, this.settings[name]);
             },
             changeSetting(name, value, emitResult = false) {
                 this.settings[name] = value
-                
+
                 if (this.settings.fontSize < 12) {
                     this.settings.fontSize = 12;
                 }
@@ -367,22 +344,26 @@
                 }
             },
             loadSetting: function(name, type, defaultValue) {
-                if (this.$cookie.get(this.cookieNames[name]) === null) {
+                const value = DefaultLocalStorageManager.loadSetting(name);
+                if (value === null) {
                     this.settings[name] = defaultValue;
                 } else {
-                    if (type == 'boolean') {
-                        this.settings[name] = this.$cookie.get(this.cookieNames[name]) === 'true';
+                    if (type === 'boolean') {
+                    this.settings[name] = value === true;
                     }
 
-                    if (type == 'integer') {
-                        this.settings[name] = parseInt(this.$cookie.get(this.cookieNames[name]));
+                    if (type === 'integer') {
+                        this.settings[name] = parseInt(value);
                     }
 
-                    if (type == 'string') {
-                        this.settings[name] = this.$cookie.get(this.cookieNames[name]);
+                    if (type === 'float') {
+                        this.settings[name] = parseFloat(value);
+                    }
+
+                    if (type === 'string') {
+                        this.settings[name] = value;
                     }
                 }
-
             },
             close(){
                 this.$emit('input', false);
