@@ -154,18 +154,12 @@ export class LocalStorageManagerService {
     }
 
     clearAllSettings() {
-        for (const key in this.settingNames) {
-            if (this.settingNames.hasOwnProperty(key)) {
-                localStorage.removeItem(this.settingNames[key]);
-            }
-        }
+      localStorage.clear();
     }
 
     saveSettings(settings = defaultSettings) {
         for (const key in settings) {
-            if (settings.hasOwnProperty(key)) {
-                this.saveSetting(key, settings[key]);
-            }
+            this.saveSetting(key, settings[key]);
         }
     }
 }
