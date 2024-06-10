@@ -546,7 +546,7 @@
             this.loadSetting('autoLevelUpWords', 'boolean', false);
             this.loadSetting('showSubtitleTimestamps', 'boolean', true);
             this.loadSetting('spaceBetweenSubtitles', 'integer', 20);
-            this.loadSetting('textToSpeechSpeed', 'float', 1.0)
+            this.loadSetting('textToSpeechSpeed', 'float', 1.0);
 
             this.settingsLoaded = true;
             this.saveSettings();
@@ -606,7 +606,7 @@
                 this.saveSetting('autoLevelUpWords');
                 this.saveSetting('showSubtitleTimestamps');
                 this.saveSetting('spaceBetweenSubtitles');
-                this.saveSetting('textToSpeechSpeed')
+                this.saveSetting('textToSpeechSpeed');
 
                 // save text to speech
                 if (this.textTospeechSelectedVoice !== null) {
@@ -656,7 +656,7 @@
                     }
 
                     if (type === 'float') {
-                        this.settings[name] = parseFloat(this.$cookie.get(this.cookieNames[name]))
+                        this.settings[name] = parseFloat(this.$cookie.get(this.cookieNames[name]));
                     }
 
                     if (type == 'string') {

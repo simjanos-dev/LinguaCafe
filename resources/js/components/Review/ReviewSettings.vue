@@ -304,7 +304,7 @@
             this.loadSetting('vocabularyHoverBoxPreferredPosition', 'string', 'bottom');
             this.loadSetting('vocabularyBottomSheet', 'boolean', true);
             this.loadSetting('reviewSentenceMode', 'string', 'plain-text');
-            this.loadSetting('textToSpeechSpeed', 'float', 1.0)
+            this.loadSetting('textToSpeechSpeed', 'float', 1.0);
 
             this.settingsLoaded = true;
             this.saveSettings();
@@ -347,7 +347,7 @@
                 this.saveSetting('vocabularyHoverBoxPreferredPosition');
                 this.saveSetting('vocabularyBottomSheet');
                 this.saveSetting('reviewSentenceMode');
-                this.saveSetting('textToSpeechSpeed')
+                this.saveSetting('textToSpeechSpeed');
 
                 // save text to speech
                 if (this.textTospeechSelectedVoice !== null) {
@@ -398,7 +398,7 @@
                     }
 
                     if (type === 'float') {
-                        this.settings[name] = parseFloat(this.$cookie.get(this.cookieNames[name]))
+                        this.settings[name] = parseFloat(this.$cookie.get(this.cookieNames[name]));
                     }
 
                     if (type == 'string') {

@@ -105,13 +105,13 @@ class TextToSpeechService {
     }
 
     getSpeechRate() {
-        let rate = 1
+        let rate = 1;
 
         if (this.cookieHandler.get('text-to-speech-speed') !== null) {
-            rate = this.cookieHandler.get('text-to-speech-speed')
+            rate = this.cookieHandler.get('text-to-speech-speed');
         }
 
-        return rate
+        return rate;
     }
 
     speak(text) {
@@ -124,7 +124,7 @@ class TextToSpeechService {
         var tts = new SpeechSynthesisUtterance();
         tts.text = text;
         tts.lang = this.languageCodes[this.language];
-        tts.rate = this.getSpeechRate()
+        tts.rate = this.getSpeechRate();
 
         if (selectedVoice !== null) {
             tts.voice = selectedVoice;
