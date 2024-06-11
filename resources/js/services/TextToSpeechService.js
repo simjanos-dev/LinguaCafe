@@ -37,7 +37,7 @@ class TextToSpeechService {
         this.cookieHandler = cookieHandler;
         this.language = language;
         this.voices = this.getLanguageVoices();
-        
+
         if (window.speechSynthesis !== undefined) {
             window.speechSynthesis.addEventListener("voiceschanged", (event) => {
                 this.voices = this.getLanguageVoices();
@@ -104,6 +104,16 @@ class TextToSpeechService {
         return voiceNames;
     }
 
+    getSpeechRate() {
+        let rate = 1;
+
+        if (this.cookieHandler.get('text-to-speech-speed') !== null) {
+            rate = this.cookieHandler.get('text-to-speech-speed');
+        }
+
+        return rate;
+    }
+
     speak(text) {
         if (typeof speechSynthesis === "undefined") {
             return false;
@@ -114,13 +124,14 @@ class TextToSpeechService {
         var tts = new SpeechSynthesisUtterance();
         tts.text = text;
         tts.lang = this.languageCodes[this.language];
-        
+        tts.rate = this.getSpeechRate();
+
         if (selectedVoice !== null) {
             tts.voice = selectedVoice;
         } else {
             return false;
         }
-        
+
         // speak
         window.speechSynthesis.speak(tts);
 
