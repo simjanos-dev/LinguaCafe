@@ -215,7 +215,7 @@
                 this.deleteDialog.databaseTableName = databaseTableName;
                 this.deleteDialog.dictionaryName = dictionaryName;
             },
-            deleteDictionaryConfirm(databaseTableName) {
+            deleteDictionaryConfirm() {
                 axios.get('/dictionaries/delete/' + this.deleteDialog.id).then((response) => {
                     this.deleteDialog.active = false;
                     this.loadDictionaries();
