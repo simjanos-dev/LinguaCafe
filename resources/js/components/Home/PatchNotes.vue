@@ -5,6 +5,16 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.14<v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>Other changes:</b>
+                <ul>
+                    <li>Replaced switches with checkboxes on the vocabulary export page.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.13<v-spacer /> 2024.06.??.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
