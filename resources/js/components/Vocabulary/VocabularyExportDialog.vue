@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="value" persistent scrollable width="900px">
-        <v-card 
-            id="vocabulary-export-dialog" 
+        <v-card
+            id="vocabulary-export-dialog"
             class="rounded-lg"
         >
             <!-- Title bar -->
@@ -18,94 +18,94 @@
                 <label class="font-weight-bold mt-2">Select fields to export</label>
                 <div class="d-flex flex-wrap">
                     <!-- Lemma switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.lemma"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Lemma"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Word switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.word"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Word"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Lemma reading switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.lemmaReading"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Lemma reading"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Reading switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.reading"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Reading"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Translation switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.translation"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Translation"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Stage switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.stage"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Level"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Added to srs switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.addedToSrs"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Added to srs date"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Read count switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.readCount"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Read count"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
 
                     <!-- Lookup count switch -->
-                    <v-switch
+                    <v-checkbox
                         v-model="fields.lookupCount"
                         hide-details
                         class="vocabulary-export-switch my-1"
                         color="primary"
                         label="Lookup count"
                         @change="fieldSwitchChange"
-                    ></v-switch>
+                    ></v-checkbox>
                 </div>
 
                 <!-- Sample -->
@@ -155,30 +155,30 @@
                 </v-simple-table>
 
             </v-card-text>
-            
+
             <!-- Action buttons -->
             <v-card-actions>
-                <v-switch
+                <v-checkbox
                     v-model="fields.selectAll"
                     hide-details
                     class="select-all-switch vocabulary-export-switch my-1"
                     color="primary"
                     label="Select all"
                     @change="selectAll"
-                ></v-switch>
-                <v-switch
+                ></v-checkbox>
+                <v-checkbox
                     v-model="fields.selectAll"
                     hide-details
                     class="select-all-switch-small vocabulary-export-switch my-1"
                     color="primary"
                     label="All"
                     @change="selectAll"
-                ></v-switch>
-                
+                ></v-checkbox>
+
                 <v-spacer></v-spacer>
                 <v-btn rounded text @click="close">Cancel</v-btn>
-                <v-btn 
-                    rounded 
+                <v-btn
+                    rounded
                     depressed
                     color="primary"
                     :disabled="!fields.any"
@@ -246,6 +246,9 @@
                     this.fields.any = true;
                 } else {
                     this.fields.any = false;
+                }
+                if (this.fields.selectAll === true && Object.values(this.fields).some(el => el === false)) {
+                    this.fields.selectAll = false;
                 }
             },
             exportToCsv() {
