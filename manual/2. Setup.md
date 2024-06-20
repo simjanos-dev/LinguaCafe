@@ -1,6 +1,22 @@
 # Setup
 This section contains information related to hosting, setting up and maintaining your LinguaCafe server. There are some important steps to take after installation before you can use linguacafe, like installing additional languages and importing dictionaries.
 
+# Beta
+
+>[!NOTE]
+>
+>Please only participate in beta if you can set up LinguaCafe yourself, you can create a backup of your database, and if you don't mind encountering more issues than main version releases, including bugs that can corrupt your database. I'll always try to help if you encounter issues, but I have limited time, and it may take a few days before I can check out problems.
+
+The beta docker image is a version of LinguaCafe that I use in my personal production environment. Previously I only tested it for a few days, but since I have less time nowadays, LinguaCafe has more users, and I am trying to develop it while maintaining a more stable version than did before, I will test updates for a bit longer.
+
+To use the beta version of LinguaCafe, create a  `.env` file in your LinguaCafe directory if you don't already have one, and add this line to the end of it: `VERSION=beta`. After that run the update command of your operating system from the readme file. It will pull the latest beta docker image.
+
+To see if a new beta version is released, you can just run the update command, or check the [GitHub actions](https://github.com/simjanos-dev/LinguaCafe/actions) page. I may change it up, but at this time there's no other way to track beta releases. Since the latest beta image will become the main version, there's no reason to move back to the main version, except if you want to stop using the beta when the next version comes out.
+
+I created this docker image because I've seen people using unsupported features, and wanting to use the latest version as soon as possible. If you decide to use it, please **backup** before every update. Also keep in mind that reverting to older versions is not supported. 
+
+If there ever will be extra steps necessary for beta users, I will display that in this section.
+
 # Backup
 
 >[!NOTE]
