@@ -213,7 +213,8 @@
                 importingProgressPercentage: 0,
             };
         },
-        mounted: function() {
+        beforeDestroy() {
+            this.$store.getters.echo.private('dictionary-import-progress.1').stopListening('DictionaryImportProgressedEvent');
         },
         methods: {
             testDictionaryFile() {
@@ -240,35 +241,15 @@
                     this.dictionaryFileTest = 'error';
                 });
             },
-            // requests how many records have been imported
-            updateImportProgress() {
-return;                
-                if (this.dictionaryFile === null) {
-                    return;
-                }
-
-                axios.get('/dictionaries/get-record-count/' + this.dictionary.databaseName).then((response) => {
-                    // update imported recod count
-                    this.importedRecords = parseInt(response.data);
-
+            startImport() {
+                this.$store.getters.echo.private('dictionary-import-progress.1').listen('DictionaryImportProgressedEvent', (message) => {
+                    this.importedRecords = message.importedRecords
+                    
                     // update percentage
                     this.importingProgressPercentage = parseInt(this.importedRecords / this.dictionary.expectedRecordCount * 100);
                     if (this.importingProgressPercentage > 100) {
                         this.importingProgressPercentage = 100;
                     }
-                    
-                    // if the import hasn't finished, call this function again
-                    if (this.importing) {
-                        setTimeout(() => {
-                            this.updateImportProgress();
-                        }, this.dictionary.updateInterval);
-                    }
-                });
-            },
-            startImport() {
-                this.$store.getters.echo.private('dictionary-import-progress.1').listen('DictionaryImportProgressEvent', (e) => {
-                    console.log('dictionary import progress: ', e);
-                    this.importingProgressPercentage = parseInt(e.percentage);
                 });
                 
                 if (this.dictionary === null) {
@@ -279,17 +260,11 @@ return;
                 this.importedRecords = 0;
                 this.stepperPage = 3;
                 
-                // first improt progress request
-                setTimeout(() => {
-                    this.updateImportProgress();
-                }, this.dictionary.firstUpdateInterval);
-
                 axios.post('/dictionaries/import', {
                     'dictionarySourceLanguage': this.dictionary.source_language,
                     'dictionaryTargetLanguage': this.dictionary.target_language,
                     'dictionaryName': this.dictionary.name,
                     'dictionaryDatabaseName': this.dictionary.databaseName,
-                    'dictionaryExpectedRecordCount': this.dictionary.expectedRecordCount,
                     'dictionaryFileName': this.dictionary.fileName
                 }).then((response) => {
                     this.importing = false;

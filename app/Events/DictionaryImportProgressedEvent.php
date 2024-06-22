@@ -9,19 +9,19 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
 
-class DictionaryImportProgressEvent implements ShouldBroadcast
+class DictionaryImportProgressedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $percentage;
+    public $importedRecords;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($percentage)
+    public function __construct($importedRecords)
     {
-        $this->percentage = $percentage;
+        $this->importedRecords = $importedRecords;
     }
 
     /**

@@ -44,8 +44,6 @@ class DictionaryImportService {
             $dictionary->target_language = 'english';
             $dictionary->color = '#74E39A'; 
             $dictionary->expectedRecordCount = 207690;
-            $dictionary->firstUpdateInterval = 25000;
-            $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'jmdict.zip';
 
             // check if jmdict is imported
@@ -61,8 +59,6 @@ class DictionaryImportService {
             $dictionary->target_language = 'english';
             $dictionary->color = '#EF4556'; 
             $dictionary->expectedRecordCount = 0;
-            $dictionary->firstUpdateInterval = 25000;
-            $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'cedict_ts.u8';
 
             // check record count
@@ -89,8 +85,6 @@ class DictionaryImportService {
             $dictionary->target_language = 'german';
             $dictionary->color = '#EF4556'; 
             $dictionary->expectedRecordCount = 0;
-            $dictionary->firstUpdateInterval = 25000;
-            $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'handedict.u8';
 
             // check record count
@@ -106,8 +100,6 @@ class DictionaryImportService {
             $dictionary->target_language = 'english';
             $dictionary->color = '#DDBFE4'; 
             $dictionary->expectedRecordCount =  117509;
-            $dictionary->firstUpdateInterval = 25000;
-            $dictionary->updateInterval = 10000;
             $dictionary->fileName = 'kengdic.tsv';
 
             return $dictionary;
@@ -121,9 +113,7 @@ class DictionaryImportService {
             $dictionary->source_language = 'welsh';
             $dictionary->target_language = 'english';
             $dictionary->color = '#32DB4D'; 
-            $dictionary->expectedRecordCount =  210579 * 2;
-            $dictionary->firstUpdateInterval = 25000;
-            $dictionary->updateInterval = 10000;
+            $dictionary->expectedRecordCount =  210579;
             $dictionary->fileName = 'Eurfa_Welsh_Dictionary.csv';
 
             return $dictionary;
@@ -178,8 +168,6 @@ class DictionaryImportService {
                 $dictionary->target_language = $dictCcLanguageCodes[$fileLanguage[1]];
                 $dictionary->color = '#FF981B'; 
                 $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path('temp/dictionaries/' . $fileName));
-                $dictionary->firstUpdateInterval = 3000;
-                $dictionary->updateInterval = 10000;
                 $dictionary->fileName = $fileName;
 
                 return $dictionary;
@@ -214,8 +202,6 @@ class DictionaryImportService {
                 $dictionary->target_language = 'english';
                 $dictionary->color = '#E9CDA0'; 
                 $dictionary->expectedRecordCount = $this->getFileLineCount(Storage::path('temp/dictionaries/' . $fileName));
-                $dictionary->firstUpdateInterval = 5000;
-                $dictionary->updateInterval = 10000;
                 $dictionary->fileName =  $fileName;
 
                 return $dictionary;
@@ -369,6 +355,9 @@ class DictionaryImportService {
             if ($index % 1000 == 0) {
                 DB::commit();
                 DB::beginTransaction();
+
+                // send progress through websockets
+                event(new \App\Events\DictionaryImportProgressedEvent($index));
             }
             
             $index ++;
@@ -441,6 +430,9 @@ class DictionaryImportService {
             if ($index % 1000 == 0) {
                 DB::commit();
                 DB::beginTransaction();
+
+                // send progress through websockets
+                event(new \App\Events\DictionaryImportProgressedEvent($index));
             }
             
             $index ++;
@@ -505,6 +497,9 @@ class DictionaryImportService {
             if ($index % 1000 == 0) {
                 DB::commit();
                 DB::beginTransaction();
+
+                // send progress through websockets
+                event(new \App\Events\DictionaryImportProgressedEvent($index));
             }
             
             $index ++;
@@ -570,6 +565,9 @@ class DictionaryImportService {
             if ($index % 1000 == 0) {
                 DB::commit();
                 DB::beginTransaction();
+
+                // send progress through websockets
+                event(new \App\Events\DictionaryImportProgressedEvent($index));
             }
             
             $index ++;
@@ -657,8 +655,8 @@ class DictionaryImportService {
                 DB::commit();
                 DB::beginTransaction();
 
-                // send progress through web sockets
-                event(new \App\Events\DictionaryImportProgressEvent($index / 102939 * 100));
+                // send progress through websockets
+                event(new \App\Events\DictionaryImportProgressedEvent($index));
             }
             
             $index ++;
@@ -936,6 +934,9 @@ class DictionaryImportService {
             if ($index % 1000 == 0) {
                 DB::commit();
                 DB::beginTransaction();
+
+                // send progress through websockets
+                event(new \App\Events\DictionaryImportProgressedEvent($index));
             }
             
             $index ++;
