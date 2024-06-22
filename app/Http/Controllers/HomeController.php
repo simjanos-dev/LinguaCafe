@@ -36,7 +36,8 @@ class HomeController extends Controller {
             'userCount' => $userCount,
             'userName' => $userName,
             'isAdmin' => $isAdmin,
-            'theme' => $theme
+            'theme' => $theme,
+            'userUuid' => Auth::user()->uuid,
         ]);
     }
 

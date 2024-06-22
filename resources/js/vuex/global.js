@@ -3,6 +3,7 @@ import Pusher from 'pusher-js';
 
 export default global = {
     state: () => ({
+        userUuid: '',
         echo: new Echo({
             broadcaster: 'pusher',
             key: 'key1',
@@ -14,13 +15,16 @@ export default global = {
         })
     }),
     mutations: {
-        increment (state) {
-           state.count++
+        setUuid (state, userUuid) {
+            state.userUuid = userUuid;
         }
     },
     getters: {
         echo (state) {
             return state.echo;
+        },
+        userUuid(state) {
+            return state.userUuid;
         }
     }
 }

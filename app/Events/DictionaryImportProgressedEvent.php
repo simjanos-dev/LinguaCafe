@@ -30,8 +30,8 @@ class DictionaryImportProgressedEvent implements ShouldBroadcast
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn() {
-        $userId = Auth::user()->id;
+        $userUuid = Auth::user()->uuid;
 
-        return new PrivateChannel('dictionary-import-progress.' . $userId);
+        return new PrivateChannel('dictionary-import-progress.' . $userUuid);
     }
 }

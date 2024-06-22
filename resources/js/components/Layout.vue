@@ -165,6 +165,10 @@
                 type: String,
                 default: '',
             },
+            _userUuid: {
+                type: String,
+                default: '',
+            },
             _userCount: Number,
             _isAdmin: Boolean,
         },
@@ -196,6 +200,9 @@
             }
         },
         mounted() {
+            // set user uuid
+            this.$store.commit('setUuid', this.$props._userUuid);
+            
             // load default and selected font types into the dom
             var fontTypeService = new FontTypeService(this.selectedLanguage, this.$cookie, () => {
                 fontTypeService.loadSelectedFontTypeIntoDom();

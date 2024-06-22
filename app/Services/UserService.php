@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 use App\Models\User;
@@ -48,6 +49,7 @@ class UserService {
         $user->email = $email;
         $user->is_admin = $isAdmin;
         $user->password_changed = $passwordChanged;
+        $user->uuid = Str::uuid()->toString();
         $user->password = Hash::make($password);
         $user->save();
 

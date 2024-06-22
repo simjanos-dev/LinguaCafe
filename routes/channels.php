@@ -16,6 +16,6 @@ use Ramsey\Uuid\Type\Integer;
 |
 */
 
-Broadcast::channel('dictionary-import-progress.{userId}', function ($user, $userId) {
-    return $user->id === intval($userId);
+Broadcast::channel('dictionary-import-progress.{userUuid}', function ($user, $userUuid) {
+    return $user->uuid === $userUuid;
 });
