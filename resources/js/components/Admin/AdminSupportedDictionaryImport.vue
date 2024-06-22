@@ -243,6 +243,7 @@
             },
             startImport() {
                 this.$store.getters.echo.private('dictionary-import-progress.1').listen('DictionaryImportProgressedEvent', (message) => {
+                    console.log('message', message.importedRecords);
                     this.importedRecords = message.importedRecords
                     
                     // update percentage
@@ -267,6 +268,7 @@
                     'dictionaryDatabaseName': this.dictionary.databaseName,
                     'dictionaryFileName': this.dictionary.fileName
                 }).then((response) => {
+                    this.$store.getters.echo.private('dictionary-import-progress.1').stopListening('DictionaryImportProgressedEvent');
                     this.importing = false;
                     if (response.status === 200) {
                         this.importResult = 'success';
@@ -274,6 +276,7 @@
                         this.importResult = 'error';
                     }
                 }).catch(() => {
+                    this.$store.getters.echo.private('dictionary-import-progress.1').stopListening('DictionaryImportProgressedEvent');
                     this.importing = false;
                     this.importResult = 'error';
                 });
