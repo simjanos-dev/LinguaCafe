@@ -129,7 +129,7 @@
                             <v-progress-linear
                                 color="primary"
                                 height="36"
-                                :value="this.importedRecords / this.dictionary.expectedRecordCount * 100"
+                                :value="importingProgressPercentage"
                                 class="rounded-pill mt-2"
                             >
                                 <strong>{{ importingProgressPercentage }}%</strong>
@@ -242,6 +242,7 @@
             },
             // requests how many records have been imported
             updateImportProgress() {
+return;                
                 if (this.dictionaryFile === null) {
                     return;
                 }
@@ -265,6 +266,11 @@
                 });
             },
             startImport() {
+                this.$store.getters.echo.private('dictionary-import-progress.1').listen('DictionaryImportProgressEvent', (e) => {
+                    console.log('dictionary import progress: ', e);
+                    this.importingProgressPercentage = parseInt(e.percentage);
+                });
+                
                 if (this.dictionary === null) {
                     return;
                 }

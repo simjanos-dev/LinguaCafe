@@ -97,7 +97,6 @@
 
 <script>
     import {formatNumber} from './../../helper.js';
-    const moment = require('moment');
     export default {
         data: function() {
             return {

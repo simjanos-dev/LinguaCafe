@@ -656,6 +656,9 @@ class DictionaryImportService {
             if ($index % 1000 == 0) {
                 DB::commit();
                 DB::beginTransaction();
+
+                // send progress through web sockets
+                event(new \App\Events\DictionaryImportProgressEvent($index / 102939 * 100));
             }
             
             $index ++;

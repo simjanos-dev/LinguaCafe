@@ -8,6 +8,7 @@ var VueCookie = require('vue-cookie');
 window.Vue.use(VueCookie);
 window.Vue.use(VueRouter);
 
+
 // vue showdown
 import VueShowdown from 'vue-showdown'
 
@@ -216,7 +217,7 @@ const router = new VueRouter({
         { path: '/', component: Home },
         { path: '/user-settings', component: UserSettingsLayout },
         { path: '/admin/:page?', component: AdminSettingsLayout },
-        { path: '/user-manual/:currentPage?', component: UserManual },
+        { path: '/user-manual/:curre0ntPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
@@ -230,16 +231,23 @@ const router = new VueRouter({
     ]
 })
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+// vuex
+import Vuex from 'vuex';
+import global from './vuex/global.js';
+Vue.use(Vuex);
 
+const store = new Vuex.Store({
+    modules: {
+        global: global,
+    }
+});
+
+Vue.use(store);
 const app = new Vue({
     router,
     el: '#app',
-    vuetify
+    vuetify,
+    store
 });
 
 
