@@ -2,6 +2,7 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
 export default global = {
+    namespaced: true,
     state: () => ({
         userUuid: '',
         echo: new Echo({
