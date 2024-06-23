@@ -28,11 +28,11 @@
                                 There are {{ notInstalledLanguages }} additional languages that can be installed.
                             </template>
 
-                            <template v-if="!$props.isAdmin">
+                            <template v-if="!$store.getters['global/userAdmin']">
                                 Languages can only installed by admin users.
                             </template>
                         </v-col>
-                        <v-col class="shrink" v-if="$props.isAdmin">
+                        <v-col class="shrink" v-if="$store.getters['global/userAdmin']">
                             <v-btn outlined depressed rounded color="foreground" @click="manageLanguages">
                                 <v-icon class="mr-1">mdi-cog</v-icon>
                                 Manage languages
@@ -74,7 +74,6 @@
     export default {
         props: {
             value : Boolean,
-            isAdmin: Boolean
         },
         emits: ['input'],
         data: function() {

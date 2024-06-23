@@ -7,7 +7,7 @@
 
         <template v-if="$router.currentRoute.path !== '/login'">
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
-            <language-selection-dialog :is-admin="$props._isAdmin" v-model="languageSelectionDialog"></language-selection-dialog>
+            <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
             <v-navigation-drawer
                 id="navigation-drawer"
                 app
