@@ -5,6 +5,7 @@ export default global = {
     namespaced: true,
     state: () => ({
         userUuid: '',
+        userAdmin: false,
         echo: new Echo({
             broadcaster: 'pusher',
             key: 'key1',
@@ -18,6 +19,9 @@ export default global = {
     mutations: {
         setUuid (state, userUuid) {
             state.userUuid = userUuid;
+        },
+        setUserAdmin (state, userAdmin) {
+            state.userAdmin = userAdmin;
         }
     },
     getters: {
@@ -26,6 +30,9 @@ export default global = {
         },
         userUuid(state) {
             return state.userUuid;
+        },
+        userAdmin(state) {
+            return state.userAdmin;
         }
     }
 }
