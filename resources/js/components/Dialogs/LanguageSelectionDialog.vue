@@ -21,14 +21,18 @@
                     <v-row align="center">
                         <v-col class="grow">
                             <template v-if="notInstalledLanguages === 1">
-                                There is 1 additional language that you can install.
+                                There is 1 additional language that can be installed.
                             </template>
 
                             <template v-else>
-                                There are {{ notInstalledLanguages }} additional languages that you can install.
+                                There are {{ notInstalledLanguages }} additional languages that can be installed.
+                            </template>
+
+                            <template v-if="!$props.isAdmin">
+                                Languages can only installed by admin users.
                             </template>
                         </v-col>
-                        <v-col class="shrink">
+                        <v-col class="shrink" v-if="$props.isAdmin">
                             <v-btn outlined depressed rounded color="foreground" @click="manageLanguages">
                                 <v-icon class="mr-1">mdi-cog</v-icon>
                                 Manage languages
@@ -70,6 +74,7 @@
     export default {
         props: {
             value : Boolean,
+            isAdmin: Boolean
         },
         emits: ['input'],
         data: function() {
