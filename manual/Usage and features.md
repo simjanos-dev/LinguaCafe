@@ -68,7 +68,7 @@ In the default light and dark themes, the closer you are to learn a word, the le
 
 In addition to saving words, LinguaCafe also allows you to save multiple words as a **phrase**. With your mouse, left-click on a word and drag it onto the next one until you've selected all the adjacent words you want. When you're done selecting words, you can add a translation for the phrase in the **Vocabulary Sidebar** or pop-up **Vocabulary Box**, set its level, and save it. 
 
-When you reach the end of a chapter, you can click the **Finished reading** button to set all words in the chapter to known and update the daily read words statistics.
+When you reach the end of a chapter, you can click the **Finished reading** button to set all yellow words in the chapter to known and update the daily read words statistics.
 
 > [!NOTE]
 > The effect of clicking the **Finished reading** button cannot be undone easily, thus exercise some caution when clicking it. You can turn off auto setting the words to known by the **Finished reading** button in the text reader settings. You can also  set individual words' levels back to new again with a hotkey.
