@@ -287,6 +287,50 @@ class ChapterService {
         return true;
     }
 
+    public function processChapterText($userId, $chapterId) {
+        \DB::disableQueryLog();
+        
+        // retrieve chapter
+        $chapter = Chapter
+            ::where('id', $chapterId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$chapter) {
+            throw new \Exception('Chapter does not exist, or it belongs to a different user.');
+        }
+        
+        // process text
+        $textBlock = new TextBlockService();
+        $textBlock->rawText = $chapter->raw_text;
+        $textBlock->tokenizeRawText();
+        $textBlock->processTokenizedWords();
+        $textBlock->collectUniqueWords();
+        $textBlock->updateAllPhraseIds();
+        $textBlock->createNewEncounteredWords();
+
+        // collect unique word ID-s
+        $uniqueWordIds = DB
+            ::table('encountered_words')
+            ->select('id')
+            ->where('user_id', $userId)
+            ->where('language', $chapter->language)
+            ->whereIn('word', $textBlock->uniqueWords)
+            ->pluck('id')
+            ->toArray();
+
+        // update chapter word data
+        $chapter->word_count = $textBlock->getWordCount();
+        $chapter->unique_words = json_encode($textBlock->uniqueWords);
+        $chapter->unique_word_ids = json_encode($uniqueWordIds);
+        $chapter->setProcessedText($textBlock->processedWords);
+        $chapter->save();
+        
+        (new BookService())->updateBookWordCount($userId, $chapter->book_id);
+        
+        return true;
+    }
+
     public function deleteChapter($userId, $chapterId) {
         
         // retrieve chapter

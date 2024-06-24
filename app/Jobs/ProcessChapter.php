@@ -9,19 +9,26 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+
+use App\Services\ChapterService;
 
 class ProcessChapter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $message;
+    
+    private $userId;
+    private $chapterId;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($message)
+    public function __construct($userId, $chapterId)
     {
-        $this->message = $message;
+        $this->userId = $userId;
+        $this->chapterId = $chapterId;
     }
 
     /**
@@ -31,7 +38,7 @@ class ProcessChapter implements ShouldQueue
      */
     public function handle()
     {
-        usleep(1000);
-        Log::debug('Test task: ' . $this->message);
+// Auth::loginUsingId(1);
+        (new ChapterService())->processChapterText($this->userId, $this->chapterId);
     }
 }
