@@ -12,9 +12,11 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/framework": "^8.54",
+        "laravel/horizon": "^5.22",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "league/csv": "^9.0",
+        "predis/predis": "^2.2",
         "pusher/pusher-php-server": "7.0"
     },
     "require-dev": {

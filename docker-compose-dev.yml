@@ -55,6 +55,19 @@ services:
             SERVICE_NAME: linguacafe-dev
         networks:
             - linguacafedev
+    redis:
+        image: redis:7.2-alpine
+        container_name: linguacafe-redis-dev
+        volumes: 
+            - ./cache:/data
+        ports:
+            - "6379:6379"
+        environment:
+            REDIS_PASSWORD: linguacafe-dev
+            REDIS_PORT: 6379
+            REDIS_DATABASES: 16
+        networks:
+            - linguacafedev
     python:
         container_name: linguacafe-python-service-dev
         command: "python3 /app/tokenizer.py"
