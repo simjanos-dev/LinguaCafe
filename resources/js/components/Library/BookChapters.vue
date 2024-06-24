@@ -131,7 +131,7 @@
                                 class="menu-button"
                                 tile
                                 color="white"
-                                @click="showDeleteChapterDialog(chapter)"
+                                @click="showDeleteChapterDialog(item)"
                             >
                                 Delete
                             </v-btn>

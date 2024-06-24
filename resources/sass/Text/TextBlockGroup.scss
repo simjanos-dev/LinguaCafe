@@ -39,6 +39,7 @@
             opacity: 0;
             height: 0px;
             padding: 0px !important;
+            pointer-events: none;
         }
     }
 
@@ -62,6 +63,10 @@
         border-top: 1px solid rgba(0, 0, 0, 0);
         border-bottom: 1px solid rgba(0, 0, 0, 0);
         transition: background-color 0s;
+
+        .rubyword {
+            pointer-events: none;
+        }
 
         &:not(.phrase):not(.highlighted) {
             border-radius: 6px;

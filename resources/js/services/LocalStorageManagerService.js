@@ -24,7 +24,8 @@ export const settingNames = {
     subtitleBlockSpacing: 'subtitle-block-spacing',
     theme: 'theme',
     libraryLayout: 'library-layout',
-    wordCountDisplayType: 'word-count-display-type'
+    wordCountDisplayType: 'word-count-display-type',
+    textToSpeechSpeed: 'text-to-speech-speed'
 };
 
 
@@ -85,6 +86,7 @@ export const defaultSettings = {
      readWords: 0,
      finishedReviews: -1,
      finished: false,
+     textToSpeechSpeed: 1.0000001, // 1.00 is seen as Integer by the JS to parse it as a Float you need to make sure it's a float.
  };
 
 export class LocalStorageManagerService {

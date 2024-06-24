@@ -5,6 +5,16 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.14<v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-text>
+                <b>Other changes:</b>
+                <ul>
+                    <li>Replaced switches with checkboxes on the vocabulary export page.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.13<v-spacer /> 2024.06.??.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
@@ -23,6 +33,7 @@
                     <li>Added an auto level words option, which automatically levels up words which the user did not click on while reading.</li>
                     <li>Added a hotkey to the text reader to toggle plain text mode.</li>
                     <li>Added settings to hide the subtitle timestamps and to change the space between subtitles.</li>
+                    <li>Added a setting to change the speed of the text to speech.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -70,7 +81,7 @@
                 </ul>
             </v-card-text>
         </v-card>
-        
+
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.6<v-spacer /> 2024.06.05.</v-card-title>
             <v-card-text>
@@ -106,7 +117,7 @@
                 </ul>
             </v-card-text>
         </v-card>
-        
+
 
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.12.3<v-spacer /> 2024.05.22.</v-card-title>
@@ -352,22 +363,22 @@
                         There will be no error message anymore due to empty book name when you click on "Create book" button.
                     </li>
                     <li>
-                        While creating a book, the save button won't be grayed out anymore if you type in a name. 
+                        While creating a book, the save button won't be grayed out anymore if you type in a name.
                         Previously it only turned active after you removed the focus from the name input field.
                     </li>
                     <li>
-                        While creating or editing a book and uploading an image, clicking on the cancel button will now 
+                        While creating or editing a book and uploading an image, clicking on the cancel button will now
                         revert the image to the default or previous image, instead of showing an error message.
                     </li>
                     <li>
                         Fixed a bug that caused words imported on the vocabulary page to not be added to the review system.
                     </li>
                     <li>
-                        Pressing the enter key when creating or editing a book or a chapter now will act the same as clicking on the Save button. 
+                        Pressing the enter key when creating or editing a book or a chapter now will act the same as clicking on the Save button.
                         Pressing the enter key when importing something now will act as the Continue or Import button.
                     </li>
                     <li>
-                        Fixed a bug that caused hover vocabulary box to appear even when plain text mode was active 
+                        Fixed a bug that caused hover vocabulary box to appear even when plain text mode was active
                     </li>
                 </ul>
 
@@ -512,12 +523,12 @@
                 <b>Other changes:</b>
                 <ul>
                     <li>
-                        If DeepL is disabled for a language, the dictionaries will not show a DeepL error message anymore, 
+                        If DeepL is disabled for a language, the dictionaries will not show a DeepL error message anymore,
                         and they also won't make a request to retrieve the DeepL translations.
                     </li>
                     <li>
-                        For better performance and to avoid accidentaly opening hover vocabulary on words, a slight delay was added before 
-                        the hover vocabulary box becomes visible. The dictionary and DeepL searches already had this delay, it just has 
+                        For better performance and to avoid accidentaly opening hover vocabulary on words, a slight delay was added before
+                        the hover vocabulary box becomes visible. The dictionary and DeepL searches already had this delay, it just has
                         been applied to the visibility of the hover vocabulary box as well.
                     </li>
                 </ul>
@@ -551,10 +562,10 @@
                         Setting words' and phrases' level is now possible while hovering over them.
                     </li>
                     <li>
-                        Added dictionary search for hover vocabulary box. 
+                        Added dictionary search for hover vocabulary box.
                     </li>
                     <li>
-                        Added DeepL search for hover vocabulary box. 
+                        Added DeepL search for hover vocabulary box.
                     </li>
                     <li>
                         Separated DeepL search from regular dictionary search in the vocabulary box. Users won't have to wait for DeepL server's response to see the dictionary search results which load much faster.
@@ -563,7 +574,7 @@
                         Added loading indicator for vocabulary box dictionary search.
                     </li>
                     <li>
-                        Added an option to automatically highlight a word when it gets a translation added to it. 
+                        Added an option to automatically highlight a word when it gets a translation added to it.
                     </li>
                     <li>
                         A list of words which were not counted in the statistics now will be automatically set to ignored when imported. Also added all numbers and more symbols to the list.
@@ -587,7 +598,7 @@
                         Added windows installation guide and installation file.
                     </li>
                 </ul>
-                
+
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
@@ -615,14 +626,14 @@
                         Removed furigana from e-book imports.
                     </li>
                 </ul>
-                
+
                 <b>Other changes:</b>
                 <ul>
                     <li>
                         Removed media player page, it has been replaced with Jellyfin subtitle import option.
                     </li>
                     <li>
-                        Improved text selecting design. 
+                        Improved text selecting design.
                     </li>
                     <li>
                         Removed unnecessary files from the webserver image and decreased its size.
@@ -652,7 +663,7 @@
                         Added proper finish reading screen.
                     </li>
                 </ul>
-                
+
                 <b>Bug fixes:</b>
                 <ul>
                     <li>
@@ -662,7 +673,7 @@
                         Increased maximum execution time for importing dictionaries. If your dictionary import did not end with a success message but still functional, I recommend importing it again, because it probably did not import all the records from the dictionary file.
                     </li>
                 </ul>
-                
+
                 <b>Other changes:</b>
                 <ul>
                     <li>
@@ -699,14 +710,14 @@
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.5 <v-spacer /> 2024.01.21.</v-card-title>
             <v-card-text>
-                The docker installation process has been improved since the last version. Fixed all the known issues with it, and 
+                The docker installation process has been improved since the last version. Fixed all the known issues with it, and
                 removed the requirement for users to create their folders manually and to modify the docker-compose.yml file.
 
                 <br><br>
-                There were several issues with Jellyfin integration. Now it should work properly with every language and video type. 
+                There were several issues with Jellyfin integration. Now it should work properly with every language and video type.
                 Also added information about subtitle file naming to the readme file. <br><br>
 
-                Lemma modifications only apply to new words that haven't been imported yet. There will be an option in the future, to 
+                Lemma modifications only apply to new words that haven't been imported yet. There will be an option in the future, to
                 overwrite already existing lemmas.<br><br>
 
                 <b>New features:</b>
@@ -758,8 +769,8 @@
                         Fixed an issue related to Media player missing language support, now all languages work with it.
                     </li>
                     <li>
-                        Fixed an issue on the vocabulary search page, that caused phrases to be displayed with commas 
-                        between the words, or with no spaces between them. It will still need further improvement for 
+                        Fixed an issue on the vocabulary search page, that caused phrases to be displayed with commas
+                        between the words, or with no spaces between them. It will still need further improvement for
                         non Japanese and Chinese languages.
                     </li>
                     <li>
@@ -792,7 +803,7 @@
                         Unified text reader and subtitle reader settings. Users don't have to modify settings at both places separately anymore.
                     </li>
                     <li>
-                        Added dynamic subtitle rendering for Media player, which increased performance significantly. For this I had to remove 
+                        Added dynamic subtitle rendering for Media player, which increased performance significantly. For this I had to remove
                         customizable spacing between subtitles, due to a bug that moved the vocabulary box around. This will be fixed in the
                         future.
                     </li>
@@ -806,7 +817,7 @@
                 <b>New features:</b>
                 <ul>
                     <li>
-                        German lemmatization for nouns and separable verbs have been improved. 
+                        German lemmatization for nouns and separable verbs have been improved.
                     </li>
                     <li>
                         Importing dictionaries have been simplified, and has a new UI page to manage them.
@@ -843,7 +854,7 @@
                 </ul>
             </v-card-text>
         </v-card>
-        
+
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.3 <v-spacer /> 2024.01.12.</v-card-title>
             <v-card-text>
@@ -856,8 +867,8 @@
                         Docker installation and update process has been reworked and made simpler.
                     </li>
                     <li>
-                        The "Highlight words" option in the text and subtitle reader settings dialog has been split into 2 options: 
-                        "Hide all highlighting" and "Hide new word highlighting". This makes it possible to hide only the 
+                        The "Highlight words" option in the text and subtitle reader settings dialog has been split into 2 options:
+                        "Hide all highlighting" and "Hide new word highlighting". This makes it possible to hide only the
                         yellow new word highlighting.
                     </li>
                 </ul>
@@ -867,18 +878,18 @@
                     <li>
                         Fixed all issues with "Plain text mode".
                     </li>
-                    <li>Fixed a bug that caused words to only have top and bottom border without background when "Highlight words" option was turned off, 
+                    <li>Fixed a bug that caused words to only have top and bottom border without background when "Highlight words" option was turned off,
                         and the user hovered over them.
                     </li>
                     <li>
                         Missing toolbar titles have been added to text reader.
                     </li>
                     <li>
-                        There was a non-standard scroll function used that caused issues in some browsers. 
+                        There was a non-standard scroll function used that caused issues in some browsers.
                         It has been fixed, and it was added as an option for text and subtitle reader.
                     </li>
                     <li>
-                        An issue has been fixed that caused white space characters being displayed as clickable words 
+                        An issue has been fixed that caused white space characters being displayed as clickable words
                         on the text reader page, and it broke the software if the user clicked on them.
                     </li>
                 </ul>
@@ -889,7 +900,7 @@
                         The "/storage/app/dictionaries" folder has been created in the repository, and won't have to be created manually.
                     </li>
                     <li>
-                        All tokenizer models have been replaced with smaller sized ones due to possible performance issues. They will be replaced 
+                        All tokenizer models have been replaced with smaller sized ones due to possible performance issues. They will be replaced
                         with larger models for specific languages if it causes word tagging accuracy issues.
                     </li>
                 </ul>

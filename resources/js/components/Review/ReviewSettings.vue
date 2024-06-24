@@ -208,6 +208,22 @@
                             @change="saveSettings"
                         ></v-select>
                     </v-col>
+                    <v-col cols="12" md="4" class="switch-container d-flex align-center mt-0 mb-md-5">TTS speed:</v-col>
+                    <v-col cols="12" md="8" class="switch-container d-flex align-center mt-0 pt-3 justify-end">
+                                <v-slider
+                                        v-model="settings.textToSpeechSpeed"
+                                        :tick-labels="['0.3', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '2']"
+                                        :tick-size="0"
+                                        :max="2"
+                                        :min="0.3"
+                                        thumb-label="always"
+                                        thumb-size="38"
+                                        step="0.1"
+                                        track-color="#c5c5c5"
+                                        class="align-center"
+                                        @change="saveSettings"
+                                    />
+                                </v-col>
                 </v-row>
             </v-card-text>
 
@@ -341,28 +357,6 @@
 
                 if (emitResult) {
                     this.$emit('changed', this.settings);
-                }
-            },
-            loadSetting: function(name, type, defaultValue) {
-                const value = DefaultLocalStorageManager.loadSetting(name);
-                if (value === null) {
-                    this.settings[name] = defaultValue;
-                } else {
-                    if (type === 'boolean') {
-                    this.settings[name] = value === true;
-                    }
-
-                    if (type === 'integer') {
-                        this.settings[name] = parseInt(value);
-                    }
-
-                    if (type === 'float') {
-                        this.settings[name] = parseFloat(value);
-                    }
-
-                    if (type === 'string') {
-                        this.settings[name] = value;
-                    }
                 }
             },
             close(){

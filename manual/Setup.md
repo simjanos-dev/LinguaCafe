@@ -1,6 +1,22 @@
 # Setup
 This section contains information related to hosting, setting up and maintaining your LinguaCafe server. There are some important steps to take after installation before you can use linguacafe, like installing additional languages and importing dictionaries.
 
+# Beta
+
+>[!NOTE]
+>
+>Please only participate in beta if you can set up LinguaCafe yourself, you can create a backup of your database, and if you don't mind encountering more issues than main version releases, including bugs that can corrupt your database. I'll always try to help if you encounter issues, but I have limited time, and it may take a few days before I can check out problems.
+
+The beta docker image is a version of LinguaCafe that I use in my personal production environment. Previously I only tested it for a few days, but since I have less time nowadays, LinguaCafe has more users, and I am trying to develop it while maintaining a more stable version than did before, I will test updates for a bit longer.
+
+To use the beta version of LinguaCafe, create a  `.env` file in your LinguaCafe directory if you don't already have one, and add this line to the end of it: `VERSION=beta`. After that run the update command of your operating system from the readme file. It will pull the latest beta docker image.
+
+To see if a new beta version is released, you can just run the update command, or check the [GitHub actions](https://github.com/simjanos-dev/LinguaCafe/actions) page. I may change it up, but at this time there's no other way to track beta releases. Since the latest beta image will become the main version, there's no reason to move back to the main version, except if you want to stop using the beta when the next version comes out.
+
+I created this docker image because I've seen people using unsupported features, and wanting to use the latest version as soon as possible. If you decide to use it, please **backup** before every update. Also keep in mind that reverting to older versions is not supported. 
+
+If there ever will be extra steps necessary for beta users, I will display that in this section.
+
 # Backup
 
 >[!NOTE]
@@ -64,6 +80,15 @@ When a new version of LinguaCafe is released, please create a backup, and read t
 >
 > LinguaCafe is still in active development, and it will change from month to month. Please make sure you backup your data regularly, and expect updates to have possible problems.
 
+# Multiple users
+LinguaCafe has added support for multiple users recently, however some features are not yet supported for a multi user setup. One of them is Anki. Highlighted words are being sent to Anki through the LinguaCafe server, and this setup does not make sense for multiple users. This will be changed in a future update, so multiple users can send their own cards to their own Anki software. 
+
+User deletion is a missing feature currently.
+
+LinguaCafe has some settings (mostly display related), which are stored locally in the browser. These settings are shared between multiple users, if they use the same device to access LinguaCafe. 
+
+These limitations will be fixed in a future update.
+
 # Languages
 
 In LinguaCafe all the data are separated by the selected language. This means that any action you take in one language will not affect the data in other languages, so the first thing you should do in LinguaCafe is select your target language. You can change your selected language by clicking on the flag in the bottom left corner.
@@ -118,9 +143,9 @@ LinguaCafe supports the following languages:
 # Importing dictionaries
 
 1. Download the dictionaries that you want to use from the provided links below.
-2. Copy the dictionary files to your `linguacafe/storage/app/dictionaries` folder.
-3. Go to the **Admin** > **Dictionaries** page in LinguaCafe, and click on the **Import dictionary** button.
-4. This dialog will list all your importable dictionaries that are found in your `dictionaries` folder. Click on the **Import** button for the dictionary that you want to import.
+2. Go to the **Admin** > **Dictionaries** page in LinguaCafe, and click on the **Add dictionary** button.
+3. Select the **Supported dictionary file from the user manual** option, then upload the downloaded file.
+4. Check if the detected dictionary's data is correct, then click on the **Import** button.
 
 After the import process is finished, your dictionary should be available whenever you select a word while reading.
 
@@ -151,6 +176,8 @@ You can also import a custom dictionary file in the form of a `.csv` file.
 ## DeepL translate
 
 DeepL is a machine translation service that lets you translate up to 500.000 characters/month for free and is supported by LinguaCafe. To access the Deepl API, you'll need to create an [API key](https://support.deepl.com/hc/en-us/articles/360020695820-API-Key-for-DeepL-s-API), add it in **Admin** > **API** > **DeepL**, and enable the DeepL dictionary.
+
+After that, go to the **Admin** -> **Dictionaries** page, and click the **Add dictionary button**, and select the DeepL dictionary option. Here you can select what language do you want DeepL to translate to. You can add multiple DeepL dictionaries for the same language, if you want it to translate to multiple languages. 
 
 # Importing Vocabulary into LinguaCafe
 

@@ -91,6 +91,16 @@ class TextToSpeechService {
         return this.voices.map(voice => voice.name);
     }
 
+    getSpeechRate() {
+        let rate = 1;
+        const localStorageRate = DefaultLocalStorageManager.loadSetting('text-to-speech-speed')
+        if (localStorageRate !== null) {
+            rate = localStorageRate
+        }
+
+        return rate;
+    }
+
     speak(text) {
         if (typeof speechSynthesis === "undefined") {
             return false;
@@ -105,6 +115,7 @@ class TextToSpeechService {
         tts.text = text;
         tts.lang = this.languageCodes[this.language];
         tts.voice = selectedVoice;
+        tts.rate = this.getSpeechRate();
 
         window.speechSynthesis.speak(tts);
 
