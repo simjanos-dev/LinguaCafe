@@ -101,6 +101,16 @@ class TextToSpeechService {
         return rate;
     }
 
+    getSpeechRate() {
+        let rate = 1;
+
+        if (this.cookieHandler.get('text-to-speech-speed') !== null) {
+            rate = this.cookieHandler.get('text-to-speech-speed');
+        }
+
+        return rate;
+    }
+
     speak(text) {
         if (typeof speechSynthesis === "undefined") {
             return false;
