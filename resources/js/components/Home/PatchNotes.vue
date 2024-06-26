@@ -5,7 +5,7 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.13<v-spacer /> 2024.06.??.</v-card-title>
+            <v-card-title>v0.13<v-spacer /> 2024.06.24.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
