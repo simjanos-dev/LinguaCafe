@@ -31,6 +31,7 @@
 <script>
     import themes from './../../themes';
     import ThemeService from './../../services/ThemeService';
+    import { DefaultLocalStorageManager } from './../../services/LocalStorageManagerService'
     export default {
         props: {
             value : Boolean,
@@ -38,7 +39,7 @@
         emits: ['input'],
         data: function() {
             return {
-                selectedTheme: ThemeService.getCurrentTheme(this.$cookie),
+                selectedTheme: ThemeService.getCurrentTheme(),
                 displayNames: {
                     light: {
                         name: 'Light theme',
@@ -60,12 +61,12 @@
         },
         methods: {
             selectTheme: function(newTheme) {
-                this.$cookie.set('theme', newTheme, 3650);
-                this.$vuetify.theme.dark = (newTheme == 'dark');
-                ThemeService.loadTheme(themes, this.$cookie, this.$vuetify);
+                DefaultLocalStorageManager.saveSetting('theme', newTheme);
+                this.$vuetify.theme.dark = (newTheme === 'dark');
+                ThemeService.loadTheme(themes, this.$vuetify);
 
                 this.close();
-                
+
             },
             close: function() {
                 this.$emit('input', false);

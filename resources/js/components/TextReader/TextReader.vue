@@ -30,7 +30,7 @@
                 ref="textReaderSettings"
                 @changed="updateSettings"
             ></text-reader-settings>
-            
+
             <!-- Chapters -->
             <text-reader-chapter-list
                 :chapters="chapters"
@@ -45,24 +45,24 @@
             ></text-reader-glossary>
 
             <!-- Text -->
-            <v-card 
+            <v-card
                 :outlined="theme !== 'eink'"
                 :flat="theme == 'eink'"
                 v-if="!finished && !saving"
                 id="reader"
                 :class="{
-                    'plain-text-mode': settings.plainTextMode, 
-                    'vertical-text': settings.verticalText, 
+                    'plain-text-mode': settings.plainTextMode,
+                    'vertical-text': settings.verticalText,
                     'rounded-lg': true,
                     'ml-2': true,
-                }" 
+                }"
                 :style="{
                     'height': $vuetify.breakpoint.mdAndUp ? 'calc(100% - 24px - 24px)' : 'calc(100% - 24px - 24px - 64px)',
                     'padding-right': settings.vocabularySidebar && vocabularySidebarFits ? '400px !important' : '0px'
                 }"
             >
                 <v-card-text id="reader-content" :class="{
-                    'vocab-box-area': true, 
+                    'vocab-box-area': true,
                     'px-6': $vuetify.breakpoint.smAndUp,
                     'px-3': $vuetify.breakpoint.xsOnly,
                     'pt-4': $vuetify.breakpoint.smAndUp,
@@ -104,7 +104,7 @@
                         @toggle-plain-text-mode="togglePlainTextMode"
                     ></text-block-group>
                     <div :class="{
-                        'd-flex': true, 
+                        'd-flex': true,
                         'mt-16': $vuetify.breakpoint.smAndUp,
                         'mb-3': $vuetify.breakpoint.xsOnly,
                     }">
@@ -113,12 +113,12 @@
                     </div>
                 </v-card-text>
             </v-card>&nbsp;
-            
+
             <!-- Finish box -->
-            <v-card 
-                v-if="finished || saving" 
+            <v-card
+                v-if="finished || saving"
                 :loading="saving"
-                outlined 
+                outlined
                 class="finished-box rounded-lg mx-auto"
                 width="800px"
                 background="foreground"
@@ -129,12 +129,12 @@
                 <v-card-text v-if="saving" height="200px"></v-card-text>
                 <v-card-text v-if="!saving && finishError" height="300px">
                     <v-alert
-                        class="my-3" 
+                        class="my-3"
                         border="left"
                         type="error"
                         v-if="finishError"
                     >
-                        An error has occurred while updating your data. 
+                        An error has occurred while updating your data.
                     </v-alert>
                 </v-card-text>
 
@@ -142,7 +142,7 @@
                 <div style="max-height: calc(100vh - 220px); overflow-y: auto;"  v-if="!saving && !finishError">
                     <v-card-text>
                         <!-- Text -->
-                        You have finished reading this chapter: <b>{{ chapterName }}</b>, and you have read <b>{{ formatNumber(wordCount) }}</b> words. Keep up the good work, and your 
+                        You have finished reading this chapter: <b>{{ chapterName }}</b>, and you have read <b>{{ formatNumber(wordCount) }}</b> words. Keep up the good work, and your
                         <span class="text-capitalize">{{ language }}</span> skills will improve steadily. Consistency is key!
 
                         <template v-if="nextChapter === -1">
@@ -188,27 +188,27 @@
                         </template>
                     </v-card-text>
                 </div>
-                
+
                 <!-- Actions -->
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn 
-                        rounded 
-                        depressed 
+                    <v-btn
+                        rounded
+                        depressed
                         :disabled="saving"
-                        color="primary" 
+                        color="primary"
                         @click="$router.push('/books/' + bookId)"
                     >
                         <v-icon class="mr-1">mdi-book-open-variant</v-icon>
                         Library
                     </v-btn>
-                    <v-btn 
+                    <v-btn
                         v-if="nextChapter !== -1"
-                        rounded 
-                        depressed 
+                        rounded
+                        depressed
                         :disabled="saving"
-                        color="primary" 
-                        :to="'/chapters/read/' + nextChapter" 
+                        color="primary"
+                        :to="'/chapters/read/' + nextChapter"
                     >
                         <v-icon class="mr-1">mdi-page-next-outline</v-icon>
                         Next chapter
@@ -221,6 +221,8 @@
 
 <script>
     import {formatNumber} from './../../helper.js';
+    import { DefaultLocalStorageManager, defaultSettings } from './../../services/LocalStorageManagerService';
+
     export default {
         data: function() {
             return {
@@ -233,9 +235,10 @@
                 },
                 maximumTextWidthData: ['800px', '900px', '1000px', '1200px', '1400px', '1600px', '100%'],
                 toolbarTop: 68,
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                theme: DefaultLocalStorageManager.loadSetting('theme') || 'light',
                 vocabularySidebarFits: true,
                 settings: {
+                    ...defaultSettings,
                     hideAllHighlights: false,
                     hideNewWordHighlights: false,
                     plainTextMode: false,
@@ -289,6 +292,7 @@
         props: {
         },
         mounted: function () {
+            this.settings = DefaultLocalStorageManager.loadAndParseSettings(this.settings);
             window.oncontextmenu = function(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -309,7 +313,7 @@
                     for (let i = 0; i < this.subtitleTimestamps.length; i++) {
                         for (let j = 0; j < data.words.length; j++) {
                             // find the first word of timestamp
-                            if (data.words[j].sentence_index == this.subtitleTimestamps[i].sentenceIndexStart && 
+                            if (data.words[j].sentence_index == this.subtitleTimestamps[i].sentenceIndexStart &&
                                 (j == 0 || data.words[j-1].sentence_index !== data.words[j].sentence_index)) {
                                     data.words[j].subtitleIndex = i;
                             }
@@ -323,7 +327,7 @@
                     phrases: JSON.parse(JSON.stringify(data.phrases)),
                     uniqueWords: JSON.parse(JSON.stringify(data.uniqueWords))
                 };
-                
+
                 this.bookName = data.bookName;
                 this.chapterId = data.chapterId;
                 this.wordCount = data.wordCount;
@@ -453,11 +457,11 @@
                 });
             },
             increaseFontSize() {
-                this.settings.fontSize ++; 
+                this.settings.fontSize ++;
                 this.toolbarSettingChanged();
             },
             decreaseFontSize() {
-                this.settings.fontSize --; 
+                this.settings.fontSize --;
                 this.toolbarSettingChanged();
             },
             togglePlainTextMode() {

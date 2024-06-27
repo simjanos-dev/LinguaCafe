@@ -1,6 +1,7 @@
+import { DefaultLocalStorageManager  } from "./LocalStorageManagerService";
+
 class TextToSpeechService {
-    constructor(language, cookieHandler, voicesLoaded = null) {
-        // BCP 47 language codes
+    constructor(language, voicesLoaded = null) {
         this.languageCodes = {
             'arabic': 'ar',
             'chinese': 'zh',
@@ -28,18 +29,16 @@ class TextToSpeechService {
             'swedish': 'sv',
             'tamil': 'ta',
             'thai': 'th',
-            'thai': 'th',
             'turkish': 'tr',
             'ukrainian': 'uk',
             'welsh': 'cy',
         };
 
-        this.cookieHandler = cookieHandler;
         this.language = language;
         this.voices = this.getLanguageVoices();
 
         if (window.speechSynthesis !== undefined) {
-            window.speechSynthesis.addEventListener("voiceschanged", (event) => {
+            window.speechSynthesis.addEventListener("voiceschanged", () => {
                 this.voices = this.getLanguageVoices();
 
                 if (voicesLoaded !== null) {
@@ -50,15 +49,15 @@ class TextToSpeechService {
     }
 
     getLanguageVoices() {
-        var languageVoices = [];
+        const languageVoices = [];
         if (window.speechSynthesis === undefined) {
             return languageVoices;
         }
 
-        var allVoices = speechSynthesis.getVoices();
+        const allVoices = speechSynthesis.getVoices();
 
         allVoices.forEach((voice) => {
-            var languageCode = voice.lang.split('-')[0];
+            const languageCode = voice.lang.split('-')[0];
             if (this.languageCodes[this.language] === languageCode) {
                 languageVoices.push(voice);
             }
@@ -72,17 +71,11 @@ class TextToSpeechService {
             return null;
         }
 
-        if (this.cookieHandler.get(this.language + '-text-to-speech-voice') !== null) {
-            var selectedVoiceName = this.cookieHandler.get(this.language + '-text-to-speech-voice');
-            var selectedVoice = null;
-
-            this.voices.forEach((voice) => {
-                if (voice.name === selectedVoiceName) {
-                    selectedVoice = voice;
-                }
-            });
-
-            return selectedVoice;
+        const selectedVoiceKey = `${this.language}-text-to-speech-voice`;
+        const selectedVoiceName = DefaultLocalStorageManager.loadSetting(selectedVoiceKey);
+        if (selectedVoiceName !== null) {
+            const selectedVoice = this.voices.find(voice => voice.name === selectedVoiceName);
+            return selectedVoice || null;
         } else if (!this.voices.length) {
             return null;
         } else {
@@ -91,24 +84,18 @@ class TextToSpeechService {
     }
 
     getVoiceNames() {
-        var voiceNames = [];
-
         if (window.speechSynthesis === undefined) {
-            return voiceNames;
+            return [];
         }
 
-        this.voices.forEach((voice) => {
-            voiceNames.push(voice.name);
-        });
-
-        return voiceNames;
+        return this.voices.map(voice => voice.name);
     }
 
     getSpeechRate() {
         let rate = 1;
-
-        if (this.cookieHandler.get('text-to-speech-speed') !== null) {
-            rate = this.cookieHandler.get('text-to-speech-speed');
+        const localStorageRate = DefaultLocalStorageManager.loadSetting('text-to-speech-speed')
+        if (localStorageRate !== null) {
+            rate = localStorageRate
         }
 
         return rate;
@@ -119,20 +106,17 @@ class TextToSpeechService {
             return false;
         }
 
-        // create tts object
-        var selectedVoice = this.getSelectedVoice();
-        var tts = new SpeechSynthesisUtterance();
-        tts.text = text;
-        tts.lang = this.languageCodes[this.language];
-        tts.rate = this.getSpeechRate();
-
-        if (selectedVoice !== null) {
-            tts.voice = selectedVoice;
-        } else {
+        const selectedVoice = this.getSelectedVoice();
+        if (!selectedVoice) {
             return false;
         }
 
-        // speak
+        const tts = new SpeechSynthesisUtterance();
+        tts.text = text;
+        tts.lang = this.languageCodes[this.language];
+        tts.voice = selectedVoice;
+        tts.rate = this.getSpeechRate();
+
         window.speechSynthesis.speak(tts);
 
         return true;

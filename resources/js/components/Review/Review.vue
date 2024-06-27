@@ -1,9 +1,9 @@
 <template>
-    <v-container 
-        v-if="currentReviewIndex !== -1 || finished" 
-        id="review-box" 
+    <v-container
+        v-if="currentReviewIndex !== -1 || finished"
+        id="review-box"
         :class="{
-            'pa-0': $vuetify.breakpoint.smAndDown, 
+            'pa-0': $vuetify.breakpoint.smAndDown,
             'chinese-font': language == 'chinese'
         }"
     >
@@ -21,13 +21,13 @@
             :language="language"
             @changed="updateSettings"
         ></review-settings>
-        
+
         <!-- Review finished box -->
-        <v-card 
+        <v-card
             v-if="finished"
-            outlined 
+            outlined
             id="finish-review-box"
-            class="mt-4 mx-auto rounded-lg" 
+            class="mt-4 mx-auto rounded-lg"
             width="500px"
         >
             <!-- There were no cards at all -->
@@ -36,7 +36,7 @@
                 <v-card-title>
                     <v-icon large color="error" class="mr-1">mdi-cards</v-icon>No cards to be reviewed.
                 </v-card-title>
-                
+
                 <!-- Card content -->
                 <v-card-text>
                     There are no words or phrases to be reviewed.
@@ -49,10 +49,10 @@
                 <v-card-title>
                     <v-icon large color="success" class="mr-1">mdi-bookmark-check</v-icon>Congratulations!
                 </v-card-title>
-                
+
                 <!-- Card content -->
                 <v-card-text>
-                    You have finished reviewing{{ formatNumber(totalReviews) }} cards. Keep up the good work, and your 
+                    You have finished reviewing{{ formatNumber(totalReviews) }} cards. Keep up the good work, and your
                     <span class="text-capitalize">{{ language }}</span> skills will improve steadily. Consistency is key!
                 </v-card-text>
             </template>
@@ -77,9 +77,9 @@
                     color="success"
                     icon="mdi-check"
                 >
-                    <div 
-                        id="progress-bar-correct-counter" 
-                        class="border" 
+                    <div
+                        id="progress-bar-correct-counter"
+                        class="border"
                         :style="{'border-color': $vuetify.theme.currentTheme.success}"
                     >
                         {{ correctReviews }}
@@ -104,13 +104,13 @@
                     <div id="progress-bar-remaining-counter" class="border">{{ totalReviews - correctReviews }}</div>
                 </v-badge>
             </div>
-            
+
             <!-- Toolbar -->
             <div id="toolbar">
                 <v-btn title="Fullscreen" icon class="my-2" @click="openFullscreen" v-if="!fullscreen"><v-icon>mdi-arrow-expand-all</v-icon></v-btn>
                 <v-btn title="Exit fullscreen" icon class="my-2" @click="exitFullscreen" v-if="fullscreen"><v-icon>mdi-arrow-collapse-all</v-icon></v-btn>
                 <v-btn title="Review settings" icon @click="settingsDialog = true;"><v-icon>mdi-cog</v-icon></v-btn>
-                <v-btn 
+                <v-btn
                     class="my-2"
                     icon
                     title="Text to speech"
@@ -119,7 +119,7 @@
                 >
                     <v-icon>mdi-bullhorn</v-icon>
                 </v-btn>
-                
+
                 <v-menu offset-y left class="rounded-lg">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -132,28 +132,28 @@
                             <v-icon>mdi-text-long</v-icon>
                         </v-btn>
                     </template>
-                    <v-btn 
-                        class="menu-button justify-start" 
-                        tile 
+                    <v-btn
+                        class="menu-button justify-start"
+                        tile
                         color="white"
                         @click="settings.reviewSentenceMode = 'disabled'; saveSettings();"
                     >
                         <v-icon class="mr-1">mdi-close</v-icon>
                         Disabled
-                        
+
                     </v-btn>
-                    <v-btn 
-                        class="menu-button justify-start" 
-                        tile 
+                    <v-btn
+                        class="menu-button justify-start"
+                        tile
                         color="white"
                         @click="settings.reviewSentenceMode = 'plain-text'; saveSettings();"
                     >
                         <v-icon class="mr-1">mdi-text-long</v-icon>
                         Plain text
                     </v-btn>
-                    <v-btn 
-                        class="menu-button justify-start" 
-                        tile 
+                    <v-btn
+                        class="menu-button justify-start"
+                        tile
                         color="white"
                         @click="settings.reviewSentenceMode = 'interactive-text'; saveSettings();"
                     >
@@ -161,18 +161,18 @@
                         Interactive text
                     </v-btn>
                 </v-menu>
-                
+
                 <v-btn title="Increase font size" icon class="my-2" @click="increaseFontSize"><v-icon>mdi-magnify-plus</v-icon></v-btn>
                 <v-btn title="Decrease font size" icon class="my-2" @click="decreaseFontSize"><v-icon>mdi-magnify-minus</v-icon></v-btn>
                 <v-btn title="Show hotkey information" icon class="my-2" @click="hotkeyDialog = !hotkeyDialog;"><v-icon>mdi-keyboard-outline</v-icon></v-btn>
             </div>
 
             <!-- Card -->
-            <div id="review-card" 
+            <div id="review-card"
                 :class="{
-                    'revealed': revealed, 
-                    'back-to-deck-animation': backToDeckAnimation, 
-                    'into-the-correct-deck-animation': intoTheCorrectDeckAnimation, 
+                    'revealed': revealed,
+                    'back-to-deck-animation': backToDeckAnimation,
+                    'into-the-correct-deck-animation': intoTheCorrectDeckAnimation,
                     'draw-new-card-animation': newCardAnimation
                 }">
                 <div class="vocab-box-area">
@@ -259,7 +259,7 @@
                                     <!-- Example sentence plain text mode -->
                                     <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
                                         <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                            <span 
+                                            <span
                                                 v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
                                                 :class="{'selected-font': true, 'mr-2': word.spaceAfter}"
                                             >{{ word.word }}</span>
@@ -303,7 +303,7 @@
                                 <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].reading }}
                             </div>
-                            
+
                             <!-- Example sentence interactive text mode -->
                             <hr v-if="settings.reviewSentenceMode !== 'disabled'">
                             <text-block-group
@@ -327,7 +327,7 @@
                             <!-- Example sentence plain text mode -->
                             <template v-if="exampleSentence !== null && settings.reviewSentenceMode === 'plain-text' && reviews[currentReviewIndex] !== undefined">
                                 <div class="phrase-words" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                    <span 
+                                    <span
                                         v-for="(word, wordIndex) in exampleSentence.words" :key="wordIndex"
                                         :class="{'selected-font': true, 'mr-2': word.spaceAfter}"
                                     >{{ word.word }}</span>
@@ -357,12 +357,14 @@
     const moment = require('moment');
     import TextToSpeechService from './../../services/TextToSpeechService';
     import {formatNumber} from './../../helper.js';
+    import { DefaultLocalStorageManager } from './../../services/LocalStorageManagerService';
+
     export default {
         data: function() {
             return {
                 textToSpeechService: null,
                 textToSpeechAvailable: false,
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                theme: DefaultLocalStorageManager.loadSetting('theme') || 'light',
                 hotkeyDialog: false,
                 textBlockKey: 0,
                 exampleSentence: [
@@ -381,15 +383,15 @@
                 newCardAnimation: false,
                 settingsDialog: false,
                 settings: {
-                    fontSize: 20,
-                    reviewSentenceMode: 'plain-text',
-                    vocabularyHoverBox: true,
-                    vocabularyHoverBoxSearch: true,
-                    vocabularyHoverBoxDelay: 300,
-                    vocabularyHoverBoxPreferredPosition: 'bottom',
-                    vocabularyBottomSheet: true,
+                    fontSize: DefaultLocalStorageManager.loadSetting('fontSize') || 20,
+                    reviewSentenceMode: DefaultLocalStorageManager.loadSetting('reviewSentenceMode') || 'plain-text',
+                    vocabularyHoverBox: DefaultLocalStorageManager.loadSetting('vocabularyHoverBox') || true,
+                    vocabularyHoverBoxSearch: DefaultLocalStorageManager.loadSetting('vocabularyHoverBoxSearch') || true,
+                    vocabularyHoverBoxDelay: DefaultLocalStorageManager.loadSetting('vocabularyHoverBoxDelay') || 300,
+                    vocabularyHoverBoxPreferredPosition: DefaultLocalStorageManager.loadSetting('vocabularyHoverBoxPreferredPosition') || 'bottom',
+                    vocabularyBottomSheet: DefaultLocalStorageManager.loadSetting('vocabularyBottomSheet') || true,
                 },
-                transitionDuration: this.$cookie.get('theme') === 'eink' ? 0 : 400,
+                transitionDuration: DefaultLocalStorageManager.loadSetting('theme') === 'eink' ? 0 : 400,
                 fullscreen: false,
                 currentReviewIndex: -1,
                 reviews: [],
@@ -411,7 +413,7 @@
                 chapterId: -1,
                 practiceMode: this.practiceMode,
             };
-            
+
             if (this.$route.params.bookId !== undefined) {
                 data.bookId = parseInt(this.$route.params.bookId);
             }
@@ -444,7 +446,7 @@
                     this.finish();
                 }
 
-                this.textToSpeechService = new TextToSpeechService(this.language, this.$cookie, this.updateTextToSpeechState);
+                this.textToSpeechService = new TextToSpeechService(this.language, this.updateTextToSpeechState);
                 window.addEventListener('keyup', this.hotkey);
             });
         },
@@ -506,26 +508,31 @@
                 this.$forceUpdate();
             },
             saveSettings() {
-                this.$refs.reviewSettings.changeSetting('fontSize', this.settings.fontSize);
-                this.$refs.reviewSettings.changeSetting('reviewSentenceMode', this.settings.reviewSentenceMode, true);
+                DefaultLocalStorageManager.saveSetting('fontSize', this.settings.fontSize);
+                DefaultLocalStorageManager.saveSetting('reviewSentenceMode', this.settings.reviewSentenceMode);
+                DefaultLocalStorageManager.saveSetting('vocabularyHoverBox', this.settings.vocabularyHoverBox);
+                DefaultLocalStorageManager.saveSetting('vocabularyHoverBoxSearch', this.settings.vocabularyHoverBoxSearch);
+                DefaultLocalStorageManager.saveSetting('vocabularyHoverBoxDelay', this.settings.vocabularyHoverBoxDelay);
+                DefaultLocalStorageManager.saveSetting('vocabularyHoverBoxPreferredPosition', this.settings.vocabularyHoverBoxPreferredPosition);
+                DefaultLocalStorageManager.saveSetting('vocabularyBottomSheet', this.settings.vocabularyBottomSheet);
             },
             increaseFontSize() {
-                this.settings.fontSize ++; 
+                this.settings.fontSize ++;
                 this.saveSettings();
             },
             decreaseFontSize() {
-                this.settings.fontSize --; 
+                this.settings.fontSize --;
                 this.saveSettings();
             },
             reveal() {
                 if (this.intoTheCorrectDeckAnimation || this.backToDeckAnimation || this.newCardAnimation) {
                     return;
                 }
-                
+
                 if (this.$refs.textBlock !== undefined && this.settings.reviewSentenceMode === 'interactive-text') {
                     this.$refs.textBlock.unselectAllWords(true);
                 }
-                
+
                 this.revealed = true;
                 this.newCardAnimation = false;
             },
@@ -622,7 +629,7 @@
                     id: this.reviews[this.currentReviewIndex].id,
                     savedDuringReview: true
                 };
-                
+
                 if (!this.reviews[this.currentReviewIndex].relearning && !this.practiceMode) {
                     if (this.reviews[this.currentReviewIndex].stage > -7) {
                         if (this.reviews[this.currentReviewIndex].stage > -6) {
@@ -633,7 +640,7 @@
                         this.reviews[this.currentReviewIndex].stage = this.reviews[this.currentReviewIndex].stage - 1;
                         saveData.stage = this.reviews[this.currentReviewIndex].stage;
                     }
-                }                
+                }
 
                 if (!this.practiceMode) {
                     axios.post(url, saveData).then(() => {
@@ -648,7 +655,7 @@
                 this.intoTheCorrectDeckAnimation = false;
                 this.newCardAnimation = true;
                 this.backgroundColor = this.$vuetify.theme.currentTheme.foreground;
-                
+
                 if (this.$refs.textBlock !== undefined && this.settings.reviewSentenceMode === 'interactive-text') {
                     this.$refs.textBlock.unselectAllWords(true);
                 }

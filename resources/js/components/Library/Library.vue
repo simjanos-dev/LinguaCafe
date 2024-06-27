@@ -154,7 +154,7 @@
             @open-book="openBook"
         />
 
-        <book 
+        <book
             v-if="openedBook !== -1"
             :book="books[openedBook]"
             @show-edit-book-dialog="showEditBookDialog"
@@ -167,11 +167,12 @@
 
 <script>
     import {formatNumber} from './../../helper.js';
+    import { DefaultLocalStorageManager } from './../../services/LocalStorageManagerService';
     export default {
         data: function() {
             return {
-                layout: 'table',
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                layout: DefaultLocalStorageManager.loadSetting('library-layout') || 'table',
+                theme: DefaultLocalStorageManager.loadSetting('theme') || 'light',
                 books: [],
                 openedBook: -1,
                 errorDialog: {
@@ -201,10 +202,6 @@
         },
         mounted() {
             this.loadBooks();
-
-            if (this.$cookie.get('library-layout') !== null) {
-                this.layout = this.$cookie.get('library-layout');
-            }
         },
         methods: {
             loadBookWordCounts(index) {
@@ -258,7 +255,7 @@
                 }
 
                 this.openedBook = bookIndex;
-                
+
                 // update url
                 if (this.$router.currentRoute.fullPath !== ('/books/' + this.books[bookIndex].id)) {
                     this.$router.push('/books/' + this.books[bookIndex].id);
@@ -266,7 +263,7 @@
             },
             closeBook() {
                 this.openedBook = -1;
-                
+
                 // update url
                 if (this.$router.currentRoute.fullPath !== ('/books')) {
                     this.$router.push('/books');
@@ -295,12 +292,12 @@
                         this.$nextTick(() => {
                             this.openBook(parseInt(this.$route.params.bookId));
                         });
-                    } 
+                    }
                 });
             },
             setLayout(newLayout) {
                 this.layout = newLayout;
-                this.$cookie.set('library-layout', newLayout, 3650);
+                DefaultLocalStorageManager.saveSetting('library-layout', newLayout);
             },
             formatNumber: formatNumber
         }

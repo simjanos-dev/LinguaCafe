@@ -1,3 +1,7 @@
+import { DefaultLocalStorageManager } from './LocalStorageManagerService'
+
+const localStorageManager = DefaultLocalStorageManager
+
 class ThemeService {
     constructor() {
         this.themeColorNames = [
@@ -12,7 +16,7 @@ class ThemeService {
             'lightTheme-error',
             'lightTheme-info',
             'lightTheme-success',
-            'lightTheme-warning',                    
+            'lightTheme-warning',
             'lightTheme-text',
             'lightTheme-textDark',
             'lightTheme-newWord',
@@ -26,7 +30,7 @@ class ThemeService {
             'lightTheme-ignoredWordTextColor',
             'lightTheme-readerWordSelection',
             'lightTheme-highlightedWordText',
-    
+
             'darkTheme-background',
             'darkTheme-foreground',
             'darkTheme-navigation',
@@ -38,7 +42,7 @@ class ThemeService {
             'darkTheme-error',
             'darkTheme-info',
             'darkTheme-success',
-            'darkTheme-warning',                    
+            'darkTheme-warning',
             'darkTheme-text',
             'darkTheme-textDark',
             'darkTheme-newWord',
@@ -55,21 +59,21 @@ class ThemeService {
         ];
     }
 
-    loadTheme(defaultThemes, cookieHandler, vuetifyHandler) {
+    loadTheme(defaultThemes, vuetifyHandler) {
         // deep copy
         defaultThemes = JSON.parse(JSON.stringify(defaultThemes))
 
-        var themeName = cookieHandler.get('theme') === null ? 'light' : cookieHandler.get('theme');
+        var themeName = localStorageManager.loadSetting('theme') || 'light';
         vuetifyHandler.theme.dark = (themeName == 'dark');
 
 
-        // load custom theme from cookie (cache) if saved
-        var colors = cookieHandler.get(themeName + '-theme-colors');
+        // load custom theme from (cache) if saved
+        var colors = localStorageManager.loadSetting(themeName + '-theme-colors');
 
         if (colors !== null && ['light', 'dark'].includes(themeName)) {
             vuetifyHandler.theme.themes[themeName] = JSON.parse(colors);
         } else {
-            vuetifyHandler.theme.themes['light'] = cookieHandler.get('theme') === null ? defaultThemes.light : defaultThemes[cookieHandler.get('theme')];
+            vuetifyHandler.theme.themes['light'] = localStorageManager.loadSetting('theme') === null ? defaultThemes.light : defaultThemes[localStorageManager.loadSetting('theme')];
             vuetifyHandler.theme.themes['dark'] = defaultThemes.dark;
         }
 
@@ -91,15 +95,15 @@ class ThemeService {
                 }
             });
 
-            // save into cookie cache
-            cookieHandler.set(themeName + '-theme-colors', JSON.stringify(vuetifyHandler.theme.themes[themeName]), 3650);
+            // save into cache
+            localStorageManager.saveSetting(themeName + '-theme-colors', JSON.stringify(vuetifyHandler.theme.themes[themeName]));
         }).catch((error) => {
 
         });
     }
 
-    getCurrentTheme(cookieHandler) {
-        return cookieHandler.get('theme') === null ? 'light' : cookieHandler.get('theme');
+    getCurrentTheme() {
+        return localStorageManager.loadSetting('theme') || 'light';
     }
 }
 

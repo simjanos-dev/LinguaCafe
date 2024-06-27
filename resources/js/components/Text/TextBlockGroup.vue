@@ -8,7 +8,7 @@
         }"
     >
         <!-- Delete phrase dialog -->
-        <delete-phrase-dialog 
+        <delete-phrase-dialog
             v-model="deletePhraseDialog"
             @confirm="deletePhrase"
         />
@@ -60,11 +60,11 @@
             @touchmove="updateSelectionTouchEvent"
             @touchend="finishSelection"
             >
-            
+
             <template v-for="(word, wordIndex) in words"><!--
-                --><div 
+                --><div
                         v-if="word.subtitleIndex !== -1"
-                        :class="['subtitle-timestamp', $props.showSubtitleTimestamps ? '' : 'hidden', 'rounded-pill', 'py-1']" 
+                        :class="['subtitle-timestamp', $props.showSubtitleTimestamps ? '' : 'hidden', 'rounded-pill', 'py-1']"
                         :style="{'margin-top': word.subtitleIndex > 0 ? ($props.spaceBetweenSubtitles * 3) + 'px' : '0px'}"
                     ><!--
                     -->{{ subtitleTimestamps[word.subtitleIndex].start }}<!--
@@ -159,9 +159,9 @@
         <!-- Vocabulary bottom sheet -->
         <v-bottom-sheet
             v-if="
-                (!$props.vocabularySidebar || !$props.vocabularySidebarFits) 
-                && vocabBox.active 
-                && $props.vocabularyBottomSheet 
+                (!$props.vocabularySidebar || !$props.vocabularySidebarFits)
+                && vocabBox.active
+                && $props.vocabularyBottomSheet
                 && vocabBox.vocabularyBottomSheetVisible
             "
             v-model="vocabBox.active"
@@ -242,7 +242,7 @@
                 deletePhraseDialog: false,
 
                 // tts
-                textToSpeechService: new TextToSpeechService(this.$props.language, this.$cookie, this.updateTextToSpeechState),
+                textToSpeechService: new TextToSpeechService(this.$props.language, this.updateTextToSpeechState),
                 textToSpeechAvailable: false,
 
                 // text
@@ -539,14 +539,14 @@
                         clearTimeout(this.touchTimer);
                         this.touchTimer = null;
                     }
-                    
+
                     return;
                 }
-                
+
                 if (this.ongoingSelection.length) {
                     event.preventDefault();
                 }
-                
+
                 var touch = event.changedTouches[0];
                 var element = document.elementFromPoint( touch.clientX, touch.clientY );
 
@@ -587,7 +587,7 @@
 
                     return;
                 }
-                
+
                 if (event.buttons === 0 && wordIndex === -1 || wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
                     this.removePhraseHover();
                 }
@@ -785,7 +785,7 @@
 
                     var data = JSON.parse(response.data);
                     var displayedInflections = ['Non-past', 'Non-past, polite', 'Past', 'Past, polite', 'Te-form', 'Potential', 'Passive', 'Causative', 'Causative Passive', 'Imperative'];
-                    
+
                     for (var i = 0; i < data.length; i++) {
                         if (!displayedInflections.includes(data[i].name)) {
                             continue;
@@ -1002,22 +1002,22 @@
                 }
 
                 // set vertical position
-                
+
                 // set preferred location
                 this.hoverVocabBox.arrowPosition = this.$props.vocabularyHoverBoxPreferredPosition;
 
                 // correct preferred location based on available space
-                
+
                 /*
                     Is there enough space on the bottom? If not, move the hover box to the top.
-                    
+
                     There is a special case, when there is not enough space on the bottom, however the top half of the screen is smaller
                     than the bottom one. However, overflow by the hover box on the top does not affect the scrollbar, while on the bottom it
                     does, so it won't be corrected.
                 */
                 if (
-                    this.$props.vocabularyHoverBoxPositionCorrections && 
-                    this.hoverVocabBox.arrowPosition == 'bottom' && 
+                    this.$props.vocabularyHoverBoxPositionCorrections &&
+                    this.hoverVocabBox.arrowPosition == 'bottom' &&
                     (vocabBoxArea.height + vocabBoxAreaElement.scrollTop) - (hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25) < hoverVocabBoxHeight
                 ) {
                     this.hoverVocabBox.arrowPosition = 'top';
@@ -1027,8 +1027,8 @@
                     Is there enough space on the top?
                 */
                 if (
-                    this.$props.vocabularyHoverBoxPositionCorrections && 
-                    this.hoverVocabBox.arrowPosition == 'top' && 
+                    this.$props.vocabularyHoverBoxPositionCorrections &&
+                    this.hoverVocabBox.arrowPosition == 'top' &&
                     hoveredWordPositions.top - 25 - 30 < hoverVocabBoxHeight
                 ) {
                     /*
@@ -1047,7 +1047,7 @@
                     this.hoverVocabBox.positionTop = hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
                 }
 
-                
+
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
@@ -1094,7 +1094,7 @@
                         if (!event.ctrlKey) {
                             this.textToSpeech();
                         }
-                        
+
                         break;
 
                     // set level to new
@@ -1102,7 +1102,7 @@
                         if (!event.ctrlKey) {
                             this.setStage(2);
                         }
-                        
+
                         break;
 
                     // set level 0-7
@@ -1406,7 +1406,7 @@
                     this.hoverVocabBox.deeplTranslation = '';
                 }
 
-                // do not make a search request if a word has been selected 
+                // do not make a search request if a word has been selected
                 if (this.selection.length) {
                     return;
                 }
@@ -1464,7 +1464,7 @@
                         this.hoverVocabBox.key ++;
                         this.$nextTick(() => {
                             this.updateHoverVocabularyBoxPosition();
-                        }); 
+                        });
                     }).catch(() => {
                         this.hoverVocabBox.deeplTranslation = 'DeepL error';
                     });
@@ -1703,7 +1703,7 @@
                 if (this.selectedPhrase == -1) {
                     return;
                 }
-                
+
                 this.deletePhraseDialog = false;
                 var deletedPhraseId = this.phrases[this.selectedPhrase].id;
                 var deletedPhraseIndex = this.phrases.map(e => e.id).indexOf(deletedPhraseId);
@@ -2128,7 +2128,7 @@
                         data.wordsAndPhrases[data.wordsAndPhrases.length - 1].type = 'phrase';
                     }
                 });
-                
+
                 console.log(data);
                 return data;
             }
