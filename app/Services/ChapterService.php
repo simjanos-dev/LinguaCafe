@@ -109,7 +109,7 @@ class ChapterService {
             $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($uniqueWordsForWordCounts);
         }
 
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $language);
         $textBlock->setProcessedWords($words);
         $textBlock->collectUniqueWords();
         $textBlock->prepareTextForReader();
@@ -258,7 +258,7 @@ class ChapterService {
         $chapter->name = $chapterName;
         
         // process text
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $chapter->language);
         $textBlock->rawText = $chapterText;
         $textBlock->tokenizeRawText();
         $textBlock->processTokenizedWords();
@@ -302,7 +302,7 @@ class ChapterService {
         }
         
         // process text
-        $textBlock = new TextBlockService();        
+        $textBlock = new TextBlockService($userId, $chapter->language);        
         
         if ($chapter->type == 'text') {
             $textBlock->rawText = $chapter->raw_text;

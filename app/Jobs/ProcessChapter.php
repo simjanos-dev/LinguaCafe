@@ -38,7 +38,6 @@ class ProcessChapter implements ShouldQueue
      */
     public function handle()
     {
-        Auth::loginUsingId(1);
         (new ChapterService())->processChapterText($this->userId, $this->chapterId);
     }
 }

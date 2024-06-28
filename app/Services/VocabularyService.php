@@ -98,7 +98,7 @@ class VocabularyService {
 
             $words = $chapter->getProcessedText();
 
-            $textBlock = new TextBlockService();
+            $textBlock = new TextBlockService($userId, $language);
             $textBlock->setProcessedWords($words);
             $textBlock->collectUniqueWords();
             $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
@@ -123,7 +123,7 @@ class VocabularyService {
                 continue;
             }
 
-            $textBlock = new TextBlockService();
+            $textBlock = new TextBlockService($userId, $language);
             $textBlock->setProcessedWords(json_decode($exampleSentence->words));
             $textBlock->collectUniqueWords();
             $textBlock->updatePhraseIds($phrase);
@@ -258,7 +258,7 @@ class VocabularyService {
             throw new \Exception('Example sentence does not exist, or it belongs to a different user.');
         }
         
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $exampleSentence->language);
         $textBlock->setProcessedWords(json_decode($exampleSentence->words));
         $textBlock->uniqueWords = json_decode($exampleSentence->unique_words);
         $textBlock->prepareTextForReader();
@@ -294,7 +294,7 @@ class VocabularyService {
             }
         }
         
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $language);
         $textBlock->setProcessedWords($exampleSentenceWords);
         $textBlock->collectUniqueWords();
         $textBlock->updateAllPhraseIds();
