@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +117,18 @@ class TextBlockService
         ]);
 
         $this->tokenizedWords = json_decode($this->tokenizedWords);
+    }
+
+    public function tokenizeRawSubtitles() {
+        $tokenizerResponse = Http::post($this->pythonService . ':8678/tokenizer/subtitle', [
+            'subtitles' => $this->rawText,
+            'language' => $this->language,
+        ]);
+        
+        $tokenizerResponse = json_decode($tokenizerResponse);
+
+        $this->tokenizedWords = $tokenizerResponse->tokenizedText;
+        return $tokenizerResponse->timeStamps;
     }
 
     /* 

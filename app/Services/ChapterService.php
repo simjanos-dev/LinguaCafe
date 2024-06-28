@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use App\Services\GoalService;
 use App\Services\BookService;
@@ -301,9 +302,17 @@ class ChapterService {
         }
         
         // process text
-        $textBlock = new TextBlockService();
-        $textBlock->rawText = $chapter->raw_text;
-        $textBlock->tokenizeRawText();
+        $textBlock = new TextBlockService();        
+        
+        if ($chapter->type == 'text') {
+            $textBlock->rawText = $chapter->raw_text;
+            $textBlock->tokenizeRawText();
+            $timeStamps = [];
+        } else {
+            $textBlock->rawText = $chapter->raw_text;
+            $timeStamps = $textBlock->tokenizeRawSubtitles();
+        }
+        
         $textBlock->processTokenizedWords();
         $textBlock->collectUniqueWords();
         $textBlock->updateAllPhraseIds();
@@ -324,6 +333,7 @@ class ChapterService {
         $chapter->unique_words = json_encode($textBlock->uniqueWords);
         $chapter->unique_word_ids = json_encode($uniqueWordIds);
         $chapter->setProcessedText($textBlock->processedWords);
+        $chapter->subtitle_timestamps = json_encode($timeStamps);
         $chapter->save();
         
         (new BookService())->updateBookWordCount($userId, $chapter->book_id);

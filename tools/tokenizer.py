@@ -414,6 +414,42 @@ def tokenizer():
             tokenizedText.append(tokenizeText(text, language))
         return json.dumps(tokenizedText)
 
+@route('/tokenizer/subtitle', method='POST')
+def subtitleTokenizer():
+    response.headers['Content-Type'] = 'application/json'
+    subtitles = json.loads(request.json.get('subtitles'))
+    language = request.json.get('language')
+
+    # split the text into chunks
+    tokenizedText = list()
+    timeStamps = list()
+
+    currentChunkSentenceIndex = 0
+    for subtitleIndex, subtitle in enumerate(subtitles):
+        print(subtitles)
+        # tokenize text
+        text = subtitles[subtitleIndex]['text'].replace('\r\n', ' NEWLINE ')
+        text = text.replace('\n', ' NEWLINE ')
+
+        # tokenize text
+        tokenizedSubtitle = tokenizeText(text, language, currentChunkSentenceIndex)
+
+        # set new sentence index
+        currentChunkSentenceIndex = tokenizedSubtitle[-1]['si'] + 1
+
+        # add timestamp to chunk array
+        timeStamps.append({
+            'start': subtitles[subtitleIndex]['start'],
+            'end': subtitles[subtitleIndex]['end'],
+            'sentenceIndexStart': tokenizedSubtitle[0]['si'],
+            'sentenceIndexEnd': tokenizedSubtitle[-1]['si']
+        })
+                    
+        ## add tokenized text to processed chunk
+        tokenizedText = tokenizedText + tokenizedSubtitle
+
+    return json.dumps({'tokenizedText': tokenizedText, 'timeStamps': timeStamps})
+
 # returns a raw text and a tokenized text 
 # of n .epub file cut into chunks
 @route('/tokenizer/import-book', method='POST')
@@ -439,24 +475,17 @@ def importBook():
     chunks = list()
     processedChunks = list()
     for sentenceIndex, sentence in enumerate(sentences):
-        if (len(processedChunks) == 0 or len(processedChunks[-1].replace(' NEWLINE ', '')) > chunkSize):
+        if (len(chunks) == 0 or len(chunks[-1].replace(' NEWLINE ', '')) > chunkSize):
             chunks.append('')
-            processedChunks.append('')
 
         chunks[-1] += sentences[sentenceIndex]
         chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
         chunks[-1] = chunks[-1].replace('\xa0', ' ')
-        processedChunks[-1] += sentences[sentenceIndex]
 
+        tokenizeText(processedChunks[chunkIndex], language)
 
-    # tokenize each chunk
-    for chunkIndex, chunk in enumerate(processedChunks):
-        if textProcessingMethod == 'simple':
-            processedChunks[chunkIndex] = tokenizeTextSimple(processedChunks[chunkIndex], language)
-        else:
-            processedChunks[chunkIndex] = tokenizeText(processedChunks[chunkIndex], language)
-
-    return json.dumps({'textChunks': chunks, 'processedChunks': processedChunks})
+    print(json.dumps({ 'textChunks': chunks }))
+    return json.dumps(chunks)
 
 # cuts the text given in post data into chunks, and tokenizes them
 @route('/tokenizer/import-text', method='POST')
@@ -504,56 +533,30 @@ def importSubtitles():
     response.headers['Content-Type'] = 'application/json'
     chunkSize = request.json.get('chunkSize')
     textProcessingMethod = request.json.get('textProcessingMethod')
-    importSubtitles = json.loads(request.json.get('importSubtitles'))
+    subtitles = json.loads(request.json.get('subtitles'))
     language = request.json.get('language')
 
     # split the text into chunks
     chunks = list()
-    processedChunks = list()
-    chunkTimeStamps = list()
+    chunkTexts = list()
     currentChunkSize = 0
-    currentChunkSentenceIndex = 0
-    for subtitleIndex, subtitle in enumerate(importSubtitles):
-        if (len(processedChunks) == 0 or currentChunkSize > chunkSize):
+    for subtitleIndex, subtitle in enumerate(subtitles):
+        if (len(chunks) == 0 or currentChunkSize > chunkSize):
             currentChunkSize = 0
-            currentChunkSentenceIndex = 0
-            chunks.append('')
-            processedChunks.append(list())
-            chunkTimeStamps.append(list())
+            chunks.append([])
 
     
-        text = importSubtitles[subtitleIndex]['text'].replace('\r\n', ' NEWLINE ')
+        text = subtitles[subtitleIndex]['text'].replace('\r\n', ' NEWLINE ')
         text = text.replace('\n', ' NEWLINE ')
-
-        # add subtitle to raw chunk
-        chunks[-1] += text
-        chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
-        chunks[-1] = chunks[-1].replace('\xa0', ' ')
-
-        # tokenize text
-        if textProcessingMethod == 'simple':
-            tokenizedText = tokenizeTextSimple(text, language, currentChunkSentenceIndex)
-        else:
-            tokenizedText =  tokenizeText(text, language, currentChunkSentenceIndex)
-
-        # set new sentence index
-        currentChunkSentenceIndex = tokenizedText[-1]['si'] + 1
-
-        # add timestamp to chunk array
-        chunkTimeStamps[-1].append({
-            'start': importSubtitles[subtitleIndex]['start'],
-            'end': importSubtitles[subtitleIndex]['end'],
-            'sentenceIndexStart': tokenizedText[0]['si'],
-            'sentenceIndexEnd': tokenizedText[-1]['si']
-        })
-                    
-        ## add tokenized text to processed chunk
-        processedChunks[-1] = processedChunks[-1] + tokenizedText
 
         # increase current chunk size
         currentChunkSize += len(text.replace(' NEWLINE ', ''))
+        
+        # add subtitle to raw chunk
+        chunks[-1].append(subtitle)
 
-    return json.dumps({'textChunks': chunks, 'processedChunks': processedChunks, 'timestamps': chunkTimeStamps})
+    print(chunks)
+    return json.dumps(chunks)
 
 @route('/tokenizer/get-youtube-subtitle-list', method='POST')
 def getYoutubeSubtitles():
