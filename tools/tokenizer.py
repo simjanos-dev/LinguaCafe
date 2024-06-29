@@ -484,15 +484,13 @@ def importBook():
 
         tokenizeText(processedChunks[chunkIndex], language)
 
-    print(json.dumps({ 'textChunks': chunks }))
     return json.dumps(chunks)
 
-# cuts the text given in post data into chunks, and tokenizes them
+# cuts the text given in post data into chunks
 @route('/tokenizer/import-text', method='POST')
 def importText():
     response.headers['Content-Type'] = 'application/json'
     chunkSize = request.json.get('chunkSize')
-    textProcessingMethod = request.json.get('textProcessingMethod')
     importText = request.json.get('importText')
     language = request.json.get('language')
     
@@ -505,40 +503,28 @@ def importText():
         text = text.replace(sentenceEnding, sentenceEnding + 'TMP_ST')
     sentences = text.split('TMP_ST')
 
-    # split the text into chunks
+    # split book into chunks
     chunks = list()
-    processedChunks = list()
     for sentenceIndex, sentence in enumerate(sentences):
-        if (len(processedChunks) == 0 or len(processedChunks[-1].replace(' NEWLINE ', '')) > chunkSize):
+        if (len(chunks) == 0 or len(chunks[-1].replace(' NEWLINE ', '')) > chunkSize):
             chunks.append('')
-            processedChunks.append('')
 
         chunks[-1] += sentences[sentenceIndex]
         chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
         chunks[-1] = chunks[-1].replace('\xa0', ' ')
-        processedChunks[-1] += sentences[sentenceIndex]
 
-    #tokenize each chunk
-    for chunkIndex, chunk in enumerate(processedChunks):
-        if textProcessingMethod == 'simple':
-            processedChunks[chunkIndex] = tokenizeTextSimple(processedChunks[chunkIndex], language)
-        else:
-            processedChunks[chunkIndex] = tokenizeText(processedChunks[chunkIndex], language)
+    return json.dumps(chunks)
 
-    return json.dumps({'textChunks': chunks, 'processedChunks': processedChunks})
-
-# cuts the text given in post data into chunks, and tokenizes them
+# cuts the text given in post data into chunks
 @route('/tokenizer/import-subtitles', method='POST')
 def importSubtitles():
     response.headers['Content-Type'] = 'application/json'
     chunkSize = request.json.get('chunkSize')
-    textProcessingMethod = request.json.get('textProcessingMethod')
     subtitles = json.loads(request.json.get('subtitles'))
     language = request.json.get('language')
 
     # split the text into chunks
     chunks = list()
-    chunkTexts = list()
     currentChunkSize = 0
     for subtitleIndex, subtitle in enumerate(subtitles):
         if (len(chunks) == 0 or currentChunkSize > chunkSize):

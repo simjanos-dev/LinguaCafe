@@ -30,7 +30,6 @@ class ImportService {
         // tokenize book
         $text = Http::post($this->pythonService . ':8678/tokenizer/import-book', [
             'language' => $selectedLanguage,
-            'textProcessingMethod' => $textProcessingMethod,
             'chapterSortMethod' => $eBookChapterSortMethod,
             'importFile' => $file,
             'chunkSize' => $chunkSize
@@ -50,20 +49,15 @@ class ImportService {
         $selectedLanguage = Auth::user()->selected_language;
 
         // tokenize book
-        $text = Http::post($this->pythonService . ':8678/tokenizer/import-text', [
+        $chunks = Http::post($this->pythonService . ':8678/tokenizer/import-text', [
             'language' => $selectedLanguage,
-            'textProcessingMethod' => $textProcessingMethod,
             'importText' => $importText,
             'chunkSize' => $chunkSize
         ]);
         
-        // get text and token chunks
-        $text = json_decode($text);
-        $processedChunks = $text->processedChunks;
-        $rawChunks = $text->textChunks;
-
         // import chunks
-        $this->importChunks($processedChunks, $rawChunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName);        
+        $chunks = json_decode($chunks);
+        $this->importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName);        
 
         return 'success';
     }
