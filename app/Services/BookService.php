@@ -63,6 +63,7 @@ class BookService {
         $bookWordCount = Chapter
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
+            ->where('is_processed', true)
             ->sum('word_count');
 
         $bookWordCount = intval($bookWordCount);

@@ -77,10 +77,11 @@ class ChapterService {
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->where('language', $language)
+            ->where('is_processed', true)
             ->first();
         
         if (!$chapter) {
-            throw new \Exception('Chapter does not exist, or it belongs to a different user.');
+            throw new \Exception('Chapter could not be found.');
         }
 
         $book = Book

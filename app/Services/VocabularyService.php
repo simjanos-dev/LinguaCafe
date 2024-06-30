@@ -88,6 +88,7 @@ class VocabularyService {
         $chapters = Chapter
             ::where('user_id', $userId)
             ->where('language', $language)
+            ->where('is_processed', true)
             ->get();
 
         foreach ($chapters as $chapter) {
@@ -312,7 +313,13 @@ class VocabularyService {
         $books = Book::where('user_id', $userId)->where('language', $language)->get();
         $bookIndex = -1;
         for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Chapter::select(['id', 'name'])->where('user_id', $userId)->where('language', $language)->where('book_id', $books[$i]->id)->get();
+            $books[$i]->chapters = Chapter
+                ::select(['id', 'name'])
+                ->where('user_id', $userId)
+                ->where('is_processed', true)
+                ->where('language', $language)
+                ->where('book_id', $books[$i]->id)
+                ->get();
             
             if (isset($bookId) && $books[$i]->id == $bookId) {
                 $bookIndex = $i;
