@@ -122,7 +122,7 @@ class ImportService {
             $chapter->raw_text = $isSubtitle ? json_encode($chunk) : $chunk;
             $chapter->save();
             
-            \App\Jobs\ProcessChapter::dispatch($userId, $chapter->id,)->delay(now()->addSeconds(10 * $chunkIndex));
+            \App\Jobs\ProcessChapter::dispatch($userId, $chapter->id,)->delay(now()->addSeconds(3 * $chunkIndex));
         }
 
         return true;

@@ -18,6 +18,7 @@ class CreateQueueStatsChapterProcessionTable extends Migration
             $table->integer('user_id');
             $table->integer('chapter_id');
             $table->integer('word_count');
+            $table->enum('status', ['failed', 'finished'])->default('finished');
             $table->dateTime('dispatched_at');
             $table->dateTime('started_at');
             $table->dateTime('finished_at');

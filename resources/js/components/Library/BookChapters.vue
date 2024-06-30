@@ -104,7 +104,6 @@
                 <div class="d-flex justify-center">
                     <!-- Action buttons -->
                     <template v-if="item.processing_status == 'processed'">
-                        <v-spacer />
                         <v-btn icon :to="'/chapters/read/' + item.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
                         <v-menu rounded offset-y bottom left nudge-top="-5">
                             <template v-slot:activator="{ on, attrs }">
@@ -148,6 +147,11 @@
                             indeterminate
                             color="warning"
                         ></v-progress-linear>
+                    </template>
+
+                    <!-- Chapter importing failed -->
+                    <template v-else-if="item.processing_status === 'failed'">
+                        <v-chip small color="error">Import failed</v-chip>
                     </template>
                 </div>
             </template>
