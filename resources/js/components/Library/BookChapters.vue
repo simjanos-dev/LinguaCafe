@@ -103,7 +103,7 @@
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex justify-center">
                     <!-- Action buttons -->
-                    <template v-if="item.is_processed">
+                    <template v-if="item.processing_status == 'processed'">
                         <v-spacer />
                         <v-btn icon :to="'/chapters/read/' + item.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
                         <v-menu rounded offset-y bottom left nudge-top="-5">
@@ -141,7 +141,7 @@
                     </template>
 
                     <!-- Chapter importing loader -->
-                    <template v-else>
+                    <template v-else-if="item.processing_status === 'unprocessed'">
                         <v-progress-linear
                             rounded
                             height="6"

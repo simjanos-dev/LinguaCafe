@@ -32,7 +32,7 @@ class ChapterService {
         }
 
         $chapters = Chapter
-            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids', 'is_processed'])
+            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids', 'processing_status'])
             ->where('book_id', $bookId)
             ->where('user_id', $userId)
             ->get();
@@ -46,7 +46,7 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            if ($chapters[$i]->is_processed) {
+            if ($chapters[$i]->processing_status === 'processed') {
                 $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
             } else {
                 $chapters[$i]->wordCount = new \stdClass();
@@ -86,7 +86,7 @@ class ChapterService {
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->where('language', $language)
-            ->where('is_processed', true)
+            ->where('processing_status', 'processed')
             ->first();
         
         if (!$chapter) {
@@ -116,7 +116,7 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            if ($chapters[$i]->is_processed) {
+            if ($chapters[$i]->processing_status === 'processed') {
                 $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
             } else {
                 $chapters[$i]->wordCount = new \stdClass();
@@ -243,7 +243,7 @@ class ChapterService {
 
         $chapter = new Chapter();
         $chapter->user_id = $userId;
-        $chapter->is_processed = false;
+        $chapter->processing_status = 'unprocessed';
         $chapter->name = $chapterName;
         $chapter->type = 'text';
         $chapter->subtitle_timestamps = '';
@@ -276,7 +276,7 @@ class ChapterService {
         // update chapter data
         $chapter->raw_text = $chapterText;
         $chapter->name = $chapterName;
-        $chapter->is_processed = false;
+        $chapter->processing_status = 'unprocessed';
         $chapter->save();
         
         \App\Jobs\ProcessChapter::dispatch($userId, $chapter->id);
@@ -331,7 +331,7 @@ class ChapterService {
         $chapter->unique_word_ids = json_encode($uniqueWordIds);
         $chapter->setProcessedText($textBlock->processedWords);
         $chapter->subtitle_timestamps = json_encode($timeStamps);
-        $chapter->is_processed = true;
+        $chapter->processing_status = 'processed';
         $chapter->save();
         
         (new BookService())->updateBookWordCount($userId, $chapter->book_id);

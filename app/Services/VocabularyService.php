@@ -88,7 +88,7 @@ class VocabularyService {
         $chapters = Chapter
             ::where('user_id', $userId)
             ->where('language', $language)
-            ->where('is_processed', true)
+            ->where('processing_status', 'processed')
             ->get();
 
         foreach ($chapters as $chapter) {
@@ -316,7 +316,7 @@ class VocabularyService {
             $books[$i]->chapters = Chapter
                 ::select(['id', 'name'])
                 ->where('user_id', $userId)
-                ->where('is_processed', true)
+                ->where('processing_status', 'processed')
                 ->where('language', $language)
                 ->where('book_id', $books[$i]->id)
                 ->get();

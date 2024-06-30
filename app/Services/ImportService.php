@@ -111,7 +111,7 @@ class ImportService {
             $chapter = new Chapter();
             $chapter->user_id = $userId;
             $chapter->name = $chapterNameCalculated;
-            $chapter->is_processed = false;
+            $chapter->processing_status = 'unprocessed';
             $chapter->read_count = 0;
             $chapter->word_count = 0;
             $chapter->book_id = $book->id;

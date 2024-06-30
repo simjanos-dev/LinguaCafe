@@ -16,6 +16,8 @@ class ProcessChapter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
+    public $tries = 3;
+
     private $userId;
     private $chapterId;
     private $dispatchedAt, $startedAt, $finishedAt;

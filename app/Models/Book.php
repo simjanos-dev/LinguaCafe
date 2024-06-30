@@ -21,7 +21,7 @@ class Book extends Model
     function getWordCounts($userId, $words) {
         $chapters = Chapter
             ::where('user_id', $userId)
-            ->where('is_processed', true)
+            ->where('processing_status', 'processed')
             ->where('book_id', $this->id)
             ->get();
             

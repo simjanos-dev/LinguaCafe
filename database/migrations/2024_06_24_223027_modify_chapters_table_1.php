@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use App\Models\Chapter;
 
 class ModifyChaptersTable1 extends Migration
 {
@@ -15,8 +16,12 @@ class ModifyChaptersTable1 extends Migration
     public function up()
     {
         Schema::table('chapters', function (Blueprint $table) {
-            $table->boolean('is_processed')->default(false);
+            $table->enum('processing_status', ['unprocessed', 'processed', 'failed'])->default('unprocessed');
         });
+
+        Chapter
+            ::query()
+            ->update(['processing_status' => 'processed']);
     }
 
     /**
@@ -26,6 +31,6 @@ class ModifyChaptersTable1 extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE chapters DROP COLUMN is_processed");
+        DB::statement("ALTER TABLE chapters DROP COLUMN processing_status");
     }
 }
