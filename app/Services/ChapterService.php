@@ -265,6 +265,7 @@ class ChapterService {
         return true;
     }
 
+    // processes a chapter's raw text, and returns the amount of words in the chapter
     public function processChapterText($userId, $chapterId) {
         \DB::disableQueryLog();
         
@@ -315,7 +316,7 @@ class ChapterService {
         
         (new BookService())->updateBookWordCount($userId, $chapter->book_id);
         
-        return true;
+        return $chapter->word_count;
     }
 
     public function deleteChapter($userId, $chapterId) {

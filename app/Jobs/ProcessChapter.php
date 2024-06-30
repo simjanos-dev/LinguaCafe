@@ -3,15 +3,14 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 use App\Services\ChapterService;
+use App\Models\ChapterProcessionQueueStat;
 
 class ProcessChapter implements ShouldQueue
 {
@@ -19,6 +18,7 @@ class ProcessChapter implements ShouldQueue
     
     private $userId;
     private $chapterId;
+    private $dispatchedAt, $startedAt, $finishedAt;
 
     /**
      * Create a new job instance.
@@ -29,6 +29,7 @@ class ProcessChapter implements ShouldQueue
     {
         $this->userId = $userId;
         $this->chapterId = $chapterId;
+        $this->dispatchedAt = Carbon::now();
     }
 
     /**
@@ -38,6 +39,17 @@ class ProcessChapter implements ShouldQueue
      */
     public function handle()
     {
-        (new ChapterService())->processChapterText($this->userId, $this->chapterId);
+        $this->startedAt = Carbon::now();
+        $wordCount = (new ChapterService())->processChapterText($this->userId, $this->chapterId);
+        $this->finishedAt = Carbon::now();
+
+        $chapterProcessionQueueStat = new ChapterProcessionQueueStat();
+        $chapterProcessionQueueStat->user_id = $this->userId;
+        $chapterProcessionQueueStat->chapter_id = $this->chapterId;
+        $chapterProcessionQueueStat->word_count = $wordCount;
+        $chapterProcessionQueueStat->dispatched_at = $this->dispatchedAt;
+        $chapterProcessionQueueStat->started_at = $this->startedAt;
+        $chapterProcessionQueueStat->finished_at = $this->finishedAt;
+        $chapterProcessionQueueStat->save();
     }
 }
