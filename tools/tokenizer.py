@@ -278,35 +278,6 @@ def get_separable_lemma(token):
         return prefix[0] + token.lemma_
     return token.lemma_
 
-# Cuts a text into sentences and words. Works like 
-# tokenizer, but provides no additional data for words.
-def tokenizeTextSimple(words, language, sentenceIndexStart = 0):
-    tokenizedWords = list()
-
-    # split by sentences
-    # TMP_ST is used as a temp string
-    for sentenceEnding in sentenceEndings:
-        words = words.replace(sentenceEnding, sentenceEnding + 'TMP_ST')
-
-    sentences = words.split('TMP_ST')
-    
-    wordIndex = 0
-    for sentenceIndex, sentence in enumerate(sentences):
-        # split sentences into words
-        sentences[sentenceIndex] = re.sub(alphabetRegex[language], r'TMP_ST\1TMP_ST', sentences[sentenceIndex])
-        sentences[sentenceIndex] = re.sub(duplicateRemovalRegex, 'TMP_ST', sentences[sentenceIndex])
-        sentences[sentenceIndex] = sentences[sentenceIndex].split('TMP_ST')
-
-        # add empty token info
-        for word in sentences[sentenceIndex]:
-            if word == ' ' or word == '' or word == ' ':
-                continue
-            
-            tokenizedWords.append({'w': word, 'r': '', 'l': '', 'lr': '', 'pos': '','si': sentenceIndex + sentenceIndexStart, 'g': ''})
-            wordIndex = wordIndex + 1
-    
-    return tokenizedWords
-
 # Tokenizes a text with spacy.
 def tokenizeText(text, language, sentenceIndexStart = 0):
     global hiraganaConverter
@@ -473,7 +444,6 @@ def importBook():
 
     # split book into chunks
     chunks = list()
-    processedChunks = list()
     for sentenceIndex, sentence in enumerate(sentences):
         if (len(chunks) == 0 or len(chunks[-1].replace(' NEWLINE ', '')) > chunkSize):
             chunks.append('')
@@ -481,8 +451,6 @@ def importBook():
         chunks[-1] += sentences[sentenceIndex]
         chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
         chunks[-1] = chunks[-1].replace('\xa0', ' ')
-
-        tokenizeText(processedChunks[chunkIndex], language)
 
     return json.dumps(chunks)
 

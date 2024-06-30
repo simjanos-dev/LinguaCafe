@@ -35,9 +35,9 @@ class ImportService {
             'chunkSize' => $chunkSize
         ]);
         
-        $chunks = json_decode($text);
-
+        
         // import chunks
+        $chunks = json_decode($text);
         $this->importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName);        
         
         return 'success';
@@ -74,10 +74,8 @@ class ImportService {
             'chunkSize' => $chunkSize
         ]);
         
-        // get text and token chunks
-        $chunks = json_decode($subtitles);
-
         // import chunks
+        $chunks = json_decode($subtitles);
         $this->importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName, true);
     }
 

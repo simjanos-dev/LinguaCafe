@@ -224,6 +224,7 @@ class ChapterService {
 
         $chapter = new Chapter();
         $chapter->user_id = $userId;
+        $chapter->is_processed = false;
         $chapter->name = $chapterName;
         $chapter->type = 'text';
         $chapter->subtitle_timestamps = '';
@@ -256,34 +257,10 @@ class ChapterService {
         // update chapter data
         $chapter->raw_text = $chapterText;
         $chapter->name = $chapterName;
-        
-        // process text
-        $textBlock = new TextBlockService($userId, $chapter->language);
-        $textBlock->rawText = $chapterText;
-        $textBlock->tokenizeRawText();
-        $textBlock->processTokenizedWords();
-        $textBlock->collectUniqueWords();
-        $textBlock->updateAllPhraseIds();
-        $textBlock->createNewEncounteredWords();
-
-        // collect unique word ID-s
-        $uniqueWordIds = DB
-            ::table('encountered_words')
-            ->select('id')
-            ->where('user_id', $userId)
-            ->where('language', $chapter->language)
-            ->whereIn('word', $textBlock->uniqueWords)
-            ->pluck('id')
-            ->toArray();
-
-        // update chapter word data
-        $chapter->word_count = $textBlock->getWordCount();
-        $chapter->unique_words = json_encode($textBlock->uniqueWords);
-        $chapter->unique_word_ids = json_encode($uniqueWordIds);
-        $chapter->setProcessedText($textBlock->processedWords);
+        $chapter->is_processed = false;
         $chapter->save();
         
-        (new BookService())->updateBookWordCount($userId, $chapter->book_id);
+        \App\Jobs\ProcessChapter::dispatch($userId, $chapter->id);
         
         return true;
     }
