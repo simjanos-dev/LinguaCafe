@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illumniate\Support\Sleep;
 
 use App\Services\GoalService;
 use App\Services\BookService;
@@ -32,7 +32,7 @@ class ChapterService {
         }
 
         $chapters = Chapter
-            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])
+            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids', 'is_processed'])
             ->where('book_id', $bookId)
             ->where('user_id', $userId)
             ->get();
@@ -46,7 +46,16 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
+            if ($chapters[$i]->is_processed) {
+                $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
+            } else {
+                $chapters[$i]->wordCount = new \stdClass();
+                $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
+                $chapters[$i]->wordCount->unique = 0;
+                $chapters[$i]->wordCount->known = 0;
+                $chapters[$i]->wordCount->highlighted = 0;
+                $chapters[$i]->wordCount->new = 0;
+            }
         }
         
         $data = new \stdClass();
@@ -107,7 +116,16 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($uniqueWordsForWordCounts);
+            if ($chapters[$i]->is_processed) {
+                $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
+            } else {
+                $chapters[$i]->wordCount = new \stdClass();
+                $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
+                $chapters[$i]->wordCount->unique = 0;
+                $chapters[$i]->wordCount->known = 0;
+                $chapters[$i]->wordCount->highlighted = 0;
+                $chapters[$i]->wordCount->new = 0;
+            }
         }
 
         $textBlock = new TextBlockService($userId, $language);
@@ -313,6 +331,7 @@ class ChapterService {
         $chapter->unique_word_ids = json_encode($uniqueWordIds);
         $chapter->setProcessedText($textBlock->processedWords);
         $chapter->subtitle_timestamps = json_encode($timeStamps);
+        $chapter->is_processed = true;
         $chapter->save();
         
         (new BookService())->updateBookWordCount($userId, $chapter->book_id);

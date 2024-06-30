@@ -102,8 +102,10 @@
             <!-- Actions -->
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex justify-center">
-                    <v-spacer />
-                    <v-btn icon :to="'/chapters/read/' + item.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
+                    <!-- Action buttons -->
+                    <template v-if="item.is_processed">
+                        <v-spacer />
+                        <v-btn icon :to="'/chapters/read/' + item.id" title="Read"><v-icon>mdi-book-open-variant</v-icon></v-btn>
                         <v-menu rounded offset-y bottom left nudge-top="-5">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
@@ -136,7 +138,17 @@
                                 Delete
                             </v-btn>
                         </v-menu>
-                    </v-btn>
+                    </template>
+
+                    <!-- Chapter importing loader -->
+                    <template v-else>
+                        <v-progress-linear
+                            rounded
+                            height="6"
+                            indeterminate
+                            color="warning"
+                        ></v-progress-linear>
+                    </template>
                 </div>
             </template>
         </v-data-table>
