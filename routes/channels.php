@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Ramsey\Uuid\Type\Integer;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,5 +14,9 @@ use Ramsey\Uuid\Type\Integer;
 */
 
 Broadcast::channel('dictionary-import-progress.{userUuid}', function ($user, $userUuid) {
+    return $user->uuid === $userUuid;
+});
+
+Broadcast::channel('chapters-word-count-calculated.{userUuid}', function ($user, $userUuid) {
     return $user->uuid === $userUuid;
 });

@@ -214,7 +214,7 @@
             };
         },
         beforeDestroy() {
-            this.$store.getters['global/echo'].private('dictionary-import-progress.1').stopListening('DictionaryImportProgressedEvent');
+            this.$store.getters['global/echo'].private('dictionary-import-progress' + this.$store.getters['global/userUuid']).stopListening('DictionaryImportProgressedEvent');
         },
         methods: {
             testDictionaryFile() {

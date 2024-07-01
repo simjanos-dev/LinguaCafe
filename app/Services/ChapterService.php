@@ -46,16 +46,12 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            if ($chapters[$i]->processing_status === 'processed') {
-                $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
-            } else {
-                $chapters[$i]->wordCount = new \stdClass();
-                $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
-                $chapters[$i]->wordCount->unique = 0;
-                $chapters[$i]->wordCount->known = 0;
-                $chapters[$i]->wordCount->highlighted = 0;
-                $chapters[$i]->wordCount->new = 0;
-            }
+            $chapters[$i]->wordCount = new \stdClass();
+            $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
+            $chapters[$i]->wordCount->unique = -1;
+            $chapters[$i]->wordCount->known = -1;
+            $chapters[$i]->wordCount->highlighted = -1;
+            $chapters[$i]->wordCount->new = -1;
         }
         
         $data = new \stdClass();
@@ -65,6 +61,49 @@ class ChapterService {
         return $data;
     }
 
+    public function getChaptersBookCount($userId, $userUuid, $bookId) {
+        $book = Book
+            ::where('id', $bookId)
+            ->where('user_id', $userId)
+            ->first();
+        
+        if (!$book) {
+            throw new \Exception('Book does not exist, or it belongs to a different user.');
+        }
+
+        $chapters = Chapter
+            ::where('book_id', $bookId)
+            ->where('user_id', $userId)
+            ->get();
+
+        $words = EncounteredWord
+            ::select(['id', 'word', 'stage'])
+            ->where('user_id', $userId)
+            ->where('language', $book->language)
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
+        $wordCounts = [];
+        for ($i = 0; $i < count($chapters); $i++) {
+            if ($chapters[$i]->processing_status !== 'processed') {
+                continue;
+            }
+
+            $currentChapterWordCounts = new \stdClass();
+            $currentChapterWordCounts->index = $i;
+            $currentChapterWordCounts->wordCounts = $chapters[$i]->getWordCounts($words);
+
+            $wordCounts[] = $currentChapterWordCounts;
+
+            if ($i === count($chapters) - 1) {
+                event(new \App\Events\ChaptersWordCountCalculatedEvent($userUuid, $wordCounts));
+            }
+        }
+        
+        return true;
+    }
+    
     public function getChapterForEditor($userId, $chapterId) {
         $chapter = Chapter::
             select(['name', 'raw_text', 'type'])
@@ -118,14 +157,14 @@ class ChapterService {
         for ($i = 0; $i < count($chapters); $i++) {
             if ($chapters[$i]->processing_status === 'processed') {
                 $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
-            } else {
-                $chapters[$i]->wordCount = new \stdClass();
-                $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
-                $chapters[$i]->wordCount->unique = 0;
-                $chapters[$i]->wordCount->known = 0;
-                $chapters[$i]->wordCount->highlighted = 0;
-                $chapters[$i]->wordCount->new = 0;
             }
+            
+            $chapters[$i]->wordCount = new \stdClass();
+            $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
+            $chapters[$i]->wordCount->unique = -1;
+            $chapters[$i]->wordCount->known = -1;
+            $chapters[$i]->wordCount->highlighted = -1;
+            $chapters[$i]->wordCount->new = -1;
         }
 
         $textBlock = new TextBlockService($userId, $language);

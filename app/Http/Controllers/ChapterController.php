@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Auth;
 
 // request classes
 use App\Http\Requests\Chapters\GetChaptersForBookRequest;
+use App\Http\Requests\Chapters\GetChaptersWordCountRequest;
 use App\Http\Requests\Chapters\GetChapterForEditorRequest;
 use App\Http\Requests\Chapters\GetChapterForReaderRequest;
 use App\Http\Requests\Chapters\FinishChapterRequest;
 use App\Http\Requests\Chapters\UpdateChapterRequest;
 use App\Http\Requests\Chapters\CreateChapterRequest;
 use App\Http\Requests\Chapters\DeleteChapterRequest;
+
 
 // services
 use App\Services\ChapterService;
@@ -34,6 +36,20 @@ class ChapterController extends Controller {
         }
 
         return response()->json($chapters, 200);
+    }
+
+    public function getChaptersBookCount($bookId, GetChaptersWordCountRequest $request) {
+        $userId = Auth::user()->id;
+        $userUuid = Auth::user()->uuid;
+        $bookId = intval($request->bookId);
+        
+        try {
+            $this->chapterService->getChaptersBookCount($userId, $userUuid, $bookId);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json('Chapters have been successfully requested.', 200);
     }
 
     public function getChapterForEditor(GetChapterForEditorRequest $request) {

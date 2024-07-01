@@ -231,12 +231,12 @@ class DictionaryImportService {
         return $lineCount;
     }
 
-    public function importSupportedDictionary($dictionaryName, $dictionaryFileName, $dictionarySourceLanguage, $dictionaryTargetLanguage, $dictionaryDatabaseName) {
+    public function importSupportedDictionary($userUuid, $dictionaryName, $dictionaryFileName, $dictionarySourceLanguage, $dictionaryTargetLanguage, $dictionaryDatabaseName) {
         set_time_limit(2400);
         
         // import jmdict files
         if ($dictionaryName == 'JMDict') {
-            $this->jmdictImport();
+            $this->jmdictImport($userUuid);
             $this->kanjiImport();
             $this->kanjiRadicalImport();
 
@@ -245,21 +245,21 @@ class DictionaryImportService {
 
         // import cc cedict or HanDeDict file
         if ($dictionaryName == 'cc-cedict' || $dictionaryName == 'HanDeDict') {
-            $this->importCeDictOrHanDeDict($dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
+            $this->importCeDictOrHanDeDict($userUuid, $dictionaryName, $dictionaryTargetLanguage, $dictionaryDatabaseName, $dictionaryFileName);
 
             return true;
         }
 
         // import kengdic file
         if ($dictionaryName == 'kengdic') {
-            $this->importKengdic($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            $this->importKengdic($userUuid, $dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
 
             return true;
         }
 
         // import eurfa files
         if ($dictionaryName == 'eurfa') {
-            $this->importEurfa($dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
+            $this->importEurfa($userUuid, $dictionaryName, $dictionaryDatabaseName, $dictionaryFileName);
 
             return true;
         }
@@ -268,6 +268,7 @@ class DictionaryImportService {
         // import dict cc files
         if (str_contains($dictionaryName, 'dictcc')) {
             $this->importDictCc(
+                $userUuid, 
                 $dictionaryName, 
                 $dictionarySourceLanguage, 
                 $dictionaryTargetLanguage,
@@ -281,6 +282,7 @@ class DictionaryImportService {
         // import wiktionary files
         if (str_contains($dictionaryName, 'wiktionary')) {
             $this->importWiktionary(
+                $userUuid, 
                 $dictionaryName, 
                 $dictionarySourceLanguage, 
                 $dictionaryFileName, 
@@ -295,7 +297,7 @@ class DictionaryImportService {
         Imports a cc-cedict or HanDeDict dictionary file into the database.
         They are in the same format, HanDeDict is just translated to German.
     */
-    public function importCeDictOrHanDeDict($name, $targetLanguage, $databaseName, $fileName) {
+    public function importCeDictOrHanDeDict($userUuid, $name, $targetLanguage, $databaseName, $fileName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -357,7 +359,7 @@ class DictionaryImportService {
                 DB::beginTransaction();
 
                 // send progress through websockets
-                event(new \App\Events\DictionaryImportProgressedEvent($index));
+                event(new \App\Events\DictionaryImportProgressedEvent($userUuid, $index));
             }
             
             $index ++;
@@ -372,7 +374,7 @@ class DictionaryImportService {
     /*
         Imports a kengdic dictionary file into the database.
     */
-    public function importKengdic($name, $databaseName, $fileName) {
+    public function importKengdic($userUuid, $name, $databaseName, $fileName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -432,7 +434,7 @@ class DictionaryImportService {
                 DB::beginTransaction();
 
                 // send progress through websockets
-                event(new \App\Events\DictionaryImportProgressedEvent($index));
+                event(new \App\Events\DictionaryImportProgressedEvent($userUuid, $index));
             }
             
             $index ++;
@@ -447,7 +449,7 @@ class DictionaryImportService {
     /*
         Imports a  dictionary file into the database.
     */
-    public function importEurfa($name, $databaseName, $fileName) {
+    public function importEurfa($userUuid, $name, $databaseName, $fileName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -499,7 +501,7 @@ class DictionaryImportService {
                 DB::beginTransaction();
 
                 // send progress through websockets
-                event(new \App\Events\DictionaryImportProgressedEvent($index));
+                event(new \App\Events\DictionaryImportProgressedEvent($userUuid, $index));
             }
             
             $index ++;
@@ -513,7 +515,7 @@ class DictionaryImportService {
     /*
         Imports a dict cc dictionary file into the database.
     */
-    public function importDictCc($name, $sourceLanguage, $targetLanguage, $fileName, $databaseName) {
+    public function importDictCc($userUuid, $name, $sourceLanguage, $targetLanguage, $fileName, $databaseName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -567,7 +569,7 @@ class DictionaryImportService {
                 DB::beginTransaction();
 
                 // send progress through websockets
-                event(new \App\Events\DictionaryImportProgressedEvent($index));
+                event(new \App\Events\DictionaryImportProgressedEvent($userUuid, $index));
             }
             
             $index ++;
@@ -582,7 +584,7 @@ class DictionaryImportService {
     /*
         Imports a wiktionary dictionary file into the database.
     */
-    public function importWiktionary($name, $language, $fileName, $databaseName) {
+    public function importWiktionary($userUuid, $name, $language, $fileName, $databaseName) {
         // create dictionary table 
         Schema::dropIfExists($databaseName);
         Schema::create($databaseName, function (Blueprint $table) {
@@ -656,7 +658,7 @@ class DictionaryImportService {
                 DB::beginTransaction();
 
                 // send progress through websockets
-                event(new \App\Events\DictionaryImportProgressedEvent($index));
+                event(new \App\Events\DictionaryImportProgressedEvent($userUuid, $index));
             }
             
             $index ++;
@@ -865,7 +867,7 @@ class DictionaryImportService {
     /*
         Imports jmdict dictionary file.
     */
-    public function jmdictImport() {
+    public function jmdictImport($userUuid) {
         DB::statement('DELETE FROM dict_jp_jmdict');
         DB::statement('DELETE FROM dict_jp_jmdict_words');
         DB::statement('DELETE FROM dict_jp_jmdict_readings');
@@ -936,7 +938,7 @@ class DictionaryImportService {
                 DB::beginTransaction();
 
                 // send progress through websockets
-                event(new \App\Events\DictionaryImportProgressedEvent($index));
+                event(new \App\Events\DictionaryImportProgressedEvent($userUuid, $index));
             }
             
             $index ++;

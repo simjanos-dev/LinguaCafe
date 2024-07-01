@@ -2,27 +2,30 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
 
-class DictionaryImportProgressedEvent implements ShouldBroadcast
+class ChaptersWordCountCalculatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    
     private $userUuid;
-    public $importedRecords;
+    public $wordCounts;
 
-    public function __construct($userUuid, $importedRecords)
+    public function __construct($userUuid, $wordCounts)
     {
-        $this->importedRecords = $importedRecords;
+        $this->wordCounts = $wordCounts;
         $this->userUuid = $userUuid;
     }
 
     public function broadcastOn() {
-        return new PrivateChannel('dictionary-import-progress.' . $this->userUuid);
+        return new PrivateChannel('chapters-word-count-calculated.' . $this->userUuid);
     }
 }

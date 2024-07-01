@@ -56,47 +56,57 @@
         >
             <!-- Total words -->
             <template v-slot:item.wordCount.total="{ item }">
-                {{ formatNumber(item.wordCount.total) }}
+                <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
+                    {{ formatNumber(item.wordCount.total) }}
+                </template>
             </template>
 
             <!-- Unique words -->
             <template v-slot:item.wordCount.unique="{ item }">
-                {{ formatNumber(item.wordCount.unique) }}
+                <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
+                    {{ formatNumber(item.wordCount.unique) }}
+                </template>
             </template>
 
             <!-- Known words -->
             <template v-slot:item.wordCount.known="{ item }">
-                <template v-if="$props.wordCountDisplayType == 0">
-                    {{ formatNumber(item.wordCount.known) }}
-                </template>
-                <template v-else>
-                    {{ (item.wordCount.known / item.wordCount.unique * 100).toFixed(1) }}%
+                <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
+                    <template v-if="$props.wordCountDisplayType == 0">
+                        {{ formatNumber(item.wordCount.known) }}
+                    </template>
+                    <template v-else>
+                        {{ (item.wordCount.known / item.wordCount.unique * 100).toFixed(1) }}%
+                    </template>
                 </template>
             </template>
 
             <!-- Highlighted words -->
             <template v-slot:item.wordCount.highlighted="{ item }">
-                <div class="highlighted-words px-2 rounded-xl mx-auto">
-                    <template v-if="$props.wordCountDisplayType < 2">
-                        {{ formatNumber(item.wordCount.highlighted) }}
-                    </template>
-                    <template v-else>
-                        {{ (item.wordCount.highlighted / item.wordCount.unique * 100).toFixed(1) }}%
-                    </template>
-                </div>
+                <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
+                    <div class="highlighted-words px-2 rounded-xl mx-auto">
+                        <template v-if="$props.wordCountDisplayType < 2">
+                            {{ formatNumber(item.wordCount.highlighted) }}
+                        </template>
+                        <template v-else>
+                            {{ (item.wordCount.highlighted / item.wordCount.unique * 100).toFixed(1) }}%
+                        </template>
+                    </div>
+                </template>
             </template>
 
 
             <!-- New words -->
             <template v-slot:item.wordCount.new="{ item }">
-                <div class="new-words px-2 rounded-xl mx-auto">
-                    <template v-if="$props.wordCountDisplayType < 2">
-                        {{ formatNumber(item.wordCount.new) }}
-                    </template>
-                    <template v-else>
-                        {{ (item.wordCount.new / item.wordCount.unique * 100).toFixed(1) }}%
-                    </template>
-                </div>
+                <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
+                    <div class="new-words px-2 rounded-xl mx-auto">
+                        <template v-if="$props.wordCountDisplayType < 2">
+                            {{ formatNumber(item.wordCount.new) }}
+                        </template>
+                        <template v-else>
+                            {{ (item.wordCount.new / item.wordCount.unique * 100).toFixed(1) }}%
+                        </template>
+                    </div>
+                </template>
             </template>
 
             <!-- Actions -->
@@ -195,19 +205,21 @@
         },
         mounted() {
             this.loadChapters();
+            this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).listen('ChaptersWordCountCalculatedEvent', (message) => {
+                var wordCounts = message.wordCounts;
+
+                wordCounts.forEach((item) => {
+                    this.chapters[item.index].wordCount = item.wordCounts;
+                    this.chapters[item.index].wordCountsLoaded = true;
+                });
+            });
+        },
+        beforeDestroy() {
+            this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).stopListening('ChaptersWordCountCalculatedEvent');
         },
         methods: {
             chapterSaved() {
                 this.$emit('chapter-saved');
-            },
-            toggleExpansion(expansionIndex) {
-                for (let chapterIndex = 0; chapterIndex < this.chapters.length; chapterIndex++) {
-                    if (chapterIndex == expansionIndex) {
-                        this.chapters[chapterIndex].expanded = !this.chapters[chapterIndex].expanded;
-                    } else {
-                        this.chapters[chapterIndex].expanded = false;
-                    }
-                }
             },
             showEditChapterDialog(chapterId) {
                 this.editBookChapterDialog.active = true;
@@ -239,7 +251,7 @@
                     'bookId': this.$props.bookId,
                 }).then((response) => {
                     for (let chapterIndex = 0; chapterIndex < response.data.chapters.length; chapterIndex++) {
-                        response.data.chapters[chapterIndex].expanded = false;
+                        response.data.chapters[chapterIndex].wordCountsLoaded = false;
                     }
                     
                     this.book = response.data.book;
@@ -252,7 +264,12 @@
                     }
 
                     this.chaptersLoading = false;
+                    
                 });
+
+                setTimeout(() => {
+                    axios.get('/chapters/word-counts/' + this.$props.bookId).then();
+                }, 100);
             },
             showStartReviewDialog(bookId, bookName, chapterId, chapterName) {
                 this.startReviewDialog.bookName = bookName;
