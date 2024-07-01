@@ -22,9 +22,8 @@ class ImportService {
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
 
-    public function importBook($chunkSize, $eBookChapterSortMethod, $textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
+    public function importBook($userId, $userUuid, $chunkSize, $eBookChapterSortMethod, $textProcessingMethod, $file, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
-        $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
 
         // tokenize book
@@ -38,14 +37,13 @@ class ImportService {
         
         // import chunks
         $chunks = json_decode($text);
-        $this->importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName);        
+        $this->importChunks($chunks, $userId, $userUuid, $selectedLanguage, $bookName, $bookId, $chapterName);        
         
         return 'success';
     }
 
-    public function importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName) {
+    public function importText($userId, $userUuid, $chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
-        $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
 
         // tokenize book
@@ -57,14 +55,13 @@ class ImportService {
         
         // import chunks
         $chunks = json_decode($chunks);
-        $this->importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName);        
+        $this->importChunks($chunks, $userId, $userUuid, $selectedLanguage, $bookName, $bookId, $chapterName);        
 
         return 'success';
     }
 
-    public function importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName) {
+    public function importSubtitles($userId, $userUuid, $chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName) {
         DB::disableQueryLog();
-        $userId = Auth::user()->id;
         $selectedLanguage = Auth::user()->selected_language;
 
         // import subtitles
@@ -76,7 +73,7 @@ class ImportService {
         
         // import chunks
         $chunks = json_decode($subtitles);
-        $this->importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName, true);
+        $this->importChunks($chunks, $userId, $userUuid, $selectedLanguage, $bookName, $bookId, $chapterName, true);
     }
 
     /*
@@ -84,7 +81,7 @@ class ImportService {
         Imports chunks fo raw and tokenized texts. This function
         is used by other import functions to avoid code dupication.
     */
-    private function importChunks($chunks, $userId, $selectedLanguage, $bookName, $bookId, $chapterName, $isSubtitle = false) {
+    private function importChunks($chunks, $userId, $userUuid, $selectedLanguage, $bookName, $bookId, $chapterName, $isSubtitle = false) {
         // retrieve or create book
         if ($bookId == -1) {
             $book = new Book();
@@ -122,7 +119,7 @@ class ImportService {
             $chapter->raw_text = $isSubtitle ? json_encode($chunk) : $chunk;
             $chapter->save();
             
-            \App\Jobs\ProcessChapter::dispatch($userId, $chapter->id,)->delay(now()->addSeconds(3 * $chunkIndex));
+            \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $chapter->id);
         }
 
         return true;

@@ -268,7 +268,7 @@ class ChapterService {
         return true;
     }
 
-    public function createChapter($userId, $bookId, $chapterName, $chapterText) {
+    public function createChapter($userId, $userUuid, $bookId, $chapterName, $chapterText) {
 
         // retrieve book
         $book = Book
@@ -293,13 +293,13 @@ class ChapterService {
         $chapter->unique_words = '';
         $chapter->save();
 
-        $this->updateChapter($userId, $chapter->id, $chapter->name, $chapterText);
+        $this->updateChapter($userId, $userUuid, $chapter->id, $chapter->name, $chapterText);
         
         return true;
     }
 
     // updates the name and text of a chapter
-    public function updateChapter($userId, $chapterId, $chapterName, $chapterText) {
+    public function updateChapter($userId, $userUuid, $chapterId, $chapterName, $chapterText) {
         \DB::disableQueryLog();
         
         // retrieve chapter
@@ -318,7 +318,7 @@ class ChapterService {
         $chapter->processing_status = 'unprocessed';
         $chapter->save();
         
-        \App\Jobs\ProcessChapter::dispatch($userId, $chapter->id);
+        \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id);
         
         return true;
     }

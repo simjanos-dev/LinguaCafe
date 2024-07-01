@@ -20,3 +20,7 @@ Broadcast::channel('dictionary-import-progress.{userUuid}', function ($user, $us
 Broadcast::channel('chapters-word-count-calculated.{userUuid}', function ($user, $userUuid) {
     return $user->uuid === $userUuid;
 });
+
+Broadcast::channel('chapter-processed.{userUuid}', function ($user, $userUuid) {
+    return $user->uuid === $userUuid;
+});

@@ -101,12 +101,13 @@ class ChapterController extends Controller {
 
     public function createChapter(CreateChapterRequest $request) {
         $userId = Auth::user()->id;
+        $userUuid = Auth::user()->uuid;
         $chapterName = $request->chapterName;
         $bookId = $request->bookId;
         $chapterText = is_null($request->chapterText) ? '' : $request->chapterText;
 
         try {
-            $this->chapterService->createChapter($userId, $bookId, $chapterName, $chapterText);
+            $this->chapterService->createChapter($userId, $userUuid, $bookId, $chapterName, $chapterText);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -116,12 +117,13 @@ class ChapterController extends Controller {
 
     public function updateChapter(UpdateChapterRequest $request) {
         $userId = Auth::user()->id;
+        $userUuid = Auth::user()->uuid;
         $chapterName = $request->chapterName;
         $chapterId = $request->chapterId;
         $chapterText = $request->chapterText;
 
         try {
-            $this->chapterService->updateChapter($userId, $chapterId, $chapterName, $chapterText);
+            $this->chapterService->updateChapter($userId, $userUuid, $chapterId, $chapterName, $chapterText);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }

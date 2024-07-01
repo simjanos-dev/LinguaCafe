@@ -205,6 +205,8 @@
         },
         mounted() {
             this.loadChapters();
+
+            // retrieve word counts
             this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).listen('ChaptersWordCountCalculatedEvent', (message) => {
                 var wordCounts = message.wordCounts;
 
@@ -213,9 +215,19 @@
                     this.chapters[item.index].wordCountsLoaded = true;
                 });
             });
+
+            // retrieve chapter statuses
+            this.$store.getters['global/echo'].private('chapter-processed.' + this.$store.getters['global/userUuid']).listen('ChapterProcessedEvent', (message) => {
+                var chapters = JSON.parse(message.chapters);
+
+                chapters.forEach((item, index) => {
+                    this.chapters[index].processing_status = item.processing_status;
+                });
+            });
         },
         beforeDestroy() {
             this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).stopListening('ChaptersWordCountCalculatedEvent');
+            this.$store.getters['global/echo'].private('chapter-processed.' + this.$store.getters['global/userUuid']).stopListening('ChapterProcessedEvent');
         },
         methods: {
             chapterSaved() {
