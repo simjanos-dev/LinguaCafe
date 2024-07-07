@@ -442,7 +442,12 @@ class TextBlockService
 
             for ($i = 0; $i < count($phraseOccurences[$p]); $i++) {
                 $tempArray = $this->processedWords[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids;
-                array_push($tempArray, $phrase->id);
+
+                // add phrase id to word if it's not already added
+                if (!in_array($phrase->id, $tempArray, true)) {
+                    array_push($tempArray, $phrase->id);
+                }
+
                 $this->processedWords[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids = $tempArray;
             }
         }

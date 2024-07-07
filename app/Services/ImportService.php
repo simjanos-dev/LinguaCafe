@@ -81,13 +81,13 @@ class ImportService {
         Imports chunks fo raw and tokenized texts. This function
         is used by other import functions to avoid code dupication.
     */
-    private function importChunks($chunks, $userId, $userUuid, $selectedLanguage, $bookName, $bookId, $chapterName, $isSubtitle = false) {
+    private function importChunks($chunks, $userId, $userUuid, $language, $bookName, $bookId, $chapterName, $isSubtitle = false) {
         // retrieve or create book
         if ($bookId == -1) {
             $book = new Book();
             $book->user_id = $userId;
             $book->cover_image = 'default.jpg';
-            $book->language = $selectedLanguage;
+            $book->language = $language;
             $book->name = $bookName;
             $book->save();
         } else {
@@ -112,14 +112,14 @@ class ImportService {
             $chapter->read_count = 0;
             $chapter->word_count = 0;
             $chapter->book_id = $book->id;
-            $chapter->language = $selectedLanguage;
+            $chapter->language = $language;
             $chapter->unique_words = '';
             $chapter->subtitle_timestamps = '';
             $chapter->type = $isSubtitle ? 'subtitle' : 'text';
             $chapter->raw_text = $isSubtitle ? json_encode($chunk) : $chunk;
             $chapter->save();
             
-            \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $chapter->id);
+            \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $language);
         }
 
         return true;

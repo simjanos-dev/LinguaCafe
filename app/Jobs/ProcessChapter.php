@@ -9,26 +9,30 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
 
+// services
 use App\Services\ChapterService;
+use App\Services\VocabularyService;
+
+// models
 use App\Models\ChapterProcessionQueueStat;
 use App\Models\Chapter;
-use App\Models\User;
+use App\Models\Phrase;
 
 class ProcessChapter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
-    public $tries = 1;
-
     private $userId;
     private $userUuid;
     private $chapterId;
-    private $dispatchedAt, $startedAt, $finishedAt;
+    private $language;
+    private $dispatchedAt, $startedAt;
 
-    public function __construct($userId, $userUuid, $chapterId) {
+    public function __construct($userId, $userUuid, $chapterId, $language) {
         $this->userId = $userId;
         $this->userUuid = $userUuid;
         $this->chapterId = $chapterId;
+        $this->language = $language;
         $this->dispatchedAt = Carbon::now();
     }
 
@@ -38,17 +42,27 @@ class ProcessChapter implements ShouldQueue
                 ::where('id', $this->chapterId)
                 ->where('user_id', $this->userId)
                 ->first();
-            
+        
             if (!$chapter) {
                 return;
             }
-            
+
             $this->startedAt = Carbon::now();
+
+            // process chapter text
             $wordCount = (new ChapterService())->processChapterText($this->userId, $this->chapterId);
-            $this->finishedAt = Carbon::now();
             
-            if(rand(1,7) === 2) {
-                $a = $wordCount[2];
+            // index phrases that were created while the job was running
+            $phrases = Phrase
+                ::where('user_id', $this->userId)
+                ->where('language', $this->language)
+                ->where('created_at', '>=', $this->startedAt)
+                ->where('created_at', '<=', Carbon::now())
+                ->get();
+
+            foreach ($phrases as $phrase) {
+                \Illuminate\Support\Facades\Log::stack(['single'])->info('Phrase processed afterwards!');
+                (new VocabularyService())->indexPhraseInChapter($chapter->id, $this->userId, $this->language, $phrase);
             }
 
             $chapterProcessionQueueStat = new ChapterProcessionQueueStat();
@@ -58,12 +72,13 @@ class ProcessChapter implements ShouldQueue
             $chapterProcessionQueueStat->word_count = $wordCount;
             $chapterProcessionQueueStat->dispatched_at = $this->dispatchedAt;
             $chapterProcessionQueueStat->started_at = $this->startedAt;
-            $chapterProcessionQueueStat->finished_at = $this->finishedAt;
+            $chapterProcessionQueueStat->finished_at = Carbon::now();
             $chapterProcessionQueueStat->save();
 
             $this->broadcastChapterStatusEvent($chapter->book_id);
         } catch (\Throwable $e) {
             $this->jobFailed();
+            throw $e;
         }
     }
 
@@ -92,7 +107,7 @@ class ProcessChapter implements ShouldQueue
         $chapterProcessionQueueStat->word_count = 0;
         $chapterProcessionQueueStat->dispatched_at = $this->dispatchedAt;
         $chapterProcessionQueueStat->started_at = $this->startedAt;
-        $chapterProcessionQueueStat->finished_at = $this->finishedAt;
+        $chapterProcessionQueueStat->finished_at = Carbon::now();
         $chapterProcessionQueueStat->save();
 
         $this->broadcastChapterStatusEvent($chapter->book_id);
