@@ -18,6 +18,8 @@ services:
         volumes:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+            - ./docker/supervisor-horizon.conf:/etc/supervisor/conf.d/horizon.conf
+            - ./docker/supervisor-websockets.conf:/etc/supervisor/conf.d/websockets.conf
         environment:
             PYTHON_CONTAINER_NAME: linguacafe-python-service-dev
             DB_DATABASE: linguacafe-dev
