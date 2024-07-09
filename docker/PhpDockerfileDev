@@ -57,5 +57,5 @@ RUN addgroup --gid 1000 laravel \
 USER laravel
 
 
-ENTRYPOINT ["/var/www/html/entrypoint.sh"]
+ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
 CMD ["apache2-foreground"]
