@@ -36,5 +36,4 @@ done
 
 php artisan db:seed
 
-supervisord --configuration=/var/www/html/config/supervisord.conf
 exec "$@"

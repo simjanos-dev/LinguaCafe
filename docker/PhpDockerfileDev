@@ -58,4 +58,4 @@ USER laravel
 
 
 ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
-CMD ["apache2-foreground"]
+CMD ["supervisord", "--configuration=/var/www/html/config/supervisord.conf", "--nodaemon"]
