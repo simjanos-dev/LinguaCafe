@@ -57,5 +57,5 @@ RUN addgroup --gid 1000 laravel \
 USER laravel
 
 
-ENTRYPOINT ["/var/www/html/entrypoint.sh"]
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
+CMD ["supervisord", "--configuration=/var/www/html/config/supervisord.conf", "--nodaemon"]
