@@ -105,12 +105,13 @@
 <script>
     import ThemeService from './../services/ThemeService';
     import FontTypeService from './../services/FontTypeService';
+    import { DefaultLocalStorageManager } from './../services/LocalStorageManagerService';
     import defaultThemes from './../themes';
     export default {
         data: function() {
             return {
                 selectedLanguage: this.$props._selectedLanguage,
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                theme: DefaultLocalStorageManager.loadSetting("theme") || 'light',
                 logoutDialog: false,
                 themeSelectionDialog: false,
                 languageSelectionDialog: false,
@@ -156,7 +157,7 @@
                         icon: 'mdi-account-question',
                         bottomNav: false,
                     }
-                ]
+                ],
             }
         },
         props: {
@@ -196,16 +197,17 @@
             }
 
             // load theme
-            ThemeService.loadTheme(defaultThemes, this.$cookie, this.$vuetify);
+            const savedTheme = DefaultLocalStorageManager.loadSetting('theme');
+            this.theme = savedTheme ? savedTheme : 'light';
+            ThemeService.loadTheme(defaultThemes, this.$vuetify);
 
             // load navbar status
-            if (this.$cookie.get('navbar-collapsed') !== null) {
-                this.navbarCollapsed = this.$cookie.get('navbar-collapsed') === 'true';
-            }
+            const savedNavbarCollapsed = DefaultLocalStorageManager.loadSetting('navbar-collapsed');
+            this.navbarCollapsed = savedNavbarCollapsed ? savedNavbarCollapsed === 'true' : false;
         },
         mounted() {
             // load default and selected font types into the dom
-            var fontTypeService = new FontTypeService(this.selectedLanguage, this.$cookie, () => {
+            var fontTypeService = new FontTypeService(this.selectedLanguage, () => {
                 fontTypeService.loadSelectedFontTypeIntoDom();
                 fontTypeService.loadDefaultFontTypeIntoDom();
             });
@@ -213,11 +215,11 @@
         methods: {
             collapseNavbar() {
                 this.navbarCollapsed = true;
-                this.$cookie.set('navbar-collapsed', this.navbarCollapsed, 3650);
+                DefaultLocalStorageManager.saveSetting('navbar-collapsed', this.navbarCollapsed);
             },
             expandNavbar() {
                 this.navbarCollapsed = false;
-                this.$cookie.set('navbar-collapsed', this.navbarCollapsed, 3650);
+                DefaultLocalStorageManager.saveSetting('navbar-collapsed', this.navbarCollapsed);
             },
             navigationClick(itemName, event) {
                 if (itemName === 'Review') {
@@ -232,7 +234,8 @@
 
             },
             updateTheme() {
-                this.theme = (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme');
+                const savedTheme = DefaultLocalStorageManager.loadSetting('theme');
+                this.theme = savedTheme ? savedTheme : 'light';
             },
             openLogoutDialog() {
                 this.logoutDialog = true;

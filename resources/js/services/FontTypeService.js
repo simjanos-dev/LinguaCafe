@@ -1,6 +1,7 @@
+import { DefaultLocalStorageManager  } from "./LocalStorageManagerService";
+
 class FontTypeService {
-    constructor(language, cookieHandler, fontTypesLoaded = null) {
-        this.cookieHandler = cookieHandler;
+    constructor(language, fontTypesLoaded = null) {
         this.language = language;
         this.fonts = [];
 
@@ -14,20 +15,15 @@ class FontTypeService {
     }
 
     getSelectedFontTypeId() {
-        if (this.cookieHandler.get(this.language + '-selected-font-type-id') !== null) {
-            var selectedFontCookieId = this.cookieHandler.get(this.language + '-selected-font-type-id');
-            selectedFontCookieId = parseInt(this.cookieHandler.get(this.language + '-selected-font-type-id'));
-            
-            // if the font in the cookie does not exist, this function should
-            // return null to avoid showing a deleted font as selected
-            var selectedFontId = null;
-            this.fonts.forEach((font) => {
-                if (font.id === selectedFontCookieId) {
-                    selectedFontId = font.id;
-                }
-            });
+        const selectedFontIdKey = `${this.language}-selected-font-type-id`;
+        const selectedFontCookieId = DefaultLocalStorageManager.loadSetting(selectedFontIdKey);
+        if (selectedFontCookieId !== null) {
+            const selectedFontId = parseInt(selectedFontCookieId);
 
-            return selectedFontId;
+            // if the font in the localStorage does not exist, return null to avoid showing a deleted font as selected
+            let fontExists = this.fonts.some(font => font.id === selectedFontId);
+
+            return fontExists ? selectedFontId : null;
         } else if (!this.fonts.length) {
             return null;
         } else {
@@ -36,40 +32,31 @@ class FontTypeService {
     }
 
     getSelectedFontTypeFileName() {
-        var selectedFontFileName = null;
-        var selectedFontId = this.getSelectedFontTypeId();
-        
-        this.fonts.forEach((font) => {
-            if (font.id === selectedFontId) {
-                selectedFontFileName = font.filename;
-            }
-        });
+        const selectedFontId = this.getSelectedFontTypeId();
+        if (!selectedFontId) return null;
 
-        return selectedFontFileName;
+        const selectedFont = this.fonts.find(font => font.id === selectedFontId);
+        return selectedFont ? selectedFont.filename : null;
     }
-    
+
     selectFontType(fontId) {
-        this.cookieHandler.set(this.language + '-selected-font-type-id', fontId, 3650);
+        const selectedFontIdKey = `${this.language}-selected-font-type-id`;
+        DefaultLocalStorageManager.saveSetting(selectedFontIdKey, fontId);
     }
 
     loadSelectedFontTypeIntoDom() {
-        var fileName = this.getSelectedFontTypeFileName();
+        const fileName = this.getSelectedFontTypeFileName();
+        if (!fileName) return;
 
-        if (fileName === null) {
-            return;
-        }
-
-        let fontStyleText = "@font-face { font-family: selectedFont; src: url('/fonts/file/" + fileName + "'); } .selected-font { font-family: selectedFont !important; }";
+        let fontStyleText = `@font-face { font-family: selectedFont; src: url('/fonts/file/${fileName}'); } .selected-font { font-family: selectedFont !important; }`;
         document.getElementById('dynamic-selected-font').innerHTML = fontStyleText;
     }
 
     loadDefaultFontTypeIntoDom() {
-        if (!this.fonts.length) {
-            return;
-        }
+        if (!this.fonts.length) return;
 
-        var fileName = this.fonts[0].filename;
-        let fontStyleText = "@font-face { font-family: defaultFont; src: url('/fonts/file/" + fileName + "'); } .default-font, .default-font * { font-family: defaultFont !important; }";
+        const fileName = this.fonts[0].filename;
+        let fontStyleText = `@font-face { font-family: defaultFont; src: url('/fonts/file/${fileName}'); } .default-font, .default-font * { font-family: defaultFont !important; }`;
         document.getElementById('dynamic-default-font').innerHTML = fontStyleText;
     }
 }

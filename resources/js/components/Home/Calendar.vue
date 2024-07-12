@@ -19,7 +19,7 @@
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'review'; updateCalendar();">Review</v-btn>
                 <v-btn  class="menu-button justife-start" tile color="white" @click="selectedGoal = 'learn_words'; updateCalendar();">New words</v-btn>
             </v-menu>
-            
+
             <!-- Date picker -->
             <v-menu
                 v-model="showDatePicker"
@@ -29,7 +29,7 @@
                 content-class="date-picker-dialog"
             >
                 <template v-slot:activator="{ on, attrs }">
-                    <v-btn 
+                    <v-btn
                         id="calendar-date-button"
                         class="calendar-button ml-2"
                         :color="theme == 'eink' ? 'white' : ''"
@@ -40,7 +40,7 @@
                         <span id="calendar-date-button-text">{{ pickerDateFormated }}&nbsp;</span><v-icon>mdi-calendar</v-icon>
                     </v-btn>
                 </template>
-                <v-date-picker 
+                <v-date-picker
                     v-model="pickerDate"
                     scrollable
                     type="month"
@@ -54,7 +54,7 @@
                 </v-date-picker>
             </v-menu>
         </div>
-        
+
         <!-- calendar -->
         <v-card outlined id="calendar" class="rounded-lg pa-4 pt-0" :loading="popupMenu.saving">
             <!-- Calendar popup -->
@@ -138,25 +138,25 @@
                 <div class="calendar-month" v-for="(month, index) in selectedMonths" :key="index">
                     <div class="calendar-month-title">{{ month.formattedString }}</div>
                     <div class="calendar-month-days">
-                        <div 
+                        <div
                             :class="{
-                                'calendar-day': true, 
+                                'calendar-day': true,
                                 'no-achievement': (selectedGoal == 'reviews_due' && !day.reviewsDue) || (selectedGoal !== 'reviews_due' && (day.achievement == null || day.achievement.achievedQuantity == 0)),
                                 'half-achievement': selectedGoal !== 'reviews_due' && day.achievement !== null && day.achievement.achievedQuantity < day.achievement.goalQuantity,
                                 'full-achievement': (selectedGoal == 'reviews_due' && day.reviewsDue) || (selectedGoal !== 'reviews_due' && day.achievement !== null && day.achievement.achievedQuantity >= day.achievement.goalQuantity && day.achievement.goalQuantity !== 0),
                             }"
                             transition="fade-transition"
                             @click.stop="openCalendarDayPopup($event, day)"
-                            v-for="(day, dayIndex) in month.days" 
+                            v-for="(day, dayIndex) in month.days"
                             :key="index + '-' + dayIndex"
                         >
-                            <div 
+                            <div
                                 class="calendar-day-background"
                             ></div>
                             <div class="calendar-day-text" v-if="selectedGoal !== 'reviews_due'">{{ day.day }}</div>
                             <div class="calendar-day-text" v-if="selectedGoal == 'reviews_due'">
                                 {{ day.reviewsDue ? day.reviewsDue : '-' }}
-                                
+
                             </div>
                         </div>
                     </div>
@@ -169,10 +169,11 @@
 <script>
     import {formatNumber} from './../../helper.js';
     const moment = require('moment');
+    import { DefaultLocalStorageManager } from './../../services/LocalStorageManagerService';
     export default {
         data: function() {
             return {
-                theme: (this.$cookie.get('theme') === null ) ? 'light' : this.$cookie.get('theme'),
+                theme: DefaultLocalStorageManager.loadSetting('theme') || 'light',
                 calendarData: [],
                 reviewsDue: [],
                 goalTexts: {
@@ -180,7 +181,6 @@
                     'read_words': 'words',
                     'learn_words': 'new words',
                 },
-
                 pickerDate: new moment().format('YYYY-MM'),
                 pickerDateFormated: '',
                 currentMonth: new moment().startOf('month'),
@@ -203,10 +203,8 @@
         },
         mounted() {
             document.body.addEventListener("click", this.closeCalendarDayPopup);
-            
             // load achievements data
             this.loadCalendarData();
-            
             this.datePickerChanged();
         },
         methods: {
@@ -232,15 +230,15 @@
                 if (event !== null) {
                     var position = event.target.getBoundingClientRect();
                 }
-                
+
                 // close calendar if the user clicked on the already selected word
-                if (event !== null && this.popupMenu.active && 
+                if (event !== null && this.popupMenu.active &&
                     this.popupMenu.x == position.left - 100 &&
                     this.popupMenu.y == position.bottom + 5) {
                     this.popupMenu.active = false;
                     return;
                 }
-                
+
                 // display calendar popup
                 if (event !== null) {
                     this.popupMenu.tab = 0;
@@ -282,7 +280,7 @@
                 this.$nextTick(() => {
                     this.popupMenu.active = true;
                 });
-                
+
             },
             closeCalendarDayPopup() {
                 this.popupMenu.active = false;
@@ -314,7 +312,7 @@
             updateCalendar () {
                 this.selectedMonths = null;
                 this.selectedMonths = [];
-                
+
                 // loop through days of the month
                 var currentDate = new moment(this.currentMonth.format('YYYY-MM-DD')).startOf('month').subtract(4, 'months');
                 var lastDay = new moment(this.currentMonth.format('YYYY-MM-DD')).endOf('month');
@@ -333,7 +331,7 @@
                         achievement: null,
                         reviewsDue: 0,
                     };
-                    
+
                     // add achievements for the day
                     for (var i = 0; i < this.calendarData.length; i++) {
 
@@ -353,7 +351,7 @@
                             }
                         }
                     }
-                    
+
                     this.selectedMonths[this.selectedMonths.length - 1].days.push(day);
                     currentDate.add(1, 'days');
                 }
