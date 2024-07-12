@@ -1,0 +1,144 @@
+@import '../variables';
+
+#kanji {   
+    #kanji-info-box {
+        display: block;
+        width: 100%;
+
+        #characters {
+            width: 150px;
+            height: 300px;
+        }
+
+        .character {
+            position: relative;
+            display: inline-block;
+            float: left;
+            width: 150px;
+            height: 150px;
+            line-height: 150px;
+            font-size: 120px;
+            text-align: center;
+            user-select: none;
+            overflow: hidden;
+            
+            #character-dmak {
+                display: block;
+                float: unset;
+                margin: 0px;
+                width: 112px;
+                height: 112px;
+                transform: scale(1.339, 1.339);
+                transform-origin: top left;
+                
+                svg {
+                    position: absolute !important;
+                    left: 0px;
+                    top: 0px;
+                }
+            }
+        }
+
+        #kanji-info {
+            width: calc(100% - 150px);
+            
+            #kanji-chip-info {
+                display: block;
+                width: 100%;
+                height: 40px;
+                padding-left: 0px;
+            }
+
+            #meanings {
+                display: block;
+                width: 100%;
+                min-height: 36px;
+                line-height: 36px;
+                font-size: 22px;
+            }
+
+            .kanji-info-group {
+                display: block;
+                width: 100%;
+                min-height: 30px;
+                font-size: 16px;
+                
+                .kanji-info-title {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+    #kanji-radicals {
+        width: 100%;
+
+        .kanji-radical {
+            width: 100px;
+            height: 100px;
+            line-height: 76px;
+            font-size: 60px;
+            text-align: center;
+            background-color: var(--v-foreground-base);;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            user-select: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: .1s;
+            
+            span {
+                display: block;
+                font-size: 12px;
+                line-height: 24px;
+            }
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        &::after {
+            content: "";
+            flex: auto;
+        }
+    }
+
+    #kanji-words {
+        display: block;
+        width: 100%;
+
+    }
+}
+
+
+@media (max-width: 767px) {
+    #kanji {
+        #kanji-info-box {
+            #characters {
+                width: 246px;
+                height: 123px;
+                margin-bottom: 16px;
+
+                .character {
+                    width: 123px;
+                    height: 123px;
+                    font-size: 110px;
+
+                    #character-dmak {
+                        transform: scale(1.128, 1.128);
+                    }
+                }
+            }
+
+            #kanji-info {
+                width: 100%;
+            }
+        }
+    }    
+}
+
+@media (max-width: 400px) {
+    #kanji-words-table .reading {
+        display: none;
+    }
+}

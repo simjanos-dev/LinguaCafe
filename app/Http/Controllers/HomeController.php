@@ -18,8 +18,6 @@ class HomeController extends Controller {
     private $goalService;
 
     public function __construct(StatisticsService $statisticsService, GoalService $goalService) {
-        $this->middleware('auth');
-
         $this->statisticsService = $statisticsService;
         $this->goalService = $goalService;
     }

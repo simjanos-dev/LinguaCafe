@@ -1,0 +1,172 @@
+@import './../variables';
+
+div.v-list.filter-popup {
+    max-width: 200px;
+    max-height: 440px;
+    
+    .v-list-item {
+        background-color: white;
+    }
+}
+
+#vocabulary {
+    #filters .filter-menu {
+        &.show-filters {
+            display: none;
+        }
+    }
+
+    #search-result-info {
+        margin-top: 7px;
+        background-color: var(--v-gray3-base);
+    }
+
+    #search-line {
+        display: block;
+        width: 100%;
+        height: 40px;
+    }
+
+    #vocabulary-search-field {
+        display: block;
+        width: 100;
+        height: 40px;
+        margin-bottom: 10px;
+        
+        
+        .v-input__slot fieldset,
+        .v-input__slot {
+            transition: .2s;
+            height: 40px;
+            background: #F0F0F0;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-right: 0px solid rgba(0, 0, 0, 0) !important;
+
+            label.v-label.v-label--active {
+                display: none !important;
+            }
+
+            &:focus, &:active, &:hover {
+                background: #E0E0E0;
+            }
+        }
+
+        button {
+            width: 100px;
+            float: right;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-left: 0px solid rgba(0, 0, 0, 0) !important;
+            height: 40px;
+        }
+    }
+
+    #vocabulary-list {
+        td, th {
+            text-align: center;
+            overflow: hidden;
+            height: 46px;
+        }
+
+        .word, .reading, .word-with-reading {
+            width: 220px;
+
+            rt {
+                font-size: 10.5px;
+                color: rgb(113, 113, 113);
+            }
+        }
+
+        .stage {
+            width: 50px;
+
+            div {
+                width: 50px;
+                border-radius: 13px;
+                height: 26px;
+                line-height: 26px;
+
+                &.highlighted-word {
+                    background-color: var(--v-highlightedWordLevel7-base);
+                }
+
+                &.new-word {
+                    background-color: var(--v-newWord-base);
+                }
+            }
+        }
+
+        .actions {
+            width: 120px;
+        }
+
+        .word-with-reading {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    #vocabulary {
+        #vocabulary-list {
+            .word, .reading {
+                display: none;
+            }
+
+            .word-with-reading {
+                display: table-cell;
+            }
+        }
+
+        #filters {
+            display: block;
+            padding-bottom: 40px;
+
+            .filter-menu {
+                display: block;
+                width: 140px;
+                margin: 4px 0px !important;
+            }
+
+            &.hidden .filter-menu {
+                display: none;
+            }
+
+            .filter-menu {
+                &.show-filters {
+                    display: block;
+                    float: left;
+                }
+
+                &.export{
+                    display: block;
+                    float: right;
+                    width: 120px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    #vocabulary-list {
+        .translation {
+            display: none;
+        }
+    }
+}
+
+
+// style for e-ink theme
+#app main.eink #vocabulary #vocabulary-list .stage div {
+    &.highlighted-word {
+        background-color: var(--v-highlightedWordLevel7-base);
+        color: var(--v-highlightedWordText-base);
+    }
+
+    &.new-word {
+        background-color: var(--v-newWord-base);
+        color: var(--v-highlightedWordText-base);
+    }
+}

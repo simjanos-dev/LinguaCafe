@@ -1,0 +1,105 @@
+@import './../variables';
+
+#vocabulary-edit-chips {
+    width: 100%;
+}
+
+#vocabulary-edit-middle {
+    width: 60px;
+
+    .arrow {
+        height: 78px;
+        width: 100%;
+    }
+}
+
+.vocabulary-edit-side {
+    width: calc(50% - 30px);
+}
+
+#vocabulary-edit-stage-buttons {
+    width: 100% !important;
+    display: flex;
+    align-items: stretch;
+
+    button.v-btn {
+        box-shadow: none;
+        margin: 0px;
+        border: none;
+        border-radius: 0px;
+        height: 52px;
+        width: unset !important;
+        min-width: unset !important;
+        padding: 0px !important;
+        flex: 1;
+        border-top: 1px solid var(--v-customBorder-base);
+        border-bottom: 1px solid var(--v-customBorder-base);
+
+        &:first-of-type {
+            border-left: 1px solid var(--v-customBorder-base);
+            border-top-left-radius: 32px;
+            border-bottom-left-radius: 32px;
+        }
+
+        &:last-of-type {
+            border-right: 1px solid var(--v-customBorder-base);
+            border-top-right-radius: 32px;
+            border-bottom-right-radius: 32px;
+        }
+
+        &.v-btn--active {
+            background-color: var(--v-primary-base);
+            border-color: var(--v-primary-base);
+            color: white;
+        }
+    }
+}
+
+#vocabulary-edit-dialog.phrase {
+    .vocabulary-edit-side {
+        width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    #vocabulary-edit-middle {
+        width: 40px;
+    }
+    
+    .vocabulary-edit-side {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 560px) {
+    #vocabulary-edit-middle {
+        display: none;
+    }
+    
+    .vocabulary-edit-side {
+        width: calc(50% - 4px);
+
+        &:nth-child(2) {
+            margin-right: 8px;
+        }
+    }
+}
+
+@media (max-width: 460px) {
+    #vocabulary-edit-stage-buttons {
+        button.v-btn {
+            font-size: 3vw;
+            i {
+                font-size: 4vw;
+            }
+        }
+    }
+
+    .vocabulary-edit-side {
+        width: 100%;
+
+        &:nth-child(2) {
+            margin-right: 0px;
+        }
+    }
+}

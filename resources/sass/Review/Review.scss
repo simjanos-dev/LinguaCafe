@@ -1,0 +1,460 @@
+@import './../variables';
+
+#review-box #review-card ::-webkit-scrollbar {
+    background: var(--v-foreground-base);
+}
+
+#review-settings div.row {
+    .switch-container {
+        height: 50px !important;
+    }
+
+    .slider-container {
+        height: 60px !important;
+    }
+}
+
+#review-box {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    background-color: var(--v-background-base);
+
+    .text-block-group {
+        user-select: none !important;
+    }
+
+    .review-button-box {
+        box-sizing: border-box;
+        position: absolute !important;
+        display: block;
+        left: 0px;
+        width: 100%;
+        height: 0px;
+        bottom: 0px;
+        
+        #review-reveal-button {
+            position: absolute;
+            box-sizing: border-box;
+            top: 28px;
+            width: 150px;
+            left: 50%;
+            transform: translate(-50%, 0%);
+        }
+
+        #review-correct-button,
+        #review-wrong-button {
+            position: absolute;
+            box-sizing: border-box;
+            top: 28px;
+            width: 150px;
+            left: 50%;
+            transform: translate(-101%, 0%);
+        }
+
+        #review-correct-button {
+            transform: translate(1%, 0%);
+        }
+    }
+
+    #toolbar {
+        position: absolute;
+        display: block;
+        height: 280px;
+        width: 40px;
+        right: calc(50% - 346px);
+        top: 100px;
+    }
+    
+    #review {
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding-top: 25px;
+    }
+
+    #review-progress-line {
+        margin: auto;
+        position: relative; 
+        width: 900px;
+        height: 36px;
+
+        .v-badge i {
+            color: var(--v-textDark-base) !important;
+            font-size: 15px;
+        }
+
+        #progress-bar-correct-counter {
+            width: 64px;
+            height: 36px;
+            line-height: 34px;
+            text-align: center;
+            font-size: 15px;
+            background-color: var(--v-foreground-base);
+            color: var(--v-text-base);
+            border-radius: 6px;   
+        }
+
+        #progress-bar-remaining-counter {
+            width: 64px;
+            height: 36px;
+            line-height: 34px;
+            text-align: center;
+            font-size: 15px;
+            background-color: var(--v-foreground-base);
+            color: var(--v-text-base); 
+            border-radius: 6px;
+        }
+    }
+
+    #review-card {
+        z-index: 5;
+        position: relative;
+        display: block;
+        margin: 10px auto;
+        width: 600px;
+        height: 400px;
+        perspective: 800px;
+        margin-top: 25px;
+        animation: none;
+        
+        #review-card-content {
+            display: flex;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: 0s;
+            transform-style: preserve-3d;
+        }
+
+        hr {
+            margin: 12px 0px;
+        }
+
+        &.revealed #review-card-content {
+            animation: review-card-revealed-animation .4s forwards;
+        }
+
+        &.back-to-deck-animation #review-card-content {
+            animation: back-to-the-deck-animation .4s forwards;
+
+            #review-card-front,
+            #review-card-back {
+                color: white;
+            }
+        }
+
+        &.into-the-correct-deck-animation #review-card-content {
+            animation: into-the-correct-deck-animation .4s forwards;
+            
+            #review-card-front,
+            #review-card-back {
+                color: white;
+            }
+
+        }
+
+        &.draw-new-card-animation #review-card-content {
+            animation: review-card-new-animation .4s;
+            
+            #review-card-front,
+            #review-card-back {
+                color: white;
+            }    
+
+            #review-card-back *{
+                display: none !important;
+            }
+        }
+        
+        #review-card-front,
+        #review-card-back {
+            text-align: center;
+            display: block;
+            position: absolute;
+            height: auto;
+            min-height: 360px;
+            width: 100%;
+            background: var(--v-foreground-base);
+            color: var(--v-text-base);
+            backface-visibility: hidden;
+            padding: 16px;
+            overflow: visible;
+            
+            #vocab-box {
+                text-align: left;
+            }
+
+            .phrase-words {
+                width: 100%;
+                display: block;
+
+                span {
+                    display: inline-block;
+                }
+            }
+        }
+
+        #review-card-front,
+        #review-card-back {
+            justify-content: center;
+            
+            .single-word {
+                display: block;
+            }
+        }
+
+        #review-card-back {
+            transform: rotateY( 180deg );
+        }
+    }
+}
+
+@keyframes review-card-revealed-animation {
+    0%   {
+        
+    }
+
+    100% {
+        transform: rotateY( -180deg );
+        
+    }
+}
+
+@keyframes back-to-the-deck-animation {
+    0%   {
+        transform: rotateY( -180deg );
+    }
+    
+    100% {
+        transform: rotateY( -180deg ) translate(-420px, -240px) scale(0);
+    }
+}
+
+@keyframes into-the-correct-deck-animation {
+    0%   {
+        transform: rotateY( -180deg );
+    }
+    
+    100% {
+        transform: rotateY( -180deg ) translate(420px, -240px) scale(0);
+    }
+}
+
+@keyframes review-card-new-animation {
+    0%   {
+        transform: rotateY( -180deg ) translate(-420px, -240px) scale(0);
+    }
+    
+    100% {
+        transform: rotateY( -180deg );
+    }
+}
+
+@media (max-width: 1130px) {
+    #review-box #review-progress-line {
+        width: 800px;
+    }
+
+    #review-box #review-card {
+        width: 540px;
+        height: 300px;
+    }
+
+    #review-box #toolbar {
+        position: absolute;
+        display: block;
+        height: 280px;
+        width: 40px;
+        right: calc(50% - 316px);
+        top: 100px;
+    }
+    
+    @keyframes back-to-the-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(-360px, -175px) scale(0);
+        }
+    }
+    
+    @keyframes into-the-correct-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(360px, -175px) scale(0);
+        }
+    }
+    
+    @keyframes review-card-new-animation {
+        0%   {
+            transform: rotateY( -180deg ) translate(-360px, -175px) scale(0);
+        }
+        
+        100% {
+            transform: rotateY( -180deg );
+        }
+    }
+}
+
+@media (max-width: 860px) {
+    #review-box #review-progress-line {
+        width: 90%;
+    }
+
+    #review-box #review-card {
+        width: 460px;
+        height: 320px;
+    }
+
+    #review-box #toolbar {
+        position: absolute;
+        display: block;
+        height: 280px;
+        width: 40px;
+        right: calc(50% - 276px);
+        top: 86px;
+    }
+    
+    @keyframes back-to-the-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(-40vw, -175px) scale(0);
+        }
+    }
+    
+    @keyframes into-the-correct-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(40vw, -175px) scale(0);
+        }
+    }
+    
+    @keyframes review-card-new-animation {
+        0%   {
+            transform: rotateY( -180deg ) translate(-40vw, -175px) scale(0);
+        }
+        
+        100% {
+            transform: rotateY( -180deg );
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    #review-box {
+        #toolbar {
+            position: relative;
+            top: unset;
+            right: unset;
+            display: block;
+            text-align: left;
+            width: 90%;
+            min-width: 260px;
+            max-width: 440px;
+            height: 40px;
+            margin: 4px auto;
+        }
+
+        #review-reveal-button,
+        #review-correct-button,
+        #review-wrong-button {
+            width: calc(45% - 2.5px);
+            max-width: calc(220px - 2.5px);
+            min-width: calc(130px - 2.5px);
+            height: 40px;
+            line-height: 38px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+        
+        #review-card {
+            width: 90%;
+            min-width: 260px;
+            max-width: 440px;
+            height: 360px;
+            margin: 0px auto;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        #review-progress-line {
+            width: 90%;
+            min-width: 260px;
+            max-width: 440px;
+
+            #review-progress-bar {
+                width: 100%;
+                margin-left: 12px !important;
+                margin-right: 12px !important;
+                
+                #review-progress-bar-text {
+                    display: none;
+                }
+            }
+
+            #progress-bar-correct-counter,
+            #progress-bar-remaining-counter {
+                width: 52px;
+            }
+        }
+    }
+
+    @keyframes back-to-the-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(-33vw, -230px) scale(0);
+        }
+    }
+    
+    @keyframes into-the-correct-deck-animation {
+        0%   {
+            transform: rotateY( -180deg );
+        }
+        
+        100% {
+            transform: rotateY( -180deg ) translate(33vw, -230px) scale(0);
+        }
+    }
+    
+    @keyframes review-card-new-animation {
+        0%   {
+            transform: rotateY( -180deg ) translate(-33vw, -230px) scale(0);
+        }
+        
+        100% {
+            transform: rotateY( -180deg );
+        }
+    }
+}
+
+// style for e-ink theme
+#app main.eink #review-box {
+    #review-progress-line #review-progress-bar #review-progress-bar-correct {
+        transition: 0s;
+    }
+
+    #review-card {
+        &.into-the-correct-deck-animation #review-card-content,
+        &.draw-new-card-animation #review-card-content,
+        &.back-to-deck-animation #review-card-content,
+        &.revealed #review-card-content {        
+            animation-duration: 0s;
+        }
+    }
+}

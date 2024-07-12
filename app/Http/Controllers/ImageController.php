@@ -17,7 +17,6 @@ class ImageController extends Controller
     private $imageService;
 
     public function __construct(ImageService $imageService) {
-        $this->middleware('auth');
         $this->imageService = $imageService;
     }
     

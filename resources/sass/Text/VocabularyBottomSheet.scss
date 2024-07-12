@@ -1,0 +1,45 @@
+#vocab-bottom-sheet {
+    .searchBoxBorder {
+        width: calc(100% - 32px);
+        overflow-x: hidden;
+    }
+
+    #vocabulary-bottom-sheet-stage-buttons {
+        width: 100% !important;
+        display: flex;
+        align-items: stretch;
+
+        button.v-btn {
+            box-shadow: none;
+            margin: 0px;
+            border: none;
+            border-radius: 0px;
+            height: 42px;
+            width: unset !important;
+            min-width: unset !important;
+            padding: 0px !important;
+            flex: 1;
+
+            border-top: 1px solid var(--v-customBorder-base);
+            border-bottom: 1px solid var(--v-customBorder-base);
+
+            &:first-of-type {
+                border-left: 1px solid var(--v-customBorder-base);
+                border-top-left-radius: 32px;
+                border-bottom-left-radius: 32px;
+            }
+
+            &:last-of-type {
+                border-right: 1px solid var(--v-customBorder-base);
+                border-top-right-radius: 32px;
+                border-bottom-right-radius: 32px;
+            }
+
+            &.v-btn--active {
+                background-color: var(--v-primary-base);
+                border-color: var(--v-primary-base);
+                color: white;
+            }
+        }
+    }
+}

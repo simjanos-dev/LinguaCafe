@@ -1,0 +1,105 @@
+#admin-dictionary-settings {
+    #import-button-text-short {
+        display: none;
+    }
+}
+
+#supported-dictionaries {
+    .dictionary {
+        border: 1px dashed var(--v-customBorder-base);
+        user-select: none;
+        height: 80px;
+        line-height: 46px;
+        width: 100%;
+
+        &:hover {
+            background-color: var(--v-gray-base);
+            border: 1px solid var(--v-gray-base);
+        }
+        
+        .language {
+            width: 70px;
+        }
+
+        .name {
+            width: calc(100% - 70px - 120px);
+            font-size: 16px;
+        }
+
+
+        .import-button {
+            width: 120px;
+        }
+    }
+}
+
+#import-stepper .v-stepper__wrapper {
+    overflow: visible;
+}
+
+@media (max-width: 700px) {
+    #supported-dictionaries {
+        .dictionary {
+            height: auto;
+            min-height: 140px;
+            line-height: unset;
+
+            .language {
+                width: 70px;
+                flex-wrap: wrap;
+                align-content: flex-start;
+            }
+    
+            .name {
+                width: calc(100% - 70px);
+            }
+    
+    
+            .import-button {
+                width: 100%;
+                height: 36px;
+                text-align: right;
+                margin-top: 20px;
+            }
+        }
+    }
+}
+
+@media (max-width: 650px) {
+    #custom-dictionary-import-dialog .v-stepper__content{
+        padding: 0px;
+        padding-top: 16px;  
+    }
+
+    #dictionary-color-picker > * {
+        display: none;
+    }
+
+    #admin-dictionary-settings {
+        #dictionaries {
+            display: none;
+        }
+
+        #dictionaries-mobile {
+            display: block;
+        }
+    }
+}
+
+@media (max-width: 450px) {
+    #delete-dictionary-dialog {
+        .v-card__title span.text-h5 {
+            font-size: 20px !important;
+        }
+    }
+    
+    #admin-dictionary-settings {
+        #import-button-text {
+            display: none;
+        }
+
+        #import-button-text-short {
+            display: block;
+        }
+    }
+}
