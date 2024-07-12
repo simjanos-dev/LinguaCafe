@@ -262,6 +262,7 @@ class DictionaryController extends Controller
 
     public function importSupportedDictionary(ImportSupportedDictionaryRequest $request) {
         set_time_limit(2400);
+        $userUuid = Auth::user()->uuid;
         $dictionaryName = $request->post('dictionaryName');
         $dictionaryFileName = $request->post('dictionaryFileName');
         $dictionarySourceLanguage = $request->post('dictionarySourceLanguage');
@@ -270,6 +271,7 @@ class DictionaryController extends Controller
         
         try {
             $this->dictionaryImportService->importSupportedDictionary(
+                $userUuid, 
                 $dictionaryName, 
                 $dictionaryFileName, 
                 $dictionarySourceLanguage, 

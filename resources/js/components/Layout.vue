@@ -7,7 +7,7 @@
 
         <template v-if="$router.currentRoute.path !== '/login'">
             <theme-selection-dialog v-model="themeSelectionDialog" @input="updateTheme"></theme-selection-dialog>
-            <language-selection-dialog :is-admin="$props._isAdmin" v-model="languageSelectionDialog"></language-selection-dialog>
+            <language-selection-dialog v-model="languageSelectionDialog"></language-selection-dialog>
             <v-navigation-drawer
                 id="navigation-drawer"
                 app
@@ -97,7 +97,7 @@
             </v-bottom-navigation>
         </template>
         <v-main :style="{background: $vuetify.theme.currentTheme.background}" :class="{ eink: theme == 'eink'}">
-            <router-view :is-admin="$props._isAdmin" :user-count="$props._userCount" :language="selectedLanguage" :key="$route.fullPath"></router-view>
+            <router-view :user-count="$props._userCount" :language="selectedLanguage" :key="$route.fullPath"></router-view>
         </v-main>
     </v-app>
 </template>
@@ -166,10 +166,18 @@
                 type: String,
                 default: '',
             },
+            _userUuid: {
+                type: String,
+                default: '',
+            },
             _userCount: Number,
             _isAdmin: Boolean,
         },
         beforeMount() {
+            // set store data
+            this.$store.commit('global/setUuid', this.$props._userUuid);
+            this.$store.commit('global/setUserAdmin', this.$props._isAdmin);
+
             if (this.$props._selectedLanguage == 'japanese') {
                 this.navigation.splice(3, 0, {
                     name: 'Kanji',
@@ -179,7 +187,7 @@
                 });
             }
 
-            if(this.$props._isAdmin == true) {
+            if(this.$store.getters['global/userAdmin']) {
                 this.navigation.push({
                     name: 'Admin settings',
                     url: '/admin',

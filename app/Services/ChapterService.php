@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illumniate\Support\Sleep;
 
 use App\Services\GoalService;
 use App\Services\BookService;
@@ -31,7 +32,7 @@ class ChapterService {
         }
 
         $chapters = Chapter
-            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])
+            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids', 'processing_status'])
             ->where('book_id', $bookId)
             ->where('user_id', $userId)
             ->get();
@@ -45,7 +46,12 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
+            $chapters[$i]->wordCount = new \stdClass();
+            $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
+            $chapters[$i]->wordCount->unique = -1;
+            $chapters[$i]->wordCount->known = -1;
+            $chapters[$i]->wordCount->highlighted = -1;
+            $chapters[$i]->wordCount->new = -1;
         }
         
         $data = new \stdClass();
@@ -55,6 +61,49 @@ class ChapterService {
         return $data;
     }
 
+    public function getChaptersBookCount($userId, $userUuid, $bookId) {
+        $book = Book
+            ::where('id', $bookId)
+            ->where('user_id', $userId)
+            ->first();
+        
+        if (!$book) {
+            throw new \Exception('Book does not exist, or it belongs to a different user.');
+        }
+
+        $chapters = Chapter
+            ::where('book_id', $bookId)
+            ->where('user_id', $userId)
+            ->get();
+
+        $words = EncounteredWord
+            ::select(['id', 'word', 'stage'])
+            ->where('user_id', $userId)
+            ->where('language', $book->language)
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
+        $wordCounts = [];
+        for ($i = 0; $i < count($chapters); $i++) {
+            if ($chapters[$i]->processing_status !== 'processed') {
+                continue;
+            }
+
+            $currentChapterWordCounts = new \stdClass();
+            $currentChapterWordCounts->index = $i;
+            $currentChapterWordCounts->wordCounts = $chapters[$i]->getWordCounts($words);
+
+            $wordCounts[] = $currentChapterWordCounts;
+
+            if ($i === count($chapters) - 1) {
+                event(new \App\Events\ChaptersWordCountCalculatedEvent($userUuid, $wordCounts));
+            }
+        }
+        
+        return true;
+    }
+    
     public function getChapterForEditor($userId, $chapterId) {
         $chapter = Chapter::
             select(['name', 'raw_text', 'type'])
@@ -76,10 +125,11 @@ class ChapterService {
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->where('language', $language)
+            ->where('processing_status', 'processed')
             ->first();
         
         if (!$chapter) {
-            throw new \Exception('Chapter does not exist, or it belongs to a different user.');
+            throw new \Exception('Chapter could not be found.');
         }
 
         $book = Book
@@ -105,10 +155,19 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($uniqueWordsForWordCounts);
+            if ($chapters[$i]->processing_status === 'processed') {
+                $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
+            }
+            
+            $chapters[$i]->wordCount = new \stdClass();
+            $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
+            $chapters[$i]->wordCount->unique = -1;
+            $chapters[$i]->wordCount->known = -1;
+            $chapters[$i]->wordCount->highlighted = -1;
+            $chapters[$i]->wordCount->new = -1;
         }
 
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $language);
         $textBlock->setProcessedWords($words);
         $textBlock->collectUniqueWords();
         $textBlock->prepareTextForReader();
@@ -209,7 +268,7 @@ class ChapterService {
         return true;
     }
 
-    public function createChapter($userId, $bookId, $chapterName, $chapterText) {
+    public function createChapter($userId, $userUuid, $bookId, $chapterName, $chapterText) {
 
         // retrieve book
         $book = Book
@@ -223,6 +282,7 @@ class ChapterService {
 
         $chapter = new Chapter();
         $chapter->user_id = $userId;
+        $chapter->processing_status = 'unprocessed';
         $chapter->name = $chapterName;
         $chapter->type = 'text';
         $chapter->subtitle_timestamps = '';
@@ -233,14 +293,14 @@ class ChapterService {
         $chapter->unique_words = '';
         $chapter->save();
 
-        $this->updateChapter($userId, $chapter->id, $chapter->name, $chapterText);
+        $this->updateChapter($userId, $userUuid, $chapter->id, $chapter->name, $chapterText);
         
         return true;
     }
 
     // updates the name and text of a chapter
-    public function updateChapter($userId, $chapterId, $chapterName, $chapterText) {
-        \DB::disableQueryLog();
+    public function updateChapter($userId, $userUuid, $chapterId, $chapterName, $chapterText) {
+        DB::disableQueryLog();
         
         // retrieve chapter
         $chapter = Chapter
@@ -255,36 +315,72 @@ class ChapterService {
         // update chapter data
         $chapter->raw_text = $chapterText;
         $chapter->name = $chapterName;
-        
-        // process text
-        $textBlock = new TextBlockService();
-        $textBlock->rawText = $chapterText;
-        $textBlock->tokenizeRawText();
-        $textBlock->processTokenizedWords();
-        $textBlock->collectUniqueWords();
-        $textBlock->updateAllPhraseIds();
-        $textBlock->createNewEncounteredWords();
-
-        // collect unique word ID-s
-        $uniqueWordIds = DB
-            ::table('encountered_words')
-            ->select('id')
-            ->where('user_id', $userId)
-            ->where('language', $chapter->language)
-            ->whereIn('word', $textBlock->uniqueWords)
-            ->pluck('id')
-            ->toArray();
-
-        // update chapter word data
-        $chapter->word_count = $textBlock->getWordCount();
-        $chapter->unique_words = json_encode($textBlock->uniqueWords);
-        $chapter->unique_word_ids = json_encode($uniqueWordIds);
-        $chapter->setProcessedText($textBlock->processedWords);
+        $chapter->processing_status = 'unprocessed';
         $chapter->save();
         
-        (new BookService())->updateBookWordCount($userId, $chapter->book_id);
+        \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $chapter->language);
         
         return true;
+    }
+
+    // processes a chapter's raw text, and returns the amount of words in the chapter
+    public function processChapterText($userId, $chapterId) {
+        DB::disableQueryLog();
+        $bookId = null;
+
+        DB::transaction(function() use(&$bookId, $userId, $chapterId) {
+            // retrieve chapter
+            $chapter = Chapter
+                ::lockForUpdate()
+                ->where('id', $chapterId)
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$chapter) {
+                throw new \Exception('Chapter does not exist, or it belongs to a different user.');
+            }
+            
+            // process text
+            $textBlock = new TextBlockService($userId, $chapter->language);        
+            
+            if ($chapter->type == 'text') {
+                $textBlock->rawText = $chapter->raw_text;
+                $textBlock->tokenizeRawText();
+                $timeStamps = [];
+            } else {
+                $textBlock->rawText = $chapter->raw_text;
+                $timeStamps = $textBlock->tokenizeRawSubtitles();
+            }
+            
+            $textBlock->processTokenizedWords();
+            $textBlock->collectUniqueWords();
+            $textBlock->updateAllPhraseIds();
+            $textBlock->createNewEncounteredWords();
+
+            // collect unique word ID-s
+            $uniqueWordIds = DB
+                ::table('encountered_words')
+                ->select('id')
+                ->where('user_id', $userId)
+                ->where('language', $chapter->language)
+                ->whereIn('word', $textBlock->uniqueWords)
+                ->pluck('id')
+                ->toArray();
+
+            // update chapter word data
+            $chapter->word_count = $textBlock->getWordCount();
+            $chapter->unique_words = json_encode($textBlock->uniqueWords);
+            $chapter->unique_word_ids = json_encode($uniqueWordIds);
+            $chapter->setProcessedText($textBlock->processedWords);
+            $chapter->subtitle_timestamps = json_encode($timeStamps);
+            $chapter->processing_status = 'processed';
+            $chapter->save();
+            
+            $bookId = $chapter->book_id;    
+        });
+        
+        $wordCount = (new BookService())->updateBookWordCount($userId, $bookId);
+        return $wordCount;
     }
 
     public function deleteChapter($userId, $chapterId) {

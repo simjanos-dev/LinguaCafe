@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;;
 use League\Csv\Writer;
 use League\Csv\Reader;
 
@@ -84,30 +84,41 @@ class VocabularyService {
         $phrase->save();
 
         // update phrase ids in chapter texts
-        $phraseWords = array_unique($words);
-        $chapters = Chapter
-            ::where('user_id', $userId)
-            ->where('language', $language)
-            ->get();
+        $chapterIds = Chapter
+                ::where('user_id', $userId)
+                ->where('language', $language)
+                ->where('processing_status', 'processed')
+                ->pluck('id')
+                ->toArray();
 
-        foreach ($chapters as $chapter) {
-            $uniqueWords = json_decode($chapter->unique_words);
-            if (count(array_intersect($uniqueWords, $phraseWords)) !== count($phraseWords)) {
-                continue;
-            }
-
-            $words = $chapter->getProcessedText();
-
-            $textBlock = new TextBlockService();
-            $textBlock->setProcessedWords($words);
-            $textBlock->collectUniqueWords();
-            $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
-
-            // save chapter words
-            if ($phraseIdsChanged) {
-                $chapter->setProcessedText($textBlock->processedWords);
-                $chapter->save();
-            }
+        $phraseWords = array_unique(json_decode($phrase->words));
+        foreach ($chapterIds as $chapterId) {
+            DB::transaction(function() use($chapterId, $phraseWords, $userId, $language, $phrase) {
+                $chapter = Chapter
+                    ::lockForUpdate()
+                    ->where('id', $chapterId)
+                    ->where('user_id', $userId)
+                    ->where('language', $language)
+                    ->where('processing_status', 'processed')
+                    ->first();
+    
+                $uniqueWords = json_decode($chapter->unique_words);
+    
+                if (count(array_intersect($uniqueWords, $phraseWords)) === count($phraseWords)) {
+                    $words = $chapter->getProcessedText();
+    
+                    $textBlock = new TextBlockService($userId, $language);
+                    $textBlock->setProcessedWords($words);
+                    $textBlock->collectUniqueWords();
+                    $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
+    
+                    // save chapter words
+                    if ($phraseIdsChanged) {
+                        $chapter->setProcessedText($textBlock->processedWords);
+                        $chapter->save();
+                    }
+                }
+            });
         }
 
         // update phrase ids in example sentences
@@ -123,7 +134,7 @@ class VocabularyService {
                 continue;
             }
 
-            $textBlock = new TextBlockService();
+            $textBlock = new TextBlockService($userId, $language);
             $textBlock->setProcessedWords(json_decode($exampleSentence->words));
             $textBlock->collectUniqueWords();
             $textBlock->updatePhraseIds($phrase);
@@ -135,10 +146,45 @@ class VocabularyService {
         }
 
         DB::commit();
-
+        
         return $phrase->id;
     }
 
+    public function indexPhraseInChapter($chapterId, $userId, $language, $phrase) {
+        DB::transaction(function() use($chapterId, $userId, $language, $phrase) {
+            $phraseWords = json_decode($phrase->words);
+
+            $chapter = Chapter
+                ::lockForUpdate()
+                ->where('id', $chapterId)
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->where('processing_status', 'processed')
+                ->first();
+
+            if (!$chapter) {
+                throw new \Exception('Chapter not found.');
+            }
+
+            $uniqueWords = json_decode($chapter->unique_words);
+
+            if (count(array_intersect($uniqueWords, $phraseWords)) === count($phraseWords)) {
+                $words = $chapter->getProcessedText();
+
+                $textBlock = new TextBlockService($userId, $language);
+                $textBlock->setProcessedWords($words);
+                $textBlock->collectUniqueWords();
+                $phraseIdsChanged = $textBlock->updatePhraseIds($phrase);
+
+                // save chapter words
+                if ($phraseIdsChanged) {
+                    $chapter->setProcessedText($textBlock->processedWords);
+                    $chapter->save();
+                }
+            }
+        });
+    }
+    
     public function updatePhrase($userId, $phraseId, $phraseData, $phraseStage = null) {
         
         /*
@@ -258,7 +304,7 @@ class VocabularyService {
             throw new \Exception('Example sentence does not exist, or it belongs to a different user.');
         }
         
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $exampleSentence->language);
         $textBlock->setProcessedWords(json_decode($exampleSentence->words));
         $textBlock->uniqueWords = json_decode($exampleSentence->unique_words);
         $textBlock->prepareTextForReader();
@@ -294,7 +340,7 @@ class VocabularyService {
             }
         }
         
-        $textBlock = new TextBlockService();
+        $textBlock = new TextBlockService($userId, $language);
         $textBlock->setProcessedWords($exampleSentenceWords);
         $textBlock->collectUniqueWords();
         $textBlock->updateAllPhraseIds();
@@ -312,7 +358,13 @@ class VocabularyService {
         $books = Book::where('user_id', $userId)->where('language', $language)->get();
         $bookIndex = -1;
         for ($i = 0; $i < count($books); $i++) {
-            $books[$i]->chapters = Chapter::select(['id', 'name'])->where('user_id', $userId)->where('language', $language)->where('book_id', $books[$i]->id)->get();
+            $books[$i]->chapters = Chapter
+                ::select(['id', 'name'])
+                ->where('user_id', $userId)
+                ->where('processing_status', 'processed')
+                ->where('language', $language)
+                ->where('book_id', $books[$i]->id)
+                ->get();
             
             if (isset($bookId) && $books[$i]->id == $bookId) {
                 $bookIndex = $i;

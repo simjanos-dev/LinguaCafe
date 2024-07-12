@@ -6,14 +6,18 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "beyondcode/laravel-websockets": "^2.0@beta",
+        "deeplcom/deepl-php": "^1.5.1",
         "doctrine/dbal": "^3.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.7",
         "laravel/framework": "^8.54",
+        "laravel/horizon": "^5.22",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "league/csv": "^9.0",
-        "deeplcom/deepl-php": "^1.5.1"
+        "predis/predis": "^2.2",
+        "pusher/pusher-php-server": "7.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

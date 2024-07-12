@@ -19,6 +19,7 @@ RUN apt-get update \
         unzip \
         zip \
         zlib1g-dev \
+        supervisor \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,6 +30,7 @@ RUN docker-php-ext-install pdo pdo_mysql fileinfo \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install zip \
+    && docker-php-ext-install pcntl \
     && docker-php-source delete
 
 #php config
@@ -55,5 +57,5 @@ RUN addgroup --gid 1000 laravel \
 USER laravel
 
 
-ENTRYPOINT ["/var/www/html/entrypoint.sh"]
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/var/www/html/entrypoint-dev.sh"]
+CMD ["supervisord", "--configuration=/var/www/html/config/supervisord.conf", "--nodaemon"]

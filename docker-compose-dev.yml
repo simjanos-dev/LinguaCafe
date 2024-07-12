@@ -18,6 +18,8 @@ services:
         volumes:
             - ./:/var/www/html
             - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+            - ./docker/supervisor-horizon.conf:/etc/supervisor/conf.d/horizon.conf
+            - ./docker/supervisor-websockets.conf:/etc/supervisor/conf.d/websockets.conf
         environment:
             PYTHON_CONTAINER_NAME: linguacafe-python-service-dev
             DB_DATABASE: linguacafe-dev
@@ -26,6 +28,7 @@ services:
             DB_HOST: linguacafe-database-dev
             DB_PORT: 3306
         ports:
+            - "6001:6001"
             - "3000:3000"
             - "81:80"
         networks:
@@ -52,6 +55,19 @@ services:
             MYSQL_PASSWORD: linguacafe-dev
             MYSQL_ROOT_PASSWORD: linguacafe-dev
             SERVICE_NAME: linguacafe-dev
+        networks:
+            - linguacafedev
+    redis:
+        image: redis:7.2-alpine
+        container_name: linguacafe-redis-dev
+        volumes: 
+            - ./cache:/data
+        ports:
+            - "6379:6379"
+        environment:
+            REDIS_PASSWORD: linguacafe-dev
+            REDIS_PORT: 6379
+            REDIS_DATABASES: 16
         networks:
             - linguacafedev
     python:

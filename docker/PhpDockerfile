@@ -28,6 +28,7 @@ RUN docker-php-ext-install pdo pdo_mysql fileinfo \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install zip \
+    && docker-php-ext-install pcntl \
     && docker-php-source delete
 
 #php config

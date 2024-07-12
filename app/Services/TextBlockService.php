@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
@@ -31,6 +31,7 @@ class TextBlockService
     use HasFactory;
 
     public $language = '';
+    public $userId = -1;
 
     /*
         This variable contains raw untokenized text. 
@@ -68,8 +69,9 @@ class TextBlockService
     // stores the python service container's name
     private $pythonService;
 
-    function __construct() {
-        $this->language = Auth::user()->selected_language;
+    function __construct($userId, $language) {
+        $this->userId = $userId;
+        $this->language = $language;
         $this->pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
     }
 
@@ -118,24 +120,16 @@ class TextBlockService
         $this->tokenizedWords = json_decode($this->tokenizedWords);
     }
 
-    /* 
-        Sends an array of raw text to python tokenizer service, and returns the result.
-        This is used when multiple blocks of raw text needs to be tokenized. This way it
-        only needs one http request, and it speeds up the process.
-    */
-    public static function tokenizeRawTextArray($textArray, $language) {
-        $replacedTexts = [];
-        foreach ($textArray as $text) {
-            $replacedTexts[] = preg_replace("/ {2,}/", " ", str_replace(["\r\n", "\r", "\n"], " NEWLINE ", $text));
-        }
-
-        $pythonService = env('PYTHON_CONTAINER_NAME', 'linguacafe-python-service');
-        $tokenizedTextArray = Http::post($pythonService . ':8678/tokenizer', [
-            'raw_text' => $replacedTexts,
-            'language' => $language
+    public function tokenizeRawSubtitles() {
+        $tokenizerResponse = Http::post($this->pythonService . ':8678/tokenizer/subtitle', [
+            'subtitles' => $this->rawText,
+            'language' => $this->language,
         ]);
+        
+        $tokenizerResponse = json_decode($tokenizerResponse);
 
-        return json_decode($tokenizedTextArray);
+        $this->tokenizedWords = $tokenizerResponse->tokenizedText;
+        return $tokenizerResponse->timeStamps;
     }
 
     /* 
@@ -146,7 +140,6 @@ class TextBlockService
         processed.
     */
     public function processTokenizedWords() {
-        $userId = Auth::user()->id;
         $this->processedWords = [];
         $processedWordCount = 0;
         $wordCount = count($this->tokenizedWords);
@@ -154,7 +147,7 @@ class TextBlockService
 
         for ($wordIndex = 0; $wordIndex < $wordCount; $wordIndex++) {
             $word = new \stdClass();
-            $word->user_id = $userId;
+            $word->user_id = $this->userId;
             $word->word_index = $wordIndex;
             $word->sentence_index = $this->tokenizedWords[$wordIndex]->si;
             $word->word = $this->tokenizedWords[$wordIndex]->w;
@@ -299,7 +292,7 @@ class TextBlockService
         DB::disableQueryLog();
         $encounteredWords = DB::table('encountered_words')
             ->select('word')
-            ->where('user_id', Auth::user()->id)
+            ->where('user_id', $this->userId)
             ->where('language', $this->language)
             ->whereIn('word', $this->uniqueWords)
             ->pluck('word')
@@ -323,7 +316,7 @@ class TextBlockService
             }
 
             $encounteredWord = [];
-            $encounteredWord['user_id'] = Auth::user()->id;
+            $encounteredWord['user_id'] = $this->userId;
             $encounteredWord['language'] = $this->language;
             $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
             $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
@@ -367,13 +360,11 @@ class TextBlockService
         }
     }
 
-    function updateAllPhraseIds($phrases = null) {
-        if ($phrases === null) {
-            $phrases = Phrase
-                ::where('user_id', Auth::user()->id)
-                ->where('language', $this->language)
-                ->get();
-        }
+    function updateAllPhraseIds() {
+        $phrases = Phrase
+            ::where('user_id', $this->userId)
+            ->where('language', $this->language)
+            ->get();
         
         foreach($phrases as $phrase) {
             $this->updatePhraseIds($phrase);
@@ -451,7 +442,12 @@ class TextBlockService
 
             for ($i = 0; $i < count($phraseOccurences[$p]); $i++) {
                 $tempArray = $this->processedWords[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids;
-                array_push($tempArray, $phrase->id);
+
+                // add phrase id to word if it's not already added
+                if (!in_array($phrase->id, $tempArray, true)) {
+                    array_push($tempArray, $phrase->id);
+                }
+
                 $this->processedWords[$phraseOccurences[$p][$i]->wordIndex]->phrase_ids = $tempArray;
             }
         }
@@ -478,7 +474,7 @@ class TextBlockService
         sort($phraseIds);
 
         $this->phrases = Phrase
-            ::where('user_id', Auth::user()->id)
+            ::where('user_id', $this->userId)
             ->where('language', $this->language)
             ->whereIn('id', $phraseIds)
             ->orderBy('id')
@@ -511,7 +507,7 @@ class TextBlockService
 
         $this->words = [];
         $encounteredWords = DB::table('encountered_words')
-            ->where('user_id', Auth::user()->id)
+            ->where('user_id', $this->userId)
             ->where('language', $this->language)
             ->whereIn('word', $this->uniqueWords)
             ->get();

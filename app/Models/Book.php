@@ -19,7 +19,12 @@ class Book extends Model
     ];
 
     function getWordCounts($userId, $words) {
-        $chapters = Chapter::where('user_id', $userId)->where('book_id', $this->id)->get();
+        $chapters = Chapter
+            ::where('user_id', $userId)
+            ->where('processing_status', 'processed')
+            ->where('book_id', $this->id)
+            ->get();
+            
         $bookUniqueWordIds = [];
         
         foreach ($chapters as $chapter) {

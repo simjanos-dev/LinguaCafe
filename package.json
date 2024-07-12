@@ -16,11 +16,13 @@
         "browser-sync-webpack-plugin": "^2.3.0",
         "deepmerge": "^4.2.2",
         "jquery": "^3.6",
+        "laravel-echo": "1.15.3",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "moment": "2.29.1",
         "popper.js": "^1.16.1",
         "postcss": "^8.1.14",
+        "pusher-js": "^8.4.0-rc2",
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.55.0",
         "sass-loader": "^11.1.1",
@@ -35,6 +37,7 @@
         "vue-router": "3.6.5",
         "vue-showdown": "^2.4.1",
         "vue2-circle-progress": "1.2.3",
-        "vuetify": "^2.6.12"
+        "vuetify": "^2.6.12",
+        "vuex": "^3.6.2"
     }
 }

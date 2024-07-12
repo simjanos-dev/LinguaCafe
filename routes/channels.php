@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+Broadcast::channel('dictionary-import-progress.{userUuid}', function ($user, $userUuid) {
+    return $user->uuid === $userUuid;
+});
+
+Broadcast::channel('chapters-word-count-calculated.{userUuid}', function ($user, $userUuid) {
+    return $user->uuid === $userUuid;
+});
+
+Broadcast::channel('chapter-processed.{userUuid}', function ($user, $userUuid) {
+    return $user->uuid === $userUuid;
 });

@@ -35,6 +35,7 @@ class ImportController extends Controller {
 
     public function import(ImportRequest $request) {
         $userId = Auth::user()->id;
+        $userUuid = Auth::user()->uuid;
         $importType = $request->post('importType');
         $textProcessingMethod = $request->post('textProcessingMethod');
         $eBookChapterSortMethod = $request->post('eBookChapterSortMethod');
@@ -65,13 +66,13 @@ class ImportController extends Controller {
         try {
             if ($importMethod === 'e-book') {
                 // e-book
-                $this->importService->importBook($chunkSize, $eBookChapterSortMethod, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
+                $this->importService->importBook($userId, $userUuid, $chunkSize, $eBookChapterSortMethod, $textProcessingMethod, storage_path('app/temp') . '/' . $fileName, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'text') {
                 // text
-                $this->importService->importText($chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
+                $this->importService->importText($userId, $userUuid, $chunkSize, $textProcessingMethod, $importText, $bookId, $bookName, $chapterName);
             } else if ($importMethod === 'subtitle') {
                 // text
-                $this->importService->importSubtitles($chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
+                $this->importService->importSubtitles($userId, $userUuid, $chunkSize, $textProcessingMethod, $importSubtitles, $bookId, $bookName, $chapterName);
             }
         } catch (\Exception $e) {
             // delete temp file

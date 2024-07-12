@@ -9,6 +9,7 @@ docker-compose.override.yml
 Homestead.json
 Homestead.yaml
 npm-debug.log
+supervisord.pid
 yarn-error.log
 /.idea
 /.vscode
@@ -22,3 +23,4 @@ yarn-error.log
 /package-lock.json
 /public/mix-manifest.json
 /public/fonts/vendor/@mdi/*
+/cache/*

@@ -174,6 +174,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
 
     // chapters
     Route::post('/chapters', [App\Http\Controllers\ChapterController::class, 'getChaptersForBook']);
+    Route::get ('/chapters/word-counts/{bookId}', [App\Http\Controllers\ChapterController::class, 'getChaptersBookCount']);
     Route::post('/chapters/get/reader', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
     Route::post('/chapters/get/editor', [App\Http\Controllers\ChapterController::class, 'getChapterForEditor']);
     Route::post('/chapters/delete', [App\Http\Controllers\ChapterController::class, 'deleteChapter']);
