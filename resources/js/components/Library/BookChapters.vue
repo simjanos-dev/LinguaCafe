@@ -207,7 +207,7 @@
             this.loadChapters();
 
             // retrieve word counts
-            window.echo.private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).listen('ChaptersWordCountCalculatedEvent', (message) => {
+            this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).listen('ChaptersWordCountCalculatedEvent', (message) => {
                 var wordCounts = message.wordCounts;
 
                 wordCounts.forEach((item) => {
@@ -217,7 +217,7 @@
             });
 
             // retrieve chapter statuses
-            window.echo.private('chapter-processed.' + this.$store.getters['global/userUuid']).listen('ChapterProcessedEvent', (message) => {
+            this.$store.getters['global/echo'].private('chapter-processed.' + this.$store.getters['global/userUuid']).listen('ChapterProcessedEvent', (message) => {
                 var chapters = JSON.parse(message.chapters);
 
                 chapters.forEach((item, index) => {
@@ -226,8 +226,8 @@
             });
         },
         beforeDestroy() {
-            window.echo.private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).stopListening('ChaptersWordCountCalculatedEvent');
-            window.echo.private('chapter-processed.' + this.$store.getters['global/userUuid']).stopListening('ChapterProcessedEvent');
+            this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).stopListening('ChaptersWordCountCalculatedEvent');
+            this.$store.getters['global/echo'].private('chapter-processed.' + this.$store.getters['global/userUuid']).stopListening('ChapterProcessedEvent');
         },
         methods: {
             chapterSaved() {

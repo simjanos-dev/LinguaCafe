@@ -13,12 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Auth::routes([
-    'register' => false,
-    'reset' => false,
-    'verify' => false,
-    'login' => false,
-]);
+Route::get('/', function () {
+    return ['Laravel' => app()->version()];
+});
+
+require __DIR__.'/auth.php';
 
 /*
     This function's authentication is inside the controller, because

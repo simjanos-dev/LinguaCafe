@@ -6,18 +6,19 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "laravel/breeze": "^2.1",
         "laravel/framework": "^11.9",
         "laravel/horizon": "^5.25",
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5",
+        "league/csv": "^9.16.0",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "laravel/breeze": "^2.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",

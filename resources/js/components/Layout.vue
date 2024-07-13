@@ -176,18 +176,6 @@
             _isAdmin: Boolean,
         },
         beforeMount() {
-            window.Pusher = require('pusher-js');
-
-            window.echo = new Echo({
-                wsHost: 'lingua.cafe',
-                wsPort: 6001,
-                broadcaster: 'pusher',
-                key: 'wjp2pou6ebgibtwccqsj',
-                cluster: 'mt1',
-                forceTLS: false
-            });
-
-
             // set store data
             this.$store.commit('global/setUuid', this.$props._userUuid);
             this.$store.commit('global/setUserAdmin', this.$props._isAdmin);
