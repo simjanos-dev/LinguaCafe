@@ -16,4 +16,13 @@
         width: 60px;
         text-align: center
     }
+
+    .chapter-word-count-skeleton,
+    .chapter-word-count-skeleton div {
+        height: 24px;
+    }
+
+    .importing-text {
+        color: var(--v-warning-base);
+    }
 }

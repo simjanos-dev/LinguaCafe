@@ -9,23 +9,21 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Auth;
 
-class ChaptersWordCountCalculatedEvent implements ShouldBroadcast
+class ChapterStateUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    
     private $userUuid;
-    public $wordCounts;
+    public $chapters;
 
-    public function __construct($userUuid, $wordCounts)
+    public function __construct($userUuid, $chapters)
     {
-        $this->wordCounts = $wordCounts;
+        $this->chapters = json_encode($chapters);
         $this->userUuid = $userUuid;
     }
 
     public function broadcastOn() {
-        return new PrivateChannel('chapters-word-count-calculated.' . $this->userUuid);
+        return new PrivateChannel('chapter-status-update.' . $this->userUuid);
     }
 }

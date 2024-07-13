@@ -2,21 +2,23 @@
 
 namespace App\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
+use App\Models\Phrase;
+use App\Models\Chapter;
+use Illuminate\Bus\Queueable;
+use App\Models\EncounteredWord;
+use App\Services\ChapterService;
 
 // services
-use App\Services\ChapterService;
 use App\Services\VocabularyService;
+use Illuminate\Queue\SerializesModels;
 
 // models
+use Illuminate\Queue\InteractsWithQueue;
 use App\Models\ChapterProcessionQueueStat;
-use App\Models\Chapter;
-use App\Models\Phrase;
+use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class ProcessChapter implements ShouldQueue
 {
@@ -61,7 +63,6 @@ class ProcessChapter implements ShouldQueue
                 ->get();
 
             foreach ($phrases as $phrase) {
-                \Illuminate\Support\Facades\Log::stack(['single'])->info('Phrase processed afterwards!');
                 (new VocabularyService())->indexPhraseInChapter($chapter->id, $this->userId, $this->language, $phrase);
             }
 
@@ -114,13 +115,34 @@ class ProcessChapter implements ShouldQueue
     }
 
     private function broadcastChapterStatusEvent($bookId) {
+        $words = EncounteredWord
+            ::select(['id', 'word', 'stage'])
+            ->where('user_id', $this->userId)
+            ->where('language', $this->language)
+            ->get()
+            ->keyBy('id')
+            ->toArray();
+
         $chapters = Chapter
-            ::select(['id', 'processing_status'])
+            ::select(['id', 'processing_status', 'unique_word_ids', 'word_count'])
             ->where('book_id', $bookId)
             ->where('user_id', $this->userId)
+            ->where('processing_status', '<>', 'processing')
             ->get();
+
+        $chapters->map(function (Chapter $chapter) use ($words) {
+            if ($chapter->processing_status !== 'processed') {
+                return $chapter;
+            }
+
+            $chapter->wordCount = $chapter->getWordCounts($words);
+            unset($chapter->unique_word_ids);
+            unset($chapter->word_count);
+
+            return $chapter;
+        });      
+
         
-        
-        event(new \App\Events\ChapterProcessedEvent($this->userUuid, $chapters));
+        event(new \App\Events\ChapterStateUpdatedEvent($this->userUuid, $chapters->keyBy('id')->toArray()));
     }
 }

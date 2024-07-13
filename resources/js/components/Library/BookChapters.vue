@@ -54,22 +54,40 @@
             :items-per-page="-1"
             hide-default-footer
         >
+
             <!-- Total words -->
             <template v-slot:item.wordCount.total="{ item }">
+                <!-- Count -->
                 <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
                     {{ formatNumber(item.wordCount.total) }}
                 </template>
+
+                <!-- Skeleton -->
+                <v-skeleton-loader
+                        v-else
+                        class="chapter-word-count-skeleton rounded-pill"
+                        type="image"
+                ></v-skeleton-loader>
             </template>
 
             <!-- Unique words -->
             <template v-slot:item.wordCount.unique="{ item }">
+                <!-- Count -->
                 <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
                     {{ formatNumber(item.wordCount.unique) }}
                 </template>
+
+                <!-- Skeleton -->
+                <v-skeleton-loader
+                        v-else
+                        class="chapter-word-count-skeleton rounded-pill"
+                        type="image"
+                ></v-skeleton-loader>
             </template>
 
             <!-- Known words -->
             <template v-slot:item.wordCount.known="{ item }">
+                <!-- Count -->
                 <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
                     <template v-if="$props.wordCountDisplayType == 0">
                         {{ formatNumber(item.wordCount.known) }}
@@ -78,10 +96,18 @@
                         {{ (item.wordCount.known / item.wordCount.unique * 100).toFixed(1) }}%
                     </template>
                 </template>
+
+                <!-- Skeleton -->
+                <v-skeleton-loader
+                        v-else
+                        class="chapter-word-count-skeleton rounded-pill"
+                        type="image"
+                ></v-skeleton-loader>
             </template>
 
             <!-- Highlighted words -->
             <template v-slot:item.wordCount.highlighted="{ item }">
+                <!-- Count -->
                 <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
                     <div class="highlighted-words px-2 rounded-xl mx-auto">
                         <template v-if="$props.wordCountDisplayType < 2">
@@ -92,11 +118,19 @@
                         </template>
                     </div>
                 </template>
+
+                <!-- Skeleton -->
+                <v-skeleton-loader
+                        v-else
+                        class="chapter-word-count-skeleton rounded-pill"
+                        type="image"
+                ></v-skeleton-loader>
             </template>
 
 
             <!-- New words -->
             <template v-slot:item.wordCount.new="{ item }">
+                <!-- Count -->
                 <template v-if="item.processing_status === 'processed' && item.wordCountsLoaded">
                     <div class="new-words px-2 rounded-xl mx-auto">
                         <template v-if="$props.wordCountDisplayType < 2">
@@ -107,6 +141,13 @@
                         </template>
                     </div>
                 </template>
+
+                <!-- Skeleton -->
+                <v-skeleton-loader
+                        v-else
+                        class="chapter-word-count-skeleton rounded-pill"
+                        type="image"
+                ></v-skeleton-loader>
             </template>
 
             <!-- Actions -->
@@ -151,17 +192,12 @@
 
                     <!-- Chapter importing loader -->
                     <template v-else-if="item.processing_status === 'unprocessed'">
-                        <v-progress-linear
-                            rounded
-                            height="6"
-                            indeterminate
-                            color="warning"
-                        ></v-progress-linear>
+                        <v-chip small color="warning">importing</v-chip>
                     </template>
 
                     <!-- Chapter importing failed -->
                     <template v-else-if="item.processing_status === 'failed'">
-                        <v-chip small color="error">Import failed</v-chip>
+                        <v-chip small color="error">failed</v-chip>
                     </template>
                 </div>
             </template>
@@ -207,29 +243,30 @@
             this.loadChapters();
 
             // retrieve word counts
-            this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).listen('ChaptersWordCountCalculatedEvent', (message) => {
-                var wordCounts = message.wordCounts;
-
-                wordCounts.forEach((item) => {
-                    this.chapters[item.index].wordCount = item.wordCounts;
-                    this.chapters[item.index].wordCountsLoaded = true;
-                });
-            });
-
-            // retrieve chapter statuses
-            this.$store.getters['global/echo'].private('chapter-processed.' + this.$store.getters['global/userUuid']).listen('ChapterProcessedEvent', (message) => {
-                var chapters = JSON.parse(message.chapters);
-
-                chapters.forEach((item, index) => {
-                    this.chapters[index].processing_status = item.processing_status;
-                });
+            this.$store.getters['global/echo'].private('chapter-status-update.' + this.$store.getters['global/userUuid']).listen('ChapterStateUpdatedEvent', (message) => {
+                this.chapterStatusUpdate(JSON.parse(message.chapters));
             });
         },
         beforeDestroy() {
-            this.$store.getters['global/echo'].private('chapters-word-count-calculated.' + this.$store.getters['global/userUuid']).stopListening('ChaptersWordCountCalculatedEvent');
-            this.$store.getters['global/echo'].private('chapter-processed.' + this.$store.getters['global/userUuid']).stopListening('ChapterProcessedEvent');
+            this.$store.getters['global/echo'].private('chapter-status-update.' + this.$store.getters['global/userUuid']).stopListening('ChapterStateUpdatedEvent');
         },
         methods: {
+            chapterStatusUpdate(chapters) {
+                this.chapters.forEach((currentChapter) => {
+                    if (!chapters[currentChapter.id]) {
+                        return;
+                    }
+
+                    if ('wordCount' in chapters[currentChapter.id]) {
+                        currentChapter.wordCount = chapters[currentChapter.id].wordCount
+                        currentChapter.wordCountsLoaded = true
+                    }
+
+                    if ('processing_status' in chapters[currentChapter.id]) {
+                        currentChapter.processing_status = chapters[currentChapter.id].processing_status
+                    }
+                });
+            },
             chapterSaved() {
                 this.$emit('chapter-saved');
             },
@@ -276,12 +313,10 @@
                     }
 
                     this.chaptersLoading = false;
-                    
+                    this.$nextTick(() => {
+                        axios.get('/chapters/word-counts/' + this.$props.bookId);
+                    }) 
                 });
-
-                setTimeout(() => {
-                    axios.get('/chapters/word-counts/' + this.$props.bookId).then();
-                }, 100);
             },
             showStartReviewDialog(bookId, bookName, chapterId, chapterName) {
                 this.startReviewDialog.bookName = bookName;

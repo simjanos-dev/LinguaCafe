@@ -84,20 +84,19 @@ class ChapterService {
             ->keyBy('id')
             ->toArray();
 
-        $wordCounts = [];
+        $chaptersWithWordCounts = [];
         for ($i = 0; $i < count($chapters); $i++) {
             if ($chapters[$i]->processing_status !== 'processed') {
                 continue;
             }
 
             $currentChapterWordCounts = new \stdClass();
-            $currentChapterWordCounts->index = $i;
-            $currentChapterWordCounts->wordCounts = $chapters[$i]->getWordCounts($words);
+            $currentChapterWordCounts->wordCount = $chapters[$i]->getWordCounts($words);
 
-            $wordCounts[] = $currentChapterWordCounts;
+            $chaptersWithWordCounts[$chapters[$i]->id] = $currentChapterWordCounts;
 
-            if ($i === count($chapters) - 1) {
-                event(new \App\Events\ChaptersWordCountCalculatedEvent($userUuid, $wordCounts));
+            if ($i % 5 === 0 || $i === count($chapters) - 1) {
+                event(new \App\Events\ChapterStateUpdatedEvent($userUuid, $chaptersWithWordCounts));
             }
         }
         
