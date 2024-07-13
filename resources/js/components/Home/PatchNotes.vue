@@ -9,7 +9,6 @@
             <v-card-text>
                 <b>New features:</b>
                 <ul>
-                    <li>Replaced switches with checkboxes on the vocabulary export page.</li>
                     <li>Replaced cookies with local storage. This means that your local settings will reset to default settings.</li>
                     <li>Added queue based chapter imports. From now on you won't have to wait your chapters to be imported, it will happen in the background. If you open a book, the chapters will be updated in real time when the importing is finished.</li>
                     <li>Dictionary import progress bar now shows real time (ish) progress.</li>
