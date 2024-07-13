@@ -29,6 +29,7 @@
                                 <v-btn icon v-bind="attrs" v-on="on"><v-icon>mdi-dots-horizontal</v-icon></v-btn>
                             </template>
                             <v-btn class="menu-button" tile color="white" @click="loadBookWordCounts()">Load word counts</v-btn>
+                            <v-btn class="menu-button" tile color="white" @click="retryFailedImports()">Retry failed imports</v-btn>
                             <v-btn class="menu-button" tile color="white" @click="showEditBookDialog()">Edit</v-btn>
                             <v-btn class="menu-button" tile color="white" @click="showStartReviewDialog()">Review</v-btn>
                             <v-btn class="menu-button" tile color="white" @click="showDeleteBookDialog()">Delete</v-btn>
@@ -161,6 +162,21 @@
             this.loadBookWordCounts();
         },
         methods: {
+            retryFailedImports() {
+                let isAnyChapterFailed = false;
+                this.$refs.bookChapters.chapters.forEach((chapter) => {
+                    if (chapter.processing_status === 'failed') {
+                        isAnyChapterFailed = true;
+
+                        chapter.processing_status = 'unprocessed';
+                        chapter.wordCountsLoaded = false;
+                    }
+                });
+
+                if (isAnyChapterFailed) {
+                    axios.get(`/chapters/retry-failed-chapters/${this.$props.book.id}`);
+                }
+            },
             saveWordCountDisplayType() {
                 DefaultLocalStorageManager.saveSetting('word-count-display-type', this.wordCountDisplayType);
             },

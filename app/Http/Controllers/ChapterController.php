@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
+use App\Services\ChapterService;
 
 // request classes
-use App\Http\Requests\Chapters\GetChaptersForBookRequest;
-use App\Http\Requests\Chapters\GetChaptersWordCountRequest;
-use App\Http\Requests\Chapters\GetChapterForEditorRequest;
-use App\Http\Requests\Chapters\GetChapterForReaderRequest;
-use App\Http\Requests\Chapters\FinishChapterRequest;
-use App\Http\Requests\Chapters\UpdateChapterRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Chapters\CreateChapterRequest;
 use App\Http\Requests\Chapters\DeleteChapterRequest;
+use App\Http\Requests\Chapters\FinishChapterRequest;
+use App\Http\Requests\Chapters\UpdateChapterRequest;
+use App\Http\Requests\Chapters\GetChaptersForBookRequest;
+use App\Http\Requests\Chapters\GetChapterForEditorRequest;
+use App\Http\Requests\Chapters\GetChapterForReaderRequest;
+use App\Http\Requests\Chapters\RetryFailedChaptersRequest;
+use App\Http\Requests\Chapters\GetChaptersWordCountRequest;
 
-
-// services
-use App\Services\ChapterService;
 
 class ChapterController extends Controller {
     private $chapterService;
@@ -142,5 +141,18 @@ class ChapterController extends Controller {
         }
 
         return response()->json('Chapter has been deleted successfully.', 200);
+    }
+
+    public function retryFailedChapters($bookId, RetryFailedChaptersRequest $request) {
+        $userId = Auth::user()->id;
+        $userUuid = Auth::user()->uuid;
+
+        try {
+            $this->chapterService->retryFailedChapters($userId, $userUuid, $bookId);
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+
+        return response()->json('Failed chapters has been added to the queue successfully.', 200);
     }
 }

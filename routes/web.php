@@ -180,6 +180,7 @@ Route::group(['middleware' => ['auth', 'web']], function () {
     Route::post('/chapters/finish', [App\Http\Controllers\ChapterController::class, 'finishChapter']);
     Route::post('/chapters/update', [App\Http\Controllers\ChapterController::class, 'updateChapter']);
     Route::post('/chapters/create', [App\Http\Controllers\ChapterController::class, 'createChapter']);
+    Route::get('/chapters/retry-failed-chapters/{bookId}', [App\Http\Controllers\ChapterController::class, 'retryFailedChapters']);
 
     // library import
     Route::post('/import', [App\Http\Controllers\ImportController::class, 'import']);

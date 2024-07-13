@@ -400,4 +400,25 @@ class ChapterService {
 
         return true;
     }
+
+    public function retryFailedChapters($userId, $userUuid, $bookId) {
+        
+        $chapters = Chapter
+            ::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->get();
+
+        $chapters->each(function($chapter) use($userId, $userUuid) {
+            if ($chapter->processing_status !== 'failed')  {
+                return;
+            }
+
+            $chapter->processing_status = 'unprocessed';
+            $chapter->save();
+
+            \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $chapter->language);
+        });
+
+        return true;
+    }
 }

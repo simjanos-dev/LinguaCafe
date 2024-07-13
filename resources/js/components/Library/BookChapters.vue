@@ -259,11 +259,11 @@
 
                     if ('wordCount' in chapters[currentChapter.id]) {
                         currentChapter.wordCount = chapters[currentChapter.id].wordCount
-                        currentChapter.wordCountsLoaded = true
+                        currentChapter.wordCountsLoaded = true;
                     }
 
                     if ('processing_status' in chapters[currentChapter.id]) {
-                        currentChapter.processing_status = chapters[currentChapter.id].processing_status
+                        currentChapter.processing_status = chapters[currentChapter.id].processing_status;
                     }
                 });
             },
