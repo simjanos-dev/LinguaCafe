@@ -18,8 +18,6 @@ class ReviewController extends Controller {
     private $goalService;
 
     public function __construct(ReviewService $reviewService, GoalService $goalService) {
-        $this->middleware('auth');
-
         $this->reviewService = $reviewService;
         $this->goalService = $goalService;
     }

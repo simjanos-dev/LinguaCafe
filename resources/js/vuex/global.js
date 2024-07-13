@@ -8,10 +8,10 @@ export default global = {
         userAdmin: false,
         echo: new Echo({
             broadcaster: 'pusher',
-            key: 'key1',
+            key: 'wjp2pou6ebgibtwccqsj',
             cluster: 'mt1',
             forceTLS: false,
-            wsHost: 'lingua.cafe',
+            wsHost: window.location.hostname,
             wsPort: 6001,
             enabledTransports: ['ws', 'wss'],
         })

@@ -18,7 +18,6 @@ class SettingsController extends Controller
     private $settingsService;
 
     public function __construct(SettingsService $settingsService) {
-        $this->middleware('auth');
         $this->settingsService = $settingsService;
     }
 

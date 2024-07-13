@@ -16,7 +16,7 @@
         "browser-sync-webpack-plugin": "^2.3.0",
         "deepmerge": "^4.2.2",
         "jquery": "^3.6",
-        "laravel-echo": "1.15.3",
+        "laravel-echo": "1.16.1",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "moment": "2.29.1",

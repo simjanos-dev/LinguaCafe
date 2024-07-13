@@ -103,6 +103,8 @@
 </template>
 
 <script>
+    import Echo from 'laravel-echo';
+    import Pusher from 'pusher-js';
     import ThemeService from './../services/ThemeService';
     import FontTypeService from './../services/FontTypeService';
     import { DefaultLocalStorageManager } from './../services/LocalStorageManagerService';
