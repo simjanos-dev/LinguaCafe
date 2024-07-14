@@ -148,7 +148,7 @@
 
                             <!-- Success message -->
                             <v-alert dark border="left" type="success" color="success" v-if="importResult === 'success'">
-                                Your text has been imported successfully.
+                                Your book and chapters have been created successfully. The chapters will be processed in the background and become available for reading as soon as it's finished.
                             </v-alert>
                         </v-stepper-content>
 
