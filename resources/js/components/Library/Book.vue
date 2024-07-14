@@ -7,7 +7,7 @@
                 v-model="editBookChapterDialog.active"
                 :book-id="editBookChapterDialog.bookId"
                 :chapter-id="editBookChapterDialog.chapterId"
-                @chapter-saved="chapterSaved"
+                @chapter-saved="wordCountChanged"
             ></edit-book-chapter-dialog>
 
             <div class="book-box">
@@ -133,7 +133,7 @@
                     ref="bookChapters"
                     :book-id="book.id"
                     :word-count-display-type="wordCountDisplayType"
-                    @chapter-saved="chapterSaved"
+                    @word-count-changed="wordCountChanged"
                 ></book-chapters>
             </v-card-text>
         </v-card>
@@ -185,7 +185,8 @@
                 this.editBookChapterDialog.bookId = this.book.id;
                 this.editBookChapterDialog.chapterId = -1;
             },
-            chapterSaved() {
+            wordCountChanged() {
+                console.log('wordCountChanged')
                 this.loadBookWordCounts();
                 this.$refs.bookChapters.loadChapters();
             },

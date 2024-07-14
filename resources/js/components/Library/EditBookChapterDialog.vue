@@ -167,9 +167,9 @@
                     this.saving = false;
                     if (response.status === 200) {
                         this.saveResult = 'success';
+                        this.$emit('chapter-saved');
 
                         setTimeout(() => {
-                            this.$emit('chapter-saved');
                             this.close();
                         }, 750);
                     } else {

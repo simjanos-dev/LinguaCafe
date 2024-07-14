@@ -268,7 +268,7 @@
                 });
             },
             chapterSaved() {
-                this.$emit('chapter-saved');
+                this.$emit('word-count-changed');
             },
             showEditChapterDialog(chapterId) {
                 this.editBookChapterDialog.active = true;
@@ -286,7 +286,7 @@
                     this.errorDialog.active = true;
                 }).then((response) => {
                     if (response.status === 200) {
-                        this.loadChapters();
+                        this.$emit('word-count-changed');
                     } else {
                         this.errorDialog.active = true;
                     }

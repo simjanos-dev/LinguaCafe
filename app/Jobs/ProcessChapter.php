@@ -132,6 +132,8 @@ class ProcessChapter implements ShouldQueue
 
         $chapters->map(function (Chapter $chapter) use ($words) {
             if ($chapter->processing_status !== 'processed') {
+                unset($chapter->unique_word_ids);
+                unset($chapter->word_count);
                 return $chapter;
             }
 

@@ -16,9 +16,10 @@ use App\Models\EncounteredWord;
 
 
 class ChapterService {
-    
-    public function __construct() {
+    private $bookService;
 
+    public function __construct() {
+        $this->bookService = new BookService();
     }
 
     public function getChaptersForBook($userId, $bookId) {
@@ -378,7 +379,7 @@ class ChapterService {
             $bookId = $chapter->book_id;    
         });
         
-        $wordCount = (new BookService())->updateBookWordCount($userId, $bookId);
+        $wordCount = $this->bookService->updateBookWordCount($userId, $bookId);
         return $wordCount;
     }
 
@@ -397,6 +398,9 @@ class ChapterService {
 
         // delete chapter
         $chapter->delete();
+
+        // update book word counts
+        $this->bookService->updateBookWordCount($userId, $chapter->book_id);
 
         return true;
     }
