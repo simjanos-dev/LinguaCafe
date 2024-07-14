@@ -14,6 +14,8 @@ services:
                 condition: service_healthy
         volumes:
             - ./storage:/var/www/html/storage
+            - ./docker/supervisor-horizon.conf:/etc/supervisor/conf.d/horizon.conf
+            - ./docker/supervisor-websockets.conf:/etc/supervisor/conf.d/websockets.conf
         environment:
             DB_DATABASE: ${DB_DATABASE:-linguacafe}
             DB_USERNAME: ${DB_USERNAME:-linguacafe}
@@ -21,6 +23,7 @@ services:
             DB_HOST: ${DB_HOST:-linguacafe-database}
             DB_PORT: ${DB_PORT:-3306}
         ports:
+            - "6001:6001"
             - "${PORT:-9191}:80"
         networks:
             - linguacafe
@@ -45,6 +48,19 @@ services:
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-linguacafe}
             SERVICE_NAME: linguacafe
         command: mysqld --general-log=1 --general-log-file=/var/lib/mysql/general-log.log
+        networks:
+            - linguacafe
+    redis:
+        image: redis:7.2-alpine
+        container_name: linguacafe-redis
+        volumes: 
+            - ./cache:/data
+        ports:
+            - "6379:6379"
+        environment:
+            REDIS_PASSWORD: linguacafe
+            REDIS_PORT: 6379
+            REDIS_DATABASES: 16
         networks:
             - linguacafe
     python:

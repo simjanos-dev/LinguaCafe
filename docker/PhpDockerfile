@@ -18,6 +18,7 @@ RUN apt-get update \
         unzip \
         zip \
         zlib1g-dev \
+        supervisor \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -60,4 +61,4 @@ USER laravel
 RUN composer install --optimize-autoloader --no-dev
 
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
-CMD ["apache2-foreground"]
+CMD ["supervisord", "--configuration=/var/www/html/config/supervisord.conf", "--nodaemon"]
