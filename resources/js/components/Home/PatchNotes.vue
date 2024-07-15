@@ -12,6 +12,12 @@
                     <li>Replaced cookies with local storage. This means that your local settings will reset to default settings.</li>
                     <li>Added queue based chapter imports. From now on you won't have to wait your chapters to be imported, it will happen in the background. If you open a book, the chapters will be updated in real time when the importing is finished.</li>
                     <li>Dictionary import progress bar now shows real time (ish) progress.</li>
+                    <li>Added level to hover vocabulary box for highlighted words.</li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Book word counts did not update after deleting a chapter.</li>
                 </ul>
 
                 <b>Other changes:</b>

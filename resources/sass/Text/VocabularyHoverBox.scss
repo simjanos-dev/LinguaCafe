@@ -13,9 +13,43 @@
         list-style: none;
     }
 
-    .reading {
+    .header {
         width: 100%;
         font-size: 16px;
+
+
+        div.stage {
+            color: var(--v-textDark-base);
+            font-size: 14px;
+        }
+        
+        div[stage="-7"] {
+            background-color: var(--v-highlightedWordLevel7-base);
+        }
+
+        div[stage="-6"] {
+            background-color: var(--v-highlightedWordLevel6-base);
+        }
+
+        div[stage="-5"] {
+            background-color: var(--v-highlightedWordLevel5-base);
+        }
+
+        div[stage="-4"] {
+            background-color: var(--v-highlightedWordLevel4-base);
+        }
+
+        div[stage="-3"] {
+            background-color: var(--v-highlightedWordLevel3-base);
+        }
+
+        div[stage="-2"] {
+            background-color: var(--v-highlightedWordLevel2-base);
+        }
+
+        div[stage="-1"] {
+            background-color: var(--v-highlightedWordLevel1-base);
+        }
     }
 
     &:after, &:before {

@@ -120,6 +120,7 @@
             :positionTop="hoverVocabBox.positionTop"
             :arrowPosition="hoverVocabBox.arrowPosition"
             :reading="hoverVocabBox.reading"
+            :stage="hoverVocabBox.stage"
             @update-position="updateHoverVocabularyBoxPosition"
         ></vocabulary-hover-box>
 
@@ -268,7 +269,8 @@
                     key: 0,
                     hoveredWords: null,
                     hoveredPhrase: -1,
-                    reading: '',
+                    stage: null,
+                    lemmaReading: '',
                     userTranslation: '',
                     dictionaryTranslation: '',
                     deeplTranslation: '',
@@ -900,12 +902,14 @@
 
                     data.translation = uniqueWord.translation;
                     data.reading = uniqueWord.reading;
+                    data.stage = uniqueWord.stage < 0 ? uniqueWord.stage : null;
                     data.hoveredWords[0].lemma = uniqueWord.base_word;
                 }
 
                 if (hoveredWords !== null && hoveredWords.length > 1) {
                     data.translation = this.phrases[hoveredPhraseIndex].translation;
                     data.reading = this.phrases[hoveredPhraseIndex].reading;
+                    data.stage = this.phrases[hoveredPhraseIndex].stage < 0 ? this.phrases[hoveredPhraseIndex].stage : null;
                 }
 
                 this.updateHoverVocabularyBox(data);
@@ -921,6 +925,7 @@
                     this.hoverVocabBox.dictionaryTranslation = 'loading';
                     this.hoverVocabBox.deeplTranslation = this.deeplEnabled ? 'loading' : 'deepl-disabled';
                     this.hoverVocabBox.reading = data.reading;
+                    this.hoverVocabBox.stage = data.stage;
 
                     // clear previous delay timeout
                     if (this.hoverVocabBox.hoverVocabularyDelayTimeout !== null) {
@@ -1067,6 +1072,7 @@
                 this.hoverVocabBox.deeplTranslation = '';
                 this.hoverVocabBox.reading = '';
                 this.hoverVocabBox.hoveredPhrase = -1;
+                this.hoverVocabBox.stage = -1;
                 this.hoverVocabBox.key ++;
             },
             preProcessWords() {
@@ -1952,6 +1958,7 @@
                 // unselect word if it was hovered
                 if (hoverSetStage) {
                     this.unselectAllWords();
+                    this.hoverVocabBox.stage = stage < 0 ? stage : null;
                 }
             },
             updateSelectedWordStage() {

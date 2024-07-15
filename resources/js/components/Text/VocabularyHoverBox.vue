@@ -15,8 +15,16 @@
             'top': $props.positionTop + 'px',
         }"
     >
-        <div class="reading" v-if="$props.reading.length">
-            {{ $props.reading }}
+        <div class="header d-flex justify-space-between">
+            <!-- Reading -->
+            <div v-if="$props.reading.length">
+                {{ $props.reading }}
+            </div>
+
+            <!-- Stage -->
+            <div class="stage rounded-pill px-4" v-if="$props.stage !== null" :stage="$props.stage">
+                {{ $props.stage * -1 }}
+            </div>
         </div>
 
         <!-- Translations -->
@@ -80,7 +88,8 @@
             positionLeft: Number,
             positionTop: Number,
             arrowPosition: String,
-            reading: String
+            reading: String,
+            stage: Number,
         },
         mounted() {
             this.translationList = []; 
