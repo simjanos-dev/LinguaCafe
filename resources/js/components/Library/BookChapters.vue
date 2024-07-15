@@ -243,12 +243,12 @@
             this.loadChapters();
 
             // retrieve word counts
-            this.$store.getters['global/echo'].private('chapter-status-update.' + this.$store.getters['global/userUuid']).listen('ChapterStateUpdatedEvent', (message) => {
+            this.$store.getters['shared/echo'].private('chapter-status-update.' + this.$store.getters['shared/userUuid']).listen('ChapterStateUpdatedEvent', (message) => {
                 this.chapterStatusUpdate(JSON.parse(message.chapters));
             });
         },
         beforeDestroy() {
-            this.$store.getters['global/echo'].private('chapter-status-update.' + this.$store.getters['global/userUuid']).stopListening('ChapterStateUpdatedEvent');
+            this.$store.getters['shared/echo'].private('chapter-status-update.' + this.$store.getters['shared/userUuid']).stopListening('ChapterStateUpdatedEvent');
         },
         methods: {
             chapterStatusUpdate(chapters) {

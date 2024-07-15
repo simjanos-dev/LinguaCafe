@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="$store.getters['global/userAdmin']">
+    <v-container v-if="$store.getters['shared/userAdmin']">
         <v-tabs v-model="tab" background-color="foreground" class="rounded-lg border overflow-hidden" @change="tabChanged">
             <v-tab>Users</v-tab>
             <v-tab>Languages</v-tab>

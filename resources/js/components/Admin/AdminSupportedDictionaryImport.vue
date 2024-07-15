@@ -214,7 +214,7 @@
             };
         },
         beforeDestroy() {
-            this.$store.getters['global/echo'].private('dictionary-import-progress' + this.$store.getters['global/userUuid']).stopListening('DictionaryImportProgressedEvent');
+            this.$store.getters['shared/echo'].private('dictionary-import-progress' + this.$store.getters['shared/userUuid']).stopListening('DictionaryImportProgressedEvent');
         },
         methods: {
             testDictionaryFile() {
@@ -242,7 +242,7 @@
                 });
             },
             startImport() {
-                this.$store.getters['global/echo'].private('dictionary-import-progress.' + this.$store.getters['global/userUuid']).listen('DictionaryImportProgressedEvent', (message) => {
+                this.$store.getters['shared/echo'].private('dictionary-import-progress.' + this.$store.getters['shared/userUuid']).listen('DictionaryImportProgressedEvent', (message) => {
                     this.importedRecords = message.importedRecords
                     
                     // update percentage
@@ -267,7 +267,7 @@
                     'dictionaryDatabaseName': this.dictionary.databaseName,
                     'dictionaryFileName': this.dictionary.fileName
                 }).then((response) => {
-                    this.$store.getters['global/echo'].private('dictionary-import-progress.' + this.$store.getters['global/userUuid']).stopListening('DictionaryImportProgressedEvent');
+                    this.$store.getters['shared/echo'].private('dictionary-import-progress.' + this.$store.getters['shared/userUuid']).stopListening('DictionaryImportProgressedEvent');
                     this.importing = false;
                     if (response.status === 200) {
                         this.importResult = 'success';
@@ -275,7 +275,7 @@
                         this.importResult = 'error';
                     }
                 }).catch(() => {
-                    this.$store.getters['global/echo'].private('dictionary-import-progress.' + this.$store.getters['global/userUuid']).stopListening('DictionaryImportProgressedEvent');
+                    this.$store.getters['shared/echo'].private('dictionary-import-progress.' + this.$store.getters['shared/userUuid']).stopListening('DictionaryImportProgressedEvent');
                     this.importing = false;
                     this.importResult = 'error';
                 });

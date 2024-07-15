@@ -28,11 +28,11 @@
                                 There are {{ notInstalledLanguages }} additional languages that can be installed.
                             </template>
 
-                            <template v-if="!$store.getters['global/userAdmin']">
+                            <template v-if="!$store.getters['shared/userAdmin']">
                                 Languages can only installed by admin users.
                             </template>
                         </v-col>
-                        <v-col class="shrink" v-if="$store.getters['global/userAdmin']">
+                        <v-col class="shrink" v-if="$store.getters['shared/userAdmin']">
                             <v-btn outlined depressed rounded color="foreground" @click="manageLanguages">
                                 <v-icon class="mr-1">mdi-cog</v-icon>
                                 Manage languages

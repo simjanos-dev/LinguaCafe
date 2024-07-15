@@ -233,12 +233,14 @@ const router = new VueRouter({
 
 // vuex
 import Vuex from 'vuex';
-import global from './vuex/global.js';
+import shared from './vuex/shared.js';
+// import InteractiveText from './vuex/InteractiveText.js';
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
-        global: global,
+        shared: shared,
+        // interactiveText: InteractiveText,
     }
 });
 

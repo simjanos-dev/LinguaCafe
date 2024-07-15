@@ -177,8 +177,8 @@
         },
         beforeMount() {
             // set store data
-            this.$store.commit('global/setUuid', this.$props._userUuid);
-            this.$store.commit('global/setUserAdmin', this.$props._isAdmin);
+            this.$store.commit('shared/setUuid', this.$props._userUuid);
+            this.$store.commit('shared/setUserAdmin', this.$props._isAdmin);
 
             if (this.$props._selectedLanguage == 'japanese') {
                 this.navigation.splice(3, 0, {
@@ -189,7 +189,7 @@
                 });
             }
 
-            if(this.$store.getters['global/userAdmin']) {
+            if(this.$store.getters['shared/userAdmin']) {
                 this.navigation.push({
                     name: 'Admin settings',
                     url: '/admin',
