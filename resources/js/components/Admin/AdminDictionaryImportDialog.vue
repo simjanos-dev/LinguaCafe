@@ -26,6 +26,15 @@
             @close="close" 
         ></admin-deepl-dictionary-creation>
 
+        <!-- Deepl dictionary creation -->
+        <admin-my-memory-dictionary-creation
+            v-if="selectedDictionaryType === 'mymemory'"
+            :language="$props.language"
+            @import-finished="importFinished" 
+            @back-to-dictionaries="backToDictionaries" 
+            @close="close" 
+        ></admin-my-memory-dictionary-creation>
+
         <!-- Dictionary selection list -->
         <v-card 
             v-if="selectedDictionaryType === null"
@@ -61,6 +70,10 @@
                     <v-radio
                         label="DeepL dictionary"
                         value="deepl"
+                    ></v-radio>
+                    <v-radio
+                        label="MyMemory dictionary"
+                        value="mymemory"
                     ></v-radio>
                 </v-radio-group>
             </v-card-text>

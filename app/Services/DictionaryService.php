@@ -123,6 +123,8 @@ class DictionaryService {
             
             if ($dictionary->name == 'JMDict') {
                 $searchResultDictionary->jmdictRecords = $this->searchJmDict($term);
+            } else if ($dictionary->type == 'my_memory') {
+                $searchResultDictionary->records = $this->searchMyMemory($dictionary->source_language, $dictionary->target_language, $term);
             } else if (explode(' ', $dictionary->name)[0] == 'DeepL' && $dictionary->database_table_name == 'API') {
                 continue;
             } else {
@@ -190,6 +192,50 @@ class DictionaryService {
         return $result;
     }
     
+    public function searchMyMemory($sourceLanguage, $targetLanguage, $term) {
+        $myMemoryDictionaries = Dictionary
+            ::where('type', 'my_memory')
+            ->where('enabled', true)
+            ->where('database_table_name','API')
+            ->where('source_language', $sourceLanguage)
+            ->where('target_language', $targetLanguage)
+            ->get();
+
+        if (empty($myMemoryDictionaries)) {
+            throw new \Exception('MyMemory dictionary is disabled.');
+        }
+
+        // retrieve api key from database
+        $languageCodes = config('linguacafe.languages.my_memory_supported_target_languages');
+
+        // collect cached definitions
+        $definitions = [];
+        $definitionsToRequest = [];
+        foreach ($myMemoryDictionaries as $index => $dictionary) {
+            $definitionsToRequest[] = [$languageCodes[$dictionary->source_language], $languageCodes[$dictionary->target_language]];
+        }
+
+        // request translations
+        $responses = Http::pool(function (Pool $pool) use ($definitionsToRequest, $term) {
+            foreach ($definitionsToRequest as $requestData) {
+                $pool->get('https://api.mymemory.translated.net/get?q=' . urlencode($term) . '!&langpair=' . $requestData[0] . '|' . $requestData[1]);
+            }
+        });
+
+        // add translations to the definitions array, and cache them
+        
+        
+        foreach ($responses as $response) {
+            $definition = json_decode($response->body())->responseData->translatedText;
+            $definitions[] = $definition;
+        }
+
+        $responseData = new \stdClass();
+        $responseData->word = $term;
+        $responseData->definitions = $definitions;
+        return [$responseData];
+    }
+
     public function searchDeepl($language, $term) {
         $deeplDictionaries = Dictionary
             ::where('name', 'like', 'DeepL%')

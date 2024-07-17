@@ -15,6 +15,7 @@ use App\Services\DictionaryImportService;
 // request classes
 use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
 use App\Http\Requests\Dictionaries\CreateDeeplDictionaryRequest;
+use App\Http\Requests\Dictionaries\CreateMyMemoryDictionaryRequest;
 use App\Http\Requests\Dictionaries\GetDictionaryRequest;
 use App\Http\Requests\Dictionaries\UpdateDictionaryRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsRequest;
@@ -189,6 +190,19 @@ class DictionaryController extends Controller
         }
 
         return response()->json('DeepL dictionary has been created successfully.', 200);
+    }
+
+    public function createMyMemoryDictionary(CreateMyMemoryDictionaryRequest $request) {
+        $sourceLanguage = $request->validated('sourceLanguage');
+        $targetLanguage = $request->validated('targetLanguage');
+        $color = $request->validated('color');
+        $name  = $request->validated('name');
+
+        try {
+            $this->dictionaryImportService->createMyMemoryDictionary($sourceLanguage, $targetLanguage, $color, $name);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
     }
 
     /*

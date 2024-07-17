@@ -1043,6 +1043,21 @@ class DictionaryImportService {
     public function createDeeplDictionary($sourceLanguage, $targetLanguage, $color, $name) {
         $dictionary = new Dictionary();
         $dictionary->name = $name;
+        $dictionary->type = 'deepl';
+        $dictionary->database_table_name = 'API';
+        $dictionary->source_language = $sourceLanguage;
+        $dictionary->target_language = $targetLanguage;
+        $dictionary->color = $color;
+        $dictionary->enabled = true;
+        $dictionary->save();
+
+        return true;
+    }
+
+    public function createMyMemoryDictionary($sourceLanguage, $targetLanguage, $color, $name) {
+        $dictionary = new Dictionary();
+        $dictionary->name = $name;
+        $dictionary->type = 'my_memory';
         $dictionary->database_table_name = 'API';
         $dictionary->source_language = $sourceLanguage;
         $dictionary->target_language = $targetLanguage;

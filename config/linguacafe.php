@@ -115,9 +115,7 @@ return [
             'Welsh',
         ],
 
-        /*
-            List of target languages that are supported by DeepL.
-        */
+        // List of target languages that are supported by DeepL.
         'deepl_supported_target_languages' => [
             'Arabic',
             'Brazilian portuguese',
@@ -150,6 +148,37 @@ return [
             'Swedish',
             'Turkish',
             'Ukrainian',
+        ],
+
+        // List of target languages that are supported by MyMemory.
+        'my_memory_supported_target_languages' => [
+            'chinese' => 'zh-CN',
+            'croatian' => 'hr-HR',
+            'danish' => 'da-DE',
+            'czech' => 'cs',
+            'dutch' => 'nl-NL',
+            'english' => 'en-GB',
+            'finnish' => 'fi-FI',
+            'french' => 'fr-FR',
+            'german' => 'de-DE',
+            'greek' => 'el-GR',
+            'italian' => 'it-IT',
+            'japanese' => 'ja',
+            'korean' => 'ko-KR',
+            'latin' => 'la',
+            'macedonian' => 'mk',
+            'norwegian' => 'no',
+            'polish' => 'pl',
+            'portuguese' => 'pt-PT',
+            'romanian' => 'ro',
+            'russian' => 'ru-RU',
+            'slovenian' => 'sl',
+            'spanish' => 'es-ES',
+            'swedish' => 'sv-SE',
+            'thai' => 'th',
+            'turkish' => 'tr-TR',
+            'ukrainian' => 'uk',
+            'welsh' => 'cy-GB',
         ],
 
         /*

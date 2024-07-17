@@ -19,8 +19,8 @@ return new class extends Migration
 
         $dictionaries = Dictionary::all();
         $dictionaries->each(function ($dictionary) {
-            if (str_contains($dictionary->name, 'JMDict')) {
-                $dictionary->type = 'jmdict';
+            if (str_contains($dictionary->name, 'DeepL')) {
+                $dictionary->type = 'deepl';
                 $dictionary->save();
             }
 

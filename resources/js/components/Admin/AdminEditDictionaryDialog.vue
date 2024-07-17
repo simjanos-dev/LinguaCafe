@@ -29,41 +29,67 @@
                     ></v-text-field>
 
                     <!-- Source language -->
-                    <label class="font-weight-bold">
-                        Source language
-                        
-                        <!-- Source language info box -->
-                        <v-menu offset-y nudge-top="-12px">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                    <template>
+                        <label class="font-weight-bold">
+                            Source language
+                            
+                            <!-- Source language info box -->
+                            <v-menu offset-y nudge-top="-12px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                                </template>
+                                <v-card outlined class="rounded-lg pa-4" width="320px">
+                                    The language that you are learning.
+                                </v-card>
+                            </v-menu>
+                        </label>
+
+                        <!-- My memory source language -->
+                        <v-select
+                            v-if="dictionary.type === 'my_memory'"
+                            v-model="dictionary.source_language"
+                            :items="supportedMyMemoryLanguages"
+                            item-value="name"
+                            item-text="name"
+                            placeholder="Language"
+                            dense
+                            filled
+                            rounded
+                        >
+                            <template v-slot:selection="{ item, index }">
+                                <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                <span class="text-capitalize">{{ item.name }}</span>
                             </template>
-                            <v-card outlined class="rounded-lg pa-4" width="320px">
-                                The language that you are learning.
-                            </v-card>
-                        </v-menu>
-                    </label>
+                            <template v-slot:item="{ item }">
+                                <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                <span class="text-capitalize">{{ item.name }}</span>
+                            </template>
+                        </v-select>
 
-                    <v-select
-                        v-model="dictionary.source_language"
-                        :items="supportedSourceLanguages"
-                        item-value="name"
-                        placeholder="Language"
-                        dense
-                        filled
-                        rounded
-                        :disabled="dictionary.database_table_name === 'API' || dictionary.name === 'JMDict'"
-                    >
-                        <template v-slot:selection="{ item, index }">
-                            <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
-                            <span class="text-capitalize">{{ item.name }}</span>
-                        </template>
-                        <template v-slot:item="{ item }">
-                            <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
-                            <span class="text-capitalize">{{ item.name }}</span>
-                        </template>
-                    </v-select>
+                        <!-- Other  source language -->
+                        <v-select
+                            v-else
+                            v-model="dictionary.source_language"
+                            :items="supportedSourceLanguages"
+                            item-value="name"
+                            placeholder="Language"
+                            dense
+                            filled
+                            rounded
+                            :disabled="dictionary.database_table_name === 'API' || dictionary.name === 'JMDict'"
+                        >
+                            <template v-slot:selection="{ item, index }">
+                                <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                <span class="text-capitalize">{{ item.name }}</span>
+                            </template>
+                            <template v-slot:item="{ item }">
+                                <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                <span class="text-capitalize">{{ item.name }}</span>
+                            </template>
+                        </v-select>
+                    </template>
 
-                    <!-- Target language -->
+                    <!-- Target DeepL language -->
                     <template v-if="dictionary.database_table_name === 'API' && dictionary.name.includes('DeepL')">
                         <label class="font-weight-bold">
                             Target language
@@ -101,7 +127,34 @@
                         </v-select>
                     </template>
 
-                    <!-- Target DeepL language -->
+                    <!-- Target language -->
+                    <template v-else-if="dictionary.type === 'my_memory'">
+                        <label class="font-weight-bold">
+                            Target language
+                        </label>
+
+                        <v-select
+                            v-model="dictionary.target_language"
+                            :items="supportedMyMemoryLanguages"
+                            item-value="name"
+                            item-text="name"
+                            placeholder="Language"
+                            dense
+                            filled
+                            rounded
+                        >
+                            <template v-slot:selection="{ item, index }">
+                                <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                <span class="text-capitalize">{{ item.name }}</span>
+                            </template>
+                            <template v-slot:item="{ item }">
+                                <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
+                                <span class="text-capitalize">{{ item.name }}</span>
+                            </template>
+                        </v-select>
+                    </template>
+
+                    <!-- Target language -->
                     <template v-else>
                         <label class="font-weight-bold">
                             Target language
@@ -226,6 +279,7 @@
                 supportedSourceLanguages: [],
                 supportedTargetLanguages: [],
                 supportedDeeplTargetLanguages: [],
+                supportedMyMemoryLanguages: [],
                 dictionary: null,
             };
         },
@@ -235,7 +289,8 @@
                 axios.get('/config/get/linguacafe.languages.supported_target_languages'),
                 axios.get('/config/get/linguacafe.languages.deepl_supported_target_languages'),
                 axios.get('/dictionaries/get/' + this.$props.dictionaryId),
-            ]).then(axios.spread((response1, response2, response3, response4) => {
+                axios.get('/config/get/linguacafe.languages.my_memory_supported_target_languages'),
+            ]).then(axios.spread((response1, response2, response3, response4, response5) => {
                 this.loading = false;
                 this.dictionary = response4.data;
 
@@ -262,6 +317,14 @@
                         selected: false
                     });
                 }
+
+                // add supported mymemory languages
+                Object.keys(response5.data).forEach((languageName) => {
+                    this.supportedMyMemoryLanguages.push({
+                        name: languageName.toLowerCase(),
+                        selected: false
+                    });
+                });
             }));
         },
         methods: {
