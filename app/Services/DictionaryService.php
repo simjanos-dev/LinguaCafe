@@ -406,6 +406,7 @@ class DictionaryService {
 
         $dictionary = new Dictionary();
         $dictionary->name = $dictionaryName;
+        $dictionary->type = 'custom_csv';
         $dictionary->database_table_name = $databaseTableName;
         $dictionary->source_language = $sourceLanguage;
         $dictionary->target_language = $targetLanguage;
