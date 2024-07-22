@@ -234,15 +234,17 @@ const router = new VueRouter({
 })
 
 // vuex
-import Vuex from 'vuex';
+import Vuex from 'vuex'
 import shared from './vuex/shared.js';
-// import InteractiveText from './vuex/InteractiveText.js';
+import InteractiveText from './vuex/InteractiveText.js';
+import HoverVocabularyBox from './vuex/HoverVocabularyBox.js';
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
         shared: shared,
-        // interactiveText: InteractiveText,
+        interactiveText: InteractiveText,
+        hoverVocabularyBox: HoverVocabularyBox,
     }
 });
 
@@ -251,7 +253,7 @@ const app = new Vue({
     router,
     el: '#app',
     vuetify,
-    store
+    store,
 });
 
 

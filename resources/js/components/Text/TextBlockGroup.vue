@@ -110,18 +110,9 @@
 
         <!-- Vocabulary popup box -->
         <vocabulary-hover-box
-            v-if="hoverVocabBox.active && !vocabBox.active && !hoverVocabBox.disabledWhileSelecting"
+            v-if="true && !vocabBox.active && !$store.state.hoverVocabularyBox.disabledWhileSelecting"
             ref="hoverVocabBox"
-            :key="'hover-vocab-box' + hoverVocabBox.key"
-            :user-translation="hoverVocabBox.userTranslation"
-            :dictionary-translation="hoverVocabBox.dictionaryTranslation"
-            :deepl-translation="hoverVocabBox.deeplTranslation"
-            :positionLeft="hoverVocabBox.positionLeft"
-            :positionTop="hoverVocabBox.positionTop"
-            :arrowPosition="hoverVocabBox.arrowPosition"
-            :reading="hoverVocabBox.reading"
-            :stage="hoverVocabBox.stage"
-            @update-position="updateHoverVocabularyBoxPosition"
+            :key="'hover-vocab-box' + $store.state.hoverVocabularyBox.key"
         ></vocabulary-hover-box>
 
         <!-- Vocabulary popup box -->
@@ -260,25 +251,7 @@
                 deeplEnabled: false,
 
                 // hover vocabulary box
-                hoverVocabBox: {
-                    hoverVocabularyDelayTimeout: null,
-                    dictionarySearchTerm: '',
-                    disabledWhileSelecting: false,
-                    active: false,
-                    lastHoveredWordIndex: -1,
-                    key: 0,
-                    hoveredWords: null,
-                    hoveredPhrase: -1,
-                    stage: null,
-                    lemmaReading: '',
-                    userTranslation: '',
-                    dictionaryTranslation: '',
-                    deeplTranslation: '',
-                    positionLeft: 0,
-                    positionTop: 0,
-                    arrowPosition: 'top',
-                },
-
+                hoverVocabularyDelayTimeout: null,
                 // vocabulary box
                 vocabBox: {
                     vocabularyBottomSheetVisible: false,
@@ -582,7 +555,7 @@
                 }
 
                 if (wordIndex === -1) {
-                    if (wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
+                    if (wordIndex !== this.$store.state.hoverVocabularyBox.lastHoveredWordIndex) {
                         this.closeHoverBox();
                         this.removePhraseHover();
                     }
@@ -590,7 +563,7 @@
                     return;
                 }
 
-                if (event.buttons === 0 && wordIndex === -1 || wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
+                if (event.buttons === 0 && wordIndex === -1 || wordIndex !== this.$store.state.hoverVocabularyBox.lastHoveredWordIndex) {
                     this.removePhraseHover();
                 }
 
@@ -598,7 +571,7 @@
                     return;
                 }
 
-                if (event.buttons === 0 && wordIndex !== this.hoverVocabBox.lastHoveredWordIndex) {
+                if (event.buttons === 0 && wordIndex !== this.$store.state.hoverVocabularyBox.lastHoveredWordIndex) {
                     this.updateHoverSelection(wordIndex);
                 }
 
@@ -619,7 +592,7 @@
                 }
 
                 // update vocab box
-                this.hoverVocabBox.disabledWhileSelecting = true;
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'disabledWhileSelecting', value: true });
                 if (this.$refs.vocabularyBox !== undefined) {
                     this.$refs.vocabularyBox.inputChanged();
                 }
@@ -627,6 +600,7 @@
                 if (this.$refs.vocabularySideBox !== undefined) {
                     this.$refs.vocabularySideBox.inputChanged();
                 }
+                
                 if (this.selection.length == 1) {
                     this.saveWord();
                 } else if (this.selectedPhrase !== -1) {
@@ -851,7 +825,7 @@
 
                 var hoveredWords = [];
                 var hoveredPhraseIndex = -1;
-                this.hoverVocabBox.lastHoveredWordIndex = wordIndex;
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'lastHoveredWordIndex', value: wordIndex });
 
                 var phraseIndexes = this.words[wordIndex].phraseIndexes;
                 if (!phraseIndexes.length) {
@@ -919,35 +893,36 @@
                     this.closeHoverBox();
                     return;
                 } else {
-                    this.hoverVocabBox.hoveredWords = data.hoveredWords;
-                    this.hoverVocabBox.hoveredPhrase = data.hoveredPhrase;
-                    this.hoverVocabBox.userTranslation = data.translation;
-                    this.hoverVocabBox.dictionaryTranslation = 'loading';
-                    this.hoverVocabBox.deeplTranslation = this.deeplEnabled ? 'loading' : 'deepl-disabled';
-                    this.hoverVocabBox.reading = data.reading;
-                    this.hoverVocabBox.stage = data.stage;
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredWords', value: data.hoveredWords });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredPhrase', value: data.hoveredPhrase });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'userTranslation', value: data.translation });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: 'loading' });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: this.deeplEnabled ? 'loading' : 'deepl-disabled' });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'reading', value: data.reading });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: data.stage });
 
                     // clear previous delay timeout
-                    if (this.hoverVocabBox.hoverVocabularyDelayTimeout !== null) {
+                    if (this.hoverVocabularyDelayTimeout !== null) {
                         this.clearHoverVocabularyBoxTimeout();
                     }
 
                     // check if dictionary search option is enabled
                     if (!this.$props.vocabularyHoverBoxSearch) {
-                        this.hoverVocabBox.hoverVocabularyDelayTimeout = setTimeout(() => {
-                            this.hoverVocabBox.dictionaryTranslation = 'dictionary-search-disabled';
-                            this.hoverVocabBox.deeplTranslation = '';
-                            this.hoverVocabBox.active = true;
+                        this.hoverVocabularyDelayTimeout = setTimeout(() => {
+                            this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: 'dictionary-search-disabled' });
+                            this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: '' });
+                            this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'active', value: true });
                             this.$nextTick(() => {
                                 this.updateHoverVocabularyBoxPosition();
                             });
                         }, this.$props.vocabularyHoverBoxDelay);
+
                         return;
                     }
 
                     // call the hover vocabulary search function with a delay
-                    this.hoverVocabBox.hoverVocabularyDelayTimeout = setTimeout(() => {
-                        this.hoverVocabBox.active = true;
+                    this.hoverVocabularyDelayTimeout = setTimeout(() => {
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'active', value: true });
                         this.$nextTick(() => {
                             this.updateHoverVocabularyBoxPosition();
                         });
@@ -990,26 +965,26 @@
                 var vocabBoxArea = vocabBoxAreaElement.getBoundingClientRect();
 
 
-                if (this.hoverVocabBox.hoveredWords.length == 1) {
-                    var hoveredWordPositions = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                if (this.$store.state.hoverVocabularyBox.hoveredWords.length == 1) {
+                    var hoveredWordPositions = document.querySelector('[wordindex="' + this.$store.state.hoverVocabularyBox.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
                 } else {
-                    var hoveredWordPositions = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[parseInt(this.hoverVocabBox.hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
+                    var hoveredWordPositions = document.querySelector('[wordindex="' + this.$store.state.hoverVocabularyBox.hoveredWords[parseInt(this.$store.state.hoverVocabularyBox.hoveredWords.length / 2)].wordIndex + '"]').getBoundingClientRect();
                 }
 
-                var hoveredWordPositions = document.querySelector('[wordindex="' + this.hoverVocabBox.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
+                var hoveredWordPositions = document.querySelector('[wordindex="' + this.$store.state.hoverVocabularyBox.hoveredWords[0].wordIndex + '"]').getBoundingClientRect();
 
                 // set horizontal position
-                this.hoverVocabBox.positionLeft = hoveredWordPositions.right - vocabBoxArea.left - hoverVocabBoxWidth / 2 - (hoveredWordPositions.right - hoveredWordPositions.left) / 2;
-                if (this.hoverVocabBox.positionLeft < margin) {
-                    this.hoverVocabBox.positionLeft = margin;
-                } else if (this.hoverVocabBox.positionLeft > vocabBoxArea.right - vocabBoxArea.left - hoverVocabBoxWidth - margin) {
-                    this.hoverVocabBox.positionLeft = vocabBoxArea.right - vocabBoxArea.left - hoverVocabBoxWidth - margin;
+               this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionLeft', value: hoveredWordPositions.right - vocabBoxArea.left - hoverVocabBoxWidth / 2 - (hoveredWordPositions.right - hoveredWordPositions.left) / 2 });
+                if (this.$store.state.hoverVocabularyBox.positionLeft < margin) {
+                   this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionLeft', value: margin });
+                } else if (this.$store.state.hoverVocabularyBox.positionLeft > vocabBoxArea.right - vocabBoxArea.left - hoverVocabBoxWidth - margin) {
+                   this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionLeft', value: vocabBoxArea.right - vocabBoxArea.left - hoverVocabBoxWidth - margin });
                 }
 
                 // set vertical position
 
                 // set preferred location
-                this.hoverVocabBox.arrowPosition = this.$props.vocabularyHoverBoxPreferredPosition;
+               this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'arrowPosition', value: this.$props.vocabularyHoverBoxPreferredPosition });
 
                 // correct preferred location based on available space
 
@@ -1022,10 +997,10 @@
                 */
                 if (
                     this.$props.vocabularyHoverBoxPositionCorrections &&
-                    this.hoverVocabBox.arrowPosition == 'bottom' &&
+                    this.$store.state.hoverVocabularyBox.arrowPosition == 'bottom' &&
                     (vocabBoxArea.height + vocabBoxAreaElement.scrollTop) - (hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25) < hoverVocabBoxHeight
                 ) {
-                    this.hoverVocabBox.arrowPosition = 'top';
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'arrowPosition', value: 'top' });
                 }
 
                 /*
@@ -1033,7 +1008,7 @@
                 */
                 if (
                     this.$props.vocabularyHoverBoxPositionCorrections &&
-                    this.hoverVocabBox.arrowPosition == 'top' &&
+                    this.$store.state.hoverVocabularyBox.arrowPosition == 'top' &&
                     hoveredWordPositions.top - 25 - 30 < hoverVocabBoxHeight
                 ) {
                     /*
@@ -1041,18 +1016,16 @@
                         otherwise prefer to use the top position, because that does not cause scroll issues.
                     */
                     if ((vocabBoxArea.height + vocabBoxAreaElement.scrollTop) - (hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25) >= hoverVocabBoxHeight) {
-                        this.hoverVocabBox.arrowPosition = 'bottom';
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'arrowPosition', value: 'bottom' });
                     }
                 }
 
                 // set hover vocabulary box's location based on preference and correction
-                if (this.hoverVocabBox.arrowPosition == 'top') {
-                    this.hoverVocabBox.positionTop = hoveredWordPositions.top - vocabBoxArea.top + vocabBoxAreaElement.scrollTop - hoverVocabBoxHeight - 25;
+                if (this.$store.state.hoverVocabularyBox.arrowPosition == 'top') {
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionTop', value: hoveredWordPositions.top - vocabBoxArea.top + vocabBoxAreaElement.scrollTop - hoverVocabBoxHeight - 25 });
                 } else {
-                    this.hoverVocabBox.positionTop = hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25;
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionTop', value: hoveredWordPositions.bottom - vocabBoxArea.top + vocabBoxAreaElement.scrollTop + 25 });
                 }
-
-
             },
             removePhraseHover: function() {
                 for (let i  = 0; i < this.words.length; i++) {
@@ -1061,19 +1034,19 @@
             },
             closeHoverBox() {
                 this.clearHoverVocabularyBoxTimeout();
-                this.hoverVocabBox.lastHoveredWordIndex = -1;
-                this.hoverVocabBox.dictionarySearchTerm = '';
-                this.hoverVocabBox.hoveredWords = null;
-                this.hoverVocabBox.active = false;
-                this.hoverVocabBox.positionLeft = 0;
-                this.hoverVocabBox.positionTop = 0;
-                this.hoverVocabBox.userTranslation = '';
-                this.hoverVocabBox.dictionaryTranslation = '';
-                this.hoverVocabBox.deeplTranslation = '';
-                this.hoverVocabBox.reading = '';
-                this.hoverVocabBox.hoveredPhrase = -1;
-                this.hoverVocabBox.stage = -1;
-                this.hoverVocabBox.key ++;
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'lastHoveredWordIndex', value: -1 });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionarySearchTerm', value: '' });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredWords', value: null });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'active', value: false });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionLeft', value: 0 });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionTop', value: 0 });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'userTranslation', value: '' });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: '' });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: '' });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'reading', value: '' });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredPhrase', value: -1 });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: -1 });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'key', value: this.$store.state.hoverVocabularyBox.key + 1 });
             },
             preProcessWords() {
                 for (let i = 0; i < this.uniqueWords.length; i++) {
@@ -1396,20 +1369,20 @@
 
                 this.vocabBox.key ++;
                 this.resizeHandle();
-                this.hoverVocabBox.disabledWhileSelecting = false;
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'disabledWhileSelecting', value: false });
             },
             clearHoverVocabularyBoxTimeout() {
-                if (this.hoverVocabBox.hoverVocabularyDelayTimeout === null) {
+                if (this.hoverVocabularyDelayTimeout === null) {
                     return;
                 }
 
-                clearTimeout(this.hoverVocabBox.hoverVocabularyDelayTimeout);
-                this.hoverVocabBox.hoverVocabularyDelayTimeout = null;
+                clearTimeout(this.hoverVocabularyDelayTimeout);
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoverVocabularyDelayTimeout', value: null });
             },
             makeHoverVocabularyBoxSearchRequest(term) {
                 if (!this.$props.vocabularyHoverBoxSearch) {
-                    this.hoverVocabBox.dictionaryTranslation = '';
-                    this.hoverVocabBox.deeplTranslation = '';
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: '' });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: '' });
                 }
 
                 // do not make a search request if a word has been selected
@@ -1423,7 +1396,7 @@
                 }
 
                 term = term.toLowerCase();
-                this.hoverVocabBox.dictionarySearchTerm = term;
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionarySearchTerm', value: term });
 
 
                 // make dictionary search
@@ -1433,17 +1406,17 @@
                 }).then((response) => {
                     // return if a different word has been selected
                     // after the request was sent
-                    if (this.hoverVocabBox.dictionarySearchTerm !== response.data.term) {
+                    if (this.$store.state.hoverVocabularyBox.dictionarySearchTerm !== response.data.term) {
                         return;
                     }
 
                     // return if there is no word selected anymore
-                    if (this.hoverVocabBox.dictionarySearchTerm === '') {
+                    if (this.$store.state.hoverVocabularyBox.dictionarySearchTerm === '') {
                         return;
                     }
 
-                    this.hoverVocabBox.dictionaryTranslation = response.data.definitions.join(';');
-                    this.hoverVocabBox.key ++;
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: response.data.definitions.join(';') });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'key', value: this.$store.state.hoverVocabularyBox.key + 1 });
                     this.$nextTick(() => {
                         this.updateHoverVocabularyBoxPosition();
                     });
@@ -1457,22 +1430,22 @@
                     }).then((response) => {
                         // return if a different word has been selected
                         // after the request was sent
-                        if (this.hoverVocabBox.dictionarySearchTerm !== response.data.term) {
+                        if (this.$store.state.hoverVocabularyBox.dictionarySearchTerm !== response.data.term) {
                             return;
                         }
 
                         // return if there is no word selected anymore
-                        if (this.hoverVocabBox.dictionarySearchTerm === '') {
+                        if (this.$store.state.hoverVocabularyBox.dictionarySearchTerm === '') {
                             return;
                         }
 
-                        this.hoverVocabBox.deeplTranslation = response.data.definitions;
-                        this.hoverVocabBox.key ++;
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: this.$store.state.hoverVocabularyBox.key + 1 });
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'key', value: response.data.definitions });
                         this.$nextTick(() => {
                             this.updateHoverVocabularyBoxPosition();
                         });
                     }).catch(() => {
-                        this.hoverVocabBox.deeplTranslation = 'DeepL error';
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: 'DeepL error' });
                     });
                 }
             },
@@ -1496,7 +1469,7 @@
 
                 this.unselectAllWordsProcess();
                 this.removePhraseHover();
-                this.hoverVocabBox.disabledWhileSelecting = false;
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'disabledWhileSelecting', value: false });
             },
             unselectAllWordsProcess() {
                 this.selectedPhrase = -1;
@@ -1878,21 +1851,21 @@
                     return;
                 }
 
-                if (!this.selection.length && this.hoverVocabBox.hoveredWords !== null) {
+                if (!this.selection.length && this.$store.state.hoverVocabularyBox.hoveredWords !== null) {
                     hoverSetStage = true;
 
                     // do not set hovered phrases to ignored
-                    if (this.hoverVocabBox.hoveredWords.length > 1 && stage > 0) {
+                    if (this.$store.state.hoverVocabularyBox.hoveredWords.length > 1 && stage > 0) {
                         return;
                     }
 
                     // select hovered word and click on it
-                    for (let i = 0; i < this.hoverVocabBox.hoveredWords.length; i++) {
-                        if (!this.hoverVocabBox.hoveredWords[i].hover) {
+                    for (let i = 0; i < this.$store.state.hoverVocabularyBox.hoveredWords.length; i++) {
+                        if (!this.$store.state.hoverVocabularyBox.hoveredWords[i].hover) {
                             continue;
                         }
 
-                        this.startSelection(this.hoverVocabBox.hoveredWords[0].wordIndex);
+                        this.startSelection(this.$store.state.hoverVocabularyBox.hoveredWords[0].wordIndex);
                         this.finishSelection();
                         break;
                     }
@@ -1958,7 +1931,7 @@
                 // unselect word if it was hovered
                 if (hoverSetStage) {
                     this.unselectAllWords();
-                    this.hoverVocabBox.stage = stage < 0 ? stage : null;
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: stage < 0 ? stage : null });
                 }
             },
             updateSelectedWordStage() {
