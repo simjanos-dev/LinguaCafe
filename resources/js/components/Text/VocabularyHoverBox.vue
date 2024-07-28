@@ -73,7 +73,8 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapState } from 'vuex';
+    
     export default {
         data: function() {
             return {

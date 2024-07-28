@@ -3,10 +3,10 @@
         id="vocab-side-box" 
         elevation="0"
         :class="{
-            'new-phrase': $props.type === 'new-phrase', 
-            'word-selected': $props.type === 'word',
-            'phrase-selected': $props.type === 'phrase',
-            'new-phrase-selected': $props.type === 'new-phrase',
+            'new-phrase': type === 'new-phrase', 
+            'word-selected': type === 'word',
+            'phrase-selected': type === 'phrase',
+            'new-phrase-selected': type === 'new-phrase',
             'pa-4': true,
             'rounded-l-0': true,
             'rounded-r-lg': true
@@ -14,28 +14,28 @@
         :style="{
             'width': '400px',
             'border-left': '1px solid var(--v-gray2-base)',
-            'left': $props.positionLeft + 'px',
-            'top': $props.positionTop + 'px',
-            'height': $props.height + 'px',
+            'left': positionLeft + 'px',
+            'top': positionTop + 'px',
+            'height': height + 'px',
         }"
         @mouseup.stop=";"
     >
         <!-- Vocab box content -->
-        <v-alert id="no-word-selected-title" border="top" color="gray" class="text--text" v-if="$props.type == 'empty'">
+        <v-alert id="no-word-selected-title" border="top" color="gray" class="text--text" v-if="type == 'empty'">
             Select a word or a phrase!
         </v-alert>
 
         <!-- Toolbar -->
-        <div class="pa-0 w-full" v-if="$props.type !== 'empty'">
+        <div class="pa-0 w-full" v-if="type !== 'empty'">
             <!-- Word/phrase info -->
             <div class="vocab-box-subheader d-flex mb-2">
-                <span id="vocab-side-box-title" v-if="$props.type == 'new-phrase'">New phrase</span>
-                <span id="vocab-side-box-title" class="text-capitalize" v-else>{{ $props.type }}</span>
+                <span id="vocab-side-box-title" v-if="type == 'new-phrase'">New phrase</span>
+                <span id="vocab-side-box-title" class="text-capitalize" v-else>{{ type }}</span>
                 <v-spacer />
 
                 <!-- Inflections table button -->
                 <v-btn 
-                    v-if="tab == 0 && $props.inflections.length"
+                    v-if="tab == 0 && inflections.length"
                     icon
                     title="Show inflections"
                     @click="tab = 1;"
@@ -54,7 +54,7 @@
 
                 <!-- Send to Anki button -->
                 <v-btn 
-                    v-if="tab == 0 && $props.type !== 'new-phrase'"
+                    v-if="tab == 0 && type !== 'new-phrase'"
                     icon
                     title="Send to anki"
                     @mouseup.stop="addSelectedWordToAnki"
@@ -79,11 +79,11 @@
             </div>
         </div> 
 
-        <v-tabs-items v-model="tab" v-if="$props.type !== 'empty'">
+        <v-tabs-items v-model="tab" v-if="type !== 'empty'">
             <!-- Word/phrase tab -->
             <v-tab-item :value="0" class="sidebar-tab">
                 <!-- Word text fields -->
-                <div class="d-flex" v-if="$props.type == 'word'">
+                <div class="d-flex" v-if="type == 'word'">
                     <v-text-field 
                         :class="{'default-font': true, 'mt-2': true, 'mb-2': ($props.language !== 'japanese' && $props.language !== 'chinese')}"
                         hide-details
@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Reading fields -->
-                <div class="d-flex" v-if="$props.type == 'word' && ($props.language == 'japanese' || $props.language == 'chinese')">
+                <div class="d-flex" v-if="type == 'word' && ($props.language == 'japanese' || $props.language == 'chinese')">
                     <v-text-field 
                         class="default-font my-2"
                         hide-details
@@ -143,7 +143,7 @@
 
                 <!-- Phrase text -->
                 <v-textarea
-                    v-if="$props.type !== 'word'"
+                    v-if="type !== 'word'"
                     class="default-font my-2"
                     label="Phrase"
                     filled
@@ -159,7 +159,7 @@
 
                 <!-- Phrase reading -->
                 <v-textarea
-                    v-if="$props.type !== 'word' && ($props.language == 'japanese' || $props.language == 'chinese')"
+                    v-if="type !== 'word' && ($props.language == 'japanese' || $props.language == 'chinese')"
                     class="default-font my-2"
                     label="Reading"
                     filled
@@ -174,7 +174,7 @@
                 ></v-textarea>
                 
                 <!-- Stage buttons-->
-                <template v-if="$props.type !== 'new-phrase'">
+                <template v-if="type !== 'new-phrase'">
                     <div id="vocab-box-stage-buttons" class="mb-2">
                         <v-btn :class="{'v-btn--active': stage == -7}" @click="setStage(-7)">7</v-btn>
                         <v-btn :class="{'v-btn--active': stage == -6}" @click="setStage(-6)">6</v-btn>
@@ -192,7 +192,7 @@
                         <v-btn 
                             :class="{'v-btn--active': stage == 1}" 
                             @click="setStage(1)" 
-                            v-if="$props.type == 'word'"
+                            v-if="type == 'word'"
                         >
                             <v-icon small>mdi-close</v-icon>
                         </v-btn>
@@ -235,28 +235,28 @@
 
                 <!-- Search box -->
                 <vocabulary-search-box
-                    v-if="$props.type !== 'empty'"
+                    v-if="type !== 'empty'"
                     :deeplEnabled="$props.deeplEnabled"
                     :language="$props.language"
                     :searchTerm="searchField"
                     @addDefinitionToInput="addDefinitionToInput"
                 ></vocabulary-search-box>
 
-                <div v-if="$props.type !== 'word'" class="d-flex mt-2 pl-0">
+                <div v-if="type !== 'word'" class="d-flex mt-2 pl-0">
                     <v-spacer />
                     <v-btn 
                         small
                         rounded
                         color="success"
                         @click="addNewPhrase"
-                        v-if="$props.type == 'new-phrase'"
+                        v-if="type == 'new-phrase'"
                     >Save phrase</v-btn>
                     <v-btn 
                         small
                         rounded
                         color="error"
                         @click="deletePhrase"
-                        v-if="$props.type == 'phrase'"
+                        v-if="type == 'phrase'"
                     >Delete phrase</v-btn>
                 </div>
             </v-tab-item>
@@ -264,7 +264,7 @@
             <!-- Inflections tab -->
             <v-tab-item :value="1">
                 <v-simple-table
-                    v-if="$props.inflections.length"
+                    v-if="inflections.length"
                     class="border rounded-lg no-hover mx-auto default-font" 
                 >
                     <thead>
@@ -275,7 +275,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(inflection, index) in $props.inflections" :key="index">
+                        <tr v-for="(inflection, index) in inflections" :key="index">
                             <td class="px-2">{{ inflection.name }}</td>
                             <td class="px-1 text-center">{{ inflection.affPlain }}</td>
                             <td class="px-1 text-center">{{ inflection.negPlain }}</td>
@@ -288,28 +288,36 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex';
+    
     export default {
         props: {
-            autoHighlightWords: Boolean,
             language: String,
-            active: Boolean,
-            type: String,
-            word: String,
-            phrase: Array,
-            kanjiList: Array,
-            stage: Number,
-            inflections: Array,
+            autoHighlightWords: Boolean,
             deeplEnabled: Boolean,
             textToSpeechAvailable: Boolean,
-            _reading: String,
-            _baseWord: String,
-            _baseWordReading: String,
-            _phraseReading: String,
-            _translationText: String,
-            _searchField: String,
-            positionLeft: Number,
-            positionTop: Number,
-            height: Number
+        },
+        computed: mapState({
+            active: state => state.vocabularyBox.active,
+            type: state => state.vocabularyBox.type,
+            word: state => state.vocabularyBox.word,
+            phrase: state => state.vocabularyBox.phrase,
+            stage: state => state.vocabularyBox.stage,
+            inflections: state => state.vocabularyBox.inflections,
+            _reading: state => state.vocabularyBox.reading,
+            _baseWord: state => state.vocabularyBox.baseWord,
+            _baseWordReading: state => state.vocabularyBox.baseWordReading,
+            _phraseReading: state => state.vocabularyBox.phraseReading,
+            _translationText: state => state.vocabularyBox.translationText,
+            _searchField: state => state.vocabularyBox.searchField,
+            positionLeft: state => state.vocabularyBox.positionLeft,
+            positionTop: state => state.vocabularyBox.positionTop,
+            height: state => state.vocabularyBox.height,
+        }),
+        watch: {
+            word: function () {
+                this.updateDataFromStore();
+            },
         },
         data: function() {
             return {
@@ -320,36 +328,46 @@
 
                 // data for word
                 phraseText: '',
-                reading: this.$props._reading,
-                baseWord: this.$props._baseWord,
-                baseWordReading: this.$props._baseWordReading,
-                phraseReading: this.$props._phraseReading,
+                reading: '',
+                baseWord: '',
+                baseWordReading: '',
+                phraseReading: '',
 
                 // data for both
-                translationText: this.$props._translationText,
-                translationList: this.$props._translationText.split(';'),
+                translationText: '',
 
                 // ui data
                 tab: 0,
-                searchField: this.$props._searchField,
+                searchField: '',
                 searchResults: [],
             };
         },
         mounted: function() {
             // generate phrase text
-            for (let wordIndex = 0; wordIndex < this.$props.phrase.length; wordIndex++) {
-                if (this.$props.phrase.word === 'NEWLINE') {
+            for (let wordIndex = 0; wordIndex < this.$store.state.vocabularyBox.phrase.length; wordIndex++) {
+                if (this.$store.state.vocabularyBox.phrase.word === 'NEWLINE') {
                     continue;
                 }
                 
-                this.phraseText += this.$props.phrase[wordIndex].word;
+                this.phraseText += this.$store.state.vocabularyBox.phrase[wordIndex].word;
 
-                if (this.$props.phrase[wordIndex].spaceAfter) {
+                if (this.$store.state.vocabularyBox.phrase[wordIndex].spaceAfter) {
                     this.phraseText += ' ';
                 }
             }
         },
         methods: {
+            updateDataFromStore() {
+                this.phraseCurrentlySaving = false;
+                this.phraseText = '';
+
+                this.translationText = this._translationText;
+                this.reading = this._reading;
+                this.baseWord = this._baseWord;
+                this.baseWordReading = this._baseWordReading;
+                this.phraseReading = this._phraseReading;
+                this.searchField = this._searchField;
+            },
             textToSpeech() {
                 this.$emit('textToSpeech');
             },
@@ -372,9 +390,6 @@
             deletePhrase() {
                 this.$emit('deletePhrase');
             },
-            updateVocabBoxTranslationList() {
-                this.translationList = this.$props._translationText.split(';');
-            },
             addDefinitionToInput(definition) {
                 if (this.translationText.length && this.translationText[this.translationText.length - 1] !== ';') {
                     this.translationText += ';';
@@ -384,8 +399,6 @@
                 this.inputChanged('translation');
             },
             inputChanged(inputName = '') {
-                this.updateVocabBoxTranslationList();
-
                 this.$emit('updateVocabBoxData', {
                     reading: this.reading,
                     baseWord: this.baseWord,
@@ -394,7 +407,7 @@
                     translationText: this.translationText
                 });
 
-                if (inputName == 'translation' && this.$props.stage >= 0 && this.$props.autoHighlightWords && this.translationText !== '') {
+                if (inputName == 'translation' && this.$store.state.vocabularyBox.stage >= 0 && this.$props.autoHighlightWords && this.translationText !== '') {
                     this.setStage(-7);
                 }
             },

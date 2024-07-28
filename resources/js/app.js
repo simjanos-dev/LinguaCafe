@@ -235,16 +235,19 @@ const router = new VueRouter({
 
 // vuex
 import Vuex from 'vuex'
-import shared from './vuex/shared.js';
-import InteractiveText from './vuex/InteractiveText.js';
-import HoverVocabularyBox from './vuex/HoverVocabularyBox.js';
+import SharedStore from './vuex/Shared.js';
+import InteractiveTextStore from './vuex/InteractiveText.js';
+import HoverVocabularyBoxStore from './vuex/HoverVocabularyBox.js';
+import VocabularyBoxStore from './vuex/VocabularyBox.js';
+
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
-        shared: shared,
-        interactiveText: InteractiveText,
-        hoverVocabularyBox: HoverVocabularyBox,
+        shared: SharedStore,
+        interactiveText: InteractiveTextStore,
+        hoverVocabularyBox: HoverVocabularyBoxStore,
+        vocabularyBox: VocabularyBoxStore,
     }
 });
 

@@ -1,11 +1,11 @@
 export default {
     namespaced: true,
     state: () => ({
+        active: false,
         dictionaryTranslation: '',
         deeplTranslation: '',
         dictionarySearchTerm: '',
         disabledWhileSelecting: false,
-        active: false,
         lastHoveredWordIndex: -1,
         key: 0,
         hoveredWords: null,
@@ -19,7 +19,6 @@ export default {
     }),
     mutations: {
         setValue (state, payload) {
-            console.log('hoverVocabularyBox set value', payload.propertyName, payload.value)
             state[payload.propertyName] = payload.value;
         },
     },
