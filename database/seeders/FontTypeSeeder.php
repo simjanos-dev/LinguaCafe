@@ -12,25 +12,20 @@ class FontTypeSeeder extends Seeder
     {
         // Noto sans JP
         $notoSansJpLanguages = [
-            'Croatian',
             'Danish',
-            'Czech',
             'Dutch',
             'English',
             'Finnish',
             'French',
             'German',
-            'Greek',
             'Italian',
             'Japanese',
             'Korean',
             'Latin',
-            'Macedonian',
             'Norwegian',
             'Portuguese',
             'Romanian',
             'Russian',
-            'Slovenian',
             'Spanish',
             'Swedish',
             'Thai',
@@ -77,8 +72,13 @@ class FontTypeSeeder extends Seeder
         }
 
         // OpenSans
-        $poltawskiNowLanguages = [
+        $openSansLanguages = [
+            'Croatian',
+            'Czech',
+            'Greek',
+            'Macedonian',
             'Polish',
+            'Slovenian',
         ];
 
         $fontType = FontType
@@ -86,13 +86,13 @@ class FontTypeSeeder extends Seeder
             ->first();
 
         if ($fontType) {
-            $fontType->languages = json_encode($poltawskiNowLanguages);
+            $fontType->languages = json_encode($openSansLanguages);
             $fontType->save();
         } else {
             $fontType = new FontType();
             $fontType->name = 'OpenSans';
             $fontType->filename = 'DefaultOpenSans.ttf';
-            $fontType->languages = json_encode($poltawskiNowLanguages);
+            $fontType->languages = json_encode($openSansLanguages);
             $fontType->default = true;
             $fontType->save();
         }
