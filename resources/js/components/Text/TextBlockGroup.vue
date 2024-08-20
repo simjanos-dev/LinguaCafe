@@ -133,45 +133,31 @@
         ></vocabulary-box>
 
         <!-- Vocabulary bottom sheet -->
-        <!-- <v-bottom-sheet
+        <v-bottom-sheet
             v-if="
                 (!$props.vocabularySidebar || !$props.vocabularySidebarFits)
-                && vocabBox.active
+                && $store.state.vocabularyBox.active
                 && $props.vocabularyBottomSheet
-                && vocabBox.vocabularyBottomSheetVisible
+                && $store.state.vocabularyBox.vocabularyBottomSheetVisible
             "
-            v-model="vocabBox.active"
+            v-model="$store.state.vocabularyBox.active"
             persistent
             scrollable
         >
             <vocabulary-bottom-sheet
-                :key="'vocab-bottom-sheet' + vocabBox.key"
                 :language="$props.language"
-                :active="vocabBox.active"
-                :type="vocabBox.type"
-                :kanjiList="vocabBox.kanjiList"
-                :word="vocabBox.word"
-                :phrase="vocabBox.phrase"
-                :stage="vocabBox.stage"
-                :inflections="vocabBox.inflections"
                 :auto-highlight-words="$props.autoHighlightWords"
                 :deepl-enabled="this.deeplEnabled"
-                :textToSpeechAvailable="textToSpeechAvailable"
-                :_reading="vocabBox.reading"
-                :_baseWord="vocabBox.baseWord"
-                :_baseWordReading="vocabBox.baseWordReading"
-                :_phraseReading="vocabBox.phraseReading"
-                :_translationText="vocabBox.translationText"
-                :_searchField="vocabBox.searchField"
+                :text-to-speech-available="textToSpeechAvailable"
                 @textToSpeech="textToSpeech"
                 @setStage="setStage"
                 @unselectAllWords="unselectAllWords"
                 @updateVocabBoxData="updateVocabBoxData"
                 @addNewPhrase="addNewPhrase"
-                @showDeletePhraseDialog="showDeletePhraseDialog"
+                @deletePhrase="deletePhrase"
                 @addSelectedWordToAnki="addSelectedWordToAnki"
             ></vocabulary-bottom-sheet>
-        </v-bottom-sheet> -->
+        </v-bottom-sheet>
 
         <!--Vocabulary sidebar-->
         <vocabulary-side-box
