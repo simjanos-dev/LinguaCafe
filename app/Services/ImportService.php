@@ -86,7 +86,7 @@ class ImportService {
         if ($bookId == -1) {
             $book = new Book();
             $book->user_id = $userId;
-            $book->cover_image = 'default.jpg';
+            $book->cover_image = null;
             $book->language = $language;
             $book->name = $bookName;
             $book->save();
