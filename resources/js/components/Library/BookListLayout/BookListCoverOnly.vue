@@ -12,10 +12,17 @@
                 <!-- Cover image -->
                 <div class="cover-image-box rounded-lg">
                     <img
+                        v-if="book.cover_image"
                         class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                         @click="openBook(book.id)"
                     ></img>
+                    <div
+                        v-else
+                        class="p-2 h-100 display-1 text-center align-middle"
+                        @click="openBook(book.id)">
+                        {{book.name}}
+                    </div>
                 </div>
             </div>
         </v-card>

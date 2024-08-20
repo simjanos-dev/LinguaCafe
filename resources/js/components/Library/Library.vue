@@ -219,7 +219,7 @@
                 this.editBookDialog.active = true;
                 if (book === null) {
                     this.editBookDialog.bookId = -1;
-                    this.editBookDialog.bookCover = 'default.jpg';
+                    this.editBookDialog.bookCover = null;
                     this.editBookDialog.bookName = '';
                 } else {
                     this.editBookDialog.bookId = book.id;

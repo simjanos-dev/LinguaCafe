@@ -151,6 +151,14 @@
     }
 }
 
+img.no-cover-image {
+    max-width: 75%;
+    border-radius: 15px;
+    content:url("/icon512rounded.png");
+    // content:url("/default/images/book_images/default.svg");
+}
+
+
 @media (max-width: 550px) {
     #books #toolbar {
         width: 100%;

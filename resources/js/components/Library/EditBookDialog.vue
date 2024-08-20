@@ -55,11 +55,16 @@
                     <template v-if="!editImage">
                         <div id="image-upload-box" class="d-flex">
                             <div id="image-box" class="d-flex align-center">
-                                <img 
+                                <img v-if="$props.bookCover"
                                     class="cover-image rounded-xl"
                                     :src="'/images/book_images/' + $props.bookCover"
                                     width="100px"
+                                    :alt="$props.bookName + 'cover'"
                                 ></img>
+                                <div v-else class="d-flex flex-column p-2 h-100 justify-center align-center text-center">
+                                    <img class="no-cover-image"/>
+                                    <div>No image</div>
+                                </div>
                             </div>
                             <div
                                 id="edit-book-upload-image-button" 

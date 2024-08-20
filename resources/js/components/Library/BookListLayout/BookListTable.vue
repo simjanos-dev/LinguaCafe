@@ -50,9 +50,14 @@
                 <!-- Cover image -->
                 <template v-slot:item.cover_image="{ item }">
                     <img
+                        v-if="item.cover_image"
                         class="cover-image rounded-lg ma-2"
                         :src="'/images/book_images/' + item.cover_image"
                     ></img>
+                    <div v-else class="d-flex flex-column p-2 h-100 justify-center align-center">
+                        <img class="no-cover-image"/>
+                        <div>No image</div>
+                    </div>
                 </template>
                 
                 <!-- Length -->
