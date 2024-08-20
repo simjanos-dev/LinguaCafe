@@ -116,37 +116,21 @@
         ></vocabulary-hover-box>
 
         <!-- Vocabulary popup box -->
-        <!-- <vocabulary-box
-            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && vocabBox.active && (!$props.vocabularyBottomSheet || !vocabBox.vocabularyBottomSheetVisible)"
+        <vocabulary-box
+            v-if="(!$props.vocabularySidebar || !$props.vocabularySidebarFits) && $store.state.vocabularyBox.active && (!$props.vocabularyBottomSheet || !$store.state.vocabularyBox.vocabularyBottomSheetVisible)"
             ref="vocabularyBox"
             :language="$props.language"
-            :active="vocabBox.active"
-            :type="vocabBox.type"
-            :positionLeft="vocabBox.positionLeft"
-            :positionTop="vocabBox.positionTop"
-            :width="vocabBox.width"
-            :kanjiList="vocabBox.kanjiList"
-            :word="vocabBox.word"
-            :phrase="vocabBox.phrase"
-            :stage="vocabBox.stage"
-            :inflections="vocabBox.inflections"
             :auto-highlight-words="$props.autoHighlightWords"
             :deepl-enabled="this.deeplEnabled"
-            :textToSpeechAvailable="textToSpeechAvailable"
-            :_reading="vocabBox.reading"
-            :_baseWord="vocabBox.baseWord"
-            :_baseWordReading="vocabBox.baseWordReading"
-            :_phraseReading="vocabBox.phraseReading"
-            :_translationText="vocabBox.translationText"
-            :_searchField="vocabBox.searchField"
+            :text-to-speech-available="textToSpeechAvailable"
             @textToSpeech="textToSpeech"
             @setStage="setStage"
             @unselectAllWords="unselectAllWords"
             @updateVocabBoxData="updateVocabBoxData"
             @addNewPhrase="addNewPhrase"
-            @deletePhrase="deletePhrase"
+            @showDeletePhraseDialog="showDeletePhraseDialog"
             @addSelectedWordToAnki="addSelectedWordToAnki"
-        ></vocabulary-box> -->
+        ></vocabulary-box>
 
         <!-- Vocabulary bottom sheet -->
         <!-- <v-bottom-sheet
