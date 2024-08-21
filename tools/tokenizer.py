@@ -16,7 +16,7 @@ from youtube_transcript_api._errors import TranscriptsDisabled
 from urllib import parse
 from pysubparser import parser
 from pysubparser.cleaners import formatting
-import lxml.html.clean
+import lxml_html_clean
 import lxml.html
 import importlib
 import shutil
@@ -375,7 +375,7 @@ def tokenizeText(text, language, sentenceIndexStart = 0):
 # loads an .epub file
 def loadBook(file, sortMethod):
     # rp and rt tags are used in adding prononciation over words, we need to remove the content of the tags
-    cleaner = lxml.html.clean.Cleaner(allow_tags=[''], remove_unknown_tags=False, kill_tags = ['rp','rt'], page_structure=False)
+    cleaner = lxml_html_clean.Cleaner(allow_tags=[''], remove_unknown_tags=False, kill_tags = ['rp','rt'], page_structure=False)
     content = ''
     book = epub.read_epub(file)
     items = list(book.get_items())

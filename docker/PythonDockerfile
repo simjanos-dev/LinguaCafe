@@ -16,7 +16,8 @@ USER laravel
 RUN pip install -U --no-cache-dir \
         setuptools \
         wheel \
-        lxml[html_clean] \
+        lxml \
+        lxml_html_clean \
 #youtube api
         youtube_transcript_api \
 #ebook library
