@@ -65,7 +65,7 @@
                 <v-label class="font-text-weight pt-6">Status: {{ responseStatus }}</v-label><br>
 
                 <v-label class="font-text-weight mt-4">Response:</v-label>
-                <pre class="text--text rounded-xl pa-6 mt-2" style="background-color: #39383D;"><!--
+                <pre class="text--text rounded-xl pa-6 mt-2" style="background-color: var(--v-gray3-base);"><!--
                     -->{{ responseData }}<!--
                 --></pre>
             </template>
