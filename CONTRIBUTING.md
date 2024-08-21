@@ -1,5 +1,5 @@
 ## Contributing
-LinguaCafe used to be my personal project, but it got much more popular than I expected after I published it, and serveral people contributed to it since. I've created this guideline for anyone who wants to contribute. This is my first open-source project, and I have no experience with working on open-source software, so please feel free to give any feedback on it.
+LinguaCafe used to be my personal project, but it got much more popular than I expected after I published it, and several people contributed to it since. I've created this guideline for anyone who wants to contribute. This is my first open-source project, and I have no experience with working on open-source software, so please feel free to give any feedback on it.
 
 #### Bug reports and small improvements
 I appreciate any bug report, it is important to identify problems with LinguaCafe, so it can be improved. Please feel free to create a GitHub issue for any bug, this includes small problems on the UI as well.
@@ -8,11 +8,11 @@ I appreciate any bug report, it is important to identify problems with LinguaCaf
 In general I'm happy to add most feature requests to the list, but I would also like to keep the scope of LinguaCafe similar to when it's started. Currently I would like to avoid adding a few things:
 - Most large AI tools.
 - Any built-in video features.
-- Niche features that only a small percent of the users would use and dificult to maintain.
+- Niche features that only a small percent of the users would use and difficult to maintain.
 
 
 #### No pull requests tag on issues 
-I've created a **no pull requests** tag for GitHub issues that I would ike to work on myself, please do not send pull requests for them. These are mostly large and not yet designed features like "Manga reader", bugs that require changing significant parts of the software, and issues that I would like to work on to learn software development.
+I've created a **no pull requests** tag for GitHub issues that I would like to work on myself, please do not send pull requests for them. These are mostly large and not yet designed features like "Manga reader", bugs that require changing significant parts of the software, and issues that I would like to work on to learn software development.
 
 #### Pull requests
 If you made a bug fix, or a changed something small that is objectively an improvement like typos or small fixes, feel free to create a PR. If you would like to work on a larger part of the software, please comment on, or create an issue before so it can be discussed.
