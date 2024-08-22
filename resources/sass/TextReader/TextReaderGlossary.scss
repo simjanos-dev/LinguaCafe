@@ -6,7 +6,7 @@
     min-height: 100px;
 
     &:nth-child(even) {
-        background-color: rgb(242, 242, 242);
+        background-color: var(--v-gray-base);
     }
 
     rt {
@@ -36,6 +36,35 @@
         &[stage="2"] {
             background-color: var(--v-newWord-base);
             color: var(--v-highlightedWordText-base);
+        }
+
+        &[stage="-7"] {
+            background-color: var(--v-highlightedWordLevel7-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-6"] {
+            background-color: var(--v-highlightedWordLevel6-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-5"] {
+            background-color: var(--v-highlightedWordLevel5-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-4"] {
+            background-color: var(--v-highlightedWordLevel4-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-3"] {
+            background-color: var(--v-highlightedWordLevel3-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-2"] {
+            background-color: var(--v-highlightedWordLevel2-base);
+            color: var(--v-textDark-base);
+        }
+        &[stage="-1"] {
+            background-color: var(--v-highlightedWordLevel1-base);
+            color: var(--v-textDark-base);
         }
     }
 

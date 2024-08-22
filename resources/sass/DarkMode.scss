@@ -361,48 +361,6 @@
     }
 }
 
-#app.dark #text-reader-glossary .glossary-entry {
-    &:nth-child(even) {
-        background-color: var(--v-gray-base);
-    }
-
-    .stage {
-        &[stage="-7"] {
-            background-color: var(--v-highlightedWordLevel7-base);
-            color: var(--v-textDark-base);
-        }
-        &[stage="-6"] {
-            background-color: var(--v-highlightedWordLevel6-base);
-            color: var(--v-textDark-base);
-        }
-        &[stage="-5"] {
-            background-color: var(--v-highlightedWordLevel5-base);
-            color: var(--v-textDark-base);
-        }
-        &[stage="-4"] {
-            background-color: var(--v-highlightedWordLevel4-base);
-            color: var(--v-textDark-base);
-        }
-        &[stage="-3"] {
-            background-color: var(--v-highlightedWordLevel3-base);
-            color: var(--v-textDark-base);
-        }
-        &[stage="-2"] {
-            background-color: var(--v-highlightedWordLevel2-base);
-            color: var(--v-textDark-base);
-        }
-        &[stage="-1"] {
-            background-color: var(--v-highlightedWordLevel1-base);
-            color: var(--v-textDark-base);
-        }
-
-        &[stage="2"] {
-            background-color: var(--v-newWord-base);
-            color: var(--v-textDark-base);
-        }
-    }
-}
-
 // vocab box active stage button
 #app.dark #vocab-box #vocab-box-stage-buttons .v-btn.v-btn--active, 
 #app.dark #vocab-side-box #vocab-box-stage-buttons .v-btn.v-btn--active,
