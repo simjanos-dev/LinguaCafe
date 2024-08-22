@@ -5,7 +5,7 @@
     box-sizing: border-box;
     min-height: 100px;
 
-    &:nth-child(even) {
+    &:nth-child(odd) {
         background-color: var(--v-gray-base);
     }
 
