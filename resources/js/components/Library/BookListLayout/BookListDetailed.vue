@@ -1,3 +1,7 @@
+<script setup>
+import NoBookCover from '../../Icons/NoBookCover.vue';
+</script>
+
 <template>
     <!-- Book list detailed -->
     <div id="book-list" class="detailed">
@@ -16,9 +20,8 @@
                         class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
-                    <div v-else class="d-flex flex-column p-2 h-100 justify-center align-center">
-                        <img class="no-cover-image"/>
-                        <div>No image</div>
+                    <div v-else class="no-cover-image-container h-100">
+                        <NoBookCover/>
                     </div>
                 </div>
 

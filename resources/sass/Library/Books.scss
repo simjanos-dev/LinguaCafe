@@ -25,7 +25,7 @@
 
 // table layout
 #books #book-list.table-layout {
-    img.cover-image {
+    .cover-image {
         width: 68px;
         height: 97px;
     }
@@ -47,6 +47,7 @@
         width: 181px;
         max-width: 181px;
         height: 258px;
+        font-size: 1.6rem;
         overflow: hidden;
         cursor: pointer;
 
@@ -149,13 +150,6 @@
             }
         }
     }
-}
-
-img.no-cover-image {
-    max-width: 75%;
-    border-radius: 15px;
-    content:url("/icon512rounded.png");
-    // content:url("/default/images/book_images/default.svg");
 }
 
 
