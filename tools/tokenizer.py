@@ -656,6 +656,14 @@ def model_install():
                 "install",
                 "--target=/var/www/html/storage/app/model",
                 "tzdata"])
+        # https://stackoverflow.com/questions/78634235
+        if lang == "Turkish":
+            subprocess.check_output([
+                "pip",
+                "install",
+                "--target=/var/www/html/storage/app/model",
+                "numpy<2.0.0",
+                "--upgrade"])
         importlib.invalidate_caches()
         return HTTPResponse(status=200, body="Language and dependencies installed correctly")
     except subprocess.CalledProcessError as e:
