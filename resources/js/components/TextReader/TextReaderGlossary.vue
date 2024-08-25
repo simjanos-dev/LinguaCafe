@@ -18,7 +18,7 @@
                         <div class="glossary-title">
                             <!-- Glossary entry stage -->
                             <div class="stage" :stage="word.stage">
-                                {{ Math.abs(word.stage) }}
+                                {{ word.stage === 2 ? 'new' : Math.abs(word.stage)}}
                             </div>
                             
                             <!-- Glossary entry word-->

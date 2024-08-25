@@ -18,12 +18,15 @@
                 <b>Bug fixes:</b>
                 <ul>
                     <li>Book word counts did not update after deleting a chapter.</li>
+                    <li>Text reader's light theme glossary word colors were not showing.</li>
+                    <li>Text reader's glossary displayed "2" instead of "new" for new words.</li>
+                    <li>Development tools page had incorrect background for light theme.</li>
                 </ul>
 
                 <b>Other changes:</b>
                 <ul>
-                    <li>Replaced switches with checkboxes on the vocabulary export page.</li>
                     <li>Updated to Laravel 11.</li>
+                    <li>Replaced switches with checkboxes on the vocabulary export page.</li>
                 </ul>
             </v-card-text>
         </v-card>
