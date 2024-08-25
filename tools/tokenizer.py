@@ -390,7 +390,12 @@ def loadBook(file, sortMethod):
 
     for item in sortedItems:
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
-            epubPage = cleaner.clean_html(item.get_content()).decode('utf-8')
+            # clean_html cannot be passed bytes but it cannot be passed a str
+            # with explicit encoding either. So you must convert it to a string
+            # and then use RegEx to remove the encoding declaration
+            content_str = item.get_content().decode()
+            content_str = re.sub(r'<\?xml[^>]+\?>', '', content_str, count=1)
+            epubPage = cleaner.clean_html(content_str)
             # needed to removed extra div created by cleaner...
             epubPage = lxml.html.fromstring(epubPage).text_content()
             content += epubPage
