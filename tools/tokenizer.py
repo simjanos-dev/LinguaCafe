@@ -16,7 +16,7 @@ from youtube_transcript_api._errors import TranscriptsDisabled
 from urllib import parse
 from pysubparser import parser
 from pysubparser.cleaners import formatting
-import lxml.html.clean
+import lxml_html_clean
 import lxml.html
 import importlib
 import shutil
@@ -375,7 +375,7 @@ def tokenizeText(text, language, sentenceIndexStart = 0):
 # loads an .epub file
 def loadBook(file, sortMethod):
     # rp and rt tags are used in adding prononciation over words, we need to remove the content of the tags
-    cleaner = lxml.html.clean.Cleaner(allow_tags=[''], remove_unknown_tags=False, kill_tags = ['rp','rt'], page_structure=False)
+    cleaner = lxml_html_clean.Cleaner(allow_tags=[''], remove_unknown_tags=False, kill_tags = ['rp','rt'], page_structure=False)
     content = ''
     book = epub.read_epub(file)
     items = list(book.get_items())
@@ -390,7 +390,12 @@ def loadBook(file, sortMethod):
 
     for item in sortedItems:
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
-            epubPage = cleaner.clean_html(item.get_content()).decode('utf-8')
+            # clean_html cannot be passed bytes but it cannot be passed a str
+            # with explicit encoding either. So you must convert it to a string
+            # and then use RegEx to remove the encoding declaration
+            content_str = item.get_content().decode()
+            content_str = re.sub(r'<\?xml[^>]+\?>', '', content_str, count=1)
+            epubPage = cleaner.clean_html(content_str)
             # needed to removed extra div created by cleaner...
             epubPage = lxml.html.fromstring(epubPage).text_content()
             content += epubPage
@@ -620,7 +625,7 @@ model_url: dict[str, str] = {
     "Russian": "https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.7.0/ru_core_news_sm-3.7.0-py3-none-any.whl",
     "Ukrainian": "https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl",
     "Chinese": "https://github.com/explosion/spacy-models/releases/download/zh_core_web_sm-3.7.0/zh_core_web_sm-3.7.0-py3-none-any.whl",
-    "Turkish": "https://huggingface.co/turkish-nlp-suite/tr_core_news_md/resolve/main/tr_core_news_md-any-py3-none-any.whl",
+    "Turkish": "https://huggingface.co/turkish-nlp-suite/tr_core_news_md/resolve/main/tr_core_news_md-1.0-py3-none-any.whl",
     "Thai": "spacy_thai",
 }
 
@@ -656,6 +661,14 @@ def model_install():
                 "install",
                 "--target=/var/www/html/storage/app/model",
                 "tzdata"])
+        # https://stackoverflow.com/questions/78634235
+        if lang == "Turkish":
+            subprocess.check_output([
+                "pip",
+                "install",
+                "--target=/var/www/html/storage/app/model",
+                "numpy<2.0.0",
+                "--upgrade"])
         importlib.invalidate_caches()
         return HTTPResponse(status=200, body="Language and dependencies installed correctly")
     except subprocess.CalledProcessError as e:
