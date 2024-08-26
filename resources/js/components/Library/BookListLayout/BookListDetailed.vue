@@ -14,15 +14,13 @@ import NoBookCover from '../../Icons/NoBookCover.vue';
         >
             <div class="book-box">
                 <!-- Cover image -->
-                <div class="cover-image-box">
+                <div class="cover-image-box rounded-lg">
                     <img
                         v-if="book.cover_image"
                         class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
-                    <div v-else class="no-cover-image-container h-100">
-                        <NoBookCover/>
-                    </div>
+                    <NoBookCover v-else/>
                 </div>
 
                 <!-- Title bar -->

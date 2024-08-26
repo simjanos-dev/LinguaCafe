@@ -58,12 +58,8 @@ import NoBookCover from '../../Icons/NoBookCover.vue';
                         class="cover-image rounded-lg ma-2"
                         :src="'/images/book_images/' + item.cover_image"
                     ></img>
-                    <!-- <div v-else class="no-cover-image-container d-flex flex-column p-2 h-100 justify-center align-center">
-                        <div>No image</div>
-                        <img class="no-cover-image"/>
-                    </div> -->
-                    <div v-else class="no-cover-image-container cover-image m-auto py-1">
-                        <NoBookCover class="p-1 rounded-lg" />
+                    <div v-else class="cover-image d-flex align-items-center mx-auto my-2">
+                        <NoBookCover class="px-1" />
                     </div>
                 </template>
                 
