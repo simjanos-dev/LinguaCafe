@@ -1,5 +1,9 @@
-    <template>
-        <div>
+<script setup>
+import NoBookCover from '../Icons/NoBookCover.vue';
+</script>
+
+<template>
+    <div>
         <v-card outlined class="book opened detailed rounded-lg mx-auto my-6">
             <!-- Edit book chapter dialog for adding new chapter -->
             <edit-book-chapter-dialog
@@ -14,9 +18,15 @@
                 <!-- Cover image -->
                 <div class="cover-image-box">
                     <img
+                        v-if="book.cover_image"
                         class="cover-image"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
+                    <div v-else class="d-flex flex-column h-100 justify-center align-center">
+                        <NoBookCover/>
+                        <!-- <img class="no-cover-image"/>
+                        <div>No image</div> -->
+                    </div>
                 </div>
 
                 <!-- Title bar -->

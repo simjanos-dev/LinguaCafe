@@ -21,12 +21,12 @@ class ImageService {
             ->where('cover_image', $fileName)
             ->first();
 
-        if (!$book && $fileName !== 'default.jpg') {
+        if (!$book && $fileName !== null) {
             abort(500, 'The file does not exist, or it belongs to a different user.');
         }
 
-        if ($fileName === 'default.jpg') {
-            return Storage::disk('default-files')->path('/images/book_images/' . $fileName);
+        if (is_null($fileName)) {
+            return Storage::disk('default-files')->path('/images/book_images/default.svg');
         } else {
             return Storage::path('/images/book_images/' . $fileName);
         }

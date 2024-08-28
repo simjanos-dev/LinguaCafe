@@ -1,3 +1,7 @@
+<script setup>
+import NoBookCover from '../Icons/NoBookCover.vue';
+</script>
+
 <template>
     <v-dialog v-model="value" persistent width="800px" @keydown.enter.prevent="enterPressed">
         <v-card id="edit-book-dialog" class="rounded-lg">
@@ -55,11 +59,13 @@
                     <template v-if="!editImage">
                         <div id="image-upload-box" class="d-flex">
                             <div id="image-box" class="d-flex align-center">
-                                <img 
+                                <img v-if="$props.bookCover"
                                     class="cover-image rounded-xl"
                                     :src="'/images/book_images/' + $props.bookCover"
                                     width="100px"
+                                    :alt="$props.bookName + 'cover'"
                                 ></img>
+                                <NoBookCover v-else />
                             </div>
                             <div
                                 id="edit-book-upload-image-button" 

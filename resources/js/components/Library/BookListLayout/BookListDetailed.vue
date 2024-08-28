@@ -1,3 +1,7 @@
+<script setup>
+import NoBookCover from '../../Icons/NoBookCover.vue';
+</script>
+
 <template>
     <!-- Book list detailed -->
     <div id="book-list" class="detailed">
@@ -10,11 +14,13 @@
         >
             <div class="book-box">
                 <!-- Cover image -->
-                <div class="cover-image-box">
+                <div class="cover-image-box rounded-lg">
                     <img
+                        v-if="book.cover_image"
                         class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
+                    <NoBookCover v-else/>
                 </div>
 
                 <!-- Title bar -->

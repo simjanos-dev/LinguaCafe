@@ -12,15 +12,31 @@
                 <!-- Cover image -->
                 <div class="cover-image-box rounded-lg">
                     <img
+                        v-if="book.cover_image"
                         class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                         @click="openBook(book.id)"
-                    ></img>
+                    />
+                    <div
+                        v-else
+                        class="no-cover p-2 h-100 text-center align-middle"
+                        @click="openBook(book.id)">
+                        {{book.name}}
+                    </div>
                 </div>
             </div>
         </v-card>
     </div>
 </template>
+
+<style scoped>
+.no-cover {
+    color: var(--v-foreground-base);
+    background: var(--v-primary-base);
+    hyphens: auto;
+}
+
+</style>
 
 <script>
 import {formatNumber} from './../../../helper.js';

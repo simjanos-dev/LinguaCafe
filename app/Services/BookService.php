@@ -81,7 +81,7 @@ class BookService {
         // create book model
         $book = new Book();
         $book->user_id = $userId;
-        $book->cover_image = 'default.jpg';
+        $book->cover_image = null;
         $book->language = $selectedLanguage;
         $book->name = $bookName;
 
@@ -120,7 +120,7 @@ class BookService {
 
     private function saveBookImage($book, $bookCoverFile) {
         // delete old image
-        if ($book->cover_image !== '' && $book->cover_image !== 'default.jpg') {
+        if ($book->cover_image !== '' && $book->cover_image !== null) {
             Storage::delete('/images/book_images/' . $book->cover_image);
         }
 
@@ -149,7 +149,7 @@ class BookService {
             ->where('book_id', $bookId)
             ->delete();
             
-        if ($book->cover_image !== '' && $book->cover_image !== 'default.jpg') {
+        if ($book->cover_image !== '' && $book->cover_image !== null) {
             Storage::delete('/images/book_images/' . $book->cover_image);
         }
 
