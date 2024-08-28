@@ -1,7 +1,3 @@
-<script setup>
-import NoBookCover from '../../Icons/NoBookCover.vue';
-</script>
-
 <template>
     <div id="book-list" class="table-layout">
         <!-- Book list detailed -->
@@ -59,7 +55,7 @@ import NoBookCover from '../../Icons/NoBookCover.vue';
                         :src="'/images/book_images/' + item.cover_image"
                     ></img>
                     <div v-else class="cover-image d-flex align-items-center mx-auto my-2">
-                        <NoBookCover class="px-1" />
+                        <NoBookCoverIcon class="px-1" />
                     </div>
                 </template>
                 

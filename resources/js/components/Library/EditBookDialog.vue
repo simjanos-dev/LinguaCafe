@@ -1,7 +1,3 @@
-<script setup>
-import NoBookCover from '../Icons/NoBookCover.vue';
-</script>
-
 <template>
     <v-dialog v-model="value" persistent width="800px" @keydown.enter.prevent="enterPressed">
         <v-card id="edit-book-dialog" class="rounded-lg">
@@ -65,7 +61,7 @@ import NoBookCover from '../Icons/NoBookCover.vue';
                                     width="100px"
                                     :alt="$props.bookName + 'cover'"
                                 ></img>
-                                <NoBookCover v-else />
+                                <NoBookCoverIcon v-else />
                             </div>
                             <div
                                 id="edit-book-upload-image-button" 

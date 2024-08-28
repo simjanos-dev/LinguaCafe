@@ -19,7 +19,7 @@
                     />
                     <div
                         v-else
-                        class="no-cover p-2 h-100 text-center align-middle"
+                        class="cover-image no-cover p-2 h-100 text-center align-middle"
                         @click="openBook(book.id)">
                         {{book.name}}
                     </div>
@@ -28,15 +28,6 @@
         </v-card>
     </div>
 </template>
-
-<style scoped>
-.no-cover {
-    color: var(--v-foreground-base);
-    background: var(--v-primary-base);
-    hyphens: auto;
-}
-
-</style>
 
 <script>
 import {formatNumber} from './../../../helper.js';

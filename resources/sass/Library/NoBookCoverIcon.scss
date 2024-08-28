@@ -1,0 +1,57 @@
+.no-cover-container {
+    container-name: nocover;
+    container-type: size;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-weight: bold;
+    color: var(--v-foreground-base);
+    background: var(--v-primary-base);
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+
+
+    .no-cover-caption {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+        font-size: .9rem;
+        line-height: 1.1rem;
+        padding-bottom: 0.25rem;
+        user-select: none;
+    }
+
+    @container nocover (min-width: 70px) {
+        .no-cover-caption {
+            font-size: 1.6rem;
+            line-height: 1.6rem;
+            padding-bottom: 0.5rem;
+        }
+    }
+
+    @container nocover (min-width: 150px) {
+        .no-cover-caption {
+            font-size: 1.8rem;
+            line-height: 2rem;
+            padding-bottom: 1rem;
+        }
+    }
+
+    .no-cover-bg {
+        fill: var(--v-background-base);
+    }
+
+    .no-cover-fg {
+        fill: var(--v-primary-base);
+    }   
+}
+
+.cover-image.no-cover {
+    color: var(--v-foreground-base);
+    background: var(--v-primary-base);
+    hyphens: auto;
+}

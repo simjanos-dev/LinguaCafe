@@ -1,7 +1,3 @@
-<script setup>
-import NoBookCover from '../../Icons/NoBookCover.vue';
-</script>
-
 <template>
     <!-- Book list detailed -->
     <div id="book-list" class="detailed">
@@ -20,7 +16,7 @@ import NoBookCover from '../../Icons/NoBookCover.vue';
                         class="cover-image rounded-lg"
                         :src="'/images/book_images/' + book.cover_image"
                     ></img>
-                    <NoBookCover v-else/>
+                    <NoBookCoverIcon v-else/>
                 </div>
 
                 <!-- Title bar -->
