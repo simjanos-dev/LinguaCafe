@@ -96,8 +96,10 @@ class ChapterService {
 
             $chaptersWithWordCounts[$chapters[$i]->id] = $currentChapterWordCounts;
 
+            // push data on websockets in 5 item chunks
             if ($i % 5 === 0 || $i === count($chapters) - 1) {
                 event(new \App\Events\ChapterStateUpdatedEvent($userUuid, $chaptersWithWordCounts));
+                $chaptersWithWordCounts = [];
             }
         }
         

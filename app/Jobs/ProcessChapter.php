@@ -2,21 +2,22 @@
 
 namespace App\Jobs;
 
+use Exception;
 use Carbon\Carbon;
 use App\Models\Phrase;
 use App\Models\Chapter;
 use Illuminate\Bus\Queueable;
 use App\Models\EncounteredWord;
-use App\Services\ChapterService;
 
 // services
-use App\Services\VocabularyService;
-use Illuminate\Queue\SerializesModels;
+use App\Services\ChapterService;
+use Ramsey\Collection\Collection;
 
 // models
+use App\Services\VocabularyService;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Models\ChapterProcessionQueueStat;
-use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
@@ -40,6 +41,11 @@ class ProcessChapter implements ShouldQueue
 
     public function handle() {
         try {
+            // for testing failed jobs
+            // if(random_int(1, 2) === 2) {
+            //     throw new \Exception('teszt');
+            // }
+
             $chapter = Chapter
                 ::where('id', $this->chapterId)
                 ->where('user_id', $this->userId)
@@ -52,7 +58,7 @@ class ProcessChapter implements ShouldQueue
             $this->startedAt = Carbon::now();
 
             // process chapter text
-            $wordCount = (new ChapterService())->processChapterText($this->userId, $this->chapterId);
+            (new ChapterService())->processChapterText($this->userId, $this->chapterId);
             
             // index phrases that were created while the job was running
             $phrases = Phrase
@@ -66,16 +72,7 @@ class ProcessChapter implements ShouldQueue
                 (new VocabularyService())->indexPhraseInChapter($chapter->id, $this->userId, $this->language, $phrase);
             }
 
-            $chapterProcessionQueueStat = new ChapterProcessionQueueStat();
-            $chapterProcessionQueueStat->user_id = $this->userId;
-            $chapterProcessionQueueStat->chapter_id = $this->chapterId;
-            $chapterProcessionQueueStat->status = 'finished';
-            $chapterProcessionQueueStat->word_count = $wordCount;
-            $chapterProcessionQueueStat->dispatched_at = $this->dispatchedAt;
-            $chapterProcessionQueueStat->started_at = $this->startedAt;
-            $chapterProcessionQueueStat->finished_at = Carbon::now();
-            $chapterProcessionQueueStat->save();
-
+    
             $this->broadcastChapterStatusEvent($chapter->book_id);
         } catch (\Throwable $e) {
             $this->jobFailed();
@@ -100,21 +97,10 @@ class ProcessChapter implements ShouldQueue
         $chapter->processing_status = 'failed';
         $chapter->save();
 
-        // create a chapter procession queue stat
-        $chapterProcessionQueueStat = new ChapterProcessionQueueStat();
-        $chapterProcessionQueueStat->user_id = $this->userId;
-        $chapterProcessionQueueStat->chapter_id = $this->chapterId;
-        $chapterProcessionQueueStat->status = 'failed';
-        $chapterProcessionQueueStat->word_count = 0;
-        $chapterProcessionQueueStat->dispatched_at = $this->dispatchedAt;
-        $chapterProcessionQueueStat->started_at = $this->startedAt;
-        $chapterProcessionQueueStat->finished_at = Carbon::now();
-        $chapterProcessionQueueStat->save();
-
-        $this->broadcastChapterStatusEvent($chapter->book_id);
+        $this->broadcastChapterStatusEvent();
     }
 
-    private function broadcastChapterStatusEvent($bookId) {
+    private function broadcastChapterStatusEvent() {
         $words = EncounteredWord
             ::select(['id', 'word', 'stage'])
             ->where('user_id', $this->userId)
@@ -123,28 +109,22 @@ class ProcessChapter implements ShouldQueue
             ->keyBy('id')
             ->toArray();
 
-        $chapters = Chapter
+        $chapter = Chapter
             ::select(['id', 'processing_status', 'unique_word_ids', 'word_count'])
-            ->where('book_id', $bookId)
+            ->where('id', $this->chapterId)
             ->where('user_id', $this->userId)
             ->where('processing_status', '<>', 'processing')
-            ->get();
+            ->first();
 
-        $chapters->map(function (Chapter $chapter) use ($words) {
-            if ($chapter->processing_status !== 'processed') {
-                unset($chapter->unique_word_ids);
-                unset($chapter->word_count);
-                return $chapter;
-            }
-
+        if ($chapter->processing_status === 'processed') {
             $chapter->wordCount = $chapter->getWordCounts($words);
-            unset($chapter->unique_word_ids);
-            unset($chapter->word_count);
-
-            return $chapter;
-        });      
-
+        }
         
-        event(new \App\Events\ChapterStateUpdatedEvent($this->userUuid, $chapters->keyBy('id')->toArray()));
+        unset($chapter->unique_word_ids);
+        unset($chapter->word_count);
+        
+        event(new \App\Events\ChapterStateUpdatedEvent($this->userUuid, [
+            $chapter->id => $chapter
+        ]));
     }
 }
