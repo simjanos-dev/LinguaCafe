@@ -569,7 +569,7 @@ def getYoutubeSubtitles():
 @route('/tokenizer/get-website-text', method='POST')
 def getWebsiteText():
     url = request.json.get('url')
-    article = Article(url, language='th')
+    article = Article(url)
     article.download()
     article.parse()
 
