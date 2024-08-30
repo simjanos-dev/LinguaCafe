@@ -14,10 +14,11 @@ use App\Services\ChapterService;
 use Ramsey\Collection\Collection;
 
 // models
+use App\Services\QueueStatsService;
 use App\Services\VocabularyService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Models\ChapterProcessionQueueStat;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
@@ -25,13 +26,28 @@ class ProcessChapter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
+
+    private VocabularyService $vocabularyService;
+    private ChapterService $chapterService;
+    private QueueStatsService $queueStatsService;
+
     private $userId;
     private $userUuid;
     private $chapterId;
     private $language;
     private $dispatchedAt, $startedAt;
 
-    public function __construct($userId, $userUuid, $chapterId, $language) {
+    public function __construct(
+        $userId, 
+        $userUuid, 
+        $chapterId, 
+        $language
+    ) 
+    {
+        $this->vocabularyService = new VocabularyService();
+        $this->chapterService = new ChapterService();
+        $this->queueStatsService = new QueueStatsService();
+
         $this->userId = $userId;
         $this->userUuid = $userUuid;
         $this->chapterId = $chapterId;
@@ -41,24 +57,15 @@ class ProcessChapter implements ShouldQueue
 
     public function handle() {
         try {
-            // for testing failed jobs
-            // if(random_int(1, 2) === 2) {
-            //     throw new \Exception('teszt');
-            // }
-
-            $chapter = Chapter
-                ::where('id', $this->chapterId)
-                ->where('user_id', $this->userId)
-                ->first();
-        
-            if (!$chapter) {
-                return;
-            }
-
             $this->startedAt = Carbon::now();
 
+            $chapter = Chapter::query()
+                ->where('id', $this->chapterId)
+                ->where('user_id', $this->userId)
+                ->first();
+
             // process chapter text
-            (new ChapterService())->processChapterText($this->userId, $this->chapterId);
+            $this->chapterService->processChapterText($this->userId, $this->chapterId);
             
             // index phrases that were created while the job was running
             $phrases = Phrase
@@ -69,38 +76,36 @@ class ProcessChapter implements ShouldQueue
                 ->get();
 
             foreach ($phrases as $phrase) {
-                (new VocabularyService())->indexPhraseInChapter($chapter->id, $this->userId, $this->language, $phrase);
+                $this->vocabularyService->indexPhraseInChapter($chapter->id, $this->userId, $this->language, $phrase);
             }
 
-    
-            $this->broadcastChapterStatusEvent($chapter->book_id);
+            $chapter->refresh();
+            $this->queueStatsService->insertChapterProcessedStat($chapter, 'finished', $this->dispatchedAt, $this->startedAt);
+            $this->broadcastChapterStatusEvent($chapter);
         } catch (\Throwable $e) {
             $this->jobFailed();
             throw $e;
         }
     }
 
-    /*
-        Laravel does not pass context to it's own failed() method....
-    */
-    public function jobFailed() {
+    // Laravel does not pass context to it's own failed() method.
+    public function jobFailed() 
+    {
         $chapter = Chapter
             ::where('id', $this->chapterId)
             ->where('user_id', $this->userId)
             ->first();
         
-        if (!$chapter) {
-            return;
-        }
-
         // set chapter processing status to failed
         $chapter->processing_status = 'failed';
         $chapter->save();
 
-        $this->broadcastChapterStatusEvent();
+        $this->queueStatsService->insertChapterProcessedStat($chapter, 'failed', $this->dispatchedAt, $this->startedAt);
+        $this->broadcastChapterStatusEvent($chapter);
     }
 
-    private function broadcastChapterStatusEvent() {
+    private function broadcastChapterStatusEvent(Chapter $chapter): void
+    {
         $words = EncounteredWord
             ::select(['id', 'word', 'stage'])
             ->where('user_id', $this->userId)
@@ -109,22 +114,15 @@ class ProcessChapter implements ShouldQueue
             ->keyBy('id')
             ->toArray();
 
-        $chapter = Chapter
-            ::select(['id', 'processing_status', 'unique_word_ids', 'word_count'])
-            ->where('id', $this->chapterId)
-            ->where('user_id', $this->userId)
-            ->where('processing_status', '<>', 'processing')
-            ->first();
-
         if ($chapter->processing_status === 'processed') {
             $chapter->wordCount = $chapter->getWordCounts($words);
         }
         
-        unset($chapter->unique_word_ids);
-        unset($chapter->word_count);
-        
         event(new \App\Events\ChapterStateUpdatedEvent($this->userUuid, [
-            $chapter->id => $chapter
+            $chapter->id => [
+                'processing_status' => $chapter->processing_status,
+                'wordCount' => $chapter->wordCount ?? null,
+            ]
         ]));
     }
 }

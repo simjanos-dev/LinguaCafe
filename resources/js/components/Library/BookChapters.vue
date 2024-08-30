@@ -257,7 +257,7 @@
                         return;
                     }
 
-                    if ('wordCount' in chapters[currentChapter.id]) {
+                    if ('wordCount' in chapters[currentChapter.id] && chapters[currentChapter.id].wordCount !== null) {
                         currentChapter.wordCount = chapters[currentChapter.id].wordCount
                         currentChapter.wordCountsLoaded = true;
                     }

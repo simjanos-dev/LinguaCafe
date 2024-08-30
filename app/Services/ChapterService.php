@@ -381,8 +381,7 @@ class ChapterService {
             $bookId = $chapter->book_id;    
         });
         
-        $wordCount = $this->bookService->updateBookWordCount($userId, $bookId);
-        return $wordCount;
+        $this->bookService->updateBookWordCount($userId, $bookId);
     }
 
     public function deleteChapter($userId, $chapterId) {

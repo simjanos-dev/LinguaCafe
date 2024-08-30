@@ -73,8 +73,6 @@ class BookService {
             ::where('user_id', $userId)
             ->where('id', $bookId)
             ->update(['word_count' => $bookWordCount]);
-        
-        return $bookWordCount;
     }
 
     public function createBook($userId, $selectedLanguage, $bookName, $bookCoverFile) {

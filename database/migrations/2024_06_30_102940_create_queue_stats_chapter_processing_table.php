@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQueueStatsChapterProcessionTable extends Migration
+class CreateQueueStatsChapterProcessingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateQueueStatsChapterProcessionTable extends Migration
      */
     public function up()
     {
-        Schema::create('queue_stats_chapter_procession', function (Blueprint $table) {
+        Schema::create('queue_stats_chapter_processing', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
             $table->integer('chapter_id');
-            $table->integer('word_count');
+            $table->integer('book_id');
+            $table->integer('word_count')->nullable();
             $table->enum('status', ['failed', 'finished'])->default('finished');
             $table->dateTime('dispatched_at');
             $table->dateTime('started_at');
@@ -33,6 +34,6 @@ class CreateQueueStatsChapterProcessionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('queue_stats_chapter_procession');
+        Schema::dropIfExists('queue_stats_chapter_processing');
     }
 }
