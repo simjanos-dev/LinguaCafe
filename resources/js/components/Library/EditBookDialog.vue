@@ -46,7 +46,7 @@
                         rounded
                         clearable
                         ref="image"
-                        accept=".jpg,.jpeg,.png"
+                        accept=".jpg,.jpeg,.png,.webp"
                         placeholder="Cover image"
                         prepend-icon="mdi-image"
                         @change="imageChanged"

@@ -25,7 +25,7 @@ class CreateBookRequest extends FormRequest
     {
         return [
             'bookName' => 'required|string|max:128',
-            'bookCover' => 'file|mimes:jpg,jpeg,png'
+            'bookCover' => 'file|mimes:jpg,jpeg,png,webp'
         ];
     }
 }

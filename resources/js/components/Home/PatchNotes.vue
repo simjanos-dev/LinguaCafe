@@ -10,9 +10,10 @@
                 <b>New features:</b>
                 <ul>
                     <li>Replaced cookies with local storage. This means that your local settings will reset to default settings.</li>
-                    <li>Added queue based chapter imports. From now on you won't have to wait your chapters to be imported, it will happen in the background. If you open a book, the chapters will be updated in real time when the importing is finished.</li>
-                    <li>Dictionary import progress bar now shows real time (ish) progress.</li>
+                    <li>Added queue based chapter imports. From now on you won't have to wait for your chapters to be imported, it will happen in the background. If you open a book, the chapters will be updated in real time after the importing is finished.</li>
+                    <li>Dictionary import progress bar now shows real time progress.</li>
                     <li>Added level to hover vocabulary box for highlighted words.</li>
+                    <li>Added book .webp support for cover images.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -26,6 +27,7 @@
                 <b>Other changes:</b>
                 <ul>
                     <li>Updated to Laravel 11.</li>
+                    <li>Replaced default book cover image.</li>
                     <li>Replaced switches with checkboxes on the vocabulary export page.</li>
                 </ul>
             </v-card-text>

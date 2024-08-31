@@ -26,7 +26,7 @@ class UpdateBookRequest extends FormRequest
         return [
             'bookId' => 'required|numeric|gte:0',
             'bookName' => 'required|string|max:128',
-            'bookCover' => 'file|mimes:jpg,jpeg,png'
+            'bookCover' => 'file|mimes:jpg,jpeg,png,webp'
         ];
     }
 }
