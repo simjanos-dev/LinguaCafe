@@ -1,7 +1,7 @@
 <?php
 
 return [
-
+    'my_memory_url' => 'https://api.mymemory.translated.net/',
     'languages' => [
         // A list of the supported languages that can be read with linguacafe. 
         'supported_languages' => [

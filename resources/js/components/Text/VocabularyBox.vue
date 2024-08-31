@@ -151,7 +151,7 @@
 
                         <!-- Search box -->
                         <vocabulary-search-box
-                            :deeplEnabled="$props.deeplEnabled"
+                            :any-api-dictionary-enabled="$props.anyApiDictionaryEnabled"
                             :language="$props.language"
                             :searchTerm="searchField"
                             @addDefinitionToInput="addDefinitionToInput"
@@ -295,7 +295,7 @@
         props: {
             autoHighlightWords: Boolean,
             language: String,
-            deeplEnabled: Boolean,
+            anyApiDictionaryEnabled: Boolean,
             textToSpeechAvailable: Boolean,
         },
         computed: mapState({

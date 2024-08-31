@@ -80,19 +80,16 @@ class DictionaryService {
         return true;
     }
 
-    public function isDeeplEnabled($language) {
-        $deeplDictionary = Dictionary
+    public function isAnyApiDictionaryEnabled($language): bool
+    {
+        $apiDictionary = Dictionary
             ::where('name', 'like', 'DeepL%')
             ->where('enabled', true)
             ->where('database_table_name','API')
             ->where('source_language', $language)
             ->first();
 
-        if (!$deeplDictionary) {
-            return false;
-        } else {
-            return true;
-        }
+        return boolval($apiDictionary);
     }
 
     public function getDeeplCharacterLimit() {
@@ -121,14 +118,12 @@ class DictionaryService {
             $searchResultDictionary->name = $dictionary->name;
             $searchResultDictionary->color = $dictionary->color;
             
-            if ($dictionary->name == 'JMDict') {
+            if ($dictionary->name === 'JMDict') {
                 $searchResultDictionary->jmdictRecords = $this->searchJmDict($term);
-            } else if ($dictionary->type == 'my_memory') {
-                $searchResultDictionary->records = $this->searchMyMemory($dictionary->source_language, $dictionary->target_language, $term);
-            } else if (explode(' ', $dictionary->name)[0] == 'DeepL' && $dictionary->database_table_name == 'API') {
-                continue;
-            } else {
+            } else if($dictionary->type === 'supported' || $dictionary->type === 'custom_csv') {
                 $searchResultDictionary->records = $this->searchImportedDictionary($dictionary->database_table_name, $term);
+            } else {
+                continue;
             }
 
             $searchResultDictionaries[] = $searchResultDictionary;
@@ -192,6 +187,151 @@ class DictionaryService {
         return $result;
     }
     
+    public function searchApiDictionaries(string $sourceLanguage, string $term): array
+    {
+        $definitions = [];
+        $termHash = md5(mb_strtolower($term, 'UTF-8'));
+        $apiDictionaries = Dictionary::query()
+            ->whereIn('type', ['my_memory', 'deepl'])
+            ->where('enabled', true)
+            ->where('source_language', $sourceLanguage)
+            ->get();
+
+        $responseAdditionalInfo = [];
+        $responses = Http::pool(function (Pool $pool) use (
+                $apiDictionaries, 
+                $term,
+                $termHash,
+                &$definitions,
+                &$responseAdditionalInfo,
+        ) {
+            foreach ($apiDictionaries as $dictionary) {
+
+                // deepl
+                if ($dictionary->type === 'deepl') {
+                    // check if search term is already cached
+                    $cache = DeeplCache::query()
+                        ->where('source_language', $dictionary->source_language)
+                        ->where('target_language', $dictionary->target_language)
+                        ->where('hash', $termHash)
+                        ->first();
+                
+                    if ($cache) {
+                        $definitions[] = [
+                            'dictionary' => $dictionary->name,
+                            'dictionaryColor' => $dictionary->color,
+                            'definitions' => $cache->definition,
+                            'term' => $cache->definition,
+                        ];
+                    } else {
+                        $responseAdditionalInfo[] = [
+                            'dictionary' => $dictionary->name,
+                            'dictionaryColor' => $dictionary->color,
+                            'dictionaryType' => $dictionary->type,
+                            'term' => $term,
+                        ];
+                        
+                        $this->buildDeeplRequest($pool, $dictionary, $term);
+                    }
+                }
+
+                // my memory api
+                if ($dictionary->type === 'my_memory') {
+                    $responseAdditionalInfo[] = [
+                        'dictionary' => $dictionary->name,
+                        'dictionaryColor' => $dictionary->color,
+                        'dictionaryType' => $dictionary->type,
+                        'term' => $term,
+                    ];
+
+                    $this->buildMyMemoryRequest($pool, $dictionary, $term);
+                }
+            }
+        });
+
+        // format dictionary search responses to a unified format
+        foreach($responses as $responseIndex => $response) {
+            // dd(json_decode($responses[1]->body()));
+            if (!$response->ok()) {
+                $definitions[] = [
+                    'definitions' => ['error'],
+                    ...$responseAdditionalInfo[$responseIndex]
+                ];
+
+                continue;
+            }
+
+            $dictionaryType = $responseAdditionalInfo[$responseIndex]['dictionaryType'];
+            unset($responseAdditionalInfo[$responseIndex]['dictionaryType']);
+            if ($dictionaryType === 'deepl') {
+                $definitions[] = [
+                    'definitions' => [json_decode($response->body())->translations[0]->text],
+                    ...$responseAdditionalInfo[$responseIndex]
+                ];
+            }
+            
+            
+            if ($dictionaryType === 'my_memory') {
+                $myMemoryDefinitions = [];
+                $matches = json_decode($response->body());
+                foreach($matches->matches as $match) {
+                    if($match->segment !== $responseAdditionalInfo[$responseIndex]['term']) {
+                        continue;
+                    }
+
+                    
+                    $myMemoryDefinitions[] = $match->translation;
+                }
+
+                if (!count($myMemoryDefinitions)) {
+                    continue;
+                }
+
+                $definitions[] = [
+                    'definitions' => $myMemoryDefinitions,
+                    ...$responseAdditionalInfo[$responseIndex]
+                ];
+            }
+        }
+
+        return $definitions;
+    }
+
+    private function buildDeeplRequest(Pool $pool, Dictionary $dictionary, string $term): void
+    {
+        $deeplApiKey = Setting::where('name', 'deeplApiKey')->first()->decode();
+        $deeplHost = Setting::where('name', 'deeplHost')->first()->decode();
+        $deeplLanguageCodes = config('linguacafe.languages.deepl_language_codes');
+
+        // DeepL does not support 'EN-US' for source language 
+        // and 'PT-PT' for language, so I replace them
+        $sourceLanguageCode = $deeplLanguageCodes[$dictionary->source_language];
+        if ($sourceLanguageCode === 'EN-US') {
+            $sourceLanguageCode = 'EN';
+        }
+
+        if ($sourceLanguageCode === 'PT-PT') {
+            $sourceLanguageCode = 'PT';
+        }
+
+        $pool->withHeaders([
+            'Authorization' => 'DeepL-Auth-Key ' . $deeplApiKey,
+            'Content-Type' => 'application/json',
+        ])->post($deeplHost, [
+            'text' => [$term],
+            "source_lang" => $sourceLanguageCode,
+            "target_lang" => $deeplLanguageCodes[$dictionary->target_language],
+        ]);
+    }
+
+    private function buildMyMemoryRequest(Pool $pool, Dictionary $dictionary, string $term): void
+    {
+        $myMemoryLanguageCodes = config('linguacafe.languages.my_memory_supported_target_languages');
+        $sourceLanguageCode = $myMemoryLanguageCodes[$dictionary->source_language];
+        $targetLanguageCode = $myMemoryLanguageCodes[$dictionary->target_language];
+        $pool->get('https://api.mymemory.translated.net/get?q=' . urlencode($term) . '!&langpair=' . $sourceLanguageCode . '|' . $targetLanguageCode);
+    }
+
     public function searchMyMemory($sourceLanguage, $targetLanguage, $term) {
         $myMemoryDictionaries = Dictionary
             ::where('type', 'my_memory')
@@ -202,7 +342,7 @@ class DictionaryService {
             ->get();
 
         if (empty($myMemoryDictionaries)) {
-            throw new \Exception('MyMemory dictionary is disabled.');
+            throw new \Exception('MyMemory dictionaries are disabled.');
         }
 
         // retrieve api key from database
@@ -212,7 +352,7 @@ class DictionaryService {
         $definitions = [];
         $definitionsToRequest = [];
         foreach ($myMemoryDictionaries as $index => $dictionary) {
-            $definitionsToRequest[] = [$languageCodes[$dictionary->source_language], $languageCodes[$dictionary->target_language]];
+            $definitionsToRequest[] = [];
         }
 
         // request translations

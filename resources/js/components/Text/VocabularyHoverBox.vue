@@ -47,27 +47,21 @@
                     <v-icon small>mdi-list-box</v-icon> {{ translation }}
                 </li>
             </template>
-
-            <!-- No dictionary search result -->
-            <template v-if="!['loading', 'deepl-disabled'].includes(deeplTranslation) && !dictionaryTranslationList.length">
-                <li>
-                    <v-icon small>mdi-list-box</v-icon> No dictionary results
-                </li>
-            </template>
     
-            <!-- Deepl translations -->
-            <template v-if="!['loading', 'deepl-disabled'].includes(deeplTranslation) && deeplTranslation.length">
-                <li key="deepl-translation" v-for="(translation, index) in deeplTranslationList" :key="'deepl-' + index">
+            <!-- Api translations -->
+            <template v-if="apiTranslations.length && apiTranslations[0] !== 'loading' && apiTranslations[0] !== 'error'">
+                <li key="api-translation" v-for="(translation, index) in apiTranslations" :key="'api-' + index">
                     <v-icon small>mdi-translate</v-icon> {{ translation }}
                 </li>
             </template>
 
-            <!-- Deepl translations loading -->
-            <template v-if="deeplTranslation === 'loading'">
+            <!-- Api translations loading -->
+            <template v-if="apiTranslations.length && apiTranslations[0] === 'loading'">
                 <li>
                     <v-progress-circular indeterminate class="mx-1" size="10" width="2" color="#92B9E2"></v-progress-circular> searching
                 </li>
             </template>
+            
         </ul>
     </v-card>
 </template>
@@ -80,7 +74,6 @@
             return {
                 userTranslationList: [],
                 dictionaryTranslationList: [],
-                deeplTranslationList: [],
             }
         },
         computed: mapState({
@@ -90,7 +83,7 @@
             reading: state => state.hoverVocabularyBox.reading,
             stage: state => state.hoverVocabularyBox.stage,
             dictionaryTranslation: state => state.hoverVocabularyBox.dictionaryTranslation,
-            deeplTranslation: state => state.hoverVocabularyBox.deeplTranslation,
+            apiTranslations: state => state.hoverVocabularyBox.apiTranslations,
         }),
         props: {
         },
@@ -105,12 +98,6 @@
             if (this.$store.state.hoverVocabularyBox.dictionaryTranslation.length) {
                 this.dictionaryTranslationList = this.$store.state.hoverVocabularyBox.dictionaryTranslation.split(';');
             }
-
-            if (this.$store.state.hoverVocabularyBox.deeplTranslation.length) {
-                this.deeplTranslationList = this.$store.state.hoverVocabularyBox.deeplTranslation.split(';');
-            }
-
-            
         },
         methods: {
         }

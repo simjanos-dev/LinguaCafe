@@ -121,7 +121,7 @@
             ref="vocabularyBox"
             :language="$props.language"
             :auto-highlight-words="$props.autoHighlightWords"
-            :deepl-enabled="this.deeplEnabled"
+            :any-api-dictionary-enabled="anyApiDictionaryEnabled"
             :text-to-speech-available="textToSpeechAvailable"
             @textToSpeech="textToSpeech"
             @setStage="setStage"
@@ -147,7 +147,7 @@
             <vocabulary-bottom-sheet
                 :language="$props.language"
                 :auto-highlight-words="$props.autoHighlightWords"
-                :deepl-enabled="this.deeplEnabled"
+                :any-api-dictionary-enabled="anyApiDictionaryEnabled"
                 :text-to-speech-available="textToSpeechAvailable"
                 @textToSpeech="textToSpeech"
                 @setStage="setStage"
@@ -164,7 +164,7 @@
             v-if="!$store.state.vocabularyBox.sidebarHidden"
             :language="$props.language"
             :auto-highlight-words="$props.autoHighlightWords"
-            :deepl-enabled="this.deeplEnabled"
+            :any-api-dictionary-enabled="anyApiDictionaryEnabled"
             :text-to-speech-available="textToSpeechAvailable"
             @textToSpeech="textToSpeech"
             @setStage="setStage"
@@ -202,7 +202,7 @@
                 snackbarId: 1,
                 ankiAutoAddCards: false,
                 ankiShowNotifications: false,
-                deeplEnabled: false,
+                anyApiDictionaryEnabled: false,
 
                 // hover vocabulary box
                 hoverVocabularyDelayTimeout: null,
@@ -330,8 +330,8 @@
                 this.ankiShowNotifications = response.data.ankiShowNotifications;
             });
 
-            axios.get('/dictionaries/deepl/is-enabled').then((response) => {
-                this.deeplEnabled = response.data;
+            axios.get('/dictionaries/api/is-enabled').then((response) => {
+                this.anyApiDictionaryEnabled = response.data;
             });
 
             this.resizeHandle();
@@ -813,7 +813,7 @@
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredPhrase', value: data.hoveredPhrase });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'userTranslation', value: data.translation });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: 'loading' });
-                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: this.deeplEnabled ? 'loading' : 'deepl-disabled' });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: this.anyApiDictionaryEnabled ? ['loading'] : [] });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'reading', value: data.reading });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: data.stage });
 
@@ -826,7 +826,7 @@
                     if (!this.$props.vocabularyHoverBoxSearch) {
                         this.hoverVocabularyDelayTimeout = setTimeout(() => {
                             this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: 'dictionary-search-disabled' });
-                            this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: '' });
+                            this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: [] });
                             this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'active', value: true });
                             this.$nextTick(() => {
                                 this.updateHoverVocabularyBoxPosition();
@@ -958,7 +958,7 @@
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'positionTop', value: 0 });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'userTranslation', value: '' });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: '' });
-                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: '' });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: [] });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'reading', value: '' });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredPhrase', value: -1 });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: -1 });
@@ -1286,7 +1286,7 @@
             makeHoverVocabularyBoxSearchRequest(term) {
                 if (!this.$props.vocabularyHoverBoxSearch) {
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: '' });
-                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: '' });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: this.anyApiDictionaryEnabled ? ['loading'] : [] });
                 }
 
                 // do not make a search request if a word has been selected
@@ -1326,30 +1326,25 @@
                     });
                 });
 
-                // make deepl search
-                if (this.deeplEnabled) {
-                    axios.post('/dictionaries/deepl/search', {
+                // make api search
+                if (this.anyApiDictionaryEnabled) {
+                    axios.post('/dictionaries/api/search', {
                         language: this.$props.language,
                         term: term
                     }).then((response) => {
-                        // return if a different word has been selected
-                        // after the request was sent
-                        if (this.$store.state.hoverVocabularyBox.dictionarySearchTerm !== response.data.term) {
-                            return;
-                        }
+                        let apiDefinitions = [];
+                        response.data.forEach((item) => {
+                            apiDefinitions = apiDefinitions.concat(item.definitions);
+                        });
 
-                        // return if there is no word selected anymore
-                        if (this.$store.state.hoverVocabularyBox.dictionarySearchTerm === '') {
-                            return;
-                        }
-
-                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: this.$store.state.hoverVocabularyBox.key + 1 });
-                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'key', value: response.data.definitions });
+                        console.log('apiDefinitions', response.data, apiDefinitions);
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: apiDefinitions });
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'key', value: this.$store.state.hoverVocabularyBox.key + 1 });
                         this.$nextTick(() => {
                             this.updateHoverVocabularyBoxPosition();
                         });
                     }).catch(() => {
-                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'deeplTranslation', value: 'DeepL error' });
+                        this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: ['error'] });
                     });
                 }
             },

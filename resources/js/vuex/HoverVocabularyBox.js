@@ -3,7 +3,7 @@ export default {
     state: () => ({
         active: false,
         dictionaryTranslation: '',
-        deeplTranslation: '',
+        apiTranslations: [],
         dictionarySearchTerm: '',
         disabledWhileSelecting: false,
         lastHoveredWordIndex: -1,

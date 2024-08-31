@@ -1,42 +1,41 @@
 <template>
     <div id="vocabulary-search-box" class="border rounded-lg pa-2" :language="$props.language">
-        <!-- DeepL translation -->
-        <div 
-            v-if="$props.deeplEnabled"
-            :class="{
-                'search-result': true, 
-                'disabled': deeplSearchResults === 'DeepL error' || deeplSearchResults == 'loading'
-            }"
-        >
+        <!-- Apis loading -->
+         <div class="search-result disabled" v-if="dictionaryApiSearchLoading">
             <div class="search-result-title">
-                <div class="dictionary-title-icon mr-1" style="background-color: #92B9E2">
+                <div class="dictionary-title-icon mr-1" style="background-color: var(--v-primary-base);">
                     <v-icon small>mdi-translate</v-icon>
                 </div>
-                DeepL <div class="search-result-word default-font" :title="$props.searchTerm">{{ $props.searchTerm }}</div>
+                {{ $props.searchTerm }}
+                <div class="search-result-word default-font" :title="$props.searchTerm">API search</div>
+            </div>
+            <div class="search-result-definition rounded pr-2">
+                loading <v-progress-circular indeterminate class="ml-1" size="20" width="3" color="primary"></v-progress-circular>
+            </div>
+        </div>
+
+        <!-- API translations -->
+        <div
+            v-else
+            class="search-result"
+            v-for="(searchResult, searchResultIndex) in apiSearchResults"
+        >
+
+            <div class="search-result-title">
+                <div class="dictionary-title-icon mr-1" :style="{'background-color': searchResult.dictionaryColor}">
+                    <v-icon small>mdi-translate</v-icon>
+                </div>
+                {{ searchResult.dictionary }} <div class="search-result-word default-font" :title="$props.searchTerm">{{ $props.searchTerm }}</div>
             </div>
             
-            <!-- DeepL search result -->
+            <!-- Api search result -->
             <div 
-                v-if="deeplSearchResults !== 'loading' && deeplSearchResults !== 'DeepL error' && deeplSearchResults.length"
-                v-for="(definition, index) in deeplSearchResults"
-                :key="'deepl-' + index"
+                v-for="(definition, definitionIndex) in searchResult.definitions"
+                :key="`api-search-result-${searchResultIndex}-${definitionIndex}`"
                 class="search-result-definition rounded"
                 @click="addDefinitionToInput(definition)"
             >
                 {{ definition }} <v-icon small>mdi-plus</v-icon>
-            </div>
-
-            <!-- DeepL search error -->
-            <div 
-                v-if="deeplSearchResults === 'DeepL error'"
-                class="search-result-definition rounded"
-            >
-                {{ deeplSearchResults }}
-            </div>
-
-            <!-- DeepL loading -->
-            <div v-if="deeplSearchResults == 'loading'" class="search-result-definition rounded pr-2">
-                loading <v-progress-circular indeterminate class="ml-1" size="20" width="3" color="#92B9E2"></v-progress-circular>
             </div>
         </div>
 
@@ -123,7 +122,7 @@
     export default {
         props: {
             language: String,
-            deeplEnabled: Boolean,
+            anyApiDictionaryEnabled: Boolean,
             searchTerm: String
         },
         watch: { 
@@ -135,8 +134,9 @@
             return {
                 searchResults: [],
                 dictionarySearchLoading: false,
+                dictionaryApiSearchLoading: false,
                 dictionarySearchResultsFound: true,
-                deeplSearchResults: [],
+                apiSearchResults: [],
             };
         },
         mounted: function() {
@@ -163,17 +163,19 @@
                     this.dictionarySearchLoading = false;
                 });
 
-                // deepl search
-                if (this.$props.deeplEnabled) {
-                    this.deeplSearchResults = 'loading';
-                    axios.post('/dictionaries/deepl/search', {
+                // api search
+                if (this.$props.anyApiDictionaryEnabled) {
+                    this.dictionaryApiSearchLoading = true;
+
+                    axios.post('/dictionaries/api/search', {
                         language: this.$props.language,
                         term: this.$props.searchTerm
                     }).then((response) => {
-                        this.deeplSearchResults = response.data.definitions.split(';');
-
+                        this.dictionaryApiSearchLoading = false;
+                        this.apiSearchResults = response.data;
                     }).catch(() => {
-                        this.deeplSearchResults = 'DeepL error';
+                        this.dictionaryApiSearchLoading = false;
+                        this.apiSearchResults = [];
                     });
                 }
             },
@@ -210,6 +212,7 @@
                             records: []
                         };
 
+                        console.log('wtf', data[dictionaryIndex])
                         for (var recordIndex = 0; recordIndex < data[dictionaryIndex].records.length; recordIndex++) {
                             searchResult.records.push({
                                 word: data[dictionaryIndex].records[recordIndex].word,

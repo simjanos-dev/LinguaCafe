@@ -20,7 +20,7 @@ use App\Http\Requests\Dictionaries\GetDictionaryRequest;
 use App\Http\Requests\Dictionaries\UpdateDictionaryRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsForHoverVocabularyRequest;
-use App\Http\Requests\Dictionaries\SearchDeeplRequest;
+use App\Http\Requests\Dictionaries\SearchApiRequest;
 use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
 use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportDictionaryCsvFileRequest;
@@ -97,11 +97,11 @@ class DictionaryController extends Controller
         return response()->json('Dictionary has been updated successfully.', 200);
     }
 
-    public function isDeeplEnabled() {
+    public function isAnyApiDictionaryEnabled() {
         $language = Auth::user()->selected_language;
 
         try {
-            $response = $this->dictionaryService->isDeeplEnabled($language);
+            $response = $this->dictionaryService->isAnyApiDictionaryEnabled($language);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -148,21 +148,17 @@ class DictionaryController extends Controller
         return response()->json($searchResult, 200);
     }
 
-    public function searchDeepl(SearchDeeplRequest $request) {
+    public function searchApiDictionaries(SearchApiRequest $request) {
         $language = $request->post('language');
         $term = $request->post('term');
 
         try {
-            $definitions = $this->dictionaryService->searchDeepl($language, $term);
+            $definitions = $this->dictionaryService->searchApiDictionaries($language, $term);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
 
-        $result = new \stdClass();
-        $result->term = $term;
-        $result->definitions = $definitions;
-
-        return response()->json($result, 200);
+        return response()->json($definitions, 200);
     }
 
     public function searchInflections(SearchInflectionsRequest $request) {

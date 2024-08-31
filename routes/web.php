@@ -137,8 +137,8 @@ Route::group(['middleware' => ['auth', 'auth.session', 'web']], function () {
     Route::get('/images/kanji/{fileName}', [App\Http\Controllers\ImageController::class, 'getKanjiImage']);
 
     // dictionaries
-    Route::post('/dictionaries/deepl/search', [App\Http\Controllers\DictionaryController::class, 'searchDeepl']);
-    Route::get('/dictionaries/deepl/is-enabled', [App\Http\Controllers\DictionaryController::class, 'isDeeplEnabled']);
+    Route::post('/dictionaries/api/search', [App\Http\Controllers\DictionaryController::class, 'searchApiDictionaries']);
+    Route::get('/dictionaries/api/is-enabled', [App\Http\Controllers\DictionaryController::class, 'isAnyApiDictionaryEnabled']);
     Route::post('/dictionaries/search', [App\Http\Controllers\DictionaryController::class, 'searchDefinitions']);
     Route::post('/dictionaries/search-for-hover-vocabulary', [App\Http\Controllers\DictionaryController::class, 'searchDefinitionsForHoverVocabulary']);
     Route::post('/dictionaries/search/inflections', [App\Http\Controllers\DictionaryController::class, 'searchInflections']);

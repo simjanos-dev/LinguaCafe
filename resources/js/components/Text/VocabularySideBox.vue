@@ -236,7 +236,7 @@
                 <!-- Search box -->
                 <vocabulary-search-box
                     v-if="type !== 'empty'"
-                    :deeplEnabled="$props.deeplEnabled"
+                    :any-api-dictionary-enabled="$props.anyApiDictionaryEnabled"
                     :language="$props.language"
                     :searchTerm="searchField"
                     @addDefinitionToInput="addDefinitionToInput"
@@ -294,7 +294,7 @@
         props: {
             language: String,
             autoHighlightWords: Boolean,
-            deeplEnabled: Boolean,
+            anyApiDictionaryEnabled: Boolean,
             textToSpeechAvailable: Boolean,
         },
         computed: mapState({
