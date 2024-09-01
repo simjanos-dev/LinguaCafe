@@ -35,6 +35,15 @@
             @close="close" 
         ></admin-my-memory-dictionary-creation>
 
+        <!-- Deepl dictionary creation -->
+        <admin-libre-translate-dictionary-creation
+            v-if="selectedDictionaryType === 'libretranslate'"
+            :language="$props.language"
+            @import-finished="importFinished" 
+            @back-to-dictionaries="backToDictionaries" 
+            @close="close" 
+        ></admin-libre-translate-dictionary-creation>
+
         <!-- Dictionary selection list -->
         <v-card 
             v-if="selectedDictionaryType === null"
@@ -74,6 +83,10 @@
                     <v-radio
                         label="MyMemory dictionary"
                         value="mymemory"
+                    ></v-radio>
+                    <v-radio
+                        label="LibreTranslate dictionary"
+                        value="libretranslate"
                     ></v-radio>
                 </v-radio-group>
             </v-card-text>

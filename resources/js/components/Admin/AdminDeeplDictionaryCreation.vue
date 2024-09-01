@@ -238,7 +238,6 @@
                     if (response.status === 200) {
                         this.createResult = 'success';
                         this.$emit('import-finished');
-                        setTimeout(this.close, 1000);
                     } else {
                         this.createResult = 'error';
                     }

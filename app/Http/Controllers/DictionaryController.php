@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dictionary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use App\Services\DictionaryService;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Dictionary;
 
 // services
-use App\Services\DictionaryService;
+use Illuminate\Support\Facades\Schema;
 use App\Services\DictionaryImportService;
 
 // request classes
-use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
-use App\Http\Requests\Dictionaries\CreateDeeplDictionaryRequest;
-use App\Http\Requests\Dictionaries\CreateMyMemoryDictionaryRequest;
+use App\Http\Requests\Dictionaries\SearchApiRequest;
 use App\Http\Requests\Dictionaries\GetDictionaryRequest;
+use App\Http\Requests\Dictionaries\DeleteDictionaryRequest;
 use App\Http\Requests\Dictionaries\UpdateDictionaryRequest;
 use App\Http\Requests\Dictionaries\SearchDefinitionsRequest;
-use App\Http\Requests\Dictionaries\SearchDefinitionsForHoverVocabularyRequest;
-use App\Http\Requests\Dictionaries\SearchApiRequest;
 use App\Http\Requests\Dictionaries\SearchInflectionsRequest;
+use App\Http\Requests\Dictionaries\CreateDeeplDictionaryRequest;
 use App\Http\Requests\Dictionaries\TestDictionaryCsvFileRequest;
 use App\Http\Requests\Dictionaries\ImportDictionaryCsvFileRequest;
-use App\Http\Requests\Dictionaries\ImportSupportedDictionaryRequest;
+use App\Http\Requests\Dictionaries\CreateMyMemoryDictionaryRequest;
 use App\Http\Requests\Dictionaries\GetDictionaryRecordCountRequest;
-use App\Http\Requests\Dictionaries\DeleteDictionaryRequest;
+use App\Http\Requests\Dictionaries\ImportSupportedDictionaryRequest;
+use App\Http\Requests\Dictionaries\GetDictionaryFileInformationRequest;
+use App\Http\Requests\Dictionaries\CreateLibreTranslateDictionaryRequest;
+use App\Http\Requests\Dictionaries\SearchDefinitionsForHoverVocabularyRequest;
 
 class DictionaryController extends Controller
 {
@@ -196,6 +197,19 @@ class DictionaryController extends Controller
 
         try {
             $this->dictionaryImportService->createMyMemoryDictionary($sourceLanguage, $targetLanguage, $color, $name);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+    }
+    
+    public function createLibreTranslateDictionary(CreateLibreTranslateDictionaryRequest $request) {
+        $sourceLanguage = $request->validated('sourceLanguage');
+        $targetLanguage = $request->validated('targetLanguage');
+        $color = $request->validated('color');
+        $name  = $request->validated('name');
+
+        try {
+            $this->dictionaryImportService->createLibreTranslateDictionary($sourceLanguage, $targetLanguage, $color, $name);
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }

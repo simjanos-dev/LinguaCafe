@@ -82,8 +82,7 @@ class DictionaryService {
 
     public function isAnyApiDictionaryEnabled($language): bool
     {
-        $apiDictionary = Dictionary
-            ::where('name', 'like', 'DeepL%')
+        $apiDictionary = Dictionary::query()
             ->where('enabled', true)
             ->where('database_table_name','API')
             ->where('source_language', $language)
@@ -192,7 +191,7 @@ class DictionaryService {
         $definitions = [];
         $termHash = md5(mb_strtolower($term, 'UTF-8'));
         $apiDictionaries = Dictionary::query()
-            ->whereIn('type', ['my_memory', 'deepl'])
+            ->whereIn('type', ['my_memory', 'deepl', 'libre_translate'])
             ->where('enabled', true)
             ->where('source_language', $sourceLanguage)
             ->get();
@@ -246,12 +245,23 @@ class DictionaryService {
 
                     $this->buildMyMemoryRequest($pool, $dictionary, $term);
                 }
+
+                // libre translate
+                if ($dictionary->type === 'libre_translate') {
+                    $responseAdditionalInfo[] = [
+                        'dictionary' => $dictionary->name,
+                        'dictionaryColor' => $dictionary->color,
+                        'dictionaryType' => $dictionary->type,
+                        'term' => $term,
+                    ];
+
+                    $this->buildLibreTranslateRequest($pool, $dictionary, $term);
+                }
             }
         });
 
         // format dictionary search responses to a unified format
         foreach($responses as $responseIndex => $response) {
-            // dd(json_decode($responses[1]->body()));
             if (!$response->ok()) {
                 $definitions[] = [
                     'definitions' => ['error'],
@@ -289,6 +299,14 @@ class DictionaryService {
 
                 $definitions[] = [
                     'definitions' => $myMemoryDefinitions,
+                    ...$responseAdditionalInfo[$responseIndex]
+                ];
+            }
+
+            if ($dictionaryType === 'libre_translate') {
+                $response = json_decode($response->body());
+                $definitions[] = [
+                    'definitions' => [$response->translatedText],
                     ...$responseAdditionalInfo[$responseIndex]
                 ];
             }
@@ -330,6 +348,18 @@ class DictionaryService {
         $sourceLanguageCode = $myMemoryLanguageCodes[$dictionary->source_language];
         $targetLanguageCode = $myMemoryLanguageCodes[$dictionary->target_language];
         $pool->get('https://api.mymemory.translated.net/get?q=' . urlencode($term) . '!&langpair=' . $sourceLanguageCode . '|' . $targetLanguageCode);
+    }
+
+    private function buildLibreTranslateRequest(Pool $pool, Dictionary $dictionary, string $term): void
+    {
+        $myMemoryLanguageCodes = config('linguacafe.languages.libre_translate_language_codes');
+        $sourceLanguageCode = $myMemoryLanguageCodes[$dictionary->source_language];
+        $targetLanguageCode = $myMemoryLanguageCodes[$dictionary->target_language];
+        $pool->post('http://libretranslate:5000/translate', [
+            'q' => $term,
+            'source' => $sourceLanguageCode,
+            'target' => $targetLanguageCode,
+        ]);
     }
 
     public function searchMyMemory($sourceLanguage, $targetLanguage, $term) {

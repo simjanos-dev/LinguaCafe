@@ -74,7 +74,7 @@
                             <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                         </template>
                         <v-card outlined class="rounded-lg pa-4" width="320px">
-                            The language that MyMemory translates to.
+                            The language that LibreTranslate translates to.
                         </v-card>
                     </v-menu>
                 </label>
@@ -133,7 +133,7 @@
                 type="success"
                 border="left"
             >
-                MyMemory dictionary has been created successfully.
+                LibreTranslate dictionary has been created successfully.
             </v-alert>
 
             <!-- Error message -->
@@ -144,7 +144,7 @@
                 type="error"
                 border="left"
             >
-                An error has occurred while creating the MyMemory dictionary.
+                An error has occurred while creating the LibreTranslate dictionary.
             </v-alert>
 
         </v-card-text>
@@ -162,7 +162,7 @@
                     color="primary" 
                     :loading="createResult === 'saving'" 
                     :disabled="createResult === 'saving' || !isFormValid || loading"
-                    @click="createMyMemoryDictionary"
+                    @click="createLibreTranslateDictionary"
                 >Create</v-btn>
             </template>
 
@@ -191,13 +191,13 @@ import { support } from 'jquery';
                 dictionary: {
                     sourceLanguage: 'english',
                     targetLanguage: 'english',
-                    color: '#0055B7',
+                    color: '#72A98F',
                     name: '',
                 },
             };
         },
         mounted: function() {
-            axios.get('/config/get/linguacafe.languages.my_memory_supported_target_languages').then((response) => {
+            axios.get('/config/get/linguacafe.languages.libre_translate_language_codes').then((response) => {
                 this.loading = false;
 
                 // add supported source languages
@@ -217,16 +217,16 @@ import { support } from 'jquery';
             },
             updateDictionaryName() {
                 this.dictionary.name = 
-                    'MyMemory ' + 
+                    'LibreTranslate ' + 
                     this.dictionary.sourceLanguage[0].toUpperCase() + 
                     this.dictionary.sourceLanguage[1].toUpperCase() + 
                     ' - ' + 
                     this.dictionary.targetLanguage[0].toUpperCase() + 
                     this.dictionary.targetLanguage[1].toUpperCase();
             },
-            createMyMemoryDictionary() {
+            createLibreTranslateDictionary() {
                 this.createResult = 'saving';
-                axios.post('/dictionaries/create-my-memory', this.dictionary).then((response) => {
+                axios.post('/dictionaries/create-libre-translate', this.dictionary).then((response) => {
                     if (response.status === 200) {
                         this.createResult = 'success';
                         this.$emit('import-finished');

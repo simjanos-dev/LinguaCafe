@@ -1067,4 +1067,18 @@ class DictionaryImportService {
 
         return true;
     }
+
+    public function createLibreTranslateDictionary($sourceLanguage, $targetLanguage, $color, $name) {
+        $dictionary = new Dictionary();
+        $dictionary->name = $name;
+        $dictionary->type = 'libre_translate';
+        $dictionary->database_table_name = 'API';
+        $dictionary->source_language = $sourceLanguage;
+        $dictionary->target_language = $targetLanguage;
+        $dictionary->color = $color;
+        $dictionary->enabled = true;
+        $dictionary->save();
+
+        return true;
+    }
 }
