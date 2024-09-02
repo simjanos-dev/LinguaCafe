@@ -255,7 +255,7 @@ class VocabularyService {
             ->first();
         
         if (!$exampleSentence) {
-            throw new \Exception('Example sentence does not exist, or it belongs to a different user.');
+            return null;
         }
         
         $textBlock = new TextBlockService();

@@ -5,6 +5,36 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.13.3<v-spacer /> 2024.09.02.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Fixed a bug on the review page that prevented reviewing words and phrases that had no example sentences.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.13.2<v-spacer /> 2024.08.30.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Fixed website import.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.13.1<v-spacer /> 2024.08.29.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Turkish temporary fix.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.13<v-spacer /> 2024.06.24.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
