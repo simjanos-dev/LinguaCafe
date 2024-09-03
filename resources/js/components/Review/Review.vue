@@ -541,7 +541,7 @@
                         '《', '》','【', '】', '『', '』', '〔', '〕', '［', '］', '・', '?', '(', ')', ' ', ' NEWLINE ', '.', '%', '-',
                         '«', '»', "'", '’', '–', 'NEWLINE'];
 
-                if (this.settings.reviewSentenceMode === 'disabled') {
+                if (this.settings.reviewSentenceMode === 'disabled' || this.exampleSentence === null) {
                     if (this.reviews[this.currentReviewIndex].type == 'word') {
                         this.readWords ++;
                     } else {
@@ -669,7 +669,7 @@
 
                 this.exampleSentence = null;
                 axios.get('/vocabulary/example-sentence/' + this.reviews[this.currentReviewIndex].type + '/' + this.reviews[this.currentReviewIndex].id).then((response) => {
-                    if (response.data !== 'no example sentence') {
+                    if (response.data.words !== undefined) {
                         this.exampleSentence = {
                             id: 0,
                             words: response.data.words,
