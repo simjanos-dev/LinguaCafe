@@ -95,13 +95,17 @@ class DictionaryService {
         // retrieve api key from database
         $deeplApiKeySetting = Setting::where('name', 'deeplApiKey')->first();
         $deeplApiKey = json_decode($deeplApiKeySetting->value);
+        $deeplHost = Setting::where('name', 'deeplHost')->first()->decode();
 
-        $deepl = new Translator($deeplApiKey);
-        $usage = new \stdClass();
-        $usage->limits = $deepl->getUsage();
-        $usage->cachedDeeplTranslations = DeeplCache::select('id')->count('id');
-        
-        return $usage;
+        $response = HTTP::withHeaders([
+            'Authorization' => 'DeepL-Auth-Key ' . $deeplApiKey,
+            'Content-Type' => 'application/json',
+        ])->get($deeplHost . '/usage');
+
+        return [
+            'limits' => json_decode($response->body()),
+            'cachedDeeplTranslations' => DeeplCache::select('id')->count('id'),
+        ];
     }
 
     public function searchDefinitions($language, $term) {
@@ -335,7 +339,7 @@ class DictionaryService {
         $pool->withHeaders([
             'Authorization' => 'DeepL-Auth-Key ' . $deeplApiKey,
             'Content-Type' => 'application/json',
-        ])->post($deeplHost, [
+        ])->post($deeplHost . '/translate', [
             'text' => [$term],
             "source_lang" => $sourceLanguageCode,
             "target_lang" => $deeplLanguageCodes[$dictionary->target_language],

@@ -27,8 +27,11 @@ class SettingsSeeder extends Seeder
         if (!$setting) {
             DB::table('settings')->insert([
                 'name' => 'deeplHost',
-                'value' => json_encode('https://api-free.deepl.com/v2/translate')
+                'value' => json_encode('https://api-free.deepl.com/v2')
             ]);
+        } else if (json_decode($setting->value) === 'https://api-free.deepl.com/v2/translate') {
+            $setting->value = json_encode('https://api-free.deepl.com/v2');
+            $setting->save();
         }
 
         // jellyfin api settings
