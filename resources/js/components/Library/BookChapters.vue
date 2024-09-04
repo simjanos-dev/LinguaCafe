@@ -92,8 +92,11 @@
                     <template v-if="$props.wordCountDisplayType == 0">
                         {{ formatNumber(item.wordCount.known) }}
                     </template>
-                    <template v-else>
+                    <template v-else-if="item.wordCount.unique">
                         {{ (item.wordCount.known / item.wordCount.unique * 100).toFixed(1) }}%
+                    </template>
+                    <template v-else>
+                        0%
                     </template>
                 </template>
 
@@ -113,8 +116,11 @@
                         <template v-if="$props.wordCountDisplayType < 2">
                             {{ formatNumber(item.wordCount.highlighted) }}
                         </template>
-                        <template v-else>
+                        <template v-else-if="item.wordCount.unique">
                             {{ (item.wordCount.highlighted / item.wordCount.unique * 100).toFixed(1) }}%
+                        </template>
+                        <template v-else>
+                            0%
                         </template>
                     </div>
                 </template>
@@ -136,8 +142,11 @@
                         <template v-if="$props.wordCountDisplayType < 2">
                             {{ formatNumber(item.wordCount.new) }}
                         </template>
-                        <template v-else>
+                        <template v-else-if="item.wordCount.unique">
                             {{ (item.wordCount.new / item.wordCount.unique * 100).toFixed(1) }}%
+                        </template>
+                        <template v-else>
+                            0%
                         </template>
                     </div>
                 </template>

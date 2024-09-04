@@ -24,6 +24,7 @@
                     <li>Text reader's light theme glossary word colors were not showing.</li>
                     <li>Text reader's glossary displayed "2" instead of "new" for new words.</li>
                     <li>Development tools page had incorrect background for light theme.</li>
+                    <li>Book word count percentages were displayed incorrectly in empty books and chapters.</li>
                 </ul>
 
                 <b>Other changes:</b>

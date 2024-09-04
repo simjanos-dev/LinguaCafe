@@ -66,8 +66,11 @@
                                         <template v-if="wordCountDisplayType == 0">
                                             {{ formatNumber(book.wordCount.known) }}
                                         </template>
-                                        <template v-else>
+                                        <template v-else-if="book.wordCount.unique">
                                             {{ (book.wordCount.known / book.wordCount.unique * 100).toFixed(1) }}%
+                                        </template>
+                                        <template v-else>
+                                            0%
                                         </template>
                                     </div>
                                 </td>
@@ -79,8 +82,11 @@
                                         <template v-if="wordCountDisplayType < 2">
                                             {{ formatNumber(book.wordCount.highlighted) }}
                                         </template>
-                                        <template v-else>
+                                        <template v-else-if="book.wordCount.unique">
                                             {{ (book.wordCount.highlighted / book.wordCount.unique * 100).toFixed(1) }}%
+                                        </template>
+                                        <template v-else>
+                                            0%
                                         </template>
                                     </div>
                                 </td>
@@ -92,8 +98,11 @@
                                         <template v-if="wordCountDisplayType < 2">
                                             {{ formatNumber(book.wordCount.new) }}
                                         </template>
-                                        <template v-else>
+                                        <template v-else-if="book.wordCount.unique">
                                             {{ (book.wordCount.new / book.wordCount.unique * 100).toFixed(1) }}%
+                                        </template>
+                                        <template v-else>
+                                            0%
                                         </template>
                                     </div>
                                 </td>
