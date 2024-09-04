@@ -13,6 +13,7 @@ use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
+use Carbon\Carbon;
 
 class DictionaryImportService {
 
@@ -316,7 +317,9 @@ class DictionaryImportService {
                 'source_language' => 'chinese',
                 'target_language' => $targetLanguage,
                 'color' => '#EF4556',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -393,7 +396,9 @@ class DictionaryImportService {
                 'source_language' => 'korean',
                 'target_language' => 'english',
                 'color' => '#DDBFE4',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -468,7 +473,9 @@ class DictionaryImportService {
                 'source_language' => 'welsh',
                 'target_language' => 'english',
                 'color' => '#32DB4D',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -534,7 +541,9 @@ class DictionaryImportService {
                 'source_language' => $sourceLanguage,
                 'target_language' => $targetLanguage,
                 'color' => '#FF981B',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -603,7 +612,9 @@ class DictionaryImportService {
                 'source_language' => $language,
                 'target_language' => 'english',
                 'color' => '#E9CDA0',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -946,7 +957,7 @@ class DictionaryImportService {
         
         DB::commit();
         fclose($file);
-        DB::table('dictionaries')->where('database_table_name', 'dict_jp_jmdict')->update(['enabled' => true]);
+        DB::table('dictionaries')->where('database_table_name', 'dict_jp_jmdict')->update(['enabled' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
     }
 
     /* 
