@@ -199,8 +199,22 @@
             }
 
             // load theme
-            const savedTheme = DefaultLocalStorageManager.loadSetting('theme');
-            this.theme = savedTheme ? savedTheme : 'light';
+            const autoEnabled = ThemeService.isAuto();
+            if (autoEnabled) {
+                // auto-select user's system theme if 'auto' is enabled
+                if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                    this.theme = 'dark';
+                } else {
+                    this.theme = 'light';
+                }
+
+                DefaultLocalStorageManager.saveSetting('theme', this.theme);
+            } else {
+                // otherwise use saved theme
+                const savedTheme = DefaultLocalStorageManager.loadSetting('theme');
+                this.theme = savedTheme ? savedTheme : 'light';
+            }
+
             ThemeService.loadTheme(defaultThemes, this.$vuetify);
 
             // load navbar status
