@@ -289,11 +289,13 @@ class DictionaryService {
                 $myMemoryDefinitions = [];
                 $matches = json_decode($response->body());
                 foreach($matches->matches as $match) {
-                    if($match->segment !== $responseAdditionalInfo[$responseIndex]['term']) {
+                    if(!str_contains($match->segment, $responseAdditionalInfo[$responseIndex]['term'])) {
                         continue;
                     }
 
-                    
+                    // updates term in case it found translation only for a similar search term
+                    $responseAdditionalInfo[$responseIndex]['term'] = $match->segment;
+
                     $myMemoryDefinitions[] = $match->translation;
                 }
 

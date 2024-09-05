@@ -1246,7 +1246,7 @@
                         }
 
                         if (this.selection.length > 1) {
-                            this.$store.commit('vocabularyBox/setType', 'new-phrase');
+                            this.$store.commit('vocabularyBox/setType', this.selectedPhrase === -1 ? 'new-phrase' : 'phrase');
                             this.$store.commit('vocabularyBox/pushWordToPhrase', this.selection[i]);
                         }
 

@@ -318,6 +318,9 @@
             word: function () {
                 this.updateDataFromStore();
             },
+            phrase: function () {
+                this.updateDataFromStore();
+            },
         },
         data: function() {
             return {
@@ -343,18 +346,7 @@
             };
         },
         mounted: function() {
-            // generate phrase text
-            for (let wordIndex = 0; wordIndex < this.$store.state.vocabularyBox.phrase.length; wordIndex++) {
-                if (this.$store.state.vocabularyBox.phrase.word === 'NEWLINE') {
-                    continue;
-                }
-                
-                this.phraseText += this.$store.state.vocabularyBox.phrase[wordIndex].word;
-
-                if (this.$store.state.vocabularyBox.phrase[wordIndex].spaceAfter) {
-                    this.phraseText += ' ';
-                }
-            }
+            
         },
         methods: {
             updateDataFromStore() {
@@ -367,6 +359,19 @@
                 this.baseWordReading = this._baseWordReading;
                 this.phraseReading = this._phraseReading;
                 this.searchField = this._searchField;
+
+                // generate phrase text
+                for (let wordIndex = 0; wordIndex < this.$store.state.vocabularyBox.phrase.length; wordIndex++) {
+                    if (this.$store.state.vocabularyBox.phrase[wordIndex].word === 'NEWLINE') {
+                        continue;
+                    }
+                    
+                    this.phraseText += this.$store.state.vocabularyBox.phrase[wordIndex].word;
+
+                    if (this.$store.state.vocabularyBox.phrase[wordIndex].spaceAfter) {
+                        this.phraseText += ' ';
+                    }
+                }
             },
             textToSpeech() {
                 this.$emit('textToSpeech');
