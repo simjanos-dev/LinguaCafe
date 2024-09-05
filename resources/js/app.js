@@ -223,7 +223,7 @@ const router = new VueRouter({
         { path: '/', component: Home },
         { path: '/user-settings', component: UserSettingsLayout },
         { path: '/admin/:page?', component: AdminSettingsLayout },
-        { path: '/user-manual/:curre0ntPage?', component: UserManual },
+        { path: '/user-manual/:currentPage?', component: UserManual },
         { path: '/patch-notes', component: PatchNotes },
         { path: '/attributions', component: Attributions },
         { path: '/login', component: LoginForm },
