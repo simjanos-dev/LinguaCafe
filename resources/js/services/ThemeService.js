@@ -103,7 +103,26 @@ class ThemeService {
     }
 
     getCurrentTheme() {
-        return localStorageManager.loadSetting('theme') || 'light';
+        if (localStorageManager.loadSetting('theme-auto')) {
+            return 'auto'
+        } else {
+            return localStorageManager.loadSetting('theme') || 'light';
+        };
+    }
+
+    getAutoTheme() {
+        let autoTheme;
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            autoTheme = 'dark';
+        } else {
+            autoTheme = 'light';
+        }
+
+        return autoTheme;
+    }
+
+    isAuto() {
+        return localStorageManager.loadSetting('theme-auto') === true;
     }
 }
 

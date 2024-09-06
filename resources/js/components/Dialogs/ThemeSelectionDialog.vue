@@ -41,6 +41,10 @@
             return {
                 selectedTheme: ThemeService.getCurrentTheme(),
                 displayNames: {
+                    auto: {
+                        name: 'Auto',
+                        icon: 'mdi-theme-light-dark'
+                    },
                     light: {
                         name: 'Light theme',
                         icon: 'mdi-weather-sunny'
@@ -61,6 +65,14 @@
         },
         methods: {
             selectTheme: function(newTheme) {
+                // switch to user's system theme if 'auto' is selected
+                if (newTheme === 'auto') {
+                    DefaultLocalStorageManager.saveSetting('theme-auto', true);
+                    newTheme = ThemeService.getAutoTheme()
+                } else {
+                    DefaultLocalStorageManager.saveSetting('theme-auto', false);
+                }
+
                 DefaultLocalStorageManager.saveSetting('theme', newTheme);
                 this.$vuetify.theme.dark = (newTheme === 'dark');
                 ThemeService.loadTheme(themes, this.$vuetify);
