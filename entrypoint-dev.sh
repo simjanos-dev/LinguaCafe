@@ -12,6 +12,7 @@ folder_paths="
     ./storage/framework/testing
     ./storage/framework/views
     ./storage/logs
+    ./storage/backup
 "
 
 # Ensure the folders exist
