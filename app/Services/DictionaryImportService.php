@@ -350,11 +350,13 @@ class DictionaryImportService {
             array_shift($definitions);
             array_pop($definitions);
             $definitions = implode(';', $definitions);
-            
+
 
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
-                'definitions' => mb_strtolower($definitions, 'UTF-8')
+                'definitions' => mb_strtolower($definitions, 'UTF-8'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -431,7 +433,9 @@ class DictionaryImportService {
 
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
-                'definitions' => mb_strtolower($data[3], 'UTF-8')
+                'definitions' => mb_strtolower($data[3], 'UTF-8'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -500,7 +504,9 @@ class DictionaryImportService {
             // add lemma too, because there is no lemmatisation for welsh
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($record[2], 'UTF-8'),
-                'definitions' => $record[3]
+                'definitions' => $record[3],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -570,7 +576,9 @@ class DictionaryImportService {
 
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[0], 'UTF-8'),
-                'definitions' => mb_strtolower($data[1], 'UTF-8')
+                'definitions' => mb_strtolower($data[1], 'UTF-8'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -661,7 +669,9 @@ class DictionaryImportService {
 
             DB::table($databaseName)->insert([
                 'word' => $word,
-                'definitions' => $filteredDefinitions
+                'definitions' => $filteredDefinitions,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
