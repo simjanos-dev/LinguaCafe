@@ -13,15 +13,17 @@
                     <li>Dictionary import progress bar now shows real time progress.</li>
                     <li>Added new online translation service: MyMemories.</li>
                     <li>Added new offline, self hosted translation service: LibreTranslate.</li>
+                    <li>Added an API to connect custom scripts and translation services to LinguaCafe.</li>
                     <li>Replaced cookies with local storage. This means that your local settings will reset to default settings.</li>
                     <li>Added level to hover vocabulary box for highlighted words.</li>
-                    <li>Added book .webp support for cover images.</li>
+                    <li>Added .webp support for book cover images.</li>
+                    <li>Added auto theme switching based on system theme.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
                 <ul>
                     <li>Book word counts did not update after deleting a chapter.</li>
-                    <li>Text reader's light theme glossary word colors were not showing.</li>
+                    <li>Text reader's light theme glossary word colors were not displayed correctly.</li>
                     <li>Text reader's glossary displayed "2" instead of "new" for new words.</li>
                     <li>Development tools page had incorrect background for light theme.</li>
                     <li>Book word count percentages were displayed incorrectly in empty books and chapters.</li>
