@@ -15,6 +15,17 @@
 
             <!-- Forms -->
             <template v-if="createResult !== 'success'">
+                <!-- Host -->
+                <label class="font-weight-bold">API host</label>
+                <v-text-field 
+                    v-model="dictionary.api_host"
+                    filled
+                    dense
+                    rounded
+                    placeholder="API host"
+                ></v-text-field>
+            
+
                 <!-- Name -->
                 <label class="font-weight-bold">Dictionary name</label>
                 <v-text-field 
@@ -22,9 +33,9 @@
                     filled
                     dense
                     rounded
-                    disabled
                     placeholder="Dictionary name"
                     maxlength="16"
+                    :rules="rules.dictionaryName"
                 ></v-text-field>
 
                 <!-- Source language -->
@@ -51,8 +62,8 @@
                     dense
                     filled
                     rounded
-                    :error-messages=" isFormValid ? [] : ['The source and target language cannot be the same!']"
-                    @change="updateDictionaryName(); validateForm();"
+                    :error-messages=" dictionary.languagesValid ? [] : ['The source and target language cannot be the same!']"
+                    @change="validateForm();"
                 >
                     <template v-slot:selection="{ item, index }">
                         <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
@@ -74,7 +85,7 @@
                             <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                         </template>
                         <v-card outlined class="rounded-lg pa-4" width="320px">
-                            The language that LibreTranslate translates to.
+                            The language that the custom API translates to.
                         </v-card>
                     </v-menu>
                 </label>
@@ -88,8 +99,8 @@
                     dense
                     filled
                     rounded
-                    :error-messages=" isFormValid ? [] : ['The source and target language cannot be the same!']"
-                    @change="updateDictionaryName(); validateForm();"
+                    :error-messages=" dictionary.languagesValid ? [] : ['The source and target language cannot be the same!']"
+                    @change="validateForm();"
                 >
                     <template v-slot:selection="{ item, index }">
                         <img class="mr-2 border" :src="'/images/flags/' + item.name + '.png'" width="40" height="26">
@@ -133,7 +144,7 @@
                 type="success"
                 border="left"
             >
-                LibreTranslate dictionary has been created successfully.
+                Custom API dictionary has been created successfully.
             </v-alert>
 
             <!-- Error message -->
@@ -144,7 +155,7 @@
                 type="error"
                 border="left"
             >
-                An error has occurred while creating the LibreTranslate dictionary.
+                An error has occurred while creating the custom API dictionary.
             </v-alert>
 
         </v-card-text>
@@ -161,8 +172,8 @@
                     depressed 
                     color="primary" 
                     :loading="createResult === 'saving'" 
-                    :disabled="createResult === 'saving' || !isFormValid || loading"
-                    @click="createLibreTranslateDictionary"
+                    :disabled="createResult === 'saving' || !dictionary.languagesValid || loading"
+                    @click="createCustomApiDictionary"
                 >Create</v-btn>
             </template>
 
@@ -187,47 +198,61 @@ import { support } from 'jquery';
                 createResult: '',
                 colorPicker: false,
                 supportedLanguages: [],
-                isFormValid: true,
                 dictionary: {
-                    sourceLanguage: 'english',
+                    sourceLanguage: this.$props.language,
                     targetLanguage: 'english',
-                    color: '#72A98F',
-                    name: '',
+                    color: '#a3a3a3',
+                    name: 'Custom API',
+                    api_host: 'http://host.docker.internal:1234',
+                    nameValidated: false,
+                    languagesValid: true,
                 },
+                rules: {
+                    dictionaryName: [
+                        value => {
+                            if (!value.length) {
+                                this.dictionary.nameValidated = false;
+                                return 'You must type in a dictionary name!';
+                            }
+
+                            if (value.toLowerCase().includes('deepl')) {
+                                this.dictionary.nameValidated = false;
+                                return 'Cannot contain the word "deepl".';
+                            }
+
+                            if (value.toLowerCase() === 'jmdict') {
+                                this.dictionary.nameValidated = false;
+                                return 'Cannot be named jmdict.';
+                            }
+
+                            this.dictionary.nameValidated = true;
+                            return true;
+                        }
+                    ],
+                }
             };
         },
         mounted: function() {
-            axios.get('/config/get/linguacafe.languages.libre_translate_language_codes').then((response) => {
+            axios.get('/config/get/linguacafe.languages.supported_target_languages').then((response) => {
                 this.loading = false;
-
+                
                 // add supported source languages
-                Object.keys(response.data).forEach((languageName) => {
+                response.data.forEach((languageName) => {
                     this.supportedLanguages.push({
                         name: languageName.toLowerCase(),
-                        selected: false
                     });
                 });
 
-                this.updateDictionaryName();
                 this.validateForm();
             });
         },
         methods: {
             validateForm() {
-                this.isFormValid = (this.dictionary.sourceLanguage !== this.dictionary.targetLanguage);
+                this.dictionary.languagesValid = (this.dictionary.sourceLanguage !== this.dictionary.targetLanguage);
             },
-            updateDictionaryName() {
-                this.dictionary.name = 
-                    'LibreTranslate ' + 
-                    this.dictionary.sourceLanguage[0].toUpperCase() + 
-                    this.dictionary.sourceLanguage[1].toUpperCase() + 
-                    ' - ' + 
-                    this.dictionary.targetLanguage[0].toUpperCase() + 
-                    this.dictionary.targetLanguage[1].toUpperCase();
-            },
-            createLibreTranslateDictionary() {
+            createCustomApiDictionary() {
                 this.createResult = 'saving';
-                axios.post('/dictionaries/create-libre-translate', this.dictionary).then((response) => {
+                axios.post('/dictionaries/create-custom-api', this.dictionary).then((response) => {
                     if (response.status === 200) {
                         this.createResult = 'success';
                         this.$emit('import-finished');

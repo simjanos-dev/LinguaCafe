@@ -52,12 +52,13 @@ import axios from 'axios';
             axios.get('/manual/get-menu-tree').then((response) => {
                 this.pages = response.data;
             });
-
-
+            
+            
             if (this.$route.params.currentPage !== undefined) {
                 this.selectedPage = this.$route.params.currentPage;
             }
-
+            
+            console.log('manual mounted', this.$route.params.currentPage);
             this.loadManualFile(this.selectedPage);
         },
         props: {

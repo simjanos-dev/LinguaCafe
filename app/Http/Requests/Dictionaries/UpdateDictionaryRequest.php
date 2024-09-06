@@ -26,6 +26,7 @@ class UpdateDictionaryRequest extends FormRequest
         return [
             'id' => 'required|numeric',
             'name' => 'string',
+            'api_host' => 'nullable|string',
             'source_language' => 'string',
             'target_language' => 'string',
             'color' => 'string',

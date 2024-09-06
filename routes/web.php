@@ -74,6 +74,7 @@ Route::group(['middleware' => ['auth', 'auth.session', 'web']], function () {
         Route::post('/dictionaries/import-csv-file', [App\Http\Controllers\DictionaryController::class, 'importDictionaryCsvFile']);
         Route::post('/dictionaries/create-deepl', [App\Http\Controllers\DictionaryController::class, 'createDeeplDictionary']);
         Route::post('/dictionaries/create-my-memory', [App\Http\Controllers\DictionaryController::class, 'createMyMemoryDictionary']);
+        Route::post('/dictionaries/create-custom-api', [App\Http\Controllers\DictionaryController::class, 'createCustomApiDictionary']);
         Route::post('/dictionaries/create-libre-translate', [App\Http\Controllers\DictionaryController::class, 'createLibreTranslateDictionary']);
         Route::get('/dictionaries/delete/{dictionaryId}', [App\Http\Controllers\DictionaryController::class, 'deleteDictionary']);
         Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);

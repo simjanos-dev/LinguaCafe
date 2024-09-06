@@ -16,6 +16,18 @@
 
                 <!-- Forms -->
                 <template v-if="saveResult !== 'success'">
+                    <!-- Host -->
+                    <template v-if="dictionary.type === 'custom_api'">
+                        <label class="font-weight-bold">API host</label>
+                        <v-text-field 
+                            v-model="dictionary.api_host"
+                            filled
+                            dense
+                            rounded
+                            placeholder="API host"
+                        ></v-text-field>
+                    </template>
+                    
                     <!-- Name -->
                     <label class="font-weight-bold">Dictionary name</label>
                     <v-text-field 
@@ -23,7 +35,7 @@
                         filled
                         dense
                         rounded
-                        :disabled="dictionary.database_table_name === 'API' || dictionary.name === 'JMDict'"
+                        :disabled="(dictionary.type === 'custom_api' && dictionary.database_table_name === 'API') || dictionary.name === 'JMDict'"
                         placeholder="Dictionary name"
                         maxlength="16"
                     ></v-text-field>

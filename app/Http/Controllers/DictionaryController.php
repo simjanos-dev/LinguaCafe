@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Dictionaries\CreateCustomApiDictionaryRequest;
 use App\Models\Dictionary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,10 @@ class DictionaryController extends Controller
 
         if (isset($request->name)) {
             $dictionaryData['name'] = $request->post('name');
+        }
+
+        if (isset($request->api_host)) {
+            $dictionaryData['api_host'] = $request->post('api_host');
         }
 
         if (isset($request->source_language)) {
@@ -210,6 +215,20 @@ class DictionaryController extends Controller
 
         try {
             $this->dictionaryImportService->createLibreTranslateDictionary($sourceLanguage, $targetLanguage, $color, $name);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+    }
+
+    public function createCustomApiDictionary(CreateCustomApiDictionaryRequest $request) {
+        $sourceLanguage = $request->validated('sourceLanguage');
+        $targetLanguage = $request->validated('targetLanguage');
+        $color = $request->validated('color');
+        $name  = $request->validated('name');
+        $host  = $request->validated('api_host');
+
+        try {
+            $this->dictionaryImportService->createCustomApiDictionary($sourceLanguage, $targetLanguage, $color, $name, $host);
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }

@@ -195,7 +195,7 @@ class DictionaryService {
         $definitions = [];
         $termHash = md5(mb_strtolower($term, 'UTF-8'));
         $apiDictionaries = Dictionary::query()
-            ->whereIn('type', ['my_memory', 'deepl', 'libre_translate'])
+            ->whereIn('type', ['my_memory', 'deepl', 'libre_translate', 'custom_api'])
             ->where('enabled', true)
             ->where('source_language', $sourceLanguage)
             ->get();
@@ -261,6 +261,18 @@ class DictionaryService {
 
                     $this->buildLibreTranslateRequest($pool, $dictionary, $term);
                 }
+
+                // custom api translate
+                if ($dictionary->type === 'custom_api') {
+                    $responseAdditionalInfo[] = [
+                        'dictionary' => $dictionary->name,
+                        'dictionaryColor' => $dictionary->color,
+                        'dictionaryType' => $dictionary->type,
+                        'term' => $term,
+                    ];
+
+                    $this->buildCustomApiTranslateRequest($pool, $dictionary, $term);
+                }
             }
         });
 
@@ -316,6 +328,14 @@ class DictionaryService {
                     ...$responseAdditionalInfo[$responseIndex]
                 ];
             }
+
+            if ($dictionaryType === 'custom_api') {
+                $response = json_decode($response->body());
+                $definitions[] = [
+                    'definitions' => [$response->translatedText],
+                    ...$responseAdditionalInfo[$responseIndex]
+                ];
+            }
         }
 
         return $definitions;
@@ -365,6 +385,15 @@ class DictionaryService {
             'q' => $term,
             'source' => $sourceLanguageCode,
             'target' => $targetLanguageCode,
+        ]);
+    }
+
+    private function buildCustomApiTranslateRequest(Pool $pool, Dictionary $dictionary, string $term): void
+    {
+        $pool->post($dictionary->api_host, [
+            'q' => $term,
+            'source' => strtolower($dictionary->source_language),
+            'target' => strtolower($dictionary->target_language),
         ]);
     }
     

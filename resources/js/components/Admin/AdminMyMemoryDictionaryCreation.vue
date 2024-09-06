@@ -209,6 +209,7 @@ import { support } from 'jquery';
                 });
 
                 this.updateDictionaryName();
+                this.validateForm();
             });
         },
         methods: {

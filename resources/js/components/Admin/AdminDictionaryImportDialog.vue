@@ -26,7 +26,7 @@
             @close="close" 
         ></admin-deepl-dictionary-creation>
 
-        <!-- Deepl dictionary creation -->
+        <!-- MyMemory dictionary creation -->
         <admin-my-memory-dictionary-creation
             v-if="selectedDictionaryType === 'mymemory'"
             :language="$props.language"
@@ -35,7 +35,7 @@
             @close="close" 
         ></admin-my-memory-dictionary-creation>
 
-        <!-- Deepl dictionary creation -->
+        <!-- LibreTranslate dictionary creation -->
         <admin-libre-translate-dictionary-creation
             v-if="selectedDictionaryType === 'libretranslate'"
             :language="$props.language"
@@ -43,6 +43,15 @@
             @back-to-dictionaries="backToDictionaries" 
             @close="close" 
         ></admin-libre-translate-dictionary-creation>
+
+        <!-- LibreTranslate dictionary creation -->
+        <admin-custom-api-dictionary-creation
+            v-if="selectedDictionaryType === 'customapi'"
+            :language="$props.language"
+            @import-finished="importFinished" 
+            @back-to-dictionaries="backToDictionaries" 
+            @close="close" 
+        ></admin-custom-api-dictionary-creation>
 
         <!-- Dictionary selection list -->
         <v-card 
@@ -87,6 +96,10 @@
                     <v-radio
                         label="LibreTranslate dictionary"
                         value="libretranslate"
+                    ></v-radio>
+                    <v-radio
+                        label="Custom API dictionary"
+                        value="customapi"
                     ></v-radio>
                 </v-radio-group>
             </v-card-text>
