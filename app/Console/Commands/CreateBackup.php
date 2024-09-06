@@ -32,7 +32,7 @@ class CreateBackup extends Command
         $password = ' -p' . env('DB_PASSWORD');
         $database = ' ' . env('DB_DATABASE');
         
-        $timestamp = Carbon::now()->format('_Y_m_d_h_i_s');
+        $timestamp = Carbon::now()->format('Y_m_d_h_i_s');
         
         $path = '/var/www/html/storage/backup/';
         $fileName = 'linguacafe_' . $timestamp . '.sql';
