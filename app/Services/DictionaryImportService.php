@@ -13,6 +13,7 @@ use App\Models\VocabularyJmdictReading;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
+use Carbon\Carbon;
 
 class DictionaryImportService {
 
@@ -316,7 +317,9 @@ class DictionaryImportService {
                 'source_language' => 'chinese',
                 'target_language' => $targetLanguage,
                 'color' => '#EF4556',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -347,11 +350,13 @@ class DictionaryImportService {
             array_shift($definitions);
             array_pop($definitions);
             $definitions = implode(';', $definitions);
-            
+
 
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
-                'definitions' => mb_strtolower($definitions, 'UTF-8')
+                'definitions' => mb_strtolower($definitions, 'UTF-8'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -393,7 +398,9 @@ class DictionaryImportService {
                 'source_language' => 'korean',
                 'target_language' => 'english',
                 'color' => '#DDBFE4',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -426,7 +433,9 @@ class DictionaryImportService {
 
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
-                'definitions' => mb_strtolower($data[3], 'UTF-8')
+                'definitions' => mb_strtolower($data[3], 'UTF-8'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -468,7 +477,9 @@ class DictionaryImportService {
                 'source_language' => 'welsh',
                 'target_language' => 'english',
                 'color' => '#32DB4D',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -493,7 +504,9 @@ class DictionaryImportService {
             // add lemma too, because there is no lemmatisation for welsh
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($record[2], 'UTF-8'),
-                'definitions' => $record[3]
+                'definitions' => $record[3],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -534,7 +547,9 @@ class DictionaryImportService {
                 'source_language' => $sourceLanguage,
                 'target_language' => $targetLanguage,
                 'color' => '#FF981B',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -561,7 +576,9 @@ class DictionaryImportService {
 
             DB::table($databaseName)->insert([
                 'word' => mb_strtolower($data[0], 'UTF-8'),
-                'definitions' => mb_strtolower($data[1], 'UTF-8')
+                'definitions' => mb_strtolower($data[1], 'UTF-8'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -603,7 +620,9 @@ class DictionaryImportService {
                 'source_language' => $language,
                 'target_language' => 'english',
                 'color' => '#E9CDA0',
-                'enabled' => true
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
@@ -650,7 +669,9 @@ class DictionaryImportService {
 
             DB::table($databaseName)->insert([
                 'word' => $word,
-                'definitions' => $filteredDefinitions
+                'definitions' => $filteredDefinitions,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
 
             if ($index % 1000 == 0) {
@@ -946,7 +967,7 @@ class DictionaryImportService {
         
         DB::commit();
         fclose($file);
-        DB::table('dictionaries')->where('database_table_name', 'dict_jp_jmdict')->update(['enabled' => true]);
+        DB::table('dictionaries')->where('database_table_name', 'dict_jp_jmdict')->update(['enabled' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
     }
 
     /* 
