@@ -1,6 +1,7 @@
 <template>
     <v-container v-if="$store.getters['shared/userAdmin']">
         <v-tabs v-model="tab" background-color="foreground" class="rounded-lg border overflow-hidden" @change="tabChanged">
+            <v-tab>Dashboard</v-tab>
             <v-tab>Users</v-tab>
             <v-tab>Languages</v-tab>
             <v-tab>Dictionaries</v-tab>
@@ -10,21 +11,24 @@
         </v-tabs>
         <v-tabs-items v-model="tab" id="admin-tab-items" elevation="0" class="no-background rounded-lg mt-4 pa-6">
             <v-tab-item :value="0">
-                <admin-user-settings></admin-user-settings>
+                <admin-dashboard></admin-dashboard>
             </v-tab-item>
             <v-tab-item :value="1">
-                <admin-language-settings></admin-language-settings>
+                <admin-user-settings></admin-user-settings>
             </v-tab-item>
             <v-tab-item :value="2">
-                <admin-dictionary-settings :language="$props.language"></admin-dictionary-settings>
+                <admin-language-settings></admin-language-settings>
             </v-tab-item>
             <v-tab-item :value="3">
-                <admin-font-type-settings></admin-font-type-settings>
+                <admin-dictionary-settings :language="$props.language"></admin-dictionary-settings>
             </v-tab-item>
             <v-tab-item :value="4">
-                <admin-api-settings></admin-api-settings>
+                <admin-font-type-settings></admin-font-type-settings>
             </v-tab-item>
             <v-tab-item :value="5">
+                <admin-api-settings></admin-api-settings>
+            </v-tab-item>
+            <v-tab-item :value="6">
                 <admin-review-settings></admin-review-settings>
             </v-tab-item>
         </v-tabs-items>
@@ -41,14 +45,16 @@
                 tab: 0,
                 loading: true,
                 tabIndexes: {
-                    'users': 0,
-                    'languages': 1,
-                    'dictionaries': 2,
-                    'font-types': 3,
-                    'api': 4,
-                    'reviews': 5,
+                    'dashboard': 0,
+                    'users': 1,
+                    'languages': 2,
+                    'dictionaries': 3,
+                    'font-types': 4,
+                    'api': 5,
+                    'reviews': 6,
                 },
                 tabUrls: [
+                    'dashboard',
                     'users',
                     'languages',
                     'dictionaries',

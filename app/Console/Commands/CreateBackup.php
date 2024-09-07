@@ -38,6 +38,12 @@ class CreateBackup extends Command
         $fileName = 'linguacafe_' . $timestamp . '.sql';
         $fullFilePath = $path . $fileName;
 
-        shell_exec('mysqldump --no-tablespaces' . $host . $port . $username . $password . $database . ' > ' . $fullFilePath);
+        $exitCode = null;
+        exec(
+            command: 'mysqldump --no-tablespaces' . $host . $port . $username . $password . $database . ' > ' . $fullFilePath, 
+            result_code: $exitCode
+        );
+
+        return $exitCode;
     }
 }

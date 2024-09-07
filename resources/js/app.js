@@ -149,6 +149,7 @@ Vue.component('user-settings-account', UserSettingsAccount);
 Vue.component('user-settings-themes', UserSettingsThemes);
 
 // admin settings
+import AdminDashboard from './components/Admin/AdminDashboard';
 import AdminUserSettings from './components/Admin/AdminUserSettings';
 import AdminFontTypeSettings from './components/Admin/AdminFontTypeSettings';
 import AdminEditFontTypeDialog from './components/Admin/AdminEditFontTypeDialog';
@@ -169,6 +170,7 @@ import AdminLibreTranslateDictionaryCreation from './components/Admin/AdminLibre
 import AdminCustomApiDictionaryCreation from './components/Admin/AdminCustomApiDictionaryCreation.vue';
 import AdminEditUserDialog from './components/Admin/AdminEditUserDialog';
 import AdminReviewSettings from './components/Admin/AdminReviewSettings';
+Vue.component('admin-dashboard', AdminDashboard);
 Vue.component('admin-user-settings', AdminUserSettings);
 Vue.component('admin-language-settings', AdminLanguageSettings);
 Vue.component('admin-font-type-settings', AdminFontTypeSettings);

@@ -36,6 +36,9 @@ Route::group(['middleware' => ['auth', 'auth.session', 'web']], function () {
     Route::group(['middleware' => 'admin'], function () {
         Route::get('/dev', [App\Http\Controllers\HomeController::class, 'index']);
         
+        // backup
+        Route::get('/backups/create', [App\Http\Controllers\BackupController::class, 'createBackup']);
+
         // users
         Route::get ('/users/get', [App\Http\Controllers\UserController::class, 'getUsers']);
         Route::post('/users/update', [App\Http\Controllers\UserController::class, 'updateUser']);
