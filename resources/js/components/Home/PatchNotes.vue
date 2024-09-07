@@ -18,6 +18,8 @@
                     <li>Added level to hover vocabulary box for highlighted words.</li>
                     <li>Added .webp support for book cover images.</li>
                     <li>Added auto theme switching based on system theme.</li>
+                    <li>Added an export database button to the admin page.</li>
+                    <li>Added a button that lets users delete all their data related to their selected language.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
@@ -34,6 +36,7 @@
                     <li>Updated to Laravel 11.</li>
                     <li>Replaced default book cover image.</li>
                     <li>Replaced switches with checkboxes on the vocabulary export page.</li>
+                    <li>Removed simple text parsing method.</li>
                 </ul>
             </v-card-text>
         </v-card>

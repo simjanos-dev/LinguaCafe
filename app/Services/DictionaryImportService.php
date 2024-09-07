@@ -298,30 +298,8 @@ class DictionaryImportService {
         Imports a cc-cedict or HanDeDict dictionary file into the database.
         They are in the same format, HanDeDict is just translated to German.
     */
-    public function importCeDictOrHanDeDict($userUuid, $name, $targetLanguage, $databaseName, $fileName) {
-        // create dictionary table 
-        Schema::dropIfExists($databaseName);
-        Schema::create($databaseName, function (Blueprint $table) {
-            $table->id();
-            $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('definitions', 2048)->collation('utf8mb4_bin');
-            $table->timestamps();
-        });
-
-        // add dictionary to the dictionaries table
-        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
-        if (!$dictionary) {
-            DB::table('dictionaries')->insert([
-                'name' => $name,
-                'database_table_name' => $databaseName,
-                'source_language' => 'chinese',
-                'target_language' => $targetLanguage,
-                'color' => '#EF4556',
-                'enabled' => true,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+    public function importCeDictOrHanDeDict($userUuid, $dictionaryName, $targetLanguage, $databaseTableName, $fileName) {
+        $this->createDatabase($dictionaryName, $databaseTableName, 'chinese', $targetLanguage, '#EF4556');
 
         $index = 0;
         DB::beginTransaction();
@@ -352,7 +330,7 @@ class DictionaryImportService {
             $definitions = implode(';', $definitions);
 
 
-            DB::table($databaseName)->insert([
+            DB::table($databaseTableName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
                 'definitions' => mb_strtolower($definitions, 'UTF-8'),
                 'created_at' => Carbon::now(),
@@ -379,30 +357,8 @@ class DictionaryImportService {
     /*
         Imports a kengdic dictionary file into the database.
     */
-    public function importKengdic($userUuid, $name, $databaseName, $fileName) {
-        // create dictionary table 
-        Schema::dropIfExists($databaseName);
-        Schema::create($databaseName, function (Blueprint $table) {
-            $table->id();
-            $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('definitions', 2048)->collation('utf8mb4_bin');
-            $table->timestamps();
-        });
-
-        // add dictionary to the dictionaries table
-        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
-        if (!$dictionary) {
-            DB::table('dictionaries')->insert([
-                'name' => $name,
-                'database_table_name' => $databaseName,
-                'source_language' => 'korean',
-                'target_language' => 'english',
-                'color' => '#DDBFE4',
-                'enabled' => true,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+    public function importKengdic($userUuid, $dictionaryName, $databaseTableName, $fileName) {
+        $this->createDatabase($dictionaryName, $databaseTableName, 'korean', 'english', '#DDBFE4');
 
         $index = 0;
         DB::beginTransaction();
@@ -431,7 +387,7 @@ class DictionaryImportService {
             }
 
 
-            DB::table($databaseName)->insert([
+            DB::table($databaseTableName)->insert([
                 'word' => mb_strtolower($data[1], 'UTF-8'),
                 'definitions' => mb_strtolower($data[3], 'UTF-8'),
                 'created_at' => Carbon::now(),
@@ -458,36 +414,13 @@ class DictionaryImportService {
     /*
         Imports a  dictionary file into the database.
     */
-    public function importEurfa($userUuid, $name, $databaseName, $fileName) {
-        // create dictionary table 
-        Schema::dropIfExists($databaseName);
-        Schema::create($databaseName, function (Blueprint $table) {
-            $table->id();
-            $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('definitions', 2048)->collation('utf8mb4_bin');
-            $table->timestamps();
-        });
-
-        // add dictionary to the dictionaries table
-        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
-        if (!$dictionary) {
-            DB::table('dictionaries')->insert([
-                'name' => $name,
-                'database_table_name' => $databaseName,
-                'source_language' => 'welsh',
-                'target_language' => 'english',
-                'color' => '#32DB4D',
-                'enabled' => true,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+    public function importEurfa($userUuid, $dictionaryName, $databaseTableName, $fileName) {
+        $this->createDatabase($dictionaryName, $databaseTableName, 'welsh', 'english', '#32DB4D');
 
         DB::beginTransaction();
         $index = 0;
         $csv = Reader::createFromPath(storage_path('app/temp/dictionaries') . '/' . $fileName, 'r');
         $records = $csv->getRecords();
-        $uniqueWords = [];
         foreach ($records as$record) {
 
             // check if both columns exist
@@ -496,13 +429,13 @@ class DictionaryImportService {
             }
 
             // add word 
-            DB::table($databaseName)->insert([
+            DB::table($databaseTableName)->insert([
                 'word' => mb_strtolower($record[1], 'UTF-8'),
                 'definitions' => $record[3]
             ]);
 
             // add lemma too, because there is no lemmatisation for welsh
-            DB::table($databaseName)->insert([
+            DB::table($databaseTableName)->insert([
                 'word' => mb_strtolower($record[2], 'UTF-8'),
                 'definitions' => $record[3],
                 'created_at' => Carbon::now(),
@@ -528,30 +461,8 @@ class DictionaryImportService {
     /*
         Imports a dict cc dictionary file into the database.
     */
-    public function importDictCc($userUuid, $name, $sourceLanguage, $targetLanguage, $fileName, $databaseName) {
-        // create dictionary table 
-        Schema::dropIfExists($databaseName);
-        Schema::create($databaseName, function (Blueprint $table) {
-            $table->id();
-            $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('definitions', 2048)->collation('utf8mb4_bin');
-            $table->timestamps();
-        });
-
-        // add dictionary to the dictionaries table
-        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
-        if (!$dictionary) {
-            DB::table('dictionaries')->insert([
-                'name' => $name,
-                'database_table_name' => $databaseName,
-                'source_language' => $sourceLanguage,
-                'target_language' => $targetLanguage,
-                'color' => '#FF981B',
-                'enabled' => true,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+    public function importDictCc($userUuid, $dictionaryName, $sourceLanguage, $targetLanguage, $fileName, $databaseTableName) {
+        $this->createDatabase($dictionaryName, $databaseTableName, $sourceLanguage, $targetLanguage, '#FF981B');
 
         $index = 0;
         DB::beginTransaction();
@@ -574,7 +485,7 @@ class DictionaryImportService {
                 continue;
             }
 
-            DB::table($databaseName)->insert([
+            DB::table($databaseTableName)->insert([
                 'word' => mb_strtolower($data[0], 'UTF-8'),
                 'definitions' => mb_strtolower($data[1], 'UTF-8'),
                 'created_at' => Carbon::now(),
@@ -601,30 +512,8 @@ class DictionaryImportService {
     /*
         Imports a wiktionary dictionary file into the database.
     */
-    public function importWiktionary($userUuid, $name, $language, $fileName, $databaseName) {
-        // create dictionary table 
-        Schema::dropIfExists($databaseName);
-        Schema::create($databaseName, function (Blueprint $table) {
-            $table->id();
-            $table->string('word', 256)->collation('utf8mb4_bin')->index();
-            $table->string('definitions', 256)->collation('utf8mb4_bin');
-            $table->timestamps();
-        });
-
-        // add dictionary to the dictionaries table
-        $dictionary = DB::table('dictionaries')->where('name', $name)->first();
-        if (!$dictionary) {
-            DB::table('dictionaries')->insert([
-                'name' => $name,
-                'database_table_name' => $databaseName,
-                'source_language' => $language,
-                'target_language' => 'english',
-                'color' => '#E9CDA0',
-                'enabled' => true,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+    public function importWiktionary($userUuid, $dictionaryName, $sourceLanguage, $fileName, $databaseTableName) {
+        $this->createDatabase($dictionaryName, $databaseTableName, $sourceLanguage, 'english', '#E9CDA0');
 
         $index = 0;
         DB::beginTransaction();
@@ -667,7 +556,7 @@ class DictionaryImportService {
                 continue;
             }
 
-            DB::table($databaseName)->insert([
+            DB::table($databaseTableName)->insert([
                 'word' => $word,
                 'definitions' => $filteredDefinitions,
                 'created_at' => Carbon::now(),
@@ -971,7 +860,7 @@ class DictionaryImportService {
     }
 
     /* 
-        Converts jmdict to text. Should be moved to python.
+        Converts jmdict to text. It is used to create the file that can be imported into linguacafe, it should be moved to python.
     */
     public function jmdictXmlToText() {
         $file = fopen(base_path() . '/storage/app/temp/dictionaries/jmdict.txt', 'w');
@@ -1116,5 +1005,32 @@ class DictionaryImportService {
         $dictionary->save();
 
         return true;
+    }
+
+    private function createDatabase(string $dictionaryName, string $databaseTableName, string $sourceLanguage, string $targetLanguage, string $color): void
+    {
+        // create database table
+        Schema::dropIfExists($databaseTableName);
+        Schema::create($databaseTableName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        // insert dictionary to the dictionaries table
+        $dictionary = DB::table('dictionaries')->where('name', $databaseTableName)->first();
+        if (!$dictionary) {
+            DB::table('dictionaries')->insert([
+                'name' => $dictionaryName,
+                'database_table_name' => $databaseTableName,
+                'source_language' => $sourceLanguage,
+                'target_language' => $targetLanguage,
+                'color' => $color,
+                'enabled' => true,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
     }
 }
