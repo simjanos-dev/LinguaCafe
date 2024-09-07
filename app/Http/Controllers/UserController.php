@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use App\Services\GoalService;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 // request classes
-use App\Http\Requests\Users\UpdatePasswordRequest;
 use App\Http\Requests\Users\CreateUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
+use App\Http\Requests\Users\UpdatePasswordRequest;
 use App\Http\Requests\Users\AuthenticateUserRequest;
 
 class UserController extends Controller {
@@ -23,12 +23,14 @@ class UserController extends Controller {
 
     }
 
-    public function isUserPasswordChanged() {
+    public function isUserPasswordChanged() 
+    {
         $passwordChanged = Auth::user()->password_changed;
         return response()->json($passwordChanged, 200);
     }
 
-    public function getUsers() {
+    public function getUsers() 
+    {
         $userId = Auth::user()->id;
 
         try {
@@ -40,7 +42,8 @@ class UserController extends Controller {
         return response()->json($users, 200);
     }
 
-    public function showLoginForm() {
+    public function showLoginForm() 
+    {
         $userCount = User::count();
         $theme = $_COOKIE['theme'] ?? 'light';
 
@@ -55,7 +58,8 @@ class UserController extends Controller {
         ]);
     }
     
-    public function authenticateUser(AuthenticateUserRequest $request) {
+    public function authenticateUser(AuthenticateUserRequest $request) 
+    {
         $email = $request->post('email');
         $password = $request->post('password');
 
@@ -72,7 +76,8 @@ class UserController extends Controller {
         }
     }
 
-    public function updatePassword(UpdatePasswordRequest $request) {
+    public function updatePassword(UpdatePasswordRequest $request) 
+    {
         $user = Auth::user();
         $password = $request->post('password');
 
@@ -85,7 +90,8 @@ class UserController extends Controller {
         return response()->json('Password has been updated successfully.', 200);
     }
 
-    public function createUser(CreateUserRequest $request) {
+    public function createUser(CreateUserRequest $request) 
+    {
         $userCount = User::count();
         $name = $request->post('name');
         $email = $request->post('email');
@@ -107,7 +113,8 @@ class UserController extends Controller {
         return response()->json('User has been created successfully.', 200);
     }
 
-    public function updateUser(UpdateUserRequest $request) {
+    public function updateUser(UpdateUserRequest $request) 
+    {
         $userId = $request->post('userId');
         $name = $request->post('name');
         $email = $request->post('email');
@@ -120,5 +127,18 @@ class UserController extends Controller {
         }
 
         return response()->json('User has been updated successfully.', 200);
+    }
+
+    public function deleteUserLanguageData($language) 
+    {
+        $userId = Auth::user()->id;
+
+        try {
+            $this->userService->deleteUserLanguageData($userId, $language);
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
+        
+        return response()->json('User has been deleted successfully.', 200);
     }
 }

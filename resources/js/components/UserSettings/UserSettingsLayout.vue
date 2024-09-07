@@ -6,7 +6,7 @@
         </v-tabs>
         <v-tabs-items v-model="tab" id="admin-tab-items" elevation="0" class="no-background rounded-lg mt-4 pa-6">
             <v-tab-item :value="0">
-                Nothing is here yet.
+                <user-settings-account :language="$props.language" />
             </v-tab-item>
             <v-tab-item :value="1">
                 <user-settings-themes />
@@ -19,7 +19,7 @@
     export default {
         data: function() {
             return {
-                tab: 1,
+                tab: 0,
             }
         },
         props: {

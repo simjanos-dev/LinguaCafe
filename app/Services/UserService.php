@@ -2,12 +2,19 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+use App\Models\Book;
+use App\Models\User;
+use App\Models\Phrase;
+use App\Models\Chapter;
 use Illuminate\Support\Str;
 
-use Carbon\Carbon;
-use App\Models\User;
 use App\Services\GoalService;
+use App\Models\EncounteredWord;
+use App\Models\ExampleSentence;
+use App\Models\GoalAchievement;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserService {
     
@@ -97,5 +104,40 @@ class UserService {
         $user->save();
 
         return true;
+    }
+
+    public function deleteUserLanguageData($userId, $language): void
+    {
+        DB::transaction(function() use($userId, $language) {
+            Phrase::query()
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->delete();
+
+            EncounteredWord::query()
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->delete();
+
+            ExampleSentence::query()
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->delete();
+            
+            Chapter::query()
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->delete();
+            
+            Book::query()
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->delete();
+
+            GoalAchievement::query()
+                ->where('user_id', $userId)
+                ->where('language', $language)
+                ->delete();
+        });
     }
 }
