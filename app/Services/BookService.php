@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-
-use App\Models\EncounteredWord;
-use App\Models\Chapter;
 use App\Models\Book;
+
+use App\Models\Chapter;
+use App\Models\EncounteredWord;
+use App\Enums\ChapterProcessingStatusEnum;
+use Illuminate\Support\Facades\Storage;
 
 class BookService {
     
@@ -63,7 +64,7 @@ class BookService {
         $bookWordCount = Chapter
             ::where('user_id', $userId)
             ->where('book_id', $bookId)
-            ->where('processing_status', 'processed')
+            ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
             ->sum('word_count');
 
         $bookWordCount = intval($bookWordCount);

@@ -11,12 +11,11 @@ use App\Models\EncounteredWord;
 
 // services
 use App\Services\ChapterService;
-use Ramsey\Collection\Collection;
+use App\Enums\ChapterProcessingStatusEnum;
 
 // models
 use App\Services\QueueStatsService;
 use App\Services\VocabularyService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -97,7 +96,7 @@ class ProcessChapter implements ShouldQueue
             ->first();
         
         // set chapter processing status to failed
-        $chapter->processing_status = 'failed';
+        $chapter->processing_status = ChapterProcessingStatusEnum::FAILED->value;
         $chapter->save();
 
         $this->queueStatsService->insertChapterProcessedStat($chapter, 'failed', $this->dispatchedAt, $this->startedAt);
@@ -114,7 +113,7 @@ class ProcessChapter implements ShouldQueue
             ->keyBy('id')
             ->toArray();
 
-        if ($chapter->processing_status === 'processed') {
+        if ($chapter->processing_status === ChapterProcessingStatusEnum::PROCESSED->value) {
             $chapter->wordCount = $chapter->getWordCounts($words);
         }
         

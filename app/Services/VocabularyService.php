@@ -2,21 +2,22 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;;
-use League\Csv\Writer;
-use League\Csv\Reader;
+use App\Models\Book;
+use App\Models\Kanji;
+use App\Models\Phrase;
 
 // models
-use App\Models\EncounteredWord;
-use App\Models\Phrase;
-use App\Models\Book;
+use League\Csv\Reader;
+use League\Csv\Writer;
 use App\Models\Chapter;
-use App\Models\ExampleSentence;
-use App\Models\Kanji;
 use App\Models\Radical;
+use App\Models\EncounteredWord;
+use App\Models\ExampleSentence;
+use App\Enums\ChapterProcessingStatusEnum;
 
 // services
 use App\Services\TextBlockService;
+use Illuminate\Support\Facades\DB;;
 
 class VocabularyService {
     private $itemsPerPage;
@@ -87,7 +88,7 @@ class VocabularyService {
         $chapterIds = Chapter
                 ::where('user_id', $userId)
                 ->where('language', $language)
-                ->where('processing_status', 'processed')
+                ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
                 ->pluck('id')
                 ->toArray();
 
@@ -99,7 +100,7 @@ class VocabularyService {
                     ->where('id', $chapterId)
                     ->where('user_id', $userId)
                     ->where('language', $language)
-                    ->where('processing_status', 'processed')
+                    ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
                     ->first();
     
                 $uniqueWords = json_decode($chapter->unique_words);
@@ -159,7 +160,7 @@ class VocabularyService {
                 ->where('id', $chapterId)
                 ->where('user_id', $userId)
                 ->where('language', $language)
-                ->where('processing_status', 'processed')
+                ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
                 ->first();
 
             if (!$chapter) {
@@ -361,7 +362,7 @@ class VocabularyService {
             $books[$i]->chapters = Chapter
                 ::select(['id', 'name'])
                 ->where('user_id', $userId)
-                ->where('processing_status', 'processed')
+                ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
                 ->where('language', $language)
                 ->where('book_id', $books[$i]->id)
                 ->get();

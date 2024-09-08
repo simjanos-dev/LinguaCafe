@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Book;
+use App\Models\Chapter;
+use App\Enums\ChapterProcessingStatusEnum;
+
+// models
 use Illuminate\Support\Facades\DB;
 
-// modelx
-use App\Models\Chapter;
-use App\Models\Book;
-
 // services
-use App\Services\TextBlockService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class ImportService {
 
@@ -108,7 +108,7 @@ class ImportService {
             $chapter = new Chapter();
             $chapter->user_id = $userId;
             $chapter->name = $chapterNameCalculated;
-            $chapter->processing_status = 'unprocessed';
+            $chapter->processing_status = ChapterProcessingStatusEnum::UNPROCESSED->value;
             $chapter->read_count = 0;
             $chapter->word_count = 0;
             $chapter->book_id = $book->id;

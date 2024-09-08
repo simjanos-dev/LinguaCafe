@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Chapter;
-use Illuminate\Support\Facades\Auth;
+use App\Enums\ChapterProcessingStatusEnum;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Book extends Model
 {
@@ -21,7 +21,7 @@ class Book extends Model
     function getWordCounts($userId, $words) {
         $chapters = Chapter
             ::where('user_id', $userId)
-            ->where('processing_status', 'processed')
+            ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
             ->where('book_id', $this->id)
             ->get();
             

@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
-use Illumniate\Support\Sleep;
-
-use App\Services\GoalService;
-use App\Services\BookService;
-use App\Services\TextBlockService;
-
 use App\Models\Book;
 use App\Models\Phrase;
+
 use App\Models\Chapter;
+use App\Services\BookService;
+use App\Services\GoalService;
+
 use App\Models\EncounteredWord;
+use App\Enums\ChapterProcessingStatusEnum;
+use App\Services\TextBlockService;
+use Illuminate\Support\Facades\DB;
 
 
 class ChapterService {
@@ -87,7 +87,7 @@ class ChapterService {
 
         $chaptersWithWordCounts = [];
         for ($i = 0; $i < count($chapters); $i++) {
-            if ($chapters[$i]->processing_status !== 'processed') {
+            if ($chapters[$i]->processing_status !== ChapterProcessingStatusEnum::PROCESSED->value) {
                 continue;
             }
 
@@ -127,7 +127,7 @@ class ChapterService {
             ::where('id', $chapterId)
             ->where('user_id', $userId)
             ->where('language', $language)
-            ->where('processing_status', 'processed')
+            ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
             ->first();
         
         if (!$chapter) {
@@ -157,7 +157,7 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            if ($chapters[$i]->processing_status === 'processed') {
+            if ($chapters[$i]->processing_status === ChapterProcessingStatusEnum::PROCESSED->value) {
                 $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
             }
             
@@ -284,7 +284,7 @@ class ChapterService {
 
         $chapter = new Chapter();
         $chapter->user_id = $userId;
-        $chapter->processing_status = 'unprocessed';
+        $chapter->processing_status = ChapterProcessingStatusEnum::UNPROCESSED->value;
         $chapter->name = $chapterName;
         $chapter->type = 'text';
         $chapter->subtitle_timestamps = '';
@@ -317,7 +317,7 @@ class ChapterService {
         // update chapter data
         $chapter->raw_text = $chapterText;
         $chapter->name = $chapterName;
-        $chapter->processing_status = 'unprocessed';
+        $chapter->processing_status = ChapterProcessingStatusEnum::UNPROCESSED->value;
         $chapter->save();
         
         \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $chapter->language);
@@ -375,7 +375,7 @@ class ChapterService {
             $chapter->unique_word_ids = json_encode($uniqueWordIds);
             $chapter->setProcessedText($textBlock->processedWords);
             $chapter->subtitle_timestamps = json_encode($timeStamps);
-            $chapter->processing_status = 'processed';
+            $chapter->processing_status = ChapterProcessingStatusEnum::PROCESSED->value;
             $chapter->save();
             
             $bookId = $chapter->book_id;    
@@ -414,11 +414,11 @@ class ChapterService {
             ->get();
 
         $chapters->each(function($chapter) use($userId, $userUuid) {
-            if ($chapter->processing_status !== 'failed')  {
+            if ($chapter->processing_status !== ChapterProcessingStatusEnum::FAILED->value)  {
                 return;
             }
 
-            $chapter->processing_status = 'unprocessed';
+            $chapter->processing_status = ChapterProcessingStatusEnum::UNPROCESSED->value;
             $chapter->save();
 
             \App\Jobs\ProcessChapter::dispatch($userId, $userUuid, $chapter->id, $chapter->language);
