@@ -245,7 +245,7 @@ class DictionaryController extends Controller
         $skipHeader = boolval($request->post('skipHeader') === 'true');
 
         try {
-            $sample = $this->dictionaryService->testDictionaryCsvFile($file, $delimiter, $skipHeader);
+            $sample = $this->dictionaryImportService->testDictionaryCsvFile($file, $delimiter, $skipHeader);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }
@@ -265,7 +265,7 @@ class DictionaryController extends Controller
         $color = $request->post('color');
 
         try {
-            $this->dictionaryService->importDictionaryCsvFile(
+            $this->dictionaryImportService->importDictionaryCsvFile(
                 $file, 
                 $skipHeader, 
                 $delimiter, 

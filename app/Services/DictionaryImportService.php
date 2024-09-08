@@ -2,18 +2,19 @@
 
 namespace App\Services;
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Kanji;
-use App\Models\Dictionary;
-use App\Models\Radical;
-use App\Models\VocabularyJmdict;
-use App\Models\VocabularyJmdictWord;
-use App\Models\VocabularyJmdictReading;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use League\Csv\Reader;
 use Carbon\Carbon;
+use App\Models\Kanji;
+use League\Csv\Reader;
+use App\Models\Radical;
+use App\Models\Dictionary;
+use App\Models\VocabularyJmdict;
+use Illuminate\Support\Facades\DB;
+use App\Models\VocabularyJmdictWord;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
+use App\Models\VocabularyJmdictReading;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Schema\Blueprint;
 
 class DictionaryImportService {
 
@@ -232,6 +233,127 @@ class DictionaryImportService {
         return $lineCount;
     }
 
+    public function testDictionaryCsvFile($file, $delimiter, $skipHeader) {
+        $returnData = new \stdClass();
+        $returnData->status = 'success';
+        $returnData->sample = [];
+        $returnData->recordCount = 0;
+
+        // move file to a temp folder
+        $fileName = bin2hex(openssl_random_pseudo_bytes(30)) . '.csv';
+        $file->move(storage_path('app/temp'), $fileName);
+        
+        // try to read file and collect sample rows
+        try {
+            $csv = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
+            $csv->setDelimiter($delimiter);
+            $records = $csv->getRecords();
+            foreach ($records as $index => $record) {
+                // ignore header
+                if ($skipHeader && !$index) {
+                    continue;
+                }
+
+                // check if both columns exist
+                if (!isset($record[0]) || !isset($record[1])) {
+                    throw new \Exception('Missing data.');
+                }
+
+                $sampleData = new \stdClass();
+                $sampleData->word = mb_strtolower($record[0], 'UTF-8');
+                $sampleData->translation = $record[1];
+
+                // this loop runs through the whole file to test for errors
+                if (($skipHeader && $index <= 3) || (!$skipHeader && $index < 3)) {
+                    $returnData->sample[] = $sampleData;
+                }
+
+                $returnData->recordCount ++;
+            }
+        } catch (\Exception $exception) {
+            $returnData->sample = [];
+            $returnData->status = 'error';
+        }
+
+        File::delete(storage_path('app/temp') . '/' . $fileName);
+
+        return $returnData;
+    }
+    
+    public function importDictionaryCsvFile($file, $skipHeader, $delimiter, $dictionaryName, $databaseTableName, $sourceLanguage, $targetLanguage, $color) {
+        set_time_limit(2400);
+        
+        if(!preg_match('/^[a-z0-9_]+$/', $databaseTableName)) {
+            throw new \Exception('Database name can only contain lowercase letters, numbers and underscore!');
+        }
+
+        if(mb_strlen($dictionaryName) > 16) {
+            throw new \Exception('Dictionary name can only contain up to 16 characters!');
+        }
+
+        if(mb_strlen($databaseTableName) > 40) {
+            throw new \Exception('Database name can only contain up to 40 characters!');
+        }
+
+        // check if table exists
+        if (Schema::hasTable($databaseTableName)) {
+            throw new \Exception('Database table name already exists');
+        }
+        
+        // create table
+        Schema::create($databaseTableName, function (Blueprint $table) {
+            $table->id();
+            $table->string('word', 256)->collation('utf8mb4_bin')->index();
+            $table->string('definitions', 2048)->collation('utf8mb4_bin');
+            $table->timestamps();
+        });
+
+        $dictionary = new Dictionary();
+        $dictionary->name = $dictionaryName;
+        $dictionary->type = 'custom_csv';
+        $dictionary->database_table_name = $databaseTableName;
+        $dictionary->source_language = $sourceLanguage;
+        $dictionary->target_language = $targetLanguage;
+        $dictionary->color = $color;
+        $dictionary->enabled = true;
+        $dictionary->save();
+
+        // move file to a temp folder
+        $fileName = bin2hex(openssl_random_pseudo_bytes(30)) . '.csv';
+        $file->move(storage_path('app/temp'), $fileName);
+        
+        // try to read file and collect sample rows
+        DB::beginTransaction();
+        $csv = Reader::createFromPath(storage_path('app/temp') . '/' . $fileName, 'r');
+        $csv->setDelimiter($delimiter);
+        $records = $csv->getRecords();
+        foreach ($records as $index => $record) {
+            // ignore header
+            if ($skipHeader && !$index) {
+                continue;
+            }
+
+            // check if both columns exist
+            if (!isset($record[0]) || !isset($record[1])) {
+                throw new \Exception('Missing data.');
+            }
+
+            if (mb_strlen($record[0]) > 255 || mb_strlen($record[1]) > 2047) {
+                continue;
+            }
+            
+            DB::table($databaseTableName)->insert([
+                'word' => mb_strtolower($record[0], 'UTF-8'),
+                'definitions' => $record[1]
+            ]);
+        }
+
+        DB::commit();
+        File::delete(storage_path('app/temp') . '/' . $fileName);
+        
+        return true;
+    }
+    
     public function importSupportedDictionary($userUuid, $dictionaryName, $dictionaryFileName, $dictionarySourceLanguage, $dictionaryTargetLanguage, $dictionaryDatabaseName) {
         set_time_limit(2400);
         
