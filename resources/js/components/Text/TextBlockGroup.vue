@@ -161,7 +161,7 @@
 
         <!--Vocabulary sidebar-->
         <vocabulary-side-box
-            v-if="!$store.state.vocabularyBox.sidebarHidden"
+            v-if="$props.vocabularySidebar && !$store.state.vocabularyBox.sidebarHidden"
             :language="$props.language"
             :auto-highlight-words="$props.autoHighlightWords"
             :any-api-dictionary-enabled="anyApiDictionaryEnabled"
