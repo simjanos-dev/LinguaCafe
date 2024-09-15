@@ -45,7 +45,7 @@
         <div id="toolbar" class="d-flex mx-auto mt-6 mb-2">
               <v-menu offset-y class="rounded-lg">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn :color="theme == 'eink' ? 'white' : ''" rounded depressed v-bind="attrs" v-on="on">
+                        <v-btn color="foreground" rounded depressed v-bind="attrs" v-on="on">
                             Layout
                             <v-icon v-if="attrs['aria-expanded'] === 'true'">mdi-chevron-up</v-icon>
                             <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>

@@ -16,11 +16,6 @@ div.v-list.filter-popup {
         }
     }
 
-    #search-result-info {
-        margin-top: 7px;
-        background-color: var(--v-gray3-base);
-    }
-
     #search-line {
         display: block;
         width: 100%;
@@ -38,17 +33,12 @@ div.v-list.filter-popup {
         .v-input__slot {
             transition: .2s;
             height: 40px;
-            background: #F0F0F0;
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
             border-right: 0px solid rgba(0, 0, 0, 0) !important;
 
             label.v-label.v-label--active {
                 display: none !important;
-            }
-
-            &:focus, &:active, &:hover {
-                background: #E0E0E0;
             }
         }
 

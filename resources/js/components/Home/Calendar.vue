@@ -7,7 +7,7 @@
             <!-- Displayed goal select -->
             <v-menu offset-y class="rounded-lg">
                 <template v-slot:activator="{ on, attrs }">
-                    <v-btn class="calendar-button" :color="theme == 'eink' ? 'white' : ''" rounded depressed v-bind="attrs" v-on="on">
+                    <v-btn class="calendar-button" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                         <span id="goal-selection-text-small">Goal</span>
                         <span id="goal-selection-text">Displayed goal</span>
                         <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
@@ -32,7 +32,7 @@
                     <v-btn
                         id="calendar-date-button"
                         class="calendar-button ml-2"
-                        :color="theme == 'eink' ? 'white' : ''"
+                        color="foreground"
                         rounded
                         depressed
                         @click="showDatePicker = true;"

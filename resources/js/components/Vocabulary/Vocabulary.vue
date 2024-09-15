@@ -32,13 +32,13 @@
             <div class="subheader my-4 d-flex">
                 Vocabulary
                 <v-spacer></v-spacer>
-                <v-chip id="search-result-info" class="pl-1"><v-icon class="mr-1" right>mdi-text-box-check</v-icon>{{ wordCount }} results</v-chip>
+                <v-chip id="search-result-info" color="foreground" class="pl-1"><v-icon class="mr-1" right>mdi-text-box-check</v-icon>{{ wordCount }} results</v-chip>
             </div>
 
             <!-- search filter -->
             <div id="vocabulary-search-field" class="mb-6">
                 <v-btn rounded depressed color="primary" @click="applyFilter('text')"><v-icon>mdi-magnify</v-icon> Search</v-btn>
-                <v-text-field class="pt-0" rounded label="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')"></v-text-field>
+                <v-text-field class="pt-0" rounded filled dense hide-details placeholder="Search term" v-model="filters.text" @keyup.enter="applyFilter('text')"></v-text-field>
             </div>
 
             <!-- filters -->
@@ -47,7 +47,7 @@
                     <!-- Stage filter -->
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu pl-3 pr-2 mx-1" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 Level
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
@@ -73,7 +73,7 @@
                     <!-- Book filter -->
                     <v-menu right offset-y v-if="books.length">
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu pl-3 pr-2 mx-1" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 Book
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
@@ -94,7 +94,7 @@
                     <!-- Chapter filter -->
                     <v-menu offset-y v-if="filters.bookIndex !== -1 && books.length">
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu pl-3 pr-2 mx-1" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 Chapter
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
@@ -115,7 +115,7 @@
                     <!-- Translation filter -->
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu pl-3 pr-2 mx-1" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 Translation
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
@@ -138,7 +138,7 @@
                     <!-- Phrases filter -->
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu pl-3 pr-2 mx-1" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 Phrases
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
@@ -165,7 +165,7 @@
                     <!-- Search result order -->
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu pl-3 pr-2 mx-1" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu pl-3 pr-2 mx-1" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 Order by
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>
@@ -193,7 +193,7 @@
                     <!-- Export / import -->
                     <v-menu offset-y>
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn class="filter-menu export pl-3 pr-2" rounded depressed v-bind="attrs" v-on="on">
+                            <v-btn class="filter-menu export pl-3 pr-2" color="foreground" rounded depressed v-bind="attrs" v-on="on">
                                 <v-icon small class="mr-1">mdi-file-download</v-icon>Data
                                 <v-icon v-if="attrs['aria-expanded'] === 'true' ">mdi-chevron-up</v-icon>
                                 <v-icon v-if="attrs['aria-expanded'] !== 'true'">mdi-chevron-down</v-icon>

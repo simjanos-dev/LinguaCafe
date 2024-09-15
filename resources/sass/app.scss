@@ -89,6 +89,10 @@
 }
 
 // toggle button
+.v-item-group:not(.v-bottom-navigation) > .v-btn {
+    background-color: var(--v-foreground-base) !important;
+}
+
 .v-item-group .v-btn.v-btn--active {
     background-color: var(--v-primary-base) !important;
     border-color: var(--v-primary-base) !important;
@@ -283,7 +287,7 @@ button.v-btn.menu-button {
 
 // it's required because otherwise it had 
 // weird white background outside of rounded corners
-.v-dialog.date-picker-dialog {
+.date-picker-dialog {
     border-radius: 8px !important;
     overflow: hidden !important;
 
@@ -291,6 +295,10 @@ button.v-btn.menu-button {
         border-radius: 0px !important;
         overflow: hidden !important;
         background: linear-gradient(180deg, var(--v-primary-base) 0%, #ffffff 50%) !important;
+    }
+
+    .theme--light.v-picker__body, .v-picker__actions.v-card__actions {
+        background: var(--v-foreground-base) !important;
     }
 }
 

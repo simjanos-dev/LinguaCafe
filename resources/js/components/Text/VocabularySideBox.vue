@@ -21,7 +21,7 @@
         @mouseup.stop=";"
     >
         <!-- Vocab box content -->
-        <v-alert id="no-word-selected-title" border="top" color="gray" class="text--text" v-if="type == 'empty'">
+        <v-alert id="no-word-selected-title" prominent color="foreground" class="text--text" v-if="type == 'empty'">
             Select a word or a phrase!
         </v-alert>
 
