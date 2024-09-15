@@ -29,6 +29,7 @@
                     <li>Text reader's glossary displayed "2" instead of "new" for new words.</li>
                     <li>Development tools page had incorrect background for light theme.</li>
                     <li>Book word count percentages were displayed incorrectly in empty books and chapters.</li>
+                    <li>Fixed inconsistencies in custom themes when the user selected different foreground color.</li>
                 </ul>
 
                 <b>Other changes:</b>

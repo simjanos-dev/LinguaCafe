@@ -109,6 +109,14 @@ You can now reach your dev server on localhost:3000, it will auto reload when yo
 
 The developer environment does not copy the contents of the linguacafe folder into the docker image, instead it mounts the whole folder, so it is accessible for both the docker container and the developer.
 
+#### Laravel Horizon
+
+Laravel Horizon is the process that runs Laravel jobs. For code changes to take effect in jobs, you will have to restart Horizon. Supervisor makes sure that the Horizon process is always running, so you can restart it with this command:
+
+```
+docker exec -ti linguacafe-webserver-dev php artisan horizon:terminate
+```
+
 #### Developer environment update
 
 If there is a change in docker-compose yml file, or in one of the dockerfiles, you can use these commands to update your docker image in your developer environment.
