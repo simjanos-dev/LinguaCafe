@@ -140,7 +140,7 @@ class ChapterService {
             ->first();
 
         $chapters = Chapter
-            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids'])
+            ::select(['id', 'name', 'read_count', 'word_count', 'unique_word_ids', 'processing_status'])
             ->where('user_id', $userId)
             ->where('book_id', $book->id)
             ->get();
@@ -157,16 +157,18 @@ class ChapterService {
             ->toArray();
 
         for ($i = 0; $i < count($chapters); $i++) {
-            if ($chapters[$i]->processing_status === ChapterProcessingStatusEnum::PROCESSED->value) {
-                $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($words);
-            }
-            
             $chapters[$i]->wordCount = new \stdClass();
             $chapters[$i]->wordCount->total = $chapters[$i]->word_count;
             $chapters[$i]->wordCount->unique = -1;
             $chapters[$i]->wordCount->known = -1;
             $chapters[$i]->wordCount->highlighted = -1;
             $chapters[$i]->wordCount->new = -1;
+            
+            if ($chapters[$i]->processing_status !== ChapterProcessingStatusEnum::PROCESSED->value) {
+                continue;
+            }
+
+            $chapters[$i]->wordCount = $chapters[$i]->getWordCounts($uniqueWordsForWordCounts);
         }
 
         $textBlock = new TextBlockService($userId, $language);

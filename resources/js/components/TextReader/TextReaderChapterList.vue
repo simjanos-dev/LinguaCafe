@@ -32,7 +32,15 @@
                                 <td class="text-center"><span class="rounded-pill highlighted">{{ chapter.wordCount.highlighted }}</span></td>
                                 <td class="text-center"><span class="rounded-pill new">{{ chapter.wordCount.new }}</span></td>
                                 <td class="text-center">
-                                    <v-btn depressed rounded small color="primary" width="80px" :to="'/chapters/read/' + chapter.id" v-if="chapter.id != currentChapterId">Read</v-btn>
+                                    <v-btn
+                                        v-if="chapter.id != currentChapterId && chapter.processing_status === 'processed'"
+                                        depressed
+                                        rounded
+                                        small
+                                        color="primary"
+                                        width="80px"
+                                        :to="'/chapters/read/' + chapter.id"
+                                    >Read</v-btn>
                                 </td>
                             </tr>
                         </tbody>
