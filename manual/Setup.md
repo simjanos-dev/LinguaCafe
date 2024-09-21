@@ -1,6 +1,81 @@
 # Setup
 This section contains information related to hosting, setting up and maintaining your LinguaCafe server. There are some important steps to take after installation before you can use linguacafe, like installing additional languages and importing dictionaries.
 
+
+# Installation
+
+#### Step 1: Install docker desktop.
+
+>[!IMPORTANT]
+>
+> On MacOS you might need actual Docker Desktop instead of just basic Docker, because it allows you to use Rosetta to run images without support for Arm64 like our Python image, which uses Spacy models that only work in Amd64.
+
+#### Step 2: Create linguacafe folder and download the docker-compose.yml file.
+
+Create a folder for linguacafe, and a storage subfolder. Then download the [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/main/docker-compose.yml) file, and place in inside your linguacafe folder. Your folder structure should look like this:
+```
+.
+├── linguacafe
+│   ├── storage
+│   ├── docker-compose.yml
+```
+
+If you want to change the default MySQL database and user, you can create a `.env` file inside your linguacafe folder and add these lines to it before starting your servers for the first time:
+```
+DB_DATABASE="linguacafe"
+DB_USERNAME="linguacafe"
+DB_PASSWORD="linguacafe"
+```
+
+You can also use a remote MySql server. In this case, you must create the database itself before starting the server.
+```
+DB_HOST="linguacafe-database-host"
+DB_PORT=3306
+```
+
+MacOs users with Apple silicon must also create a `.env` file, and add the following line:
+```
+PLATFORM="linux/amd64"
+```
+
+#### Step 3: Run this command to download the docker images and start your server:
+```
+docker compose up -d
+```
+
+**Windows:**
+
+For Windows, you can download [this installation script](/install_linguacafe.bat) and run it instead of running any of the commands yourself. Since this is a .bat file, Windows defender will warn you about it being potentially a malware.
+
+#### Step 4: Admin settings
+Your server now should be running and accessible on http://localhost:9191. 
+
+Although your server is set up and functional, please read the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup), because there are a few additional steps before you can use linguacafe, like installing languages and importing dictionaries.
+
+#### Install error troubleshooting
+<details>
+<summary><b>Mysql error while running the `docker compose up -d` command.</b></summary>
+
+Some Apple silicon users have encountered error messages like these: 
+```
+[+] Pulling 1/3 on
+✘ mysql Error context canceled 1.0s
+⠏ webserver [⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀] Pulling 1.0s
+⠏ python Pulling 1.0s
+no matching manifest for linux/arm64/v8 in the manifest list entries
+```
+
+We do not know why, but pulling the images individually fixes this error.
+
+Run these commands, then run `docker compose up -d` again:
+```
+docker pull --platform linux/arm64 ghcr.io/simjanos-dev/linguacafe-webserver:latest
+docker pull --platform linux/amd64 ghcr.io/simjanos-dev/linguacafe-python-service:latest
+```
+</details>
+
+
+
 # Beta
 
 >[!NOTE]
