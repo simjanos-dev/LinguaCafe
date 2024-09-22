@@ -32,6 +32,10 @@ Other Armv8 devices such as Raspberry Pis 3 and newer do not work at the moment.
 ## Memory usage
 LinguaCafe uses RAM based on how many and which languages do you use. If you use every language, the RAM usage can be over 2GB.
 
+## Installation
+
+You can find the installation guide on the [GitHub Wiki](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#installation) page.
+
 ## Updating to the latest version 
 
 Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#backup).
