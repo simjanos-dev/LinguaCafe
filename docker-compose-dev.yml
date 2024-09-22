@@ -27,7 +27,7 @@ services:
             DB_HOST: linguacafe-database-dev
             DB_PORT: 3306
             BACKUP_INTERVAL: "0,15,30,45 * * * *"
-            MAX_SAVED_BACKUPS: 14
+            MAX_SAVED_BACKUPS: 8
         ports:
             - "6001:6001"
             - "3000:3000"
