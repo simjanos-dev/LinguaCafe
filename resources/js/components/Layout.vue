@@ -168,6 +168,10 @@
                 type: String,
                 default: '',
             },
+            _userEmail: {
+                type: String,
+                default: '',
+            },
             _userUuid: {
                 type: String,
                 default: '',
@@ -178,6 +182,8 @@
         beforeMount() {
             // set store data
             this.$store.commit('shared/setUuid', this.$props._userUuid);
+            this.$store.commit('shared/setUserName', this.$props._userName);
+            this.$store.commit('shared/setUserEmail', this.$props._userEmail);
             this.$store.commit('shared/setUserAdmin', this.$props._isAdmin);
 
             if (this.$props._selectedLanguage == 'japanese') {

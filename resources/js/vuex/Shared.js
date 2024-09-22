@@ -5,6 +5,8 @@ export default {
     namespaced: true,
     state: () => ({
         userUuid: '',
+        userName: false,
+        userEmail: false,
         userAdmin: false,
         echo: new Echo({
             broadcaster: 'pusher',
@@ -19,6 +21,12 @@ export default {
     mutations: {
         setUuid (state, userUuid) {
             state.userUuid = userUuid;
+        },
+        setUserName (state, userName) {
+            state.userName = userName;
+        },
+        setUserEmail (state, userEmail) {
+            state.userEmail = userEmail;
         },
         setUserAdmin (state, userAdmin) {
             state.userAdmin = userAdmin;

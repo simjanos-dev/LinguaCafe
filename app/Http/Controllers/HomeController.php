@@ -26,6 +26,7 @@ class HomeController extends Controller {
         $selectedLanguage = Auth::user()->selected_language;
         $userCount = User::count();
         $userName = Auth::user()->name;
+        $userEmail = Auth::user()->email;
         $isAdmin = Auth::user()->is_admin === 1;
         $theme = $_COOKIE['theme'] ?? 'dark';
         
@@ -33,6 +34,7 @@ class HomeController extends Controller {
             'language' => $selectedLanguage,
             'userCount' => $userCount,
             'userName' => $userName,
+            'userEmail' => $userEmail,
             'isAdmin' => $isAdmin,
             'theme' => $theme,
             'userUuid' => Auth::user()->uuid,
