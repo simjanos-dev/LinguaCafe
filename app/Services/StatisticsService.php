@@ -7,7 +7,7 @@ use App\Models\GoalAchievement;
 use App\Models\EncounteredWord;
 
 class StatisticsService {
-    
+
     public function __construct() {
     }
 
@@ -37,7 +37,7 @@ class StatisticsService {
             ->where('language', $language)
             ->where('goal_id', $readingGoal->id)
             ->sum('achieved_quantity');
-        
+
         if ($language == 'japanese') {
             // get unique kanji
             $uniqueKanji = [];
@@ -55,13 +55,13 @@ class StatisticsService {
                     }
                 }
             }
-            
+
             $languageStatistics->kanji = new \stdClass();
             $languageStatistics->kanji->name = 'Kanji';
             $languageStatistics->kanji->value = count($uniqueKanji);
             $languageStatistics->kanji->icon = 'mdi-ideogram-cjk';
         }
-        
+
         $languageStatistics->known = new \stdClass();
         $languageStatistics->known->name = 'Known words';
         $languageStatistics->known->icon = 'mdi-credit-card-check';
@@ -80,7 +80,18 @@ class StatisticsService {
             ->where('user_id', $userId)
             ->where('language', $language)
             ->count('id');
-        
+
+        $languageStatistics->knownLemmas = new \stdClass();
+        $languageStatistics->knownLemmas->name = 'Known lemmas';
+        $languageStatistics->knownLemmas->icon = 'mdi-alpha-l-box';
+        $languageStatistics->knownLemmas->value = EncounteredWord
+            ::select('lemma')
+            ->where('stage', 0)
+            ->where('user_id', $userId)
+            ->where('language', $language)
+            ->groupBy('lemma')
+            ->having('lemma', '!=', '')
+            ->get()->count();
         return $languageStatistics;
     }
 }
