@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use App\Services\BackupService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class CreateBackup extends Command
 {
@@ -26,24 +29,8 @@ class CreateBackup extends Command
      */
     public function handle()
     {
-        $host = ' -h ' . env('DB_HOST');
-        $port = ' -P ' . env('DB_PORT');
-        $username = ' -u ' . env('DB_USERNAME');
-        $password = ' -p' . env('DB_PASSWORD');
-        $database = ' ' . env('DB_DATABASE');
+        $exitCode = (new BackupService())->createBackup();
         
-        $timestamp = Carbon::now()->format('Y_m_d_h_i_s');
-        
-        $path = '/var/www/html/storage/backup/';
-        $fileName = 'linguacafe_' . $timestamp . '.sql';
-        $fullFilePath = $path . $fileName;
-
-        $exitCode = null;
-        exec(
-            command: 'mysqldump --no-tablespaces' . $host . $port . $username . $password . $database . ' > ' . $fullFilePath, 
-            result_code: $exitCode
-        );
-
         return $exitCode;
     }
 }

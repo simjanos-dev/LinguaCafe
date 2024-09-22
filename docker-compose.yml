@@ -22,6 +22,8 @@ services:
             DB_PASSWORD: ${DB_PASSWORD:-linguacafe}
             DB_HOST: ${DB_HOST:-linguacafe-database}
             DB_PORT: ${DB_PORT:-3306}
+            BACKUP_INTERVAL: "59 23 * * *"
+            MAX_SAVED_BACKUPS: 14
         ports:
             - "6001:6001"
             - "${PORT:-9191}:80"

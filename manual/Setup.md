@@ -111,28 +111,31 @@ To ensure that your installed language models works, you must restart your docke
 >[!NOTE]
 > **Backup your database regularly!** I highly recommend making regular backups, especially before upgrading LinguaCafe to a newer version. LinguaCafe is still in active development, and there is a high possibility of introducing a data corrupting bug.
 
+## Automatic backup
+With the default settings LinguaCafe will create an automatic backup of your database every day at 23:59, and delete the oldest backup if you have more than 14. You can customize these values in the `docker-compose.yml` file, using cron syntax.
+
 ## Exporting the LinguaCafe's database
 
 Although copying the whole database folder works, you might also want to make a raw export of your database in order to remove the dependency on a functioning MySql docker container. This way you can have your database data in a single `.sql` file, e.g., `linguacafe-backup.sql`.
 
 >[!NOTE] 
 >
->If you run `docker ps -a`, then you should get all running Docker containers, among which there's `linguacafe-database` or a similarly named container, in which the database is running.
+>If you run `docker ps -a`, then you should get all running Docker containers, among which there's `linguacafe-webserver` or a similarly named container, in which the webserver is running.
 >
 
 Run this command while your LinguaCafe server is running to export your database:
 
 ```
-docker exec DATABASE-CONTAINER mysqldump --no-tablespaces -uUSERNAME -pPASSWORD DATABASE > ./linguacafe-backup.sql
+docker exec -ti WEBSERVER-CONTAINER php artisan app:create-backup
 ```
 
-where `DATABASE-CONTAINER`, `USERNAME`, and `PASSWORD` should be replaced with the names you used during installation. If you kept the default names, then the command is simply:
+where `WEBSERVER-CONTAINER` should be replaced with the name you used during installation. If you kept the default names, then the command is simply:
 
 ```
-docker exec linguacafe-database mysqldump --no-tablespaces -ulinguacafe -plinguacafe linguacafe > ./linguacafe-backup.sql
+docker exec -ti linguacafe-webserver php artisan app:create-backup
 ```
 
-Now there should be a `linguacafe-backup.sql` file inside your current directory.
+You can find the created backup in your `linguacafe/storage/backup` folder.
 
 ## Importing the LinguaCafe's database
 

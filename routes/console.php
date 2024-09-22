@@ -3,4 +3,4 @@
 use Illuminate\Support\Facades\Schedule;
 
 
-Schedule::command('app:create-backup')->everyFourMinutes();
+Schedule::command('app:create-backup')->cron(env('BACKUP_INTERVAL'));
