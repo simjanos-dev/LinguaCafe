@@ -285,70 +285,71 @@ class TextBlockService
     */
     public function createNewEncounteredWords() {
         $wordsToSkip = config('linguacafe.words_to_skip');      
-        $wordCount = 0;
 
         // a regular expression for japanese kanji characters
         $kanjipattern = "/[a-zA-Z0-9０-９あ-んア-ンー。、:？！＜＞： 「」（）｛｝≪≫〈〉《》【】『』〔〕［］・\n\r\t\s\(\)　]/u";
         DB::disableQueryLog();
-        $encounteredWords = DB::table('encountered_words')
-            ->select('word')
-            ->where('user_id', $this->userId)
-            ->where('language', $this->language)
-            ->whereIn('word', $this->uniqueWords)
-            ->pluck('word')
-            ->toArray();
+        
 
-        DB::beginTransaction();
-        $encounteredWordsToInsert = [];
-        for ($wordIndex = 0; $wordIndex < count($this->processedWords); $wordIndex ++) {
-            if (
-                in_array(mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8'), $encounteredWords, true) ||
-                $this->processedWords[$wordIndex]->word === 'NEWLINE'
-            ){
-                continue;
+        DB::transaction(function () use ($wordsToSkip, $kanjipattern) {
+            $encounteredWords = DB::table('encountered_words')
+                ->select('word')
+                ->where('user_id', $this->userId)
+                ->where('language', $this->language)
+                ->whereIn('word', $this->uniqueWords)
+                ->lockForUpdate()
+                ->pluck('word')
+                ->toArray();
+
+            $encounteredWordsToInsert = [];
+            for ($wordIndex = 0; $wordIndex < count($this->processedWords); $wordIndex ++) {
+                if (
+                    in_array(mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8'), $encounteredWords, true) ||
+                    $this->processedWords[$wordIndex]->word === 'NEWLINE'
+                ){
+                    continue;
+                }
+
+                $encounteredWords[] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
+                
+                if ($this->language == 'japanese' || $this->language == 'chinese') {
+                    $kanji = preg_replace($kanjipattern, "", $this->processedWords[$wordIndex]->word);
+                    $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
+                }
+
+                $encounteredWord = [];
+                $encounteredWord['user_id'] = $this->userId;
+                $encounteredWord['language'] = $this->language;
+                $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
+                $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
+                $encounteredWord['base_word'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
+                $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
+                $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
+                $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
+                $encounteredWord['stage'] = 2;
+                $encounteredWord['translation'] = '';
+                $encounteredWord['created_at'] =  Carbon::now();
+                $encounteredWord['updated_at'] = Carbon::now();
+
+                
+                if (in_array($this->processedWords[$wordIndex]->word, $wordsToSkip, true) || is_numeric($this->processedWords[$wordIndex]->word)) {
+                    $encounteredWord['stage'] = 1;
+                    $encounteredWord['base_word'] = '';
+                    $encounteredWord['lemma'] = '';
+                    $encounteredWord['reading'] = '';
+                    $encounteredWord['base_word_reading'] = '';
+                }
+
+                if ($encounteredWord['base_word'] == $encounteredWord['word']) {
+                    $encounteredWord['base_word'] = '';
+                    $encounteredWord['lemma'] = '';
+                    $encounteredWord['base_word_reading'] = '';
+                }
+
+                $encounteredWordsToInsert[] = $encounteredWord;
             }
-
-            $encounteredWords[] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
-            
-            if ($this->language == 'japanese' || $this->language == 'chinese') {
-                $kanji = preg_replace($kanjipattern, "", $this->processedWords[$wordIndex]->word);
-                $kanji = preg_split("//u", $kanji, -1, PREG_SPLIT_NO_EMPTY);
-            }
-
-            $encounteredWord = [];
-            $encounteredWord['user_id'] = $this->userId;
-            $encounteredWord['language'] = $this->language;
-            $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
-            $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
-            $encounteredWord['base_word'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
-            $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
-            $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
-            $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
-            $encounteredWord['stage'] = 2;
-            $encounteredWord['translation'] = '';
-            $encounteredWord['created_at'] =  Carbon::now();
-            $encounteredWord['updated_at'] = Carbon::now();
-
-            
-            if (in_array($this->processedWords[$wordIndex]->word, $wordsToSkip, true) || is_numeric($this->processedWords[$wordIndex]->word)) {
-                $encounteredWord['stage'] = 1;
-                $encounteredWord['base_word'] = '';
-                $encounteredWord['lemma'] = '';
-                $encounteredWord['reading'] = '';
-                $encounteredWord['base_word_reading'] = '';
-            }
-
-            if ($encounteredWord['base_word'] == $encounteredWord['word']) {
-                $encounteredWord['base_word'] = '';
-                $encounteredWord['lemma'] = '';
-                $encounteredWord['base_word_reading'] = '';
-            }
-
-            $encounteredWordsToInsert[] = $encounteredWord;
-        }
-
-        DB::table('encountered_words')->insert($encounteredWordsToInsert);
-        DB::commit();
+            DB::table('encountered_words')->insert($encounteredWordsToInsert);
+        });
     }
 
     public function collectUniqueWords() {
