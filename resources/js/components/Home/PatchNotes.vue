@@ -20,6 +20,7 @@
                     <li>Added auto theme switching based on system theme.</li>
                     <li>Added an export database button to the admin page.</li>
                     <li>Added a button that lets users delete all their data related to their selected language.</li>
+                    <li>Added a statistic that shows the users known unique lemmas.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
