@@ -142,13 +142,13 @@ You can find the created backup in your `linguacafe/storage/backup` folder.
 You can import the database back with the following command:  
 
 ```
-docker exec -i DATABASE-CONTAINER mysql -uUSERNAME -pPASSWORD DATABASE < ./linguacafe-backup.sql`
+docker exec -i DATABASE-CONTAINER mysql -uUSERNAME -pPASSWORD DATABASE < FILENAME`
 ```
 
-where `DATABASE-CONTAINER`, `USERNAME`, and `PASSWORD` should be replaced with the names you used during installation. If you kept the default names, then the command is simply:
+where `DATABASE-CONTAINER`, `USERNAME`, `PASSWORD` and `FILENAME`, should be replaced with the names you used during installation. For example:
 
 ```
-docker exec -i linguacafe-database mysql -ulinguacafe -plinguacafe linguacafe < ./linguacafe-backup.sql`
+docker exec -i linguacafe-database mysql -ulinguacafe -plinguacafe linguacafe < ./storage/backup/linguacafe_2024_09_22_18_10_02.sql`
 ```
 
 # Updating
