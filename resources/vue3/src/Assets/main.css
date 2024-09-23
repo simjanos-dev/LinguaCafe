@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Primary and Surface Palettes */
+:root {
+    --p-primary-50: #fbf7f5;
+    --p-primary-100: #f6eeea;
+    --p-primary-200: #f0e0d8;
+    --p-primary-300: #e4cabd;
+    --p-primary-400: #d3aa96;
+    --p-primary-500: #c4947d;
+    --p-primary-600: #aa7358;
+    --p-primary-700: #8e5e47;
+    --p-primary-800: #76503e;
+    --p-primary-900: #644638;
+    --p-primary-950: #35231a;
+    
+
+    --p-surface-0: #ffffff;
+    --p-surface-50: #f8fafc;
+    --p-surface-100: #f1f5f9;
+    --p-surface-200: #e2e8f0;
+    --p-surface-300: #cbd5e1;
+    --p-surface-400: #94a3b8;
+    --p-surface-500: #64748b;
+    --p-surface-600: #475569;
+    --p-surface-700: #334155;
+    --p-surface-800: #1e293b;
+    --p-surface-900: #0f172a;
+    --p-surface-950: #020617;
+
+    --p-surface-50: #ffffff;
+    --p-surface-100: #efefef;
+    --p-surface-200: #dcdcdc;
+    --p-surface-300: #bdbdbd;
+    --p-surface-400: #989898;
+    --p-surface-500: #7c7c7c;
+    --p-surface-600: #656565;
+    --p-surface-700: #525252;
+    --p-surface-800: #464646;
+    --p-surface-900: #3d3d3d;
+    --p-surface-950: #292929;
+
+    --p-content-border-radius: 6px;
+}
+
+/* Light Mode */
+:root {
+    --p-primary-color: var(--p-primary-500);
+    --p-primary-contrast-color: var(--p-surface-0);
+    --p-primary-hover-color: var(--p-primary-600);
+    --p-primary-active-color: var(--p-primary-700);
+    --p-content-border-color: var(--p-surface-200);
+    --p-content-hover-background: var(--p-surface-100);
+    --p-content-hover-color: var(--p-surface-800);
+    --p-highlight-background: var(--p-primary-50);
+    --p-highlight-color: var(--p-primary-700);
+    --p-highlight-focus-background: var(--p-primary-100);
+    --p-highlight-focus-color: var(--p-primary-800);
+    --p-text-color: var(--p-surface-700);
+    --p-text-hover-color: var(--p-surface-800);
+    --p-text-muted-color: var(--p-surface-500);
+    --p-text-hover-muted-color: var(--p-surface-600);
+}
+
+/* 
+ * Dark Mode
+ * Change the .p-dark to match the darkMode in tailwind.config.
+ * For example; 
+ *  darkMode: ['selector', '[class*="app-dark"]'] 
+ *  should match;
+ * :root.app-dark
+*/
+:root.p-dark {
+    --p-primary-color: var(--p-primary-400);
+    --p-primary-contrast-color: var(--p-surface-900);
+    --p-primary-hover-color: var(--p-primary-300);
+    --p-primary-active-color: var(--p-primary-200);
+    --p-content-border-color: var(--p-surface-700);
+    --p-content-hover-background: var(--p-surface-800);
+    --p-content-hover-color: var(--p-surface-0);
+    --p-highlight-background: color-mix(in srgb, var(--p-primary-400), transparent 84%);
+    --p-highlight-color: rgba(255,255,255,.87);
+    --p-highlight-focus-background: color-mix(in srgb, var(--p-primary-400), transparent 76%);
+    --p-highlight-focus-color: rgba(255,255,255,.87);
+    --p-text-color: var(--p-surface-0);
+    --p-text-hover-color: var(--p-surface-0);
+    --p-text-muted-color: var(--p-surface-400);
+    --p-text-hover-muted-color: var(--p-surface-300);
+}
