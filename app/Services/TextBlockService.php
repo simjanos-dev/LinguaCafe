@@ -152,6 +152,9 @@ class TextBlockService
             $word->sentence_index = $this->tokenizedWords[$wordIndex]->si;
             $word->word = $this->tokenizedWords[$wordIndex]->w;
             $word->lemma = $this->tokenizedWords[$wordIndex]->l;
+            $word->is_punct = $this->tokenizedWords[$wordIndex]->ip;
+            $word->space_before = $this->tokenizedWords[$wordIndex]->sb;
+            $word->space_after = $this->tokenizedWords[$wordIndex]->sa;
             if ($this->language == 'japanese' || $this->language == 'chinese') {
                 $word->reading = $this->tokenizedWords[$wordIndex]->r;
                 $word->lemma_reading = $this->tokenizedWords[$wordIndex]->lr;
@@ -513,6 +516,7 @@ class TextBlockService
             ->get();
 
         $wordCount = count($this->processedWords);
+        $maxWordIndex = $wordCount - 1;
         for ($wordIndex = 0; $wordIndex < $wordCount; $wordIndex ++) {
             // make the word into an object
             $word = $this->processedWords[$wordIndex];
@@ -523,27 +527,28 @@ class TextBlockService
             $word->phraseEnd = false;
             $word->phraseIndexes = [];
             $word->subtitleIndex = -1;
-            
-            
+
             // Add space for word if the language has spaces in it.
             if ($this->language == 'thai') {
                 $word->spaceAfter = (
                     isset($this->processedWords[$wordIndex]->sentence_index) &&
-                    $wordIndex < $wordCount - 1 && 
+                    $wordIndex < $maxWordIndex &&
                     $this->processedWords[$wordIndex + 1]->sentence_index !== $this->processedWords[$wordIndex]->sentence_index
                 );
             } else {
-                $word->spaceAfter = !in_array($this->language, $languagesWithoutSpaces, true);
-            }
-            
-            if ($wordIndex < count($this->processedWords) - 1 && in_array($this->processedWords[$wordIndex + 1]->word, $tokensWithNoSpaceBefore, true)) {
-                    $word->spaceAfter = false;
+                //$word->spaceAfter = !in_array($this->language, $languagesWithoutSpaces, true);
             }
 
-            if (in_array($this->processedWords[$wordIndex]->word, $tokensWithNoSpaceAfter, true)) {
+            if ($wordIndex < $maxWordIndex && in_array($this->processedWords[$wordIndex + 1]->word, $tokensWithNoSpaceBefore, true) ||
+                in_array($this->processedWords[$wordIndex]->word, $tokensWithNoSpaceAfter, true) ||
+                isset($word->is_punct) && $word->is_punct && isset($word->space_before) && $word->space_before
+            ) {
                 $word->spaceAfter = false;
             }
-            
+
+            if (isset($word->space_after) && $word->space_after) {
+                $word->spaceAfter = true;
+            }
 
             $wordId = $encounteredWords->search(function ($item, $key) use($word) {
                 return $item->word == mb_strtolower($word->word);

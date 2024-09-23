@@ -289,14 +289,18 @@ def tokenizeText(text, language, sentenceIndexStart = 0):
         text = text.replace(' ', ' THAINEWSENTENCE ')
         
     doc = getTokenizerDoc(language, text)
-    
+
     thaiSentenceIndex = 0
+    space_before = False
     for sentenceIndex, sentence in enumerate(doc.sents):
         for token in sentence:
             word = str(token.text)
-            if word == ' ' or word == '' or word == ' ':
+            if word == " " or word == "" or word == " ":
+                space_before = True
                 continue
-            
+            else:
+                space_before = False
+
             # get lemma
             lemma = token.lemma_
             
@@ -335,11 +339,33 @@ def tokenizeText(text, language, sentenceIndexStart = 0):
                 else:
                     if word == 'NEWLINE':
                         thaiSentenceIndex = thaiSentenceIndex + 1
-                        
-                    tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': thaiSentenceIndex + sentenceIndexStart, 'g': gender})
-            else:
-                tokenizedWords.append({'w': word, 'r': reading, 'l': lemma, 'lr': lemmaReading, 'pos': token.pos_,'si': sentenceIndex + sentenceIndexStart, 'g': gender})
 
+                    tokenizedWords.append(
+                        {
+                            "w": word,
+                            "r": reading,
+                            "l": lemma,
+                            "lr": lemmaReading,
+                            "pos": token.pos_,
+                            "si": thaiSentenceIndex + sentenceIndexStart,
+                            "g": gender,
+                        }
+                    )
+            else:
+                tokenizedWords.append(
+                    {
+                        "w": word,
+                        "r": reading,
+                        "l": lemma,
+                        "lr": lemmaReading,
+                        "pos": token.pos_,
+                        "si": sentenceIndex + sentenceIndexStart,
+                        "g": gender,
+                        "ip": token.is_punct,
+                        "sb": space_before,
+                        "sa": bool(token.whitespace_),
+                    }
+                )
 
     return tokenizedWords
 
