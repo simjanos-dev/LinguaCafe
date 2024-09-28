@@ -74,23 +74,43 @@ docker pull --platform linux/amd64 ghcr.io/simjanos-dev/linguacafe-python-servic
 ```
 </details>
 
+# Updating
 
+Please **backup** linguacafe before updating, otherwise you can lose your data if anything goes wrong. You can read more about backups in the [user manual](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#backup).
+
+If you are below v0.12, please use the migration guide provided [here](/migration.md) instead of this command.
+
+### Download the latest docker-compose.yml file
+
+Download the latest [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/main/docker-compose.yml) file, and overwrite the old one. I did not want to introduce this to the updating process, but there were several features that required this additional step. In future updates I will provide a list of changes in the file, so users with custom configurations won't have to start over.
+
+### Update to the latest docker image
+
+Run these commands to update and start your server:
+```
+docker compose pull
+docker compose up -d
+```
+
+##### Windows
+On Windows, you can run again [the installation script](/install_linguacafe.bat) to update to the latest version, or run the commands separately.
+
+
+If you run into any problem updating, please contact me on GitHub or Discord, I will try to help.
 
 # Beta
 
 >[!NOTE]
 >
->Please only participate in beta if you can set up LinguaCafe yourself, you can create a backup of your database, and if you don't mind encountering more issues than main version releases, including bugs that can corrupt your database. I'll always try to help if you encounter issues, but I have limited time, and it may take a few days before I can check out problems.
+>Please only participate in beta if you can set up LinguaCafe yourself, you can create a backup of your database, and if you don't mind encountering more issues than main version releases, including bugs that can corrupt your database.
 
-The beta docker image is a version of LinguaCafe that I use in my personal production environment. Previously I only tested it for a few days, but since I have less time nowadays, LinguaCafe has more users, and I am trying to develop it while maintaining a more stable version than did before, I will test updates for a bit longer.
+First, please create a backup of your old version, and keep it until after the next main version is released. This is very important, because you cannot downgrade your database to an older version.
 
-To use the beta version of LinguaCafe, create a  `.env` file in your LinguaCafe directory if you don't already have one, and add this line to the end of it: `VERSION=beta`. After that run the update command of your operating system from the readme file. It will pull the latest beta docker image.
+To use the beta version of LinguaCafe, first check the beta release's description, and follow any extra necessary steps from there. I'll put every important information and breaking changes there. Then create a `.env` file in your LinguaCafe directory if you don't already have one, and add this line to the end of it: `VERSION=beta`. After that run the update command of your operating system from the readme file/user manual, it will pull and start the latest beta docker image. 
 
-To see if a new beta version is released, you can just run the update command, or check the [GitHub actions](https://github.com/simjanos-dev/LinguaCafe/actions) page. I may change it up, but at this time there's no other way to track beta releases. Since the latest beta image will become the main version, there's no reason to move back to the main version, except if you want to stop using the beta when the next version comes out.
+When a new main version is released, you can update to it from your beta version by removing the `VERSION=beta` text from your `.env` file, and following the regular update steps.
 
-I created this docker image because I've seen people using unsupported features, and wanting to use the latest version as soon as possible. If you decide to use it, please **backup** before every update. Also keep in mind that reverting to older versions is not supported. 
-
-If there ever will be extra steps necessary for beta users, I will display that in this section.
+I created this docker image because I've seen people using unsupported features, and wanting to use the latest version as soon as possible. You can see new beta releases on the github releases page.
 
 # Backup
 

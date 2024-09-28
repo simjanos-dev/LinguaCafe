@@ -1,3 +1,17 @@
+## Migrating to v0.12 on Linux and MacOs
+
+If you are below v0.12 and using Linux or MacOS, please run this command from your linguacafe directory (this won't be neccessary anymore in the future):
+```
+sudo chmod -R 777 ./storage
+```
+
+If you are below v0.12 and using Windows please delete these folders **after updating**, then restart your server. You will have to install your languages again if you had any installed.
+```
+linguacafe/storage/logs
+linguacafe/storage/framework
+linguacafe/storage/app/model
+```
+
 ## Migrating from v0.8 to v0.9 on Mac
 
 If you are a Mac user with Apple silicon, and you had to uncomment a line in the `docker-compose.yml` file before, please follow these instructions before you updateto v0.9:
