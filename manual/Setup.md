@@ -380,13 +380,19 @@ After the import is complete, you will see a message about the number of created
 
 # Anki
 
-Currently Anki is supported if your server and Anki run on the same PC and have the [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin installed.
+Anki has to have the [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on installed, and it has to run on the same PC that LinguaCafe's server runs on.
 
 To set up an Anki's connection, head over to **Admin** > **API** > **Anki**.
 
 > [!NOTE]
 >
 >Future versions of LinguaCafe won't have this requirement.
+
+### Configure AnkiConnect plugin
+**Open Anki** -> **Tools** -> **Add-ons** -> **AnkiConnect** -> **Config**. Change the **webBindAddress** option to **"0.0.0.0"**. So it will look like this:
+```
+"webBindAddress": "0.0.0.0",
+```
 
 # Jellyfin
 
