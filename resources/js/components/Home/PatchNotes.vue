@@ -40,7 +40,7 @@
                     <li>Updated to Laravel 11.</li>
                     <li>Replaced default book cover image.</li>
                     <li>Replaced switches with checkboxes on the vocabulary export page.</li>
-                    <li>Removed simple text parsing method.</li>
+                    <li>Removed simple text parsing method. It was something needed before v0.1, because import times were very slow.</li>
                 </ul>
             </v-card-text>
         </v-card>
