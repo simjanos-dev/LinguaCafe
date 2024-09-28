@@ -257,6 +257,100 @@ DeepL is a machine translation service that lets you translate up to 500.000 cha
 
 After that, go to the **Admin** -> **Dictionaries** page, and click the **Add dictionary button**, and select the DeepL dictionary option. Here you can select what language do you want DeepL to translate to. You can add multiple DeepL dictionaries for the same language, if you want it to translate to multiple languages. 
 
+## LibreTranslate
+Linguacafe supports LibreTranslate. There are multiple ways to set it up, the only requirement is that the webserver container has to be able to reach the LibreTranslate server. With LinguaCafe's default configuration, you can follow these steps to install LibreTranslate.
+
+### Step 1
+Create a a folder, and a file inside it named `docker-compose.yml`. 
+
+### Step 2
+Add this configuration to it.
+
+```
+version: "3"
+networks:
+    linguacafedev_linguacafedev:
+        external: true
+
+services:
+  libretranslate:
+    container_name: libretranslate
+    image: libretranslate/libretranslate:latest
+    restart: unless-stopped
+    ports:
+      - 5000:5000
+    networks:
+      - linguacafedev_linguacafedev
+    environment:
+      - LT_LOAD_ONLY=en,nb,hu
+```
+
+### Step 3
+Add the languages you want to use to the config file. You can find a list of available language codes [here](https://libretranslate.com/languages). You can remove these 2 lines if you want to install every language, but it can take a **long time** and uses a **lot of disk space**.
+
+You can change the host of LibreTranslate in the admin settings if you didn't use the provided configuration.
+
+```
+environment:
+    - LT_LOAD_ONLY=en,nb,hu
+```
+
+### Step 4
+Run this command from the location of the created LibreTranslate folder
+```
+docker compose up -d
+```
+
+Libre translate now should be working with linguacafe. 
+
+## Custom API dictionary
+
+If you are a programmer, you can write your own API that LinguaCafe can use as a dictionary. The default host is `http://host.docker.internal:1234`, which is the computer your docker runs on.
+
+### Request example
+This is an example request that will be sent to the host. In the future it will be extended with more options, like context and batch translations. 
+
+HTTP method: POST
+
+Content-Type: json
+```
+{
+    "q": "hund",
+    "source": "norwegian",
+    "target": "english"
+}
+```
+
+### Expected response message
+The API expects a JSON response with an object, that has a translatedText field.
+
+```
+{
+    "translatedText": "dog"
+}
+```
+
+### Example translation API python script 
+
+It will return 'test translation' regardless of the request, but you can use this example to write a translation server.
+
+```
+from bottle import route, request, response, run, BaseRequest, HTTPResponse
+import json
+
+@route('/', method='POST')
+def translation():
+    response.headers['Content-Type'] = 'application/json'
+
+    sourceLanguage = request.json.get('source')
+    targetLanguage = request.json.get('target')
+    term = request.json.get('q')
+
+    return json.dumps({'translatedText': 'test translation'})
+
+run(host='0.0.0.0', port=1234, reloader=True, debug=True)
+```
+
 # Importing Vocabulary into LinguaCafe
 
 If you have a list of words that you already know before you started using LinguaCafe, you can import them from a CSV file.
