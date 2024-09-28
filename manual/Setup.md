@@ -269,7 +269,7 @@ Add this configuration to it.
 ```
 version: "3"
 networks:
-    linguacafedev_linguacafedev:
+    linguacafe_linguacafe:
         external: true
 
 services:
@@ -280,7 +280,7 @@ services:
     ports:
       - 5000:5000
     networks:
-      - linguacafedev_linguacafedev
+      - linguacafe_linguacafe
     environment:
       - LT_LOAD_ONLY=en,nb,hu
 ```
