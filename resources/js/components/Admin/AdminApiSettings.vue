@@ -118,6 +118,23 @@
                 </v-card-text>
             </v-card>
 
+            <!-- LibreTranslate settings -->
+            <div class="subheader subheader-margin-top">LibreTranslate</div>
+            <v-card outlined class="rounded-lg pa-4 pt-0">
+                <v-card-text id="jellyfin-card-text">
+                    <label class="font-weight-bold">LibreTranslate host</label>
+                    <v-text-field 
+                        v-model="settings.libreTranslateHost"
+                        filled
+                        dense
+                        rounded
+                        placeholder="LibreTranslate host"
+                        :disabled="saving || characterLimitLoading"
+                        :rules="[rules.notEmpty]"
+                    ></v-text-field>
+                </v-card-text>
+            </v-card>
+
             <!-- Anki connect settings -->
             <div class="subheader subheader-margin-top">Anki</div>
             <v-card outlined class="rounded-lg pa-4 pt-0">
@@ -359,7 +376,8 @@
                         'ankiConnectHost',
                         'ankiAutoAddCards',
                         'ankiUpdateCards',
-                        'ankiShowNotifications'
+                        'ankiShowNotifications',
+                        'libreTranslateHost'
                     ]
                 }).then((result) => {
                     this.settings = result.data;
@@ -384,7 +402,8 @@
                         'ankiConnectHost': this.settings.ankiConnectHost,
                         'ankiAutoAddCards': this.settings.ankiAutoAddCards,
                         'ankiUpdateCards': this.settings.ankiUpdateCards,
-                        'ankiShowNotifications': this.settings.ankiShowNotifications
+                        'ankiShowNotifications': this.settings.ankiShowNotifications,
+                        'libreTranslateHost': this.settings.libreTranslateHost
                     }
                 }).catch((error) => {
                     this.saving = false;

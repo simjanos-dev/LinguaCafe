@@ -276,7 +276,11 @@ class DictionaryService {
 
         // format dictionary search responses to a unified format
         foreach($responses as $responseIndex => $response) {
-            if (!$response->ok()) {
+            if (
+                !$response instanceof \Illuminate\Http\Client\Response || 
+                is_null($response->toPsrResponse()) || 
+                !$response->ok()
+            ) {
                 $definitions[] = [
                     'definitions' => ['error'],
                     ...$responseAdditionalInfo[$responseIndex]
@@ -379,7 +383,8 @@ class DictionaryService {
         $myMemoryLanguageCodes = config('linguacafe.languages.libre_translate_language_codes');
         $sourceLanguageCode = $myMemoryLanguageCodes[$dictionary->source_language];
         $targetLanguageCode = $myMemoryLanguageCodes[$dictionary->target_language];
-        $pool->post('http://libretranslate:5000/translate', [
+        $libreTranslateHost = json_decode(Setting::where('name', 'libreTranslateHost')->first()->value);
+        $pool->post($libreTranslateHost, [
             'q' => $term,
             'source' => $sourceLanguageCode,
             'target' => $targetLanguageCode,

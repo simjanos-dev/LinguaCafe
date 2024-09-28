@@ -34,6 +34,15 @@ class SettingsSeeder extends Seeder
             $setting->save();
         }
 
+        // libretranslate host settings
+        $setting = Setting::where('name', 'libreTranslateHost')->first();
+        if (!$setting) {
+            DB::table('settings')->insert([
+                'name' => 'libreTranslateHost',
+                'value' => json_encode('http://libretranslate:5000/translate')
+            ]);
+        }
+
         // jellyfin api settings
         $setting = Setting::where('name', 'jellyfinEnabled')->first();
         if (!$setting) {
