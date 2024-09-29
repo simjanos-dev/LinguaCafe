@@ -128,6 +128,7 @@
                         filled
                         dense
                         rounded
+                        hide-details
                         placeholder="LibreTranslate host"
                         :disabled="saving || characterLimitLoading"
                         :rules="[rules.notEmpty]"
