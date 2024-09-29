@@ -1,11 +1,11 @@
 <template>
     <v-container>
         <div class="subheader">
-            Patch notes
+            Update notes
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.14<v-spacer /> 2024.??.??.</v-card-title>
+            <v-card-title>v0.14.beta<v-spacer /> 2024.09.29.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
