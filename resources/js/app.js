@@ -142,11 +142,13 @@ Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 // user settings
 import UserSettingsThemes from './components/UserSettings/UserSettingsThemes';
+import TextUserSettings from './components/UserSettings/TextUserSettings';
 import UserSettingsAccount from './components/UserSettings/UserSettingsAccount';
 import ChangePasswordDialog from './components/UserSettings/ChangePasswordDialog';
 Vue.component('change-password-dialog', ChangePasswordDialog);
 Vue.component('user-settings-account', UserSettingsAccount);
 Vue.component('user-settings-themes', UserSettingsThemes);
+Vue.component('text-user-settings', TextUserSettings);
 
 // admin settings
 import AdminDashboard from './components/Admin/AdminDashboard';

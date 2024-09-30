@@ -1,6 +1,8 @@
 <template>
     <div id="user-settings-themes">
-        <!-- Header theme -->
+        <text-user-settings />
+
+        <!-- Color header -->
         <div class="subheader mt-4 d-flex">
             Colors
             <v-spacer />
@@ -142,6 +144,49 @@
                 lightTheme: [],
                 darkTheme: [],
 
+                sampleText: 'LinguaCafe is a language learning platform , where you can read foreign texts .',
+                wordStyling: {
+                    level1: {
+                        borderWidth: 0,
+                        borderRadius: 0,
+                        borderType: 'solid',
+                        borderTop: false,
+                        borderBottom: false,
+                        borderSides: false,
+                    },
+                    level1: {
+                        borderWidth: 0,
+                        borderRadius: 0,
+                        borderType: 'solid',
+                        borderTop: false,
+                        borderBottom: false,
+                        borderSides: false,
+                    },
+                    level1: {
+                        borderWidth: 0,
+                        borderRadius: 0,
+                        borderType: 'solid',
+                        borderTop: false,
+                        borderBottom: false,
+                        borderSides: false,
+                    },
+                    level1: {
+                        borderWidth: 0,
+                        borderRadius: 0,
+                        borderType: 'solid',
+                        borderTop: false,
+                        borderBottom: false,
+                        borderSides: false,
+                    },
+                    new: {
+                        borderWidth: 0,
+                        borderRadius: 0,
+                        borderType: 'solid',
+                        borderTop: false,
+                        borderBottom: false,
+                        borderSides: false,
+                    }
+                },
 
                 rules: {
                     hex: value => {
