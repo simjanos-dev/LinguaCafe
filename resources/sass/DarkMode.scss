@@ -557,8 +557,9 @@
 }
 
 // color picker actions
-#app.dark .color-picker-actions {
-    background-color: var(--v-foreground-base);
+#app.dark .color-picker-actions, 
+#app.dark .v-color-picker__controls {
+    background-color: var(--v-foreground-base) !important;
 }
 
 // library import dialog

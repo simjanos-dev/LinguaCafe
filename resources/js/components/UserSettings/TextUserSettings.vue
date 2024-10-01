@@ -19,7 +19,7 @@
                         title="Word count display type"
                     >
                         <!-- Level buttons -->
-                        <v-btn small class="px-1" v-for="(level, levelIndex) in levels" :key="`level-${levelIndex}`">
+                        <v-btn small :class="[level.length > 1 ? 'px-3' : 'px-1']" v-for="(level, levelIndex) in levels" :key="`level-${levelIndex}`">
                             {{ level.replace('level', '') }}
                         </v-btn>
                     </v-btn-toggle>
@@ -131,7 +131,7 @@
                             <label class="mb-0">
                                 Border color
                             </label>
-                            <v-menu offset-y>
+                            <v-menu offset-y :close-on-content-click="false">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn
                                         small
@@ -156,7 +156,7 @@
                             <label class="mb-1">
                                 Background color
                             </label>
-                            <v-menu offset-y>
+                            <v-menu offset-y :close-on-content-click="false">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn
                                         small
@@ -181,7 +181,7 @@
                             <label class="mb-1">
                                 Text color
                             </label>
-                            <v-menu offset-y>
+                            <v-menu offset-y :close-on-content-click="false">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn
                                         small
@@ -203,7 +203,7 @@
                     </div>
                 
                     <!-- Sample text -->
-                    <div class="w-100 mt-12">
+                    <div class="w-100 mt-12" :key="sampleTextKey">
                         <div class="d-block" style="height: 200px;" :key="'sample-' + settingsKey">
                             <div 
                                 v-for="(word, wordIndex) in sampleText.split(' ')"
@@ -224,12 +224,16 @@
         data: function() {
             return {
                 settingsKey: 0,
+                sampleTextKey: 0,
                 selectedLevelIndex: 0,
                 selectedThemeIndex: 0,
+                borderColor: '',
+                backgroundColor: '',
+                textColor: '',
                 sampleText: 'LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . ',
                 wordStyling: null,
                 themes: ['light', 'dark', 'eink'],
-                levels: ['new', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7'],
+                levels: ['known', 'new', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7', 'ignored'],
                 highlightedStyling: {},
             }
         },
@@ -255,39 +259,57 @@
         },
         mounted() {
             this.buildWordStylingSettingsData()
+            this.updateSampleTextStyling()
         },
         methods: {
-
             colorChanged(color, colorName) {
                 this.wordStyling[this.selectedTheme][this.selectedLevel][colorName] = color
+                this.updateSampleTextColors()
             },
             updateSampleTextStyling() {
                 this.highlightedStyling = {
+                    'box-sizing': 'border-box',
                     'border-width': this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px',
                     'border-color': this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor,
                     'border-style': this.wordStyling[this.selectedTheme][this.selectedLevel].borderStyle,
                     'background-color': this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor,
+                    'color': this.wordStyling[this.selectedTheme][this.selectedLevel].textColor,
                     'border-radius': this.wordStyling[this.selectedTheme][this.selectedLevel].borderRadius + 'px',
                     'margin-right': '1px',
                 }
 
+                // add colors 
+                this.updateSampleTextColors()
+
                 // remove top border
-                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderTop) {
-                    this.highlightedStyling.borderTop = '1px solid transparent'
+                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderTop || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
+                    this.highlightedStyling['padding-top'] = '1px'
+                    this.highlightedStyling['border-top'] = '0px'
                 }
 
                 // remove bottom border
-                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderBottom) {
-                    this.highlightedStyling.borderBottom = '1px solid transparent'
+                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderBottom || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
+                    this.highlightedStyling['padding-bottom'] = '1px'
+                    this.highlightedStyling['border-bottom'] = '0px'
                 }
 
                 // remove side borders
-                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderSides) {
-                    this.highlightedStyling.borderLeft = '1px solid transparent'
-                    this.highlightedStyling.borderRight = '1px solid transparent'
+                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderSides || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
+                    this.highlightedStyling['padding-left'] = '1px'
+                    this.highlightedStyling['border-left'] = '0px'
+                    this.highlightedStyling['padding-right'] = '1px'
+                    this.highlightedStyling['border-right'] = '0px'
                 }
 
+                console.log('this.highlightedStyling', this.highlightedStyling)
                 this.settingsKey ++
+            },
+            updateSampleTextColors() {
+                this.highlightedStyling['border-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor;
+                this.highlightedStyling['background-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor;
+                this.highlightedStyling['color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].textColor;
+
+                this.sampleTextKey ++
             },
             buttonSelected() {
                 console.log('selected', this.selectedLevel, this.selectedTheme)
