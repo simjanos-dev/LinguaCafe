@@ -15,7 +15,6 @@
                         mandatory
                         rounded
                         dense
-                        @change="buttonSelected"
                         title="Word count display type"
                     >
                         <!-- Level buttons -->
@@ -31,7 +30,6 @@
                         mandatory
                         rounded
                         dense
-                        @change="buttonSelected"
                         title="Word count display type"
                     >
                         <v-btn small class="px-1" v-for="(theme, themeIndex) in themes" :key="`theme-${themeIndex}`">
@@ -213,6 +211,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <v-btn @click="test">test</v-btn>
             </v-container>
         </v-card>
     </div>
@@ -257,22 +257,46 @@
             },
         },
         mounted() {
-            this.buildWordStylingSettingsData()
+            this.buildInitialWordStylingSettingsData()
             this.updateSampleTextStyling()
         },
         methods: {
+            test() {
+                console.log('css settings', this.getTextStylingSettingsObject())
+            },
             colorChanged(color, colorName) {
                 this.wordStyling[this.selectedTheme][this.selectedLevel][colorName] = color
                 this.updateSampleTextColors()
             },
+            // updates the currently selected theme/word level settings
             updateSampleTextStyling() {
-                this.highlightedStyling = {
-                    '--interactive-text-color': this.wordStyling[this.selectedTheme][this.selectedLevel].textColor,
-                    '--interactive-text-background-color': this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor,
-                    '--interactive-text-border-width': this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px',
-                    '--interactive-text-border-color': this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor,
-                    '--interactive-text-border-style': this.wordStyling[this.selectedTheme][this.selectedLevel].borderStyle,
-                    '--interactive-text-border-radius': this.wordStyling[this.selectedTheme][this.selectedLevel].borderRadius + 'px',
+                this.highlightedStyling = this.getCssSettingObject(this.selectedTheme, this.selectedLevel)
+                this.settingsKey ++
+            },
+            /*
+                Returns an object that can be injected into an html element as a style attribute. 
+                It contains the styling for every theme and word level combinations
+            */
+            getTextStylingSettingsObject() {
+                let settings = {}
+                this.themes.forEach((theme) => {
+                    settings[theme] = {}
+                    this.levels.forEach((level) => {
+                        settings[theme][level] = this.getCssSettingObject(theme, level)
+                    })
+                })
+
+                return settings
+            },
+            // returns an object with css styling for a single theme/word level combination
+            getCssSettingObject(theme, wordLevel) {
+                let cssVariables = {
+                    '--interactive-text-color': this.wordStyling[theme][wordLevel].textColor,
+                    '--interactive-text-background-color': this.wordStyling[theme][wordLevel].backgroundColor,
+                    '--interactive-text-border-width': this.wordStyling[theme][wordLevel].borderWidth + 'px',
+                    '--interactive-text-border-color': this.wordStyling[theme][wordLevel].borderColor,
+                    '--interactive-text-border-style': this.wordStyling[theme][wordLevel].borderStyle,
+                    '--interactive-text-border-radius': this.wordStyling[theme][wordLevel].borderRadius + 'px',
                     '--interactive-text-padding-top' : '0px',
                     '--interactive-text-padding-bottom' : '0px',
                     '--interactive-text-padding-left' : '0px',
@@ -280,37 +304,38 @@
                 }
 
                 // add colors 
-                this.updateSampleTextColors()
+                cssVariables['--interactive-text-border-color'] = this.wordStyling[theme][wordLevel].borderColor;
+                cssVariables['--interactive-text-background-color'] = this.wordStyling[theme][wordLevel].backgroundColor;
+                cssVariables['--interactive-text-color'] = this.wordStyling[theme][wordLevel].textColor;
 
                 // remove top border
-                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderTop || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
-                    this.highlightedStyling['--interactive-text-padding-top'] = '1px'
-                    this.highlightedStyling['--interactive-text-border-top'] = '0px'
+                if (!this.wordStyling[theme][wordLevel].borderTop || !this.wordStyling[theme][wordLevel].borderWidth) {
+                    cssVariables['--interactive-text-padding-top'] = '1px'
+                    cssVariables['--interactive-text-border-top'] = '0px'
                 } else {
-                    this.highlightedStyling['--interactive-text-border-top'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
+                    cssVariables['--interactive-text-border-top'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
                 }
 
                 // remove bottom border
-                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderBottom || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
-                    this.highlightedStyling['--interactive-text-padding-bottom'] = '1px'
-                    this.highlightedStyling['--interactive-text-border-bottom'] = '0px'
+                if (!this.wordStyling[theme][wordLevel].borderBottom || !this.wordStyling[theme][wordLevel].borderWidth) {
+                    cssVariables['--interactive-text-padding-bottom'] = '1px'
+                    cssVariables['--interactive-text-border-bottom'] = '0px'
                 } else {
-                    this.highlightedStyling['--interactive-text-border-bottom'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
+                    cssVariables['--interactive-text-border-bottom'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
                 }
 
                 // remove side borders
-                if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderSides || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
-                    this.highlightedStyling['--interactive-text-padding-left'] = '1px'
-                    this.highlightedStyling['--interactive-text-border-left'] = '0px'
-                    this.highlightedStyling['--interactive-text-padding-right'] = '1px'
-                    this.highlightedStyling['--interactive-text-border-right'] = '0px'
+                if (!this.wordStyling[theme][wordLevel].borderSides || !this.wordStyling[theme][wordLevel].borderWidth) {
+                    cssVariables['--interactive-text-padding-left'] = '1px'
+                    cssVariables['--interactive-text-border-left'] = '0px'
+                    cssVariables['--interactive-text-padding-right'] = '1px'
+                    cssVariables['--interactive-text-border-right'] = '0px'
                 } else {
-                    this.highlightedStyling['--interactive-text-border-left'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
-                    this.highlightedStyling['--interactive-text-border-right'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
+                    cssVariables['--interactive-text-border-left'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables['--interactive-text-border-right'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
                 }
 
-                console.log('this.highlightedStyling', this.highlightedStyling)
-                this.settingsKey ++
+                return cssVariables
             },
             updateSampleTextColors() {
                 this.highlightedStyling['--interactive-text-border-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor;
@@ -319,10 +344,7 @@
 
                 this.sampleTextKey ++
             },
-            buttonSelected() {
-                console.log('selected', this.selectedLevel, this.selectedTheme)
-            },
-            buildWordStylingSettingsData() {
+            buildInitialWordStylingSettingsData() {
                 this.wordStyling = {}
                 this.themes.forEach((theme) => {
                     this.wordStyling[theme] = {};
@@ -340,8 +362,6 @@
                         }
                     });
                 });
-
-                console.log('wordStyling', this.wordStyling)
             }
         }
     }
