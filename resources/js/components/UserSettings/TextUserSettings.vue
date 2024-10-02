@@ -203,12 +203,11 @@
                     </div>
                 
                     <!-- Sample text -->
-                    <div class="w-100 mt-12" :key="sampleTextKey">
-                        <div class="d-block" style="height: 200px;" :key="'sample-' + settingsKey">
+                    <div class="w-100 mt-12" :key="sampleTextKey" :style="highlightedStyling">
+                        <div class="d-block sample-text" :key="'sample-' + settingsKey">
                             <div 
                                 v-for="(word, wordIndex) in sampleText.split(' ')"
-                                class="d-inline-block" 
-                                :style="wordIndex === 4 ? highlightedStyling : { 'margin-right': '1px'}"
+                                class="d-inline-block word space-after"
                             >
                                 {{ word + ' ' }}
                             </div>
@@ -268,14 +267,16 @@
             },
             updateSampleTextStyling() {
                 this.highlightedStyling = {
-                    'box-sizing': 'border-box',
-                    'border-width': this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px',
-                    'border-color': this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor,
-                    'border-style': this.wordStyling[this.selectedTheme][this.selectedLevel].borderStyle,
-                    'background-color': this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor,
-                    'color': this.wordStyling[this.selectedTheme][this.selectedLevel].textColor,
-                    'border-radius': this.wordStyling[this.selectedTheme][this.selectedLevel].borderRadius + 'px',
-                    'margin-right': '1px',
+                    '--interactive-text-color': this.wordStyling[this.selectedTheme][this.selectedLevel].textColor,
+                    '--interactive-text-background-color': this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor,
+                    '--interactive-text-border-width': this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px',
+                    '--interactive-text-border-color': this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor,
+                    '--interactive-text-border-style': this.wordStyling[this.selectedTheme][this.selectedLevel].borderStyle,
+                    '--interactive-text-border-radius': this.wordStyling[this.selectedTheme][this.selectedLevel].borderRadius + 'px',
+                    '--interactive-text-padding-top' : '0px',
+                    '--interactive-text-padding-bottom' : '0px',
+                    '--interactive-text-padding-left' : '0px',
+                    '--interactive-text-padding-right' : '0px',
                 }
 
                 // add colors 
@@ -283,31 +284,38 @@
 
                 // remove top border
                 if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderTop || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
-                    this.highlightedStyling['padding-top'] = '1px'
-                    this.highlightedStyling['border-top'] = '0px'
+                    this.highlightedStyling['--interactive-text-padding-top'] = '1px'
+                    this.highlightedStyling['--interactive-text-border-top'] = '0px'
+                } else {
+                    this.highlightedStyling['--interactive-text-border-top'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
                 }
 
                 // remove bottom border
                 if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderBottom || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
-                    this.highlightedStyling['padding-bottom'] = '1px'
-                    this.highlightedStyling['border-bottom'] = '0px'
+                    this.highlightedStyling['--interactive-text-padding-bottom'] = '1px'
+                    this.highlightedStyling['--interactive-text-border-bottom'] = '0px'
+                } else {
+                    this.highlightedStyling['--interactive-text-border-bottom'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
                 }
 
                 // remove side borders
                 if (!this.wordStyling[this.selectedTheme][this.selectedLevel].borderSides || !this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth) {
-                    this.highlightedStyling['padding-left'] = '1px'
-                    this.highlightedStyling['border-left'] = '0px'
-                    this.highlightedStyling['padding-right'] = '1px'
-                    this.highlightedStyling['border-right'] = '0px'
+                    this.highlightedStyling['--interactive-text-padding-left'] = '1px'
+                    this.highlightedStyling['--interactive-text-border-left'] = '0px'
+                    this.highlightedStyling['--interactive-text-padding-right'] = '1px'
+                    this.highlightedStyling['--interactive-text-border-right'] = '0px'
+                } else {
+                    this.highlightedStyling['--interactive-text-border-left'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
+                    this.highlightedStyling['--interactive-text-border-right'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderWidth + 'px';
                 }
 
                 console.log('this.highlightedStyling', this.highlightedStyling)
                 this.settingsKey ++
             },
             updateSampleTextColors() {
-                this.highlightedStyling['border-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor;
-                this.highlightedStyling['background-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor;
-                this.highlightedStyling['color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].textColor;
+                this.highlightedStyling['--interactive-text-border-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor;
+                this.highlightedStyling['--interactive-text-background-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor;
+                this.highlightedStyling['--interactive-text-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].textColor;
 
                 this.sampleTextKey ++
             },
@@ -327,8 +335,8 @@
                             borderBottom: true,
                             borderSides: true,
                             borderColor: '#ff0000',
-                            backgroundColor: '#ff0000',
-                            textColor: '#ff0000',
+                            backgroundColor: '#28272C',
+                            textColor: '#CACACA',
                         }
                     });
                 });
