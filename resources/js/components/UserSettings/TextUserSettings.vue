@@ -6,7 +6,7 @@
         </div>
 
         <!-- Text content -->
-        <v-card outlined class="rounded-lg mt-2" :key="'settings' + settingsKey">
+        <v-card outlined class="rounded-lg mt-2" :key="'settings' + settingsKey" :loading="loading">
             <v-container class="pa-8" v-if="textStyling">
                 <div class="w-100 d-flex mb-4">
                     <!-- Level buttons -->
@@ -45,7 +45,7 @@
                             </label>
                             <v-slider
                                 v-model="textStyling[selectedTheme][selectedLevel].paddingHorizontal"
-                                max="8"
+                                max="16"
                                 min="0"
                                 thumb-label="always"
                                 :thumb-size="24"
@@ -86,7 +86,7 @@
                         <!-- Border width -->
                         <div class="w-100">
                             <label class="mb-0">
-                                Border width
+                                Border and wave width
                             </label>
                             <v-slider
                                 v-model="textStyling[selectedTheme][selectedLevel].borderWidth"
@@ -164,6 +164,40 @@
                                 density="compact"
                                 class="d-inline-block mt-0 ml-2"
                                 label="Sides"
+                                @change="updateSampleTextStyling"
+                            >
+                            </v-checkbox>
+                        </div>
+
+                        <!-- Font -->
+                        <div class="w-100 mb-0 mt-2">
+                            <label class="w-100 mb-0">
+                                Font
+                            </label>
+                            <v-checkbox
+                                v-model="textStyling[selectedTheme][selectedLevel].bold"
+                                hide-details
+                                density="compact"
+                                class="d-inline-block mt-0"
+                                label="Bold"
+                                @change="updateSampleTextStyling"
+                            >
+                            </v-checkbox>
+                            <v-checkbox
+                                v-model="textStyling[selectedTheme][selectedLevel].italic"
+                                hide-details
+                                density="compact"
+                                class="d-inline-block mt-0 ml-2"
+                                label="Italic"
+                                @change="updateSampleTextStyling"
+                            >
+                            </v-checkbox>
+                            <v-checkbox
+                                v-model="textStyling[selectedTheme][selectedLevel].wavyUnderline"
+                                hide-details
+                                density="compact"
+                                class="d-inline-block mt-0 ml-2"
+                                label="Wavy underline (removes borders)"
                                 @change="updateSampleTextStyling"
                             >
                             </v-checkbox>
@@ -282,6 +316,7 @@
     export default {
         data: function() {
             return {
+                loading: false,
                 settingsKey: 0,
                 sampleTextKey: 0,
                 selectedLevelIndex: 0,
@@ -411,8 +446,33 @@
                 } else {
                     cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
                     cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
-
                 }
+
+                // add bold styling
+                if (this.textStyling[theme][wordLevel].bold) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-weight`] = 'bold'
+                } else {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-weight`] = 'normal'
+                }
+
+                // add italic styling
+                if (this.textStyling[theme][wordLevel].italic) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-style`] = 'italic'
+                } else {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-style`] = 'normal'
+                }
+
+                // add wavy underline
+                if (this.textStyling[theme][wordLevel].wavyUnderline) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-text-decoration`] = 'underline'
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-bottom-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-top-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = '0px'
+                } else {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-text-decoration`] = 'none'
+                }
+                
 
                 return cssVariables
             },
@@ -475,6 +535,19 @@
             },
             loadInitialtextStylingSettingsData() {
                 this.textStyling = defaultTextThemes
+                this.loading = true
+
+                axios.post('/settings/user/get', {settingNames: ['textStyling']}).then((response) => {
+                    console.log('textStyling loaded')
+                    if (response.data.textStyling) {
+                        this.textStyling = response.data.textStyling
+                    } else {
+                        this.textStyling = defaultTextThemes
+                    }
+                    
+                    this.updateSampleTextStyling()
+                    this.loading = false
+                })
             }
         }
     }

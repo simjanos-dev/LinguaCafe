@@ -31,6 +31,14 @@
                 padding-bottom: var(--interactive-text-level#{$wordLevel}-padding-bottom);
                 padding-left: var(--interactive-text-level#{$wordLevel}-padding-left);
                 padding-right: var(--interactive-text-level#{$wordLevel}-padding-right);
+
+                // font styling
+                font-weight: var(--interactive-text-level#{$wordLevel}-weight);
+                font-style: var(--interactive-text-level#{$wordLevel}-style);
+                
+                // wavy underline
+                text-decoration: var(--interactive-text-level#{$wordLevel}-text-decoration) var(--interactive-text-level#{$wordLevel}-border-color) wavy var(--interactive-text-level#{$wordLevel}-border-width);
+                text-decoration-skip-ink: none;
             }
 
             &.space-after {

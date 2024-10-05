@@ -12,6 +12,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "new": {
@@ -26,6 +29,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level1": {
@@ -40,6 +46,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level2": {
@@ -54,6 +63,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level3": {
@@ -68,6 +80,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level4": {
@@ -82,6 +97,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level5": {
@@ -96,6 +114,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level6": {
@@ -110,6 +131,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level7": {
@@ -124,6 +148,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "ignored": {
@@ -138,6 +165,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         }
     },
@@ -154,6 +184,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "new": {
@@ -168,6 +201,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level1": {
@@ -182,6 +218,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level2": {
@@ -196,6 +235,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level3": {
@@ -210,6 +252,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level4": {
@@ -224,6 +269,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level5": {
@@ -238,6 +286,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level6": {
@@ -252,6 +303,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level7": {
@@ -266,6 +320,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "ignored": {
@@ -280,6 +337,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         }
     },
@@ -296,6 +356,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "new": {
@@ -310,6 +373,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level1": {
@@ -324,6 +390,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level2": {
@@ -338,6 +407,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level3": {
@@ -352,6 +424,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level4": {
@@ -366,6 +441,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level5": {
@@ -380,6 +458,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level6": {
@@ -394,6 +475,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "level7": {
@@ -408,6 +492,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         },
         "ignored": {
@@ -422,6 +509,9 @@ export default {
             "borderSides": true,
             "borderColor": "#ffffff",
             "backgroundColor": "#28272C",
+            "bold": false,
+            "italic": false,
+            "wavyUnderline": false,
             "textColor": "#ffffff"
         }
     }
