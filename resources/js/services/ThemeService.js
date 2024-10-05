@@ -6,59 +6,7 @@ const localStorageManager = DefaultLocalStorageManager
 
 class ThemeService {
     constructor() {
-        this.themeColorNames = [
-            'lightTheme-background',
-            'lightTheme-foreground',
-            'lightTheme-navigation',
-            'lightTheme-primary',
-            'lightTheme-gray',
-            'lightTheme-gray2',
-            'lightTheme-gray3',
-            'lightTheme-customBorder',
-            'lightTheme-error',
-            'lightTheme-info',
-            'lightTheme-success',
-            'lightTheme-warning',
-            'lightTheme-text',
-            'lightTheme-textDark',
-            'lightTheme-newWord',
-            'lightTheme-highlightedWordLevel1',
-            'lightTheme-highlightedWordLevel2',
-            'lightTheme-highlightedWordLevel3',
-            'lightTheme-highlightedWordLevel4',
-            'lightTheme-highlightedWordLevel5',
-            'lightTheme-highlightedWordLevel6',
-            'lightTheme-highlightedWordLevel7',
-            'lightTheme-ignoredWordTextColor',
-            'lightTheme-readerWordSelection',
-            'lightTheme-highlightedWordText',
-
-            'darkTheme-background',
-            'darkTheme-foreground',
-            'darkTheme-navigation',
-            'darkTheme-primary',
-            'darkTheme-gray',
-            'darkTheme-gray2',
-            'darkTheme-gray3',
-            'darkTheme-customBorder',
-            'darkTheme-error',
-            'darkTheme-info',
-            'darkTheme-success',
-            'darkTheme-warning',
-            'darkTheme-text',
-            'darkTheme-textDark',
-            'darkTheme-newWord',
-            'darkTheme-highlightedWordLevel1',
-            'darkTheme-highlightedWordLevel2',
-            'darkTheme-highlightedWordLevel3',
-            'darkTheme-highlightedWordLevel4',
-            'darkTheme-highlightedWordLevel5',
-            'darkTheme-highlightedWordLevel6',
-            'darkTheme-highlightedWordLevel7',
-            'darkTheme-ignoredWordTextColor',
-            'darkTheme-readerWordSelection',
-            'darkTheme-highlightedWordText',
-        ];
+        
     }
 
     loadTheme(vuetifyHandler) {
@@ -82,16 +30,16 @@ class ThemeService {
 
         // load custom theme from backend
         axios.post('/settings/user/get', {
-            settingNames: this.themeColorNames
+            settingNames: ['vuetifyThemes']
         }).then((response) => {
-            var data = response.data;
-            this.themeColorNames.forEach((value) => {
-                if (data[value] !== undefined) {
-                    var theme = value.split('-')[0].replace('Theme', '');
-                    var colorName = value.split('-')[1];
+            if (!response.data.vuetifyThemes) {
+                return
+            }
 
-                    vuetifyHandler.theme.themes[theme][colorName] = data[value];
-                }
+            let themeSettingNames = Object.keys(defaultThemes.light)
+            themeSettingNames.forEach((name) => {
+                vuetifyHandler.theme.themes['light'][name] = response.data.vuetifyThemes['light'][name];
+                vuetifyHandler.theme.themes['dark'][name] = response.data.vuetifyThemes['dark'][name];
             });
 
             // save into cache

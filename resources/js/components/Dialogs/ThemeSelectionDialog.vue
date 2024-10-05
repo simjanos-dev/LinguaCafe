@@ -75,7 +75,7 @@
 
                 DefaultLocalStorageManager.saveSetting('theme', newTheme);
                 this.$vuetify.theme.dark = (newTheme === 'dark');
-                ThemeService.loadTheme(themes, this.$vuetify);
+                ThemeService.loadTheme(this.$vuetify);
 
                 this.close();
 

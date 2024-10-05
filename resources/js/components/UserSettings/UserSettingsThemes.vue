@@ -208,31 +208,30 @@
             language: String
         },
         mounted() {
-            axios.post('/settings/user/get', {settingNames: ThemeService.themeColorNames}).then((response) => {
-                var savedColors = response.data;
+            axios.post('/settings/user/get', {settingNames: ['vuetifyThemes']}).then((response) => {
+                let savedColors = response.data.vuetifyThemes
+                let themeSettingNames = Object.keys(defaultThemes.light)
+
                 this.loading = false;
+                themeSettingNames.forEach((themeSettingName) => {
+                    var colorName = themeSettingName;
+                    
+                    var lightColorValue = savedColors ? savedColors['light'][themeSettingName] : defaultThemes['light'][themeSettingName];
+                    var darkColorValue = savedColors ? savedColors['dark'][themeSettingName] : defaultThemes['dark'][themeSettingName];
 
-                ThemeService.themeColorNames.forEach((value) => {
-                    var theme = value.split('-')[0].replace('Theme', '');
-                    var colorName = value.split('-')[1];
-                    var colorValue = savedColors[value] === undefined ? defaultThemes[theme][colorName] : savedColors[value];
+                    this.lightTheme.push({
+                        'name': colorName,
+                        'value': lightColorValue,
+                        'opened': false,
+                        'hex': lightColorValue,
+                    });
 
-                    if (theme === 'light') {
-                        this.lightTheme.push({
-                            'name': colorName,
-                            'value': colorValue,
-                            'opened': false,
-                            'hex': colorValue,
-                        });
-                    } else {
-                        this.darkTheme.push({
-                            'name': colorName,
-                            'value': colorValue,
-                            'opened': false,
-                            'hex': colorValue,
-                        });
-                    }
-
+                    this.darkTheme.push({
+                        'name': colorName,
+                        'value': darkColorValue,
+                        'opened': false,
+                        'hex': darkColorValue,
+                    });
                 });
             });
         },
@@ -252,7 +251,6 @@
                     return;
                 }
 
-                console.log('hex value changed');
                 if (this.selectedTheme == 'light') {
                     this.lightTheme[index].value = this.lightTheme[index].hex;
                 } else {
@@ -273,17 +271,22 @@
             },
             save() {
                 this.saving = true;
-                var colorSettings = {};
+                var colorSettings = {
+                    textStyling: this.textStyling,
+                    vuetifyThemes: {
+                        light: {},
+                        dark: {}
+                    },
+                };
 
                 this.lightTheme.forEach((value, key) => {
-                    colorSettings['lightTheme-' + value.name] = value.value;
+                    colorSettings['vuetifyThemes']['light'][value.name] = value.value;
                 });
 
                 this.darkTheme.forEach((value, key) => {
-                    colorSettings['darkTheme-' + value.name] = value.value;
+                    colorSettings['vuetifyThemes']['dark'][value.name] = value.value;
                 });
 
-                colorSettings['textStyling'] = this.textStyling;
                 axios.post('/settings/user/update', {settings: colorSettings}).then((response) => {
     
                     this.saveResult = '';
