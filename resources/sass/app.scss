@@ -250,6 +250,11 @@ button.v-btn.menu-button {
     }
 }
 
+// progress circular
+.v-progress-circular__overlay { 
+    stroke-linecap: round; 
+}
+
 // progress bar
 .v-progress-linear.delete-dialog-delay .v-progress-linear__determinate {
     transition: 0s !important;
