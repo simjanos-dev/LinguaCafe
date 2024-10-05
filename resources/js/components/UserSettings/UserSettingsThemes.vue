@@ -1,6 +1,6 @@
 <template>
     <div id="user-settings-themes">
-        <text-user-settings />
+        <text-user-settings @update="updateTextStyling" />
 
         <!-- Color header -->
         <div class="subheader mt-4 d-flex">
@@ -130,6 +130,7 @@
                 loading: true,
                 saving: false,
                 saveResult: '',
+                textStyling: null,
                 selectedTheme: ThemeService.getCurrentTheme() === 'dark' ? 'dark' : 'light',
                 themes: [
                     {
@@ -236,6 +237,9 @@
             });
         },
         methods: {
+            updateTextStyling(newTextStyling) {
+                this.textStyling = newTextStyling
+            },
             colorChanged(index, event) {
                 if (this.selectedTheme == 'light') {
                     this.lightTheme[index].hex = event.hex;
@@ -279,15 +283,13 @@
                     colorSettings['darkTheme-' + value.name] = value.value;
                 });
 
+                colorSettings['textStyling'] = this.textStyling;
                 axios.post('/settings/user/update', {settings: colorSettings}).then((response) => {
-                    if (response.status !== 200) {
-                        return;
-                    }
-
+    
                     this.saveResult = '';
                     this.saving = false;
 
-                    ThemeService.loadTheme(defaultThemes, this.$vuetify);
+                    ThemeService.loadTheme(this.$vuetify);
                 }).catch((error) => {
                     this.saveResult = 'error';
                     this.saving = false;

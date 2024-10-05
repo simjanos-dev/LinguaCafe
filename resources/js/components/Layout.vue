@@ -108,7 +108,7 @@
     import ThemeService from './../services/ThemeService';
     import FontTypeService from './../services/FontTypeService';
     import { DefaultLocalStorageManager } from './../services/LocalStorageManagerService';
-    import defaultThemes from './../themes';
+    
     export default {
         data: function() {
             return {
@@ -222,7 +222,7 @@
                     this.theme = savedTheme ? savedTheme : 'light';
                 }
 
-                ThemeService.loadTheme(defaultThemes, this.$vuetify);
+                ThemeService.loadTheme(this.$vuetify);
             }
 
 

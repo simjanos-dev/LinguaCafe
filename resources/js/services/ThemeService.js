@@ -1,4 +1,6 @@
 import { DefaultLocalStorageManager } from './LocalStorageManagerService'
+import defaultThemes from './../themes';
+import defaultTextThemes from './../themes';
 
 const localStorageManager = DefaultLocalStorageManager
 
@@ -59,13 +61,10 @@ class ThemeService {
         ];
     }
 
-    loadTheme(defaultThemes, vuetifyHandler) {
+    loadTheme(vuetifyHandler) {
         // deep copy
-        defaultThemes = JSON.parse(JSON.stringify(defaultThemes))
-
         var themeName = localStorageManager.loadSetting('theme') || 'light';
         vuetifyHandler.theme.dark = (themeName == 'dark');
-
 
         // load custom theme from (cache) if saved
         var colors = localStorageManager.loadSetting(themeName + '-theme-colors');

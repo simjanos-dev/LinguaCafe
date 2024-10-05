@@ -7,7 +7,7 @@
 
         <!-- Text content -->
         <v-card outlined class="rounded-lg mt-2" :key="'settings' + settingsKey">
-            <v-container class="pa-8" v-if="wordStyling">
+            <v-container class="pa-8" v-if="textStyling">
                 <div class="w-100 d-flex mb-4">
                     <!-- Level buttons -->
                     <v-btn-toggle
@@ -38,13 +38,58 @@
                     </v-btn-toggle>
                 </div>
                 <div class="w-100">
+                        <!-- Horizontal padding -->
+                        <div class="w-100">
+                            <label class="mb-0">
+                                Horizontal padding
+                            </label>
+                            <v-slider
+                                v-model="textStyling[selectedTheme][selectedLevel].paddingHorizontal"
+                                max="8"
+                                min="0"
+                                thumb-label="always"
+                                :thumb-size="24"
+                                @change="updateSampleTextStyling"
+                            ></v-slider>
+                        </div>
+
+                        <!-- Top padding -->
+                        <div class="w-100">
+                            <label class="mb-0">
+                                Top padding
+                            </label>
+                            <v-slider
+                                v-model="textStyling[selectedTheme][selectedLevel].paddingTop"
+                                max="8"
+                                min="0"
+                                thumb-label="always"
+                                :thumb-size="24"
+                                @change="updateSampleTextStyling"
+                            ></v-slider>
+                        </div>
+
+                        <!-- Bottom padding -->
+                        <div class="w-100">
+                            <label class="mb-0">
+                                Bottom padding
+                            </label>
+                            <v-slider
+                                v-model="textStyling[selectedTheme][selectedLevel].paddingBottom"
+                                max="8"
+                                min="0"
+                                thumb-label="always"
+                                :thumb-size="24"
+                                @change="updateSampleTextStyling"
+                            ></v-slider>
+                        </div>
+                        
                         <!-- Border width -->
                         <div class="w-100">
                             <label class="mb-0">
                                 Border width
                             </label>
                             <v-slider
-                                v-model="wordStyling[selectedTheme][selectedLevel].borderWidth"
+                                v-model="textStyling[selectedTheme][selectedLevel].borderWidth"
                                 max="8"
                                 min="0"
                                 thumb-label="always"
@@ -59,7 +104,7 @@
                                 Border radius
                             </label>
                             <v-slider
-                                v-model="wordStyling[selectedTheme][selectedLevel].borderRadius"
+                                v-model="textStyling[selectedTheme][selectedLevel].borderRadius"
                                 max="32"
                                 min="0"
                                 thumb-label="always"
@@ -74,7 +119,7 @@
                                 Border type
                             </label>
                             <v-select
-                                v-model="wordStyling[selectedTheme][selectedLevel].borderStyle"
+                                v-model="textStyling[selectedTheme][selectedLevel].borderStyle"
                                 label="Border type"
                                 rounded
                                 dense
@@ -96,7 +141,7 @@
                                 Border positions
                             </label>
                             <v-checkbox
-                                v-model="wordStyling[selectedTheme][selectedLevel].borderTop"
+                                v-model="textStyling[selectedTheme][selectedLevel].borderTop"
                                 hide-details
                                 density="compact"
                                 class="d-inline-block mt-0"
@@ -105,7 +150,7 @@
                             >
                             </v-checkbox>
                             <v-checkbox
-                                v-model="wordStyling[selectedTheme][selectedLevel].borderBottom"
+                                v-model="textStyling[selectedTheme][selectedLevel].borderBottom"
                                 hide-details
                                 density="compact"
                                 class="d-inline-block mt-0 ml-2"
@@ -114,7 +159,7 @@
                             >
                             </v-checkbox>
                             <v-checkbox
-                                v-model="wordStyling[selectedTheme][selectedLevel].borderSides"
+                                v-model="textStyling[selectedTheme][selectedLevel].borderSides"
                                 hide-details
                                 density="compact"
                                 class="d-inline-block mt-0 ml-2"
@@ -135,7 +180,7 @@
                                         small
                                         class="d-block"
                                         v-bind="attrs"
-                                        :color="wordStyling[selectedTheme][selectedLevel].borderColor"
+                                        :color="textStyling[selectedTheme][selectedLevel].borderColor"
                                         depressed
                                         v-on="on"
                                     >
@@ -143,7 +188,7 @@
                                     </v-btn>
                                 </template>
                                 <v-color-picker
-                                    :value="wordStyling[selectedTheme][selectedLevel].borderColor"
+                                    :value="textStyling[selectedTheme][selectedLevel].borderColor"
                                     @input="colorChanged($event, 'borderColor')"
                                 />
                             </v-menu>
@@ -160,7 +205,7 @@
                                         small
                                         class="d-block"
                                         v-bind="attrs"
-                                        :color="wordStyling[selectedTheme][selectedLevel].backgroundColor"
+                                        :color="textStyling[selectedTheme][selectedLevel].backgroundColor"
                                         depressed
                                         v-on="on"
                                     >
@@ -168,7 +213,7 @@
                                     </v-btn>
                                 </template>
                                 <v-color-picker
-                                    :value="wordStyling[selectedTheme][selectedLevel].backgroundColor"
+                                    :value="textStyling[selectedTheme][selectedLevel].backgroundColor"
                                     @input="colorChanged($event, 'backgroundColor')"
                                 />
                             </v-menu>
@@ -185,7 +230,7 @@
                                         small
                                         class="d-block"
                                         v-bind="attrs"
-                                        :color="wordStyling[selectedTheme][selectedLevel].textColor"
+                                        :color="textStyling[selectedTheme][selectedLevel].textColor"
                                         depressed
                                         v-on="on"
                                     >
@@ -193,7 +238,7 @@
                                     </v-btn>
                                 </template>
                                 <v-color-picker
-                                    :value="wordStyling[selectedTheme][selectedLevel].textColor"
+                                    :value="textStyling[selectedTheme][selectedLevel].textColor"
                                     @input="colorChanged($event, 'textColor')"
                                 />
                             </v-menu>
@@ -204,21 +249,36 @@
                     <div class="w-100 mt-12" :key="sampleTextKey" :style="highlightedStyling">
                         <div class="d-block sample-text" :key="'sample-' + settingsKey">
                             <div 
-                                v-for="(word, wordIndex) in sampleText.split(' ')"
-                                class="d-inline-block word space-after"
+                                v-for="(word, wordIndex) in sampleText"
+                                :key="'sample-text-word-' + wordIndex"
+                                :class="[
+                                    'd-inline-block', 
+                                    'word',
+                                    word.spaceAfter ? 'space-after' : '',
+                                    word.phrase ? 'phrase' : '',
+                                ]"
+                                :stage="word.stage"
                             >
-                                {{ word + ' ' }}
+                                {{ word.word }}
                             </div>
                         </div>
                     </div>
 
-                    <v-btn @click="test">test</v-btn>
+                    <v-btn @click="test">Console log settings</v-btn>
             </v-container>
         </v-card>
     </div>
 </template>
 
+
+<!-- 
+    This is a separate setting from the theme colors, because I can only store colors in vuetify, 
+    however there are other settings here like borders and paddings.
+-->
 <script>
+    import defaultTextThemes from './../../textThemes';
+    import ThemeService from './../../services/ThemeService';
+
     export default {
         data: function() {
             return {
@@ -226,13 +286,25 @@
                 sampleTextKey: 0,
                 selectedLevelIndex: 0,
                 selectedThemeIndex: 0,
-                borderColor: '',
-                backgroundColor: '',
-                textColor: '',
-                sampleText: 'LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . LinguaCafe is a language learning platform , where you can read foreign texts . ',
-                wordStyling: null,
+                sampleText: [],
+                textStyling: null,
                 themes: ['light', 'dark', 'eink'],
                 levels: ['known', 'new', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6', 'level7', 'ignored'],
+                /*
+                    On this page I used displayed level names. This object maps displayed level names to names that are used in css.
+                */
+                levelMapping: {
+                    'level1': 'level-1',
+                    'level2': 'level-2',
+                    'level3': 'level-3',
+                    'level4': 'level-4',
+                    'level5': 'level-5',
+                    'level6': 'level-6',
+                    'level7': 'level-7',
+                    'known': 'level0',
+                    'ignored': 'level1',
+                    'new': 'level2',
+                },
                 highlightedStyling: {},
             }
         },
@@ -257,21 +329,31 @@
             },
         },
         mounted() {
-            this.buildInitialWordStylingSettingsData()
+            this.buildSampleText()
+            this.loadInitialtextStylingSettingsData()
             this.updateSampleTextStyling()
+
+            this.$emit('update', this.textStyling)
         },
         methods: {
             test() {
-                console.log('css settings', this.getTextStylingSettingsObject())
+                console.log(this.textStyling)
             },
             colorChanged(color, colorName) {
-                this.wordStyling[this.selectedTheme][this.selectedLevel][colorName] = color
+                this.textStyling[this.selectedTheme][this.selectedLevel][colorName] = color
                 this.updateSampleTextColors()
             },
             // updates the currently selected theme/word level settings
             updateSampleTextStyling() {
-                this.highlightedStyling = this.getCssSettingObject(this.selectedTheme, this.selectedLevel)
+                this.highlightedStyling = {}
+                
+                this.levels.forEach((level) => {
+                    Object.assign(this.highlightedStyling, this.getCssSettingObject(this.selectedTheme, level))
+                })
+                
                 this.settingsKey ++
+
+                this.$emit('update', this.textStyling)
             },
             /*
                 Returns an object that can be injected into an html element as a style attribute. 
@@ -282,7 +364,7 @@
                 this.themes.forEach((theme) => {
                     settings[theme] = {}
                     this.levels.forEach((level) => {
-                        settings[theme][level] = this.getCssSettingObject(theme, level)
+                        Object.assign(settings[theme], this.getCssSettingObject(theme, level))
                     })
                 })
 
@@ -290,78 +372,109 @@
             },
             // returns an object with css styling for a single theme/word level combination
             getCssSettingObject(theme, wordLevel) {
-                let cssVariables = {
-                    '--interactive-text-color': this.wordStyling[theme][wordLevel].textColor,
-                    '--interactive-text-background-color': this.wordStyling[theme][wordLevel].backgroundColor,
-                    '--interactive-text-border-width': this.wordStyling[theme][wordLevel].borderWidth + 'px',
-                    '--interactive-text-border-color': this.wordStyling[theme][wordLevel].borderColor,
-                    '--interactive-text-border-style': this.wordStyling[theme][wordLevel].borderStyle,
-                    '--interactive-text-border-radius': this.wordStyling[theme][wordLevel].borderRadius + 'px',
-                    '--interactive-text-padding-top' : '0px',
-                    '--interactive-text-padding-bottom' : '0px',
-                    '--interactive-text-padding-left' : '0px',
-                    '--interactive-text-padding-right' : '0px',
-                }
+                let cssVariables = {}
+
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-color`] = this.textStyling[theme][wordLevel].textColor;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-background-color`] = this.textStyling[theme][wordLevel].backgroundColor;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-color`] = this.textStyling[theme][wordLevel].borderColor;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-style`] = this.textStyling[theme][wordLevel].borderStyle;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-radius`] = this.textStyling[theme][wordLevel].borderRadius + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-top`] = this.textStyling[theme][wordLevel].paddingTop + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-bottom`] = this.textStyling[theme][wordLevel].paddingBottom + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-left`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-right`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
 
                 // add colors 
-                cssVariables['--interactive-text-border-color'] = this.wordStyling[theme][wordLevel].borderColor;
-                cssVariables['--interactive-text-background-color'] = this.wordStyling[theme][wordLevel].backgroundColor;
-                cssVariables['--interactive-text-color'] = this.wordStyling[theme][wordLevel].textColor;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-color`] = this.textStyling[theme][wordLevel].borderColor;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-background-color`] = this.textStyling[theme][wordLevel].backgroundColor;
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-color`] = this.textStyling[theme][wordLevel].textColor;
 
                 // remove top border
-                if (!this.wordStyling[theme][wordLevel].borderTop || !this.wordStyling[theme][wordLevel].borderWidth) {
-                    cssVariables['--interactive-text-padding-top'] = '1px'
-                    cssVariables['--interactive-text-border-top'] = '0px'
+                if (!this.textStyling[theme][wordLevel].borderTop || !this.textStyling[theme][wordLevel].borderWidth) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-top-width`] = '0px'
                 } else {
-                    cssVariables['--interactive-text-border-top'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-top-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
                 }
 
                 // remove bottom border
-                if (!this.wordStyling[theme][wordLevel].borderBottom || !this.wordStyling[theme][wordLevel].borderWidth) {
-                    cssVariables['--interactive-text-padding-bottom'] = '1px'
-                    cssVariables['--interactive-text-border-bottom'] = '0px'
+                if (!this.textStyling[theme][wordLevel].borderBottom || !this.textStyling[theme][wordLevel].borderWidth) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-bottom-width`] = '0px'
                 } else {
-                    cssVariables['--interactive-text-border-bottom'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-bottom-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
                 }
 
                 // remove side borders
-                if (!this.wordStyling[theme][wordLevel].borderSides || !this.wordStyling[theme][wordLevel].borderWidth) {
-                    cssVariables['--interactive-text-padding-left'] = '1px'
-                    cssVariables['--interactive-text-border-left'] = '0px'
-                    cssVariables['--interactive-text-padding-right'] = '1px'
-                    cssVariables['--interactive-text-border-right'] = '0px'
+                if (!this.textStyling[theme][wordLevel].borderSides || !this.textStyling[theme][wordLevel].borderWidth) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = '0px'
                 } else {
-                    cssVariables['--interactive-text-border-left'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
-                    cssVariables['--interactive-text-border-right'] = this.wordStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
+
                 }
 
                 return cssVariables
             },
             updateSampleTextColors() {
-                this.highlightedStyling['--interactive-text-border-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].borderColor;
-                this.highlightedStyling['--interactive-text-background-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].backgroundColor;
-                this.highlightedStyling['--interactive-text-color'] = this.wordStyling[this.selectedTheme][this.selectedLevel].textColor;
+                this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-border-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].borderColor;
+                this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-background-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].backgroundColor;
+                this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].textColor;
 
                 this.sampleTextKey ++
             },
-            buildInitialWordStylingSettingsData() {
-                this.wordStyling = {}
-                this.themes.forEach((theme) => {
-                    this.wordStyling[theme] = {};
-                    this.levels.forEach((level) => {
-                        this.wordStyling[theme][level] = {
-                            borderWidth: 0,
-                            borderRadius: 0,
-                            borderStyle: 'solid',
-                            borderTop: true,
-                            borderBottom: true,
-                            borderSides: true,
-                            borderColor: '#ff0000',
-                            backgroundColor: '#28272C',
-                            textColor: '#CACACA',
-                        }
-                    });
-                });
+            buildSampleText() {
+                this.sampleText = []
+
+                // generate plain text
+                let plainText = 'LinguaCafe is a foreign language reading platform , and this is a sample text . '
+                let plainTextLength = 5;
+                for (let i = 0; i < plainTextLength; i++) {
+                    plainText += plainText
+                }
+
+                // generate object based sample text
+                let textArray = plainText.split(' ')
+                textArray.forEach((word, wordIndex) => {
+                    let tempWord = {
+                        word: word,
+                        spaceAfter: true,
+                        stage: 0,
+                        phrase: false,
+                    }
+
+                    // remove space from previous word if current word is a point or a comma
+                    if (wordIndex && [',', '.'].includes(tempWord.word)) {
+                        this.sampleText[wordIndex - 1].spaceAfter = false
+                    }
+
+                    // highlight random words
+                    if (Math.random() * 100 < 40) {
+                        tempWord.stage = Math.floor(Math.random() * 7 + 1) * -1
+                    }
+
+                    // set random words to new
+                    if (Math.random() * 100 < 16) {
+                        tempWord.stage = 2
+                    }
+
+                    // set random words to ignored
+                    if (Math.random() * 100 < 16) {
+                        tempWord.stage = 1
+                    }
+
+                    // create a phrase
+                    if (wordIndex >= 3 && wordIndex <= 6) {
+                        tempWord.stage = 0
+                        tempWord.phrase = true
+                    }
+
+
+                    this.sampleText.push(tempWord)
+                })
+            },
+            loadInitialtextStylingSettingsData() {
+                this.textStyling = defaultTextThemes
             }
         }
     }

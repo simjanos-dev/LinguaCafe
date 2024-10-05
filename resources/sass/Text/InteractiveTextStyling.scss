@@ -6,28 +6,36 @@
     .word {
         box-sizing: border-box;
 
-        // text color
-        color: var(--interactive-text-color);
-        background-color: var(--interactive-text-background-color);
+        @for $wordLevel from -7 through 2 {
+            &[stage="#{$wordLevel}"] {
+                // text color
+                color: var(--interactive-text-level#{$wordLevel}-color);
+                background-color: var(--interactive-text-level#{$wordLevel}-background-color);
+                
+                // border
+                border-width: var(--interactive-text-level#{$wordLevel}-border-width);
+                border-top-width: var(--interactive-text-level#{$wordLevel}-border-top);
+                border-bottom-width: var(--interactive-text-level#{$wordLevel}-border-bottom);
+                border-left-width: var(--interactive-text-level#{$wordLevel}-border-left);
+                border-right-width: var(--interactive-text-level#{$wordLevel}-border-right);
+                border-color: var(--interactive-text-level#{$wordLevel}-border-color);
+                border-style: var(--interactive-text-level#{$wordLevel}-border-style);
+                border-radius: var(--interactive-text-level#{$wordLevel}-border-radius);
+                border-top-width: var(--interactive-text-level#{$wordLevel}-border-top-width);
+                border-bottom-width: var(--interactive-text-level#{$wordLevel}-border-bottom-width);
+                border-left-width: var(--interactive-text-level#{$wordLevel}-border-left-width);
+                border-right-width: var(--interactive-text-level#{$wordLevel}-border-right-width);
 
-        // border
-        border-width: var(--interactive-text-border-width);
-        border-top-width: var(--interactive-text-border-top);
-        border-bottom-width: var(--interactive-text-border-bottom);
-        border-left-width: var(--interactive-text-border-left);
-        border-right-width: var(--interactive-text-border-right);
-        border-color: var(--interactive-text-border-color);
-        border-style: var(--interactive-text-border-style);
-        border-radius: var(--interactive-text-border-radius);
+                // padding for size consistency with 1px max border
+                padding-top: var(--interactive-text-level#{$wordLevel}-padding-top);
+                padding-bottom: var(--interactive-text-level#{$wordLevel}-padding-bottom);
+                padding-left: var(--interactive-text-level#{$wordLevel}-padding-left);
+                padding-right: var(--interactive-text-level#{$wordLevel}-padding-right);
+            }
 
-        // padding for size consistency with 1px max border
-        padding-top: var(--interactive-text-padding-top);
-        padding-bottom: var(--interactive-text-padding-bottom);
-        padding-left: var(--interactive-text-padding-left);
-        padding-right: var(--interactive-text-padding-right);
-
-        &.space-after {
-            margin-right: 4px;
+            &.space-after {
+                margin-right: 4px;
+            }
         }
     }
 }
