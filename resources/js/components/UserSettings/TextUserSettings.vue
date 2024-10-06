@@ -37,268 +37,363 @@
                         </v-btn>
                     </v-btn-toggle>
                 </div>
+
+                <!-- Horizontal padding -->
                 <div class="w-100">
-                        <!-- Horizontal padding -->
-                        <div class="w-100">
-                            <label class="mb-0">
-                                Horizontal padding
-                            </label>
-                            <v-slider
-                                v-model="textStyling[selectedTheme][selectedLevel].paddingHorizontal"
-                                max="16"
-                                min="0"
-                                thumb-label="always"
-                                :thumb-size="24"
-                                @change="updateSampleTextStyling"
-                            ></v-slider>
-                        </div>
+                    <label class="mb-0">
+                        Horizontal padding
+                    </label>
+                    <v-slider
+                        v-model="textStyling[selectedTheme][selectedLevel].paddingHorizontal"
+                        max="16"
+                        min="0"
+                        hide-details
+                        thumb-label="always"
+                        :thumb-size="24"
+                        @change="updateSampleTextStyling"
+                    ></v-slider>
+                </div>
 
-                        <!-- Top padding -->
-                        <div class="w-100">
-                            <label class="mb-0">
-                                Top padding
-                            </label>
-                            <v-slider
-                                v-model="textStyling[selectedTheme][selectedLevel].paddingTop"
-                                max="8"
-                                min="0"
-                                thumb-label="always"
-                                :thumb-size="24"
-                                @change="updateSampleTextStyling"
-                            ></v-slider>
-                        </div>
+                <!-- Top padding -->
+                <div class="w-100">
+                    <label class="mb-0">
+                        Top padding
+                    </label>
+                    <v-slider
+                        v-model="textStyling[selectedTheme][selectedLevel].paddingTop"
+                        max="8"
+                        min="0"
+                        hide-details
+                        thumb-label="always"
+                        :thumb-size="24"
+                        @change="updateSampleTextStyling"
+                    ></v-slider>
+                </div>
 
-                        <!-- Bottom padding -->
-                        <div class="w-100">
-                            <label class="mb-0">
-                                Bottom padding
-                            </label>
-                            <v-slider
-                                v-model="textStyling[selectedTheme][selectedLevel].paddingBottom"
-                                max="8"
-                                min="0"
-                                thumb-label="always"
-                                :thumb-size="24"
-                                @change="updateSampleTextStyling"
-                            ></v-slider>
-                        </div>
-                        
-                        <!-- Border width -->
-                        <div class="w-100">
-                            <label class="mb-0">
-                                Border and wave width
-                            </label>
-                            <v-slider
-                                v-model="textStyling[selectedTheme][selectedLevel].borderWidth"
-                                max="8"
-                                min="0"
-                                thumb-label="always"
-                                :thumb-size="24"
-                                @change="updateSampleTextStyling"
-                            ></v-slider>
-                        </div>
+                <!-- Bottom padding -->
+                <div class="w-100">
+                    <label class="mb-0">
+                        Bottom padding
+                    </label>
+                    <v-slider
+                        v-model="textStyling[selectedTheme][selectedLevel].paddingBottom"
+                        max="8"
+                        min="0"
+                        hide-details
+                        thumb-label="always"
+                        :thumb-size="24"
+                        @change="updateSampleTextStyling"
+                    ></v-slider>
+                </div>
 
-                        <!-- Border radius -->
-                        <div class="w-100">
-                            <label class="mb-0">
-                                Border radius
-                            </label>
-                            <v-slider
-                                v-model="textStyling[selectedTheme][selectedLevel].borderRadius"
-                                max="32"
-                                min="0"
-                                thumb-label="always"
-                                :thumb-size="24"
-                                @change="updateSampleTextStyling"
-                            ></v-slider>
-                        </div>
-
-                        <!-- Border type -->
-                        <div class="w-100">
-                            <label class="mb-0">
-                                Border type
-                            </label>
-                            <v-select
-                                v-model="textStyling[selectedTheme][selectedLevel].borderStyle"
-                                label="Border type"
-                                rounded
-                                dense
-                                filled
-                                single-line
-                                :items="[
-                                    'solid',
-                                    'double',
-                                    'dotted',
-                                    'dashed',
-                                ]"
-                                @change="updateSampleTextStyling"
-                            ></v-select>
-                        </div>
-
-                        <!-- Border positions -->
-                        <div class="w-100 mb-0">
-                            <label class="w-100 mb-0">
-                                Border positions
-                            </label>
-                            <v-checkbox
-                                v-model="textStyling[selectedTheme][selectedLevel].borderTop"
-                                hide-details
-                                density="compact"
-                                class="d-inline-block mt-0"
-                                label="Top"
-                                @change="updateSampleTextStyling"
-                            >
-                            </v-checkbox>
-                            <v-checkbox
-                                v-model="textStyling[selectedTheme][selectedLevel].borderBottom"
-                                hide-details
-                                density="compact"
-                                class="d-inline-block mt-0 ml-2"
-                                label="Bottom"
-                                @change="updateSampleTextStyling"
-                            >
-                            </v-checkbox>
-                            <v-checkbox
-                                v-model="textStyling[selectedTheme][selectedLevel].borderSides"
-                                hide-details
-                                density="compact"
-                                class="d-inline-block mt-0 ml-2"
-                                label="Sides"
-                                @change="updateSampleTextStyling"
-                            >
-                            </v-checkbox>
-                        </div>
-
-                        <!-- Font -->
-                        <div class="w-100 mb-0 mt-2">
-                            <label class="w-100 mb-0">
-                                Font
-                            </label>
-                            <v-checkbox
-                                v-model="textStyling[selectedTheme][selectedLevel].bold"
-                                hide-details
-                                density="compact"
-                                class="d-inline-block mt-0"
-                                label="Bold"
-                                @change="updateSampleTextStyling"
-                            >
-                            </v-checkbox>
-                            <v-checkbox
-                                v-model="textStyling[selectedTheme][selectedLevel].italic"
-                                hide-details
-                                density="compact"
-                                class="d-inline-block mt-0 ml-2"
-                                label="Italic"
-                                @change="updateSampleTextStyling"
-                            >
-                            </v-checkbox>
-                            <v-checkbox
-                                v-model="textStyling[selectedTheme][selectedLevel].wavyUnderline"
-                                hide-details
-                                density="compact"
-                                class="d-inline-block mt-0 ml-2"
-                                label="Wavy underline (removes borders)"
-                                @change="updateSampleTextStyling"
-                            >
-                            </v-checkbox>
-                        </div>
-
-                        <!-- Border color -->
-                        <div class="w-100 mt-1 mb-2">
-                            <label class="mb-0">
-                                Border color
-                            </label>
-                            <v-menu offset-y :close-on-content-click="false">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        small
-                                        class="d-block"
-                                        v-bind="attrs"
-                                        :color="textStyling[selectedTheme][selectedLevel].borderColor"
-                                        depressed
-                                        v-on="on"
-                                    >
-                                    
-                                    </v-btn>
-                                </template>
-                                <v-color-picker
-                                    :value="textStyling[selectedTheme][selectedLevel].borderColor"
-                                    @input="colorChanged($event, 'borderColor')"
-                                />
-                            </v-menu>
-                        </div>
-
-                        <!-- Background color -->
-                        <div class="w-100 mb-2">
-                            <label class="mb-1">
-                                Background color
-                            </label>
-                            <v-menu offset-y :close-on-content-click="false">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        small
-                                        class="d-block"
-                                        v-bind="attrs"
-                                        :color="textStyling[selectedTheme][selectedLevel].backgroundColor"
-                                        depressed
-                                        v-on="on"
-                                    >
-                                    
-                                    </v-btn>
-                                </template>
-                                <v-color-picker
-                                    :value="textStyling[selectedTheme][selectedLevel].backgroundColor"
-                                    @input="colorChanged($event, 'backgroundColor')"
-                                />
-                            </v-menu>
-                        </div>
-
-                        <!-- Text color -->
-                        <div class="w-100 mb-2">
-                            <label class="mb-1">
-                                Text color
-                            </label>
-                            <v-menu offset-y :close-on-content-click="false">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        small
-                                        class="d-block"
-                                        v-bind="attrs"
-                                        :color="textStyling[selectedTheme][selectedLevel].textColor"
-                                        depressed
-                                        v-on="on"
-                                    >
-                                    
-                                    </v-btn>
-                                </template>
-                                <v-color-picker
-                                    :value="textStyling[selectedTheme][selectedLevel].textColor"
-                                    @input="colorChanged($event, 'textColor')"
-                                />
-                            </v-menu>
-                        </div>
-                    </div>
+                <!-- Padding settings -->
+                <div class="w-100 mb-0">
+                    <label class="w-100 mb-0">
+                        Horizontal padding
+                    </label>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].horizontalPaddingSpacelessLanguagesOnly"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0"
+                        label="For spaceless languages only"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                </div>
                 
-                    <!-- Sample text -->
-                    <div class="w-100 mt-12" :key="sampleTextKey" :style="highlightedStyling">
-                        <div class="d-block sample-text" :key="'sample-' + settingsKey">
-                            <div 
-                                v-for="(word, wordIndex) in sampleText"
-                                :key="'sample-text-word-' + wordIndex"
-                                :class="[
-                                    'd-inline-block', 
-                                    'word',
-                                    word.spaceAfter ? 'space-after' : '',
-                                    word.phrase ? 'phrase' : '',
-                                ]"
-                                :stage="word.stage"
-                            >
-                                {{ word.word }}
-                            </div>
+                <!-- Border width -->
+                <div class="w-100 mt-3">
+                    <label class="mb-0">
+                        Border and wave width
+                    </label>
+                    <v-slider
+                        v-model="textStyling[selectedTheme][selectedLevel].borderWidth"
+                        max="8"
+                        min="0"
+                        hide-details
+                        thumb-label="always"
+                        :thumb-size="24"
+                        @change="updateSampleTextStyling"
+                    ></v-slider>
+                </div>
+
+                <!-- Border radius -->
+                <div class="w-100">
+                    <label class="mb-0">
+                        Border radius
+                    </label>
+                    <v-slider
+                        v-model="textStyling[selectedTheme][selectedLevel].borderRadius"
+                        max="32"
+                        min="0"
+                        hide-details
+                        thumb-label="always"
+                        :thumb-size="24"
+                        @change="updateSampleTextStyling"
+                    ></v-slider>
+                </div>
+
+                <!-- Border type -->
+                <div class="w-100">
+                    <label class="mb-0">
+                        Border type
+                    </label>
+                    <v-select
+                        v-model="textStyling[selectedTheme][selectedLevel].borderStyle"
+                        label="Border type"
+                        rounded
+                        dense
+                        filled
+                        single-line
+                        hide-details
+                        :items="[
+                            'solid',
+                            'double',
+                            'dotted',
+                            'dashed',
+                        ]"
+                        @change="updateSampleTextStyling"
+                    ></v-select>
+                </div>
+
+                <!-- Border positions -->
+                <div class="w-100 mb-0 mt-2">
+                    <label class="w-100 mb-0">
+                        Border positions
+                    </label>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].borderTop"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0"
+                        label="Top"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].borderBottom"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0 ml-2"
+                        label="Bottom"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].borderSides"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0 ml-2"
+                        label="Sides"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                </div>
+
+                <!-- Font -->
+                <div class="w-100 mb-0 mt-2">
+                    <label class="w-100 mb-0">
+                        Font
+                    </label>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].bold"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0"
+                        label="Bold"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].italic"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0 ml-2"
+                        label="Italic"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                    <v-checkbox
+                        v-model="textStyling[selectedTheme][selectedLevel].wavyUnderline"
+                        hide-details
+                        density="compact"
+                        class="d-inline-block mt-0 ml-2"
+                        label="Wavy underline (removes borders)"
+                        @change="updateSampleTextStyling"
+                    >
+                    </v-checkbox>
+                </div>
+
+                <!-- Colors table -->
+                <v-simple-table class="rounded-lg no-hover border mt-2" v-if="!loading">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Color</th>
+                            <th>Hex</th>
+                            <th>Reset</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Border color</td>
+                            <td>
+                                <v-menu offset-y :close-on-content-click="false">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-card
+                                            class="border mx-auto"
+                                            outlined
+                                            width="48px"
+                                            height="26px"
+                                            :color="textStyling[selectedTheme][selectedLevel].borderColor"
+                                            depressed
+                                            v-on="on"
+                                        >
+                                        
+                                        </v-card>
+                                    </template>
+                                    <v-color-picker
+                                        :value="textStyling[selectedTheme][selectedLevel].borderColor"
+                                        @input="colorChanged($event, 'borderColor')"
+                                    />
+                                </v-menu>
+                            </td>
+                            <td>
+                                <v-text-field
+                                    class="my-2"
+                                    v-model="textStyling[selectedTheme][selectedLevel].borderColor"
+                                    ref="colorHex"
+                                    filled
+                                    rounded
+                                    dense
+                                    hide-details
+                                    maxlength="7"
+                                ></v-text-field>
+                            </td>
+                            <td>
+                                <v-btn
+                                    icon
+                                    title="Restore default"
+                                    @click="resetColor('borderColor')"
+                                >
+                                    <v-icon>mdi-restore</v-icon>
+                                </v-btn>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Background color</td>
+                            <td>
+                                <v-menu offset-y :close-on-content-click="false">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-card
+                                            class="border mx-auto"
+                                            outlined
+                                            width="48px"
+                                            height="26px"
+                                            :color="textStyling[selectedTheme][selectedLevel].backgroundColor"
+                                            depressed
+                                            v-on="on"
+                                        >
+                                        
+                                        </v-card>
+                                    </template>
+                                    <v-color-picker
+                                        :value="textStyling[selectedTheme][selectedLevel].backgroundColor"
+                                        @input="colorChanged($event, 'backgroundColor')"
+                                    />
+                                </v-menu>
+                            </td>
+                            <td>
+                                <v-text-field
+                                    class="my-2"
+                                    v-model="textStyling[selectedTheme][selectedLevel].backgroundColor"
+                                    ref="colorHex"
+                                    filled
+                                    rounded
+                                    dense
+                                    hide-details
+                                    maxlength="7"
+                                ></v-text-field>
+                            </td>
+                            <td>
+                                <v-btn
+                                    icon
+                                    title="Restore default"
+                                    @click="resetColor('backgroundColor')"
+                                >
+                                    <v-icon>mdi-restore</v-icon>
+                                </v-btn>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Text color</td>
+                            <td>
+                                <v-menu offset-y :close-on-content-click="false">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-card
+                                            class="border mx-auto"
+                                            outlined
+                                            width="48px"
+                                            height="26px"
+                                            :color="textStyling[selectedTheme][selectedLevel].textColor"
+                                            depressed
+                                            v-on="on"
+                                        >
+                                        
+                                        </v-card>
+                                    </template>
+                                    <v-color-picker
+                                        :value="textStyling[selectedTheme][selectedLevel].textColor"
+                                        @input="colorChanged($event, 'textColor')"
+                                    />
+                                </v-menu>
+                            </td>
+                            <td>
+                                <v-text-field
+                                    class="my-2"
+                                    v-model="textStyling[selectedTheme][selectedLevel].textColor"
+                                    ref="colorHex"
+                                    filled
+                                    rounded
+                                    dense
+                                    hide-details
+                                    maxlength="7"
+                                ></v-text-field>
+                            </td>
+                            <td>
+                                <v-btn
+                                    icon
+                                    title="Restore default"
+                                    @click="resetColor('textColor')"
+                                >
+                                    <v-icon>mdi-restore</v-icon>
+                                </v-btn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            
+                <!-- Sample text -->
+                <div class="w-100 mt-12" :key="sampleTextKey" :style="highlightedStyling">
+                    <div class="d-block sample-text" :key="'sample-' + settingsKey">
+                        <div 
+                            v-for="(word, wordIndex) in sampleText"
+                            :key="'sample-text-word-' + wordIndex"
+                            :class="[
+                                'd-inline-block', 
+                                'word',
+                                word.spaceAfter ? 'space-after' : '',
+                                word.phrase ? 'phrase' : '',
+                            ]"
+                            :stage="word.stage"
+                        >
+                            {{ word.word }}
                         </div>
                     </div>
+                </div>
 
-                    <v-btn @click="test">Console log settings</v-btn>
+                <v-btn @click="test">Console log settings</v-btn>
             </v-container>
         </v-card>
     </div>
@@ -374,6 +469,11 @@
             test() {
                 console.log(this.textStyling)
             },
+            resetColor(colorName) {
+                console.log('default color', defaultTextThemes[this.selectedTheme][this.selectedLevel][colorName])
+                this.textStyling[this.selectedTheme][this.selectedLevel][colorName] = defaultTextThemes[this.selectedTheme][this.selectedLevel][colorName];
+                this.updateSampleTextColors()
+            },
             colorChanged(color, colorName) {
                 this.textStyling[this.selectedTheme][this.selectedLevel][colorName] = color
                 this.updateSampleTextColors()
@@ -415,11 +515,21 @@
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-color`] = this.textStyling[theme][wordLevel].borderColor;
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-style`] = this.textStyling[theme][wordLevel].borderStyle;
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-radius`] = this.textStyling[theme][wordLevel].borderRadius + 'px';
+
+                // padding
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-top`] = this.textStyling[theme][wordLevel].paddingTop + 'px';
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-bottom`] = this.textStyling[theme][wordLevel].paddingBottom + 'px';
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-left`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-right`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-spaceless-language-padding-left`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-spaceless-language-padding-right`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
 
+                // horizontal padding for spaceless languages only
+                if (this.textStyling[theme][wordLevel].horizontalPaddingSpacelessLanguagesOnly) {
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-left`] = '0px';
+                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-right`] = '0px';
+                }
+                
                 // add colors 
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-color`] = this.textStyling[theme][wordLevel].borderColor;
                 cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-background-color`] = this.textStyling[theme][wordLevel].backgroundColor;
@@ -534,15 +644,13 @@
                 })
             },
             loadInitialtextStylingSettingsData() {
-                this.textStyling = defaultTextThemes
+                this.textStyling = JSON.parse(JSON.stringify(defaultTextThemes))
                 this.loading = true
 
                 axios.post('/settings/user/get', {settingNames: ['textStyling']}).then((response) => {
                     console.log('textStyling loaded')
                     if (response.data.textStyling) {
                         this.textStyling = response.data.textStyling
-                    } else {
-                        this.textStyling = defaultTextThemes
                     }
                     
                     this.updateSampleTextStyling()

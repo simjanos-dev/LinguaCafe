@@ -2,6 +2,7 @@ export default {
     "light": {
         "known": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -19,6 +20,7 @@ export default {
         },
         "new": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -36,6 +38,7 @@ export default {
         },
         "level1": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -53,6 +56,7 @@ export default {
         },
         "level2": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -70,6 +74,7 @@ export default {
         },
         "level3": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -87,6 +92,7 @@ export default {
         },
         "level4": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -104,6 +110,7 @@ export default {
         },
         "level5": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -121,6 +128,7 @@ export default {
         },
         "level6": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -138,6 +146,7 @@ export default {
         },
         "level7": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -155,6 +164,7 @@ export default {
         },
         "ignored": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -174,6 +184,7 @@ export default {
     "dark": {
         "known": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -191,6 +202,7 @@ export default {
         },
         "new": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -208,6 +220,7 @@ export default {
         },
         "level1": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -225,6 +238,7 @@ export default {
         },
         "level2": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -242,6 +256,7 @@ export default {
         },
         "level3": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -259,6 +274,7 @@ export default {
         },
         "level4": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -276,6 +292,7 @@ export default {
         },
         "level5": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -293,6 +310,7 @@ export default {
         },
         "level6": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -310,6 +328,7 @@ export default {
         },
         "level7": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -327,6 +346,7 @@ export default {
         },
         "ignored": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -346,6 +366,7 @@ export default {
     "eink": {
         "known": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -363,6 +384,7 @@ export default {
         },
         "new": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -380,6 +402,7 @@ export default {
         },
         "level1": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -397,6 +420,7 @@ export default {
         },
         "level2": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -414,6 +438,7 @@ export default {
         },
         "level3": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -431,6 +456,7 @@ export default {
         },
         "level4": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -448,6 +474,7 @@ export default {
         },
         "level5": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -465,6 +492,7 @@ export default {
         },
         "level6": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -482,6 +510,7 @@ export default {
         },
         "level7": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
@@ -499,6 +528,7 @@ export default {
         },
         "ignored": {
             "paddingHorizontal": 0,
+            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 0,
             "paddingBottom": 0,
             "borderWidth": 0,
