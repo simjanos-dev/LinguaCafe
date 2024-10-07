@@ -535,18 +535,18 @@ class TextBlockService
                     $wordIndex < $maxWordIndex &&
                     $this->processedWords[$wordIndex + 1]->sentence_index !== $this->processedWords[$wordIndex]->sentence_index
                 );
-            } else {
-                //$word->spaceAfter = !in_array($this->language, $languagesWithoutSpaces, true);
+            } elseif (!isset($word->space_before) && !isset($word->is_punct)) {
+                // Default to legacy hardcoded spaces without punctuation checks
+                $word->spaceAfter = !in_array($this->language, $languagesWithoutSpaces, true);
             }
 
             if ($wordIndex < $maxWordIndex && in_array($this->processedWords[$wordIndex + 1]->word, $tokensWithNoSpaceBefore, true) ||
-                in_array($this->processedWords[$wordIndex]->word, $tokensWithNoSpaceAfter, true) ||
-                isset($word->is_punct) && $word->is_punct && isset($word->space_before) && $word->space_before
+                in_array($this->processedWords[$wordIndex]->word, $tokensWithNoSpaceAfter, true)
             ) {
                 $word->spaceAfter = false;
             }
 
-            if (isset($word->space_after) && $word->space_after) {
+            if (isset($word->is_punct) && isset($word->space_before) && $word->space_after) {
                 $word->spaceAfter = true;
             }
 
