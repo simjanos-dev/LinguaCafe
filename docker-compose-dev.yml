@@ -80,6 +80,10 @@ services:
             - "8678:8678"
         build:
             dockerfile: ./docker/PythonDockerfileDev
+# for testing arm build            
+#            platforms:
+#                - linux/arm64
+#                - linux/amd64
         volumes:
             - ./tools:/app
             - ./storage/app:/var/www/html/storage/app
