@@ -9,6 +9,7 @@ RUN apt-get update -y \
         liblapack-dev \
         libopenblas-dev \
         python3 \
+        python3-dev \
         pip \
         tzdata \
     && apt-get clean \
