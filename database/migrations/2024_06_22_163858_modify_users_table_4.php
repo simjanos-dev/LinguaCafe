@@ -17,7 +17,7 @@ class ModifyUsersTable4 extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('uuid', 128)->unique();
+            $table->string('uuid', 128)->nullable();
         });
 
         $users = User::all();
@@ -25,6 +25,11 @@ class ModifyUsersTable4 extends Migration
             $user->uuid = Str::uuid()->toString();
             $user->save();
         }
+
+        // Add unique
+        Schema::table('users', function (Blueprint $table) {
+            $table->unique('uuid');
+        });
     }
 
     /**
