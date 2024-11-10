@@ -26,6 +26,7 @@ services:
             DB_PASSWORD: linguacafe-dev
             DB_HOST: linguacafe-database-dev
             DB_PORT: 3306
+            REDIS_HOST: linguacafe-redis-dev
             BACKUP_INTERVAL: "0,15,30,45 * * * *"
             MAX_SAVED_BACKUPS: 8
         ports:
