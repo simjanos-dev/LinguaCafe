@@ -5,12 +5,17 @@
 .sample-text {
     .word {
         box-sizing: border-box;
+        
+        &.space-after {
+            margin-right: 4px;
+        }
 
         @for $wordLevel from -7 through 2 {
             &[stage="#{$wordLevel}"] {
                 // text color
                 color: var(--interactive-text-level#{$wordLevel}-color);
-                background-color: var(--interactive-text-level#{$wordLevel}-background-color);
+                background-color: color-mix(in srgb, var(--interactive-text-level#{$wordLevel}-background-color), transparent var(--interactive-text-level#{$wordLevel}-background-transparency));
+
                 
                 // border
                 border-width: var(--interactive-text-level#{$wordLevel}-border-width);
@@ -40,10 +45,52 @@
                 text-decoration: var(--interactive-text-level#{$wordLevel}-text-decoration) var(--interactive-text-level#{$wordLevel}-border-color) wavy var(--interactive-text-level#{$wordLevel}-border-width);
                 text-decoration-skip-ink: none;
             }
-
-            &.space-after {
-                margin-right: 4px;
-            }
         }
+
+        // phrases
+        @for $phraseLevel from -7 through 0 {
+            &[phrase-stage="#{$phraseLevel}"] {
+                // text color
+                color: var(--interactive-text-phraseLevel#{$phraseLevel}-color);
+                background-color: color-mix(in srgb, var(--interactive-text-phraseLevel#{$phraseLevel}-background-color), transparent var(--interactive-text-phraseLevel#{$phraseLevel}-background-transparency));
+                
+                // border
+                border-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-width);
+                border-top-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-top);
+                border-bottom-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-bottom);
+                border-left-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-left);
+                border-right-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-right);
+                border-color: var(--interactive-text-phraseLevel#{$phraseLevel}-border-color);
+                border-style: var(--interactive-text-phraseLevel#{$phraseLevel}-border-style);
+                border-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                border-top-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-top-width);
+                border-bottom-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-bottom-width);
+                border-left-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-left-width);
+                border-right-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-right-width);
+
+                // padding for size consistency with 1px max border
+                padding-top: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-top);
+                padding-bottom: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-bottom);
+                padding-left: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-left);
+                padding-right: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-right);
+
+                // font styling
+                font-weight: var(--interactive-text-phraseLevel#{$phraseLevel}-weight);
+                font-style: var(--interactive-text-phraseLevel#{$phraseLevel}-style);
+                
+                // wavy underline
+                text-decoration: var(--interactive-text-phraseLevel#{$phraseLevel}-text-decoration) var(--interactive-text-phraseLevel#{$phraseLevel}-border-color) wavy var(--interactive-text-phraseLevel#{$phraseLevel}-border-width);
+                text-decoration-skip-ink: none;
+
+                // replace margin with padding so background color applies
+                &.space-after {
+                    margin-right: 0px;
+                    padding-right: 4px;
+                }
+            }
+
+        }
+        
+        
     }
 }

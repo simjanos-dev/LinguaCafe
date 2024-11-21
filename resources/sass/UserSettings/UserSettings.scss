@@ -26,10 +26,42 @@
         width: 70px;
         min-width: 70px;
     }
+
+    .sample-text {
+        background-color: var(--v-gray-base);
+    }
+
+    #option-select-inputs {
+        & > div {
+            width: 220px;
+        }
+
+        label {
+            display: none;
+        }
+    }
 }
 
 #user-settings-account {
     #delete-confirm-text {
         max-width: 340px;
+    }
+}
+
+@media (max-width: 796px) {
+    #user-settings-themes {
+        #option-select-inputs {
+            & > div {
+                width: 100%;
+            }
+
+            label {
+                display: block;
+            }
+
+            .v-input {
+                width: 100% !important;
+            }
+        }
     }
 }
