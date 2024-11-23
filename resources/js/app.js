@@ -141,15 +141,17 @@ Vue.component('theme-selection-dialog', ThemeSelectionDialog);
 Vue.component('language-selection-dialog', LanguageSelectionDialog);
 
 // user settings
-import UserSettingsThemes from './components/UserSettings/UserSettingsThemes';
-import TextUserSettings from './components/UserSettings/TextUserSettings';
 import UserSettingsAccount from './components/UserSettings/UserSettingsAccount';
 import ChangePasswordDialog from './components/UserSettings/ChangePasswordDialog';
-import ResetTextStylingDialog from './components/UserSettings/ResetTextStylingDialog.vue';
+import UserSettingsThemes from './components/UserSettings/ThemeSettings/UserSettingsThemes';
+import UserSettingsTextStyling from './components/UserSettings/ThemeSettings/UserSettingsTextStyling';
+import UserSettingsTextStylingSample from './components/UserSettings/ThemeSettings/UserSettingsTextStylingSample';
+import ResetTextStylingDialog from './components/UserSettings/ThemeSettings/ResetTextStylingDialog';
+Vue.component('user-settings-themes', UserSettingsThemes);
 Vue.component('change-password-dialog', ChangePasswordDialog);
 Vue.component('user-settings-account', UserSettingsAccount);
-Vue.component('user-settings-themes', UserSettingsThemes);
-Vue.component('text-user-settings', TextUserSettings);
+Vue.component('user-settings-text-styling', UserSettingsTextStyling);
+Vue.component('user-settings-text-styling-sample', UserSettingsTextStylingSample);
 Vue.component('reset-text-styling-dialog', ResetTextStylingDialog);
 
 // admin settings

@@ -1,6 +1,6 @@
 <template>
     <div id="user-settings-themes">
-        <text-user-settings @update="updateTextStyling" />
+        <user-settings-text-styling @update="updateTextStyling" />
 
         <!-- Color header -->
         <div class="subheader mt-4 d-flex">
@@ -121,8 +121,8 @@
 </template>
 
 <script>
-    import defaultThemes from './../../themes';
-    import ThemeService from './../../services/ThemeService';
+    import defaultThemes from '../../../themes';
+    import ThemeService from '../../../services/ThemeService';
     export default {
         data: function() {
             return {

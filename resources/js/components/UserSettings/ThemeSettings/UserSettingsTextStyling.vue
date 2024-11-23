@@ -406,25 +406,8 @@
                 </v-simple-table>
             
                 <!-- Sample text -->
-                <div class="w-100 mt-4" :key="sampleTextKey" :style="highlightedStyling">
-                    <label class="mb-0">
-                        Sample text
-                    </label>
-                    <div class="d-block sample-text rounded-xl pa-4" :key="'sample-' + settingsKey">
-                        <div 
-                            v-for="(word, wordIndex) in sampleText"
-                            :key="'sample-text-word-' + wordIndex"
-                            :class="[
-                                'd-inline-block', 
-                                'word',
-                                word.spaceAfter ? 'space-after' : '',
-                            ]"
-                            :stage="word.stage"
-                            :phrase-stage="word.phrase ? word.phrase : ''"
-                        >
-                            {{ word.word }}
-                        </div>
-                    </div>
+                 <div :style="highlightedStyling">
+                    <user-settings-text-styling-sample />
                 </div>
 
                 <v-btn rounded depressed color="primary" @click="showResetTextStylingDialog">Reset</v-btn>
@@ -440,17 +423,15 @@
     however there are other settings here like borders and paddings.
 -->
 <script>
-    import defaultTextThemes from './../../textThemes';
+    import defaultTextThemes from '../../../textThemes';
     export default {
         data: function() {
             return {
                 loading: false,
                 resetTextStylingDialog: false,
                 settingsKey: 0,
-                sampleTextKey: 0,
                 selectedLevelIndex: 0,
                 selectedThemeIndex: 0,
-                sampleText: [],
                 textStyling: null,
                 themes: ['light', 'dark', 'eink'],
                 levels: [
@@ -520,7 +501,6 @@
             },
         },
         mounted() {
-            this.buildSampleText()
             this.loadInitialtextStylingSettingsData()
             this.updateSampleTextStyling()
 
@@ -675,55 +655,6 @@
                 this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].textColor;
 
                 this.sampleTextKey ++
-            },
-            buildSampleText() {
-                this.sampleText = []
-
-                // generate plain text
-                let plainText = 'LinguaCafe is a foreign language reading platform , and this is a sample text . '
-                let plainTextLength = 5;
-                for (let i = 0; i < plainTextLength; i++) {
-                    plainText += plainText
-                }
-
-                // generate object based sample text
-                let textArray = plainText.split(' ')
-                textArray.forEach((word, wordIndex) => {
-                    let tempWord = {
-                        word: word,
-                        spaceAfter: true,
-                        stage: 0,
-                    }
-
-                    // remove space from previous word if current word is a point or a comma
-                    if (wordIndex && [',', '.'].includes(tempWord.word)) {
-                        this.sampleText[wordIndex - 1].spaceAfter = false
-                    }
-
-                    // highlight random words
-                    if (Math.random() * 100 < 40) {
-                        tempWord.stage = Math.floor(Math.random() * 7 + 1) * -1
-                    }
-
-                    // set random words to new
-                    if (Math.random() * 100 < 16) {
-                        tempWord.stage = 2
-                    }
-
-                    // set random words to ignored
-                    if (Math.random() * 100 < 16) {
-                        tempWord.stage = 1
-                    }
-
-                    // create a phrase
-                    if (wordIndex >= 3 && wordIndex <= 6) {
-                        tempWord.stage = 0
-                        tempWord.phrase = -2
-                    }
-
-
-                    this.sampleText.push(tempWord)
-                })
             },
             loadInitialtextStylingSettingsData() {
                 this.textStyling = JSON.parse(JSON.stringify(defaultTextThemes))
