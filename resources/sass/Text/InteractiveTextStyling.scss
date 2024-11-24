@@ -62,7 +62,6 @@
                 border-right-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-right);
                 border-color: var(--interactive-text-phraseLevel#{$phraseLevel}-border-color);
                 border-style: var(--interactive-text-phraseLevel#{$phraseLevel}-border-style);
-                border-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
                 border-top-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-top-width);
                 border-bottom-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-bottom-width);
                 border-left-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-left-width);
@@ -71,9 +70,19 @@
                 // padding for size consistency with 1px max border
                 padding-top: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-top);
                 padding-bottom: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-bottom);
-                padding-left: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-left);
-                padding-right: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-right);
+                
+                &.phrase-start {
+                    padding-left: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-left);
+                    border-bottom-left-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                    border-top-left-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                }
 
+                &.phrase-end {
+                    padding-right: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-right);
+                    border-bottom-right-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                    border-top-right-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                }
+                
                 // font styling
                 font-weight: var(--interactive-text-phraseLevel#{$phraseLevel}-weight);
                 font-style: var(--interactive-text-phraseLevel#{$phraseLevel}-style);

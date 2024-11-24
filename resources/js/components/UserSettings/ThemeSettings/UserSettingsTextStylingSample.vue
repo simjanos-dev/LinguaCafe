@@ -34,6 +34,8 @@
                     'd-inline-block', 
                     'word',
                     word.spaceAfter ? 'space-after' : '',
+                    word.phraseStart ? 'phrase-start' : '',
+                    word.phraseEnd ? 'phrase-end' : '',
                 ]"
                 :stage="word.stage"
                 :phrase-stage="word.phrase ? word.phrase : ''"
@@ -47,7 +49,7 @@
                             {{ word.word }}
                         </span>
                     </template>
-                    <span>{{ word.phrase ? 'Phrase level: ' + word.phrase : 'Word level:' + word.stage }}</span>
+                    <span>{{ word.phrase ? 'Phrase level: ' + getStageDisplayName(word.phrase) : 'Word level: ' + getStageDisplayName(word.stage) }}</span>
                 </v-tooltip>
                 
             </div>
@@ -79,6 +81,23 @@
             this.buildSampleText('english')
         },
         methods: {
+            getStageDisplayName(stage) {
+                stage = String(stage)
+                let stageMapping = {
+                    '2': 'new',
+                    '1': 'ignored',
+                    '0': 'known',
+                    '-1': '1',
+                    '-2': '2',
+                    '-3': '3',
+                    '-4': '4',
+                    '-5': '5',
+                    '-6': '6',
+                    '-7': '7',
+                }
+
+                return stageMapping[stage];
+            },
             updateSampleTextLanguage() {
                 let selectedLanguage = this.languages[this.selectedLanguage].toLowerCase();
                 this.buildSampleText(selectedLanguage)
@@ -122,6 +141,9 @@
                         tempWord.stage = 0
                         tempWord.phrase = -7
                     }
+
+                    tempWord.phraseStart = wordIndex === 2
+                    tempWord.phraseEnd = wordIndex === 7
 
 
                     this.sampleText.push(tempWord)
