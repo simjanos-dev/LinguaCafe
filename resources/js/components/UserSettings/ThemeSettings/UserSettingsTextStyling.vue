@@ -9,7 +9,7 @@
         </div>
 
         <!-- Text content -->
-        <v-card outlined class="rounded-lg mt-2" :key="'settings' + settingsKey" :loading="loading">
+        <v-card outlined class="rounded-lg mt-2" :loading="loading">
             <v-container class="pa-8" v-if="textStyling">
                 <!-- Switch buttons (small screen) -->
                 <div id="option-select-inputs" class="w-100 d-flex justify-space-between flex-wrap mb-4">
@@ -283,6 +283,7 @@
                                     dense
                                     hide-details
                                     maxlength="7"
+                                    @input="updateSampleTextStyling"
                                 ></v-text-field>
                             </td>
                             <td>
@@ -328,6 +329,7 @@
                                     dense
                                     hide-details
                                     maxlength="7"
+                                    @input="updateSampleTextStyling"
                                 ></v-text-field>
                             </td>
                             <td>
@@ -373,6 +375,7 @@
                                     dense
                                     hide-details
                                     maxlength="7"
+                                    @input="updateSampleTextStyling"
                                 ></v-text-field>
                             </td>
                             <td>
@@ -429,7 +432,6 @@
             return {
                 loading: false,
                 resetTextStylingDialog: false,
-                settingsKey: 0,
                 selectedLevelIndex: 0,
                 selectedThemeIndex: 0,
                 textStyling: null,
@@ -544,8 +546,7 @@
                 this.levels.forEach((level) => {
                     Object.assign(this.highlightedStyling, this.getCssSettingObject(this.selectedTheme, level))
                 })
-                
-                this.settingsKey ++
+            
 
                 console.log('text styling', this.highlightedStyling)
                 this.$emit('update', this.textStyling)
@@ -653,8 +654,6 @@
                 this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-border-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].borderColor;
                 this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-background-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].backgroundColor;
                 this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].textColor;
-
-                this.sampleTextKey ++
             },
             loadInitialtextStylingSettingsData() {
                 this.textStyling = JSON.parse(JSON.stringify(defaultTextThemes))

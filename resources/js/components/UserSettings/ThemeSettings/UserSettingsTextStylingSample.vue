@@ -112,7 +112,7 @@
                     }
 
                     // remove space from previous word if current word is a point or a comma
-                    if (wordIndex && [',', '.'].includes(tempWord.word)) {
+                    if (wordIndex && [',', '.', '。', '，', '、'].includes(tempWord.word)) {
                         this.sampleText[wordIndex - 1].spaceAfter = false
                     }
 
