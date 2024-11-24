@@ -17,16 +17,7 @@ export default {
         
         text: '#333333',
         textDark: '#333333',
-        
-        newWord: '#ffD08B',
-        highlightedWordLevel7: '#80E6B3',
-        highlightedWordLevel6: '#8EE9BB',
-        highlightedWordLevel5: '#9CECC4',
-        highlightedWordLevel4: '#AAEECC',
-        highlightedWordLevel3: '#B8F1D5',
-        highlightedWordLevel2: '#C7F4DD',
-        highlightedWordLevel1: '#D5F7E6',
-        ignoredWordTextColor: '#555555',
+
         readerWordSelection: '#D8D8D8',
         highlightedWordText: '#333333',
     },
@@ -49,15 +40,6 @@ export default {
         text: '#CACACA',
         textDark: '#141110',
         
-        newWord: '#D0BA49',
-        highlightedWordLevel7: '#49A74F',
-        highlightedWordLevel6: '#49A74F',
-        highlightedWordLevel5: '#469D4C',
-        highlightedWordLevel4: '#469D4C',
-        highlightedWordLevel3: '#44934A',
-        highlightedWordLevel2: '#3F8044',
-        highlightedWordLevel1: '#3C7642',
-        ignoredWordTextColor: '#CACACA',
         readerWordSelection: '#B6B6B6',
         highlightedWordText: '#121212',
     },
@@ -77,16 +59,8 @@ export default {
         warning: '#000000',
         
         text: '#000000',
-        
-        newWord: '#000000',
-        highlightedWordLevel1: '#000000',
-        highlightedWordLevel2: '#000000',
-        highlightedWordLevel3: '#000000',
-        highlightedWordLevel4: '#000000',
-        highlightedWordLevel5: '#000000',
-        highlightedWordLevel6: '#000000',
-        highlightedWordLevel7: '#000000',
-        ignoredWordTextColor: '#000000',
+        textDark: '#000000',
+
         readerWordSelection: '#888888',
         highlightedWordText: '#FFFFFF',
     },

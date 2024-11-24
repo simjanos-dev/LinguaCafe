@@ -5,6 +5,8 @@
 .sample-text {
     .word {
         box-sizing: border-box;
+        line-height: 1;
+
         
         &.space-after {
             margin-right: 4px;
