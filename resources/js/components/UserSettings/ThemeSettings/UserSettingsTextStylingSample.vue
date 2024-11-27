@@ -35,7 +35,15 @@
         </div>
         
         <!-- Text -->
-        <div class="d-flex flex-wrap sample-text rounded-xl pa-4">
+        <div 
+            :class="[
+                'd-flex',
+                'flex-wrap',
+                'sample-text',
+                'rounded-xl',
+                'pa-4',
+                selectedLanguage > 0 ? 'spaceless-language' : ''
+            ] ">
             <div 
                 v-for="(word, wordIndex) in sampleText"
                 :key="'sample-text-word-' + wordIndex"
@@ -107,7 +115,7 @@
                 textArray.forEach((word, wordIndex) => {
                     let tempWord = {
                         word: word,
-                        spaceAfter: true,
+                        spaceAfter: this.selectedLanguage > 0 ? false : true,
                         stage: 0,
                     }
 

@@ -100,6 +100,16 @@
                 <div class="w-100 mb-0">
                     <label class="w-100 mb-0">
                         Horizontal padding
+                        <v-menu offset-y nudge-top="-12px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle</v-icon>
+                            </template>
+                            <v-card outlined class="rounded-lg pa-4" width="320px">
+                                Some languages like Chinese, Japanese and Thai do not have spaces between words. This option is for users who prefer having padding 
+                                only for these languages to improve readability, while disabling padding for languages that do have spaces between words to avoid words
+                                slightly moving on the screen when a word's level was changed.
+                            </v-card>
+                        </v-menu>
                     </label>
                     <v-checkbox
                         v-model="textStyling[selectedTheme][selectedLevel].horizontalPaddingSpacelessLanguagesOnly"
@@ -460,16 +470,17 @@
                     On this page I used displayed level names. This object maps displayed level names to names that are used in css.
                 */
                 levelMapping: {
-                    'Level 1 word': 'level-1',
-                    'Level 2 word': 'level-2',
-                    'Level 3 word': 'level-3',
-                    'Level 4 word': 'level-4',
-                    'Level 5 word': 'level-5',
-                    'Level 6 word': 'level-6',
-                    'Level 7 word': 'level-7',
-                    'Known word': 'level0',
-                    'Ignored word': 'level1',
-                    'New word': 'level2',
+                    'Level 1 word': 'wordLevel-1',
+                    'Level 2 word': 'wordLevel-2',
+                    'Level 3 word': 'wordLevel-3',
+                    'Level 4 word': 'wordLevel-4',
+                    'Level 5 word': 'wordLevel-5',
+                    'Level 6 word': 'wordLevel-6',
+                    'Level 7 word': 'wordLevel-7',
+                    'Known word': 'wordLevel0',
+                    'Ignored word': 'wordLevel1',
+                    'New word': 'wordLevel2',
+                    'Selected word': 'wordLevelSelected',
                     'Known phrase': 'phraseLevel0',
                     'Level 1 phrase': 'phraseLevel-1',
                     'Level 2 phrase': 'phraseLevel-2',
@@ -478,6 +489,7 @@
                     'Level 5 phrase': 'phraseLevel-5',
                     'Level 6 phrase': 'phraseLevel-6',
                     'Level 7 phrase': 'phraseLevel-7',
+                    'Selected pharse': 'phraseLevelSelected',
                 },
                 highlightedStyling: {},
             }
@@ -549,6 +561,8 @@
             
 
                 console.log('text styling', this.highlightedStyling)
+                
+                this.textStyling = JSON.parse(JSON.stringify(this.textStyling))
                 this.$emit('update', this.textStyling)
             },
             logTextStylingSettingsObject() {
@@ -570,81 +584,80 @@
                 return settings
             },
             // returns an object with css styling for a single theme/word level combination
-            getCssSettingObject(theme, wordLevel) {
+            getCssSettingObject(theme, level) {
                 let cssVariables = {}
 
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-color`] = this.textStyling[theme][wordLevel].textColor;
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-color`] = this.textStyling[theme][wordLevel].borderColor;
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-style`] = this.textStyling[theme][wordLevel].borderStyle;
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-radius`] = this.textStyling[theme][wordLevel].borderRadius + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-color`] = this.textStyling[theme][level].textColor;
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-border-color`] = this.textStyling[theme][level].borderColor;
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-border-style`] = this.textStyling[theme][level].borderStyle;
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-border-radius`] = this.textStyling[theme][level].borderRadius + 'px';
                 
                 // padding
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-top`] = this.textStyling[theme][wordLevel].paddingTop + 'px';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-bottom`] = this.textStyling[theme][wordLevel].paddingBottom + 'px';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-left`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-right`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-spaceless-language-padding-left`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-spaceless-language-padding-right`] = this.textStyling[theme][wordLevel].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-padding-top`] = this.textStyling[theme][level].paddingTop + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-padding-bottom`] = this.textStyling[theme][level].paddingBottom + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-padding-left`] = this.textStyling[theme][level].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-padding-right`] = this.textStyling[theme][level].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-spaceless-language-padding-left`] = this.textStyling[theme][level].paddingHorizontal + 'px';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-spaceless-language-padding-right`] = this.textStyling[theme][level].paddingHorizontal + 'px';
                 
                 // horizontal padding for spaceless languages only
-                if (this.textStyling[theme][wordLevel].horizontalPaddingSpacelessLanguagesOnly) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-left`] = '0px';
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-padding-right`] = '0px';
+                if (this.textStyling[theme][level].horizontalPaddingSpacelessLanguagesOnly) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-padding-left`] = '0px';
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-padding-right`] = '0px';
                 }
                 
                 // add colors 
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-background-transparency`] = this.textStyling[theme][wordLevel].backgroundTransparency + '%';
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-color`] = this.textStyling[theme][wordLevel].borderColor;
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-background-color`] = this.textStyling[theme][wordLevel].backgroundColor;
-                cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-color`] = this.textStyling[theme][wordLevel].textColor;
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-background-transparency`] = this.textStyling[theme][level].backgroundTransparency + '%';
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-border-color`] = this.textStyling[theme][level].borderColor;
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-background-color`] = this.textStyling[theme][level].backgroundColor;
+                cssVariables[`--interactive-text-${this.levelMapping[level]}-color`] = this.textStyling[theme][level].textColor;
 
-                // remove top border
-                if (!this.textStyling[theme][wordLevel].borderTop || !this.textStyling[theme][wordLevel].borderWidth) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-top-width`] = '0px'
+                // set top border
+                if (!this.textStyling[theme][level].borderTop || !this.textStyling[theme][level].borderWidth) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-top-width`] = '0px'
                 } else {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-top-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-top-width`] = this.textStyling[theme][level].borderWidth + 'px';
                 }
 
-                // remove bottom border
-                if (!this.textStyling[theme][wordLevel].borderBottom || !this.textStyling[theme][wordLevel].borderWidth) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-bottom-width`] = '0px'
+                // set bottom border
+                if (!this.textStyling[theme][level].borderBottom || !this.textStyling[theme][level].borderWidth) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-bottom-width`] = '0px'
                 } else {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-bottom-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-bottom-width`] = this.textStyling[theme][level].borderWidth + 'px';
                 }
 
-                // remove side borders
-                if (!this.textStyling[theme][wordLevel].borderSides || !this.textStyling[theme][wordLevel].borderWidth) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = '0px'
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = '0px'
+                // set side borders
+                if (!this.textStyling[theme][level].borderSides || !this.textStyling[theme][level].borderWidth) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-left-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-right-width`] = '0px'
                 } else {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = this.textStyling[theme][wordLevel].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-left-width`] = this.textStyling[theme][level].borderWidth + 'px';
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-right-width`] = this.textStyling[theme][level].borderWidth + 'px';
                 }
 
                 // add bold styling
-                if (this.textStyling[theme][wordLevel].bold) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-weight`] = 'bold'
+                if (this.textStyling[theme][level].bold) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-weight`] = 'bold'
                 } else {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-weight`] = 'normal'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-weight`] = 'normal'
                 }
 
                 // add italic styling
-                if (this.textStyling[theme][wordLevel].italic) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-style`] = 'italic'
+                if (this.textStyling[theme][level].italic) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-style`] = 'italic'
                 } else {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-style`] = 'normal'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-style`] = 'normal'
                 }
 
                 // add wavy underline
-                if (this.textStyling[theme][wordLevel].wavyUnderline) {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-text-decoration`] = 'underline'
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-bottom-width`] = '0px'
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-top-width`] = '0px'
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-left-width`] = '0px'
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-border-right-width`] = '0px'
+                if (this.textStyling[theme][level].wavyUnderline) {
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-text-decoration`] = 'underline'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-bottom-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-top-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-left-width`] = '0px'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-border-right-width`] = '0px'
                 } else {
-                    cssVariables[`--interactive-text-${this.levelMapping[wordLevel]}-text-decoration`] = 'none'
+                    cssVariables[`--interactive-text-${this.levelMapping[level]}-text-decoration`] = 'none'
                 }
                 
 

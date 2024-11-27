@@ -15,36 +15,31 @@
         @for $wordLevel from -7 through 2 {
             &[stage="#{$wordLevel}"] {
                 // text color
-                color: var(--interactive-text-level#{$wordLevel}-color);
-                background-color: color-mix(in srgb, var(--interactive-text-level#{$wordLevel}-background-color), transparent var(--interactive-text-level#{$wordLevel}-background-transparency));
+                color: var(--interactive-text-wordLevel#{$wordLevel}-color);
+                background-color: color-mix(in srgb, var(--interactive-text-wordLevel#{$wordLevel}-background-color), transparent var(--interactive-text-wordLevel#{$wordLevel}-background-transparency));
 
                 
                 // border
-                border-width: var(--interactive-text-level#{$wordLevel}-border-width);
-                border-top-width: var(--interactive-text-level#{$wordLevel}-border-top);
-                border-bottom-width: var(--interactive-text-level#{$wordLevel}-border-bottom);
-                border-left-width: var(--interactive-text-level#{$wordLevel}-border-left);
-                border-right-width: var(--interactive-text-level#{$wordLevel}-border-right);
-                border-color: var(--interactive-text-level#{$wordLevel}-border-color);
-                border-style: var(--interactive-text-level#{$wordLevel}-border-style);
-                border-radius: var(--interactive-text-level#{$wordLevel}-border-radius);
-                border-top-width: var(--interactive-text-level#{$wordLevel}-border-top-width);
-                border-bottom-width: var(--interactive-text-level#{$wordLevel}-border-bottom-width);
-                border-left-width: var(--interactive-text-level#{$wordLevel}-border-left-width);
-                border-right-width: var(--interactive-text-level#{$wordLevel}-border-right-width);
+                border-color: var(--interactive-text-wordLevel#{$wordLevel}-border-color);
+                border-style: var(--interactive-text-wordLevel#{$wordLevel}-border-style);
+                border-radius: var(--interactive-text-wordLevel#{$wordLevel}-border-radius);
+                border-top-width: var(--interactive-text-wordLevel#{$wordLevel}-border-top-width);
+                border-bottom-width: var(--interactive-text-wordLevel#{$wordLevel}-border-bottom-width);
+                border-left-width: var(--interactive-text-wordLevel#{$wordLevel}-border-left-width);
+                border-right-width: var(--interactive-text-wordLevel#{$wordLevel}-border-right-width);
 
                 // padding for size consistency with 1px max border
-                padding-top: var(--interactive-text-level#{$wordLevel}-padding-top);
-                padding-bottom: var(--interactive-text-level#{$wordLevel}-padding-bottom);
-                padding-left: var(--interactive-text-level#{$wordLevel}-padding-left);
-                padding-right: var(--interactive-text-level#{$wordLevel}-padding-right);
+                padding-top: var(--interactive-text-wordLevel#{$wordLevel}-padding-top);
+                padding-bottom: var(--interactive-text-wordLevel#{$wordLevel}-padding-bottom);
+                padding-left: var(--interactive-text-wordLevel#{$wordLevel}-padding-left);
+                padding-right: var(--interactive-text-wordLevel#{$wordLevel}-padding-right);
 
                 // font styling
-                font-weight: var(--interactive-text-level#{$wordLevel}-weight);
-                font-style: var(--interactive-text-level#{$wordLevel}-style);
+                font-weight: var(--interactive-text-wordLevel#{$wordLevel}-weight);
+                font-style: var(--interactive-text-wordLevel#{$wordLevel}-style);
                 
                 // wavy underline
-                text-decoration: var(--interactive-text-level#{$wordLevel}-text-decoration) var(--interactive-text-level#{$wordLevel}-border-color) wavy var(--interactive-text-level#{$wordLevel}-border-width);
+                text-decoration: var(--interactive-text-wordLevel#{$wordLevel}-text-decoration) var(--interactive-text-wordLevel#{$wordLevel}-border-color) wavy var(--interactive-text-wordLevel#{$wordLevel}-border-width);
                 text-decoration-skip-ink: none;
             }
         }
@@ -57,17 +52,10 @@
                 background-color: color-mix(in srgb, var(--interactive-text-phraseLevel#{$phraseLevel}-background-color), transparent var(--interactive-text-phraseLevel#{$phraseLevel}-background-transparency));
                 
                 // border
-                border-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-width);
-                border-top-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-top);
-                border-bottom-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-bottom);
-                border-left-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-left);
-                border-right-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-right);
-                border-color: var(--interactive-text-phraseLevel#{$phraseLevel}-border-color);
-                border-style: var(--interactive-text-phraseLevel#{$phraseLevel}-border-style);
                 border-top-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-top-width);
                 border-bottom-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-bottom-width);
-                border-left-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-left-width);
-                border-right-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-right-width);
+                border-color: var(--interactive-text-phraseLevel#{$phraseLevel}-border-color);
+                border-style: var(--interactive-text-phraseLevel#{$phraseLevel}-border-style);
 
                 // padding for size consistency with 1px max border
                 padding-top: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-top);
@@ -77,12 +65,14 @@
                     padding-left: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-left);
                     border-bottom-left-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
                     border-top-left-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                    border-left-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-left-width);
                 }
-
+                
                 &.phrase-end {
                     padding-right: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-right);
                     border-bottom-right-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
                     border-top-right-radius: var(--interactive-text-phraseLevel#{$phraseLevel}-border-radius);
+                    border-right-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-right-width);
                 }
                 
                 // font styling
@@ -94,14 +84,35 @@
                 text-decoration-skip-ink: none;
 
                 // replace margin with padding so background color applies
-                &.space-after {
+                &.space-after:not(.phrase-end) {
                     margin-right: 0px;
                     padding-right: 4px;
                 }
             }
-
         }
-        
-        
+    }
+
+    // padding for spaceless languages (Chinese, Japanese, Thai...)
+    &.spaceless-language {
+        .word {
+            @for $wordLevel from -7 through 2 {
+                &[stage="#{$wordLevel}"] {
+                    padding-left: var(--interactive-text-wordLevel#{$wordLevel}-spaceless-language-padding-left) !important;
+                    padding-right: var(--interactive-text-wordLevel#{$wordLevel}-spaceless-language-padding-right) !important;
+                }
+            }
+    
+            @for $phraseLevel from -7 through 0 {
+                &[phrase-stage="#{$phraseLevel}"] {
+                    &.phrase-start {
+                        padding-left: var(--interactive-text-phraseLevel#{$phraseLevel}-spaceless-language-padding-left) !important;
+                    }
+
+                    &.phrase-end {
+                        padding-right: var(--interactive-text-phraseLevel#{$phraseLevel}-spaceless-language-padding-right) !important;
+                    }
+                }
+            }
+        }
     }
 }
