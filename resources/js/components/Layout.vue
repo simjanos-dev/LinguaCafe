@@ -96,18 +96,18 @@
                 </v-btn>
             </v-bottom-navigation>
         </template>
-        <v-main :style="{background: $vuetify.theme.currentTheme.background}" :class="{ eink: theme == 'eink'}">
+        <v-main :style="{background: $vuetify.theme.currentTheme.background, ...textStyling}" :class="{ eink: theme == 'eink'}">
             <router-view :user-count="$props._userCount" :language="selectedLanguage" :key="$route.fullPath"></router-view>
         </v-main>
     </v-app>
 </template>
 
 <script>
-    import Echo from 'laravel-echo';
-    import Pusher from 'pusher-js';
     import ThemeService from './../services/ThemeService';
+    import TextStylingService from './../services/TextStylingService';
     import FontTypeService from './../services/FontTypeService';
     import { DefaultLocalStorageManager } from './../services/LocalStorageManagerService';
+    import { mapState } from 'vuex';
     
     export default {
         data: function() {
@@ -162,6 +162,19 @@
                 ],
             }
         },
+        computed: {
+            textStyling: function() {
+                const settingsObject = this.$store.state.shared.textStylingSettings
+
+                if (settingsObject === null) {
+                    return {}
+                }
+
+                const settingsCssObject = TextStylingService.getTextStylingSettingsObject(settingsObject)
+                console.log('text styling computed', settingsCssObject[this.theme])
+                return settingsCssObject[this.theme]
+            }
+        },
         props: {
             _selectedLanguage: String,
             _userName: {
@@ -178,6 +191,10 @@
             },
             _userCount: Number,
             _isAdmin: Boolean,
+            themeSettings: {
+                type: Object,
+                default: null,
+            }
         },
         beforeMount() {
             // set store data
@@ -204,35 +221,11 @@
                 });
             }
 
+            this.initializeThemes();
 
-            const loadTheme = () => {
-                const autoEnabled = ThemeService.isAuto();
-                if (autoEnabled) {
-                    // auto-select user's system theme if 'auto' is enabled
-                    if (preferredDarkTheme.matches) {
-                        this.theme = 'dark';
-                    } else {
-                        this.theme = 'light';
-                    }
-
-                    DefaultLocalStorageManager.saveSetting('theme', this.theme);
-                } else {
-                    // otherwise use saved theme
-                    const savedTheme = DefaultLocalStorageManager.loadSetting('theme');
-                    this.theme = savedTheme ? savedTheme : 'light';
-                }
-
-                ThemeService.loadTheme(this.$vuetify);
-            }
-
-
-            const preferredDarkTheme = window.matchMedia("(prefers-color-scheme: dark)");
-            preferredDarkTheme.addEventListener("change", e => {
-                loadTheme();
-            });
-
-            // load theme
-            loadTheme();
+            // Watch OS theme change. Currently disabled to 
+            // const preferredDarkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+            // preferredDarkTheme.addEventListener("change", this.loadSelectedTheme);
 
             // load navbar status
             const savedNavbarCollapsed = DefaultLocalStorageManager.loadSetting('navbar-collapsed');
@@ -246,6 +239,38 @@
             });
         },
         methods: {
+            initializeThemes() {
+                this.loadSelectedTheme();
+                ThemeService.setDefaultVuetifyTheme(this.$vuetify);
+
+                if (this.$props.themeSettings.vuetifyThemes) {
+                    this.$store.commit('shared/setVuetifyThemeSettings', this.$props.themeSettings.vuetifyThemes)
+                    this.$store.commit('shared/setTextStylingSettings', this.$props.themeSettings.textStyling)
+                }
+
+                ThemeService.setVuetifyTheme(this.$vuetify, this.$store)
+            },
+            loadSelectedTheme() {
+                const autoEnabled = ThemeService.isAuto();
+                const preferredDarkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+                if (autoEnabled) {
+                    // auto-select user's system theme if 'auto' is enabled
+                    if (preferredDarkTheme.matches) {
+                        this.theme = 'dark';
+                        console.log('auto dark')
+                    } else {
+                        this.theme = 'light';
+                        console.log('auto light')
+                    }
+
+                    DefaultLocalStorageManager.saveSetting('theme', this.theme);
+                } else {
+                    // otherwise use saved theme
+                    const savedTheme = DefaultLocalStorageManager.loadSetting('theme');
+                    this.theme = savedTheme ? savedTheme : 'light';
+                }
+            },
             collapseNavbar() {
                 this.navbarCollapsed = true;
                 DefaultLocalStorageManager.saveSetting('navbar-collapsed', this.navbarCollapsed);

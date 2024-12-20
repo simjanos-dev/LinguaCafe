@@ -78,11 +78,11 @@ div.v-list.filter-popup {
                 line-height: 26px;
 
                 &.highlighted-word {
-                    background-color: var(--v-highlightedWordLevel7-base);
+                    background-color: color-mix(in srgb, var(--interactive-text-wordLevel-7-background-color), transparent var(--interactive-text-wordLevel-7-background-transparency));
                 }
 
                 &.new-word {
-                    background-color: var(--v-newWord-base);
+                    background-color: color-mix(in srgb, var(--interactive-text-wordLevel2-background-color), transparent var(--interactive-text-wordLevel2-background-transparency));
                 }
             }
         }
@@ -151,12 +151,12 @@ div.v-list.filter-popup {
 // style for e-ink theme
 #app main.eink #vocabulary #vocabulary-list .stage div {
     &.highlighted-word {
-        background-color: var(--v-highlightedWordLevel7-base);
-        color: var(--v-highlightedWordText-base);
+        background-color: black;
+        color: white;
     }
 
     &.new-word {
-        background-color: var(--v-newWord-base);
-        color: var(--v-highlightedWordText-base);
+        background-color: black;
+        color: white;
     }
 }

@@ -51,6 +51,8 @@ export default {
         primary: '#000000',
         secondary: '#000000',
         gray: '#E9EAEC',
+        gray2: '#E9EAEC',
+        gray3: '#E9EAEC',
         customBorder: '#dcdcdc',
 
         error: '#000000',

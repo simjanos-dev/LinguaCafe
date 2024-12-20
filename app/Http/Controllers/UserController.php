@@ -54,7 +54,7 @@ class UserController extends Controller {
         return view('auth.login', [
             'userCount' => $userCount,
             'userUuid' => '',
-            'theme' => $theme
+            'theme' => $theme,
         ]);
     }
     

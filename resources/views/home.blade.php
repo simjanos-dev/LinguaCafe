@@ -5,5 +5,6 @@
     _user-uuid="{{ $userUuid }}" 
     :_user-count="{{ $userCount }}" 
     :_is-admin="{{ json_encode($isAdmin) }}" 
+    :theme-settings="{{ json_encode($themeSettings) }}"
     _selected-language="{{ $language }}"
 ></layout>@endsection

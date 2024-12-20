@@ -23,32 +23,10 @@
             font-size: 14px;
         }
         
-        div[stage="-7"] {
-            background-color: var(--v-highlightedWordLevel7-base);
-        }
-
-        div[stage="-6"] {
-            background-color: var(--v-highlightedWordLevel6-base);
-        }
-
-        div[stage="-5"] {
-            background-color: var(--v-highlightedWordLevel5-base);
-        }
-
-        div[stage="-4"] {
-            background-color: var(--v-highlightedWordLevel4-base);
-        }
-
-        div[stage="-3"] {
-            background-color: var(--v-highlightedWordLevel3-base);
-        }
-
-        div[stage="-2"] {
-            background-color: var(--v-highlightedWordLevel2-base);
-        }
-
-        div[stage="-1"] {
-            background-color: var(--v-highlightedWordLevel1-base);
+        @for $wordLevel from -7 through -1 {
+            div[stage="#{$wordLevel}"] {
+                background-color: color-mix(in srgb, var(--interactive-text-wordLevel#{$wordLevel}-background-color), transparent var(--interactive-text-wordLevel#{$wordLevel}-background-transparency));
+            }
         }
     }
 

@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-
 use App\Models\User;
 use App\Services\GoalService;
+
+use App\Services\SettingsService;
 use App\Services\StatisticsService;
+use Illuminate\Support\Facades\Auth;
 
 // request classes
 use App\Http\Requests\Home\GetConfigRequest;
 
 class HomeController extends Controller {
 
-    private $statisticsService;
-    private $goalService;
-
-    public function __construct(StatisticsService $statisticsService, GoalService $goalService) {
-        $this->statisticsService = $statisticsService;
-        $this->goalService = $goalService;
+    public function __construct(
+        private StatisticsService $statisticsService, 
+        private GoalService $goalService,
+        private SettingsService $settingsService
+    ) {
+        //
     }
 
     public function index() {
@@ -29,6 +29,10 @@ class HomeController extends Controller {
         $userEmail = Auth::user()->email;
         $isAdmin = Auth::user()->is_admin === 1;
         $theme = $_COOKIE['theme'] ?? 'dark';
+        $themeSettings = $this->settingsService->getUserSettingsByName(
+            Auth::user()->id,
+            ['textStyling', 'vuetifyThemes']
+        );
         
         return view('home', [
             'language' => $selectedLanguage,
@@ -37,6 +41,7 @@ class HomeController extends Controller {
             'userEmail' => $userEmail,
             'isAdmin' => $isAdmin,
             'theme' => $theme,
+            'themeSettings' => $themeSettings ?? [],
             'userUuid' => Auth::user()->uuid,
         ]);
     }

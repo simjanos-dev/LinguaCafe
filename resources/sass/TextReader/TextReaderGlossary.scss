@@ -34,33 +34,18 @@
         user-select: none;
 
         &[stage="2"] {
-            background-color: var(--v-newWord-base);
+            background-color: color-mix(in srgb, var(--interactive-text-wordLevel2-background-color), transparent var(--interactive-text-wordLevel2-background-transparency));
             color: var(--v-highlightedWordText-base);
         }
 
         &[stage^="-"] {
             color: var(--v-highlightedWordText-base);
         }
-        &[stage="-7"] {
-            background-color: var(--v-highlightedWordLevel7-base);
-        }
-        &[stage="-6"] {
-            background-color: var(--v-highlightedWordLevel6-base);
-        }
-        &[stage="-5"] {
-            background-color: var(--v-highlightedWordLevel5-base);
-        }
-        &[stage="-4"] {
-            background-color: var(--v-highlightedWordLevel4-base);
-        }
-        &[stage="-3"] {
-            background-color: var(--v-highlightedWordLevel3-base);
-        }
-        &[stage="-2"] {
-            background-color: var(--v-highlightedWordLevel2-base);
-        }
-        &[stage="-1"] {
-            background-color: var(--v-highlightedWordLevel1-base);
+
+        @for $wordLevel from -7 through -1 {
+            &[stage="#{$wordLevel}"] {
+                background-color: color-mix(in srgb, var(--interactive-text-wordLevel#{$wordLevel}-background-color), transparent var(--interactive-text-wordLevel#{$wordLevel}-background-transparency));
+            }
         }
     }
 

@@ -9,43 +9,34 @@ class ThemeService {
         
     }
 
-    loadTheme(vuetifyHandler) {
-        // deep copy
+    setDefaultVuetifyTheme(vuetifyHandler) {
+        // set vuetify theme
         var themeName = localStorageManager.loadSetting('theme') || 'light';
         vuetifyHandler.theme.dark = (themeName == 'dark');
 
-        // load custom theme from (cache) if saved
-        var colors = localStorageManager.loadSetting(themeName + '-theme-colors');
+        // set default theme
+        vuetifyHandler.theme.themes['light'] = JSON.parse(JSON.stringify(defaultThemes.light));
+        vuetifyHandler.theme.themes['dark'] = JSON.parse(JSON.stringify(defaultThemes.dark));
+    }
 
-        if (colors !== null && ['light', 'dark'].includes(themeName)) {
-            vuetifyHandler.theme.themes[themeName] = JSON.parse(colors);
-        } else {
-            vuetifyHandler.theme.themes['light'] = localStorageManager.loadSetting('theme') === null ? defaultThemes.light : defaultThemes[localStorageManager.loadSetting('theme')];
-            vuetifyHandler.theme.themes['dark'] = defaultThemes.dark;
+
+    // applies the vuetify theme stored in the vuex store
+    setVuetifyTheme(vuetifyHandler, storeHandler) {
+        const vuetifyThemeSettings = storeHandler.state.shared.vuetifyThemeSettings
+
+        if (vuetifyThemeSettings === null) {
+            return
         }
-
-        if (!['light', 'dark'].includes(themeName)) {
-            return;
-        }
-
-        // load custom theme from backend
-        axios.post('/settings/user/get', {
-            settingNames: ['vuetifyThemes']
-        }).then((response) => {
-            if (!response.data.vuetifyThemes) {
-                return
+        
+        let themeSettingNames = Object.keys(defaultThemes.light)
+        themeSettingNames.forEach((name) => {
+            if (localStorageManager.loadSetting('theme') === 'eink') {
+                console.log('defaultThemes eink', name, defaultThemes)
+                vuetifyHandler.theme.themes['light'][name] = JSON.parse(JSON.stringify(defaultThemes['eink'][name]));
+            } else {
+                vuetifyHandler.theme.themes['light'][name] = vuetifyThemeSettings['light'][name];
             }
-
-            let themeSettingNames = Object.keys(defaultThemes.light)
-            themeSettingNames.forEach((name) => {
-                vuetifyHandler.theme.themes['light'][name] = response.data.vuetifyThemes['light'][name];
-                vuetifyHandler.theme.themes['dark'][name] = response.data.vuetifyThemes['dark'][name];
-            });
-
-            // save into cache
-            localStorageManager.saveSetting(themeName + '-theme-colors', JSON.stringify(vuetifyHandler.theme.themes[themeName]));
-        }).catch((error) => {
-
+            vuetifyHandler.theme.themes['dark'][name] = vuetifyThemeSettings['dark'][name];
         });
     }
 

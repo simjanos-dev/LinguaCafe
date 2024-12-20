@@ -8,6 +8,8 @@ export default {
         userName: false,
         userEmail: false,
         userAdmin: false,
+        vuetifyThemeSettings: null,
+        textStylingSettings: null,
         echo: new Echo({
             broadcaster: 'pusher',
             key: 'wjp2pou6ebgibtwccqsj',
@@ -30,6 +32,12 @@ export default {
         },
         setUserAdmin (state, userAdmin) {
             state.userAdmin = userAdmin;
+        },
+        setVuetifyThemeSettings (state, vuetifyThemeSettings) {
+            state.vuetifyThemeSettings = vuetifyThemeSettings;
+        },
+        setTextStylingSettings (state, textStylingSettings) {
+            state.textStylingSettings = textStylingSettings;
         }
     },
     getters: {

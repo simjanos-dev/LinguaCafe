@@ -115,7 +115,7 @@
 .finished-box {
     .finished-stage-level {
         display: inline-block;
-        background-color: var(--v-highlightedWordLevel7-base);
+        background-color: color-mix(in srgb, var(--interactive-text-wordLevel-7-background-color), transparent var(--interactive-text-wordLevel-7-background-transparency));
         color: var(--v-text-base);
         min-width: 46px;
         height: 24px;

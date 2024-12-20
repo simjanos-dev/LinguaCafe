@@ -2,10 +2,12 @@
     This is a template file that will have css variables injected into it to avoid having vuejs style bindings on every word.
 */
 
-.sample-text {
+.sample-text, .text-block-group {
     .word {
+        display: inline-block;
         box-sizing: border-box;
-        line-height: 1;
+        height: auto;
+        line-height: 100%;
 
         
         &.space-after {
@@ -42,11 +44,16 @@
                 text-decoration: var(--interactive-text-wordLevel#{$wordLevel}-text-decoration) var(--interactive-text-wordLevel#{$wordLevel}-border-color) wavy var(--interactive-text-wordLevel#{$wordLevel}-border-width);
                 text-decoration-skip-ink: none;
             }
+
+            &.highlighted, &:hover{
+                background-color: var(--v-readerWordSelection-base);
+                color: var(--v-highlightedWordText-base);
+            }
         }
 
         // phrases
         @for $phraseLevel from -7 through 0 {
-            &[phrase-stage="#{$phraseLevel}"] {
+            &[phrasestage="#{$phraseLevel}"] {
                 // text color
                 color: var(--interactive-text-phraseLevel#{$phraseLevel}-color);
                 background-color: color-mix(in srgb, var(--interactive-text-phraseLevel#{$phraseLevel}-background-color), transparent var(--interactive-text-phraseLevel#{$phraseLevel}-background-transparency));
@@ -88,6 +95,24 @@
                     margin-right: 0px;
                     padding-right: 4px;
                 }
+            }
+
+            &.highlighted, &:hover{
+                background-color: var(--v-readerWordSelection-base);
+                border-color: var(--v-readerWordSelection-base);
+                color: var(--v-highlightedWordText-base);
+                border-radius: 0px;
+            }
+
+            // highlighted rounding
+            &.highlighted:not(.highlighted ~ *) {
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+
+            &.highlighted:not(:has(~ .highlighted)) {
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
             }
         }
     }

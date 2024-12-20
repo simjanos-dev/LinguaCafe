@@ -145,7 +145,6 @@
                 lightTheme: [],
                 darkTheme: [],
 
-                sampleText: 'LinguaCafe is a language learning platform , where you can read foreign texts .',
                 wordStyling: {
                     level1: {
                         borderWidth: 0,
@@ -288,12 +287,14 @@
                 });
 
                 axios.post('/settings/user/update', {settings: colorSettings}).then((response) => {
-    
                     this.saveResult = '';
                     this.saving = false;
 
-                    ThemeService.loadTheme(this.$vuetify);
+                    this.$store.commit('shared/setVuetifyThemeSettings', colorSettings.vuetifyThemes)
+                    this.$store.commit('shared/setTextStylingSettings', colorSettings.textStyling)
+                    ThemeService.setVuetifyTheme(this.$vuetify, this.$store);
                 }).catch((error) => {
+                    console.log('error', error)
                     this.saveResult = 'error';
                     this.saving = false;
                 });
