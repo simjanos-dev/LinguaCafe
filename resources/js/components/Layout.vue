@@ -243,7 +243,7 @@
                 this.loadSelectedTheme();
                 ThemeService.setDefaultVuetifyTheme(this.$vuetify);
 
-                if (this.$props.themeSettings.vuetifyThemes) {
+                if (this.$props.themeSettings?.vuetifyThemes) {
                     this.$store.commit('shared/setVuetifyThemeSettings', this.$props.themeSettings.vuetifyThemes)
                     this.$store.commit('shared/setTextStylingSettings', this.$props.themeSettings.textStyling)
                 }
