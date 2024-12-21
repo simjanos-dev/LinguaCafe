@@ -134,6 +134,7 @@ class TextStylingService {
         // add wavy underline
         if (textStylingSettings[theme][level].wavyUnderline) {
             cssVariables[`--interactive-text-${levelMapping[level]}-text-decoration`] = 'underline'
+            cssVariables[`--interactive-text-${levelMapping[level]}-wave-width`] = textStylingSettings[theme][level].borderWidth + 'px'
             cssVariables[`--interactive-text-${levelMapping[level]}-border-bottom-width`] = '0px'
             cssVariables[`--interactive-text-${levelMapping[level]}-border-top-width`] = '0px'
             cssVariables[`--interactive-text-${levelMapping[level]}-border-left-width`] = '0px'

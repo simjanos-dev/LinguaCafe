@@ -41,7 +41,8 @@
                 font-style: var(--interactive-text-wordLevel#{$wordLevel}-style);
                 
                 // wavy underline
-                text-decoration: var(--interactive-text-wordLevel#{$wordLevel}-text-decoration) var(--interactive-text-wordLevel#{$wordLevel}-border-color) wavy var(--interactive-text-wordLevel#{$wordLevel}-border-width);
+                // wavy underline
+                text-decoration: var(--interactive-text-wordLevel#{$wordLevel}-text-decoration) var(--interactive-text-wordLevel#{$wordLevel}-border-color) wavy var(--interactive-text-wordLevel#{$wordLevel}-wave-width);
                 text-decoration-skip-ink: none;
             }
 
@@ -87,7 +88,7 @@
                 font-style: var(--interactive-text-phraseLevel#{$phraseLevel}-style);
                 
                 // wavy underline
-                text-decoration: var(--interactive-text-phraseLevel#{$phraseLevel}-text-decoration) var(--interactive-text-phraseLevel#{$phraseLevel}-border-color) wavy var(--interactive-text-phraseLevel#{$phraseLevel}-border-width);
+                text-decoration: var(--interactive-text-phraseLevel#{$phraseLevel}-text-decoration) var(--interactive-text-phraseLevel#{$phraseLevel}-border-color) wavy var(--interactive-text-phraseLevel#{$phraseLevel}-wave-width);
                 text-decoration-skip-ink: none;
 
                 // replace margin with padding so background color applies
