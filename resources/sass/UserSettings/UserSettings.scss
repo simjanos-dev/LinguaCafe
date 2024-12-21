@@ -65,3 +65,16 @@
         }
     }
 }
+
+@media (max-width: 580px) {
+    #user-settings-themes {
+        #border-positions, #font-options {
+            flex-wrap: wrap;
+
+            .v-input {
+                width: 100%;
+                margin-left: 0px !important;
+            }
+        }
+    }
+}

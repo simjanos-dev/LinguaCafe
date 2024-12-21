@@ -40,7 +40,6 @@ class TextStylingService {
 
     // returns an object with css styling for a single theme/word level combination
     getCssSettingObject(textStylingSettings, theme, level) {
-        console.log('getCssSettingObject start')
         const levelMapping = {
             'Level 1 word': 'wordLevel-1',
             'Level 2 word': 'wordLevel-2',
@@ -144,7 +143,6 @@ class TextStylingService {
         }
         
 
-        console.log('getCssSettingObject end')
         return cssVariables
     }
 }

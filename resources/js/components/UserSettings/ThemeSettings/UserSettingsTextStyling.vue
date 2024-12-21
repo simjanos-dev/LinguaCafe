@@ -423,8 +423,10 @@
                     <user-settings-text-styling-sample />
                 </div>
 
-                <v-btn rounded depressed color="primary" @click="showResetTextStylingDialog">Reset</v-btn>
-                <v-btn rounded depressed color="primary" @click="logTextStylingSettingsObject">Console log settings</v-btn>
+                <div class="d-flex justify-end mt-2">
+                    <v-btn rounded depressed color="primary" @click="showResetTextStylingDialog">Reset</v-btn>
+                    <!-- <v-btn rounded depressed color="primary" @click="logTextStylingSettingsObject">Console log settings</v-btn> -->
+                </div>
             </v-container>
         </v-card>
     </div>
@@ -529,6 +531,7 @@
                 // reset only selected word/phrase level
                 if (resetType === 'level') {
                     this.textStyling[this.selectedTheme][this.selectedLevel] = JSON.parse(JSON.stringify(defaultTextThemes[this.selectedTheme][this.selectedLevel]))
+                    this.updateSampleTextStyling()
                     return
                 }
 
@@ -536,6 +539,8 @@
                 this.levels.forEach((level) => {
                     this.textStyling[this.selectedTheme][level] = JSON.parse(JSON.stringify(defaultTextThemes[this.selectedTheme][level]))
                 })
+
+                this.updateSampleTextStyling()
             },
             selectedLevelInputChanged(value) {
                 this.selectedLevelIndex = this.levels.indexOf(value);
@@ -544,7 +549,6 @@
                 this.selectedThemeIndex = this.themes.indexOf(value);
             },
             resetColor(colorName) {
-                console.log('default color', defaultTextThemes[this.selectedTheme][this.selectedLevel][colorName])
                 this.textStyling[this.selectedTheme][this.selectedLevel][colorName] = JSON.parse(JSON.stringify(defaultTextThemes[this.selectedTheme][this.selectedLevel][colorName]));
                 this.updateSampleTextColors()
             },
@@ -561,13 +565,11 @@
                 })
             
 
-                console.log('text styling', this.highlightedStyling)
                 
                 this.textStyling = JSON.parse(JSON.stringify(this.textStyling))
                 this.$emit('update', this.textStyling)
             },
             logTextStylingSettingsObject() {
-                console.log('text styling', this.textStyling)
             },
             updateSampleTextColors() {
                 this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-border-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].borderColor;
@@ -579,7 +581,6 @@
                 this.loading = true
 
                 axios.post('/settings/user/get', {settingNames: ['textStyling']}).then((response) => {
-                    console.log('textStyling loaded')
                     if (response.data.textStyling) {
                         this.textStyling = response.data.textStyling
                     }

@@ -2,8 +2,8 @@
     <!-- Sample text -->
     <div class="w-100 mt-8">
         <!-- Language selection -->
-        <div class="d-flex justify-space-between mb-2">
-            <label class="mb-0">
+        <div class="d-flex flex-wrap justify-space-between mb-1">
+            <label class="mb-2">
                 Sample text
                 
                 <v-menu offset-y nudge-top="-12px">
@@ -17,6 +17,7 @@
             </label>
 
             <v-btn-toggle
+                class="mb-1"
                 v-model="selectedLanguage"
                 mandatory
                 rounded
