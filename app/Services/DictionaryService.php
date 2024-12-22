@@ -221,7 +221,7 @@ class DictionaryService {
                         $definitions[] = [
                             'dictionary' => $dictionary->name,
                             'dictionaryColor' => $dictionary->color,
-                            'definitions' => $cache->definition,
+                            'definitions' => [$cache->definition],
                             'term' => $cache->definition,
                         ];
                     } else {
@@ -229,6 +229,7 @@ class DictionaryService {
                             'dictionary' => $dictionary->name,
                             'dictionaryColor' => $dictionary->color,
                             'dictionaryType' => $dictionary->type,
+                            'targetLanguage' => $dictionary->target_language,
                             'term' => $term,
                         ];
                         
@@ -291,9 +292,21 @@ class DictionaryService {
 
             $dictionaryType = $responseAdditionalInfo[$responseIndex]['dictionaryType'];
             unset($responseAdditionalInfo[$responseIndex]['dictionaryType']);
+
             if ($dictionaryType === 'deepl') {
+                $definition = json_decode($response->body())->translations[0]->text;
+
+                $deeplCache = new DeeplCache();
+                $deeplCache->source_language = $sourceLanguage;
+                $deeplCache->target_language = $responseAdditionalInfo[$responseIndex]['targetLanguage'];
+                $deeplCache->hash = $termHash;
+                $deeplCache->definition = $definition;
+                $deeplCache->save();
+
+                unset($responseAdditionalInfo[$responseIndex]['targetLanguage']);
+
                 $definitions[] = [
-                    'definitions' => [json_decode($response->body())->translations[0]->text],
+                    'definitions' => [$definition],
                     ...$responseAdditionalInfo[$responseIndex]
                 ];
             }
