@@ -1,6 +1,5 @@
 import { DefaultLocalStorageManager } from './LocalStorageManagerService'
 import defaultThemes from './../themes';
-import defaultTextThemes from './../themes';
 
 const localStorageManager = DefaultLocalStorageManager
 

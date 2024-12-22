@@ -107,7 +107,6 @@
     import TextStylingService from './../services/TextStylingService';
     import FontTypeService from './../services/FontTypeService';
     import { DefaultLocalStorageManager } from './../services/LocalStorageManagerService';
-    import { mapState } from 'vuex';
     
     export default {
         data: function() {
@@ -164,14 +163,13 @@
         },
         computed: {
             textStyling: function() {
-                const settingsObject = this.$store.state.shared.textStylingSettings
+                let settingsObject = this.$store.state.shared.textStylingSettings
 
                 if (settingsObject === null) {
-                    return {}
+                    settingsObject = TextStylingService.getDefaultTextStylingSettings()
                 }
 
                 const settingsCssObject = TextStylingService.getTextStylingSettingsObject(settingsObject)
-                console.log('text styling computed', settingsCssObject[this.theme])
                 return settingsCssObject[this.theme]
             }
         },

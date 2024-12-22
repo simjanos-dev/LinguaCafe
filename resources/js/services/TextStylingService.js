@@ -1,7 +1,13 @@
+import defaultTextThemes from './../textThemes';
+
 class TextStylingService {
     
     constructor() {
         
+    }
+
+    getDefaultTextStylingSettings() {
+        return defaultTextThemes;
     }
 
     getTextStylingSettingsObject(textStylingSettings) {
