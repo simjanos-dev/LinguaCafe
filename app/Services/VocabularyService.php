@@ -241,6 +241,7 @@ class VocabularyService {
         // remove phrase ids from text words
         $chapters = Chapter
             ::where('user_id', $userId)
+            ->where('processing_status', ChapterProcessingStatusEnum::PROCESSED->value)
             ->where('language', $language)
             ->get();
 
