@@ -14,7 +14,12 @@ class ThemeService {
         vuetifyHandler.theme.dark = (themeName == 'dark');
 
         // set default theme
-        vuetifyHandler.theme.themes['light'] = JSON.parse(JSON.stringify(defaultThemes.light));
+        if (localStorageManager.loadSetting('theme') === 'eink') {
+            vuetifyHandler.theme.themes['light'] = JSON.parse(JSON.stringify(defaultThemes.eink));
+        } else {
+            vuetifyHandler.theme.themes['light'] = JSON.parse(JSON.stringify(defaultThemes.light));
+        }
+        
         vuetifyHandler.theme.themes['dark'] = JSON.parse(JSON.stringify(defaultThemes.dark));
     }
 
@@ -30,7 +35,6 @@ class ThemeService {
         let themeSettingNames = Object.keys(defaultThemes.light)
         themeSettingNames.forEach((name) => {
             if (localStorageManager.loadSetting('theme') === 'eink') {
-                console.log('defaultThemes eink', name, defaultThemes)
                 vuetifyHandler.theme.themes['light'][name] = JSON.parse(JSON.stringify(defaultThemes['eink'][name]));
             } else {
                 vuetifyHandler.theme.themes['light'][name] = vuetifyThemeSettings['light'][name];
