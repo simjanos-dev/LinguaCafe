@@ -258,17 +258,4 @@
             color: white;
         }
     }
-
-    #reader .word[stage="2"]:not(.highlighted):not(:hover) {
-        border-bottom: 2px solid var(--v-text-base);
-        background-color: #ffffff;
-        color: var(--v-text-base);
-        
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-    }
-
-    #reader .word.phrase {
-        border-color: var(--v-text-base) !important;
-    }
 }

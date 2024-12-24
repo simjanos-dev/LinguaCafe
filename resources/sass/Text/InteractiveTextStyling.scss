@@ -8,6 +8,7 @@
         box-sizing: border-box;
         height: auto;
         line-height: 100%;
+        cursor: pointer;
 
         .rubyword {
             pointer-events: none;
@@ -73,6 +74,10 @@
                 border-bottom-width: var(--interactive-text-phraseLevel#{$phraseLevel}-border-bottom-width);
                 border-color: var(--interactive-text-phraseLevel#{$phraseLevel}-border-color);
                 border-style: var(--interactive-text-phraseLevel#{$phraseLevel}-border-style);
+                border-bottom-left-radius: 0px;
+                border-top-left-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-top-right-radius: 0px;
 
                 // padding for size consistency with 1px max border
                 padding-top: var(--interactive-text-phraseLevel#{$phraseLevel}-padding-top);
@@ -121,6 +126,10 @@
                 border-color: var(--v-readerWordSelection-base);
                 color: var(--v-highlightedWordText-base);
                 border-radius: 0px;
+
+                &.phrase {
+                    border-radius: 0px;
+                }
             }
 
             // highlighted rounding
