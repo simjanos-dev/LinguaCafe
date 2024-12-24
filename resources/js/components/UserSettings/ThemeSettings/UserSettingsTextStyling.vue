@@ -570,6 +570,7 @@
                 this.$emit('update', this.textStyling)
             },
             logTextStylingSettingsObject() {
+                console.log('this.textStyling', this.textStyling)
             },
             updateSampleTextColors() {
                 this.highlightedStyling[`--interactive-text-${this.levelMapping[this.selectedLevel]}-border-color`] = this.textStyling[this.selectedTheme][this.selectedLevel].borderColor;
