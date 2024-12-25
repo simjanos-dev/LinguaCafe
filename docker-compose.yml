@@ -77,3 +77,4 @@ services:
             - ./storage:/var/www/html/storage
         networks:
             - linguacafe
+        platform: ${PLATFORM:-}
