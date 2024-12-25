@@ -20,6 +20,8 @@ export default {
 
         readerWordSelection: '#D8D8D8',
         highlightedWordText: '#333333',
+        highlightedWordBackground: '#71EB7A',
+        newWordBackground: '#71EB7A',
     },
     dark: {
         background: '#1C1B20',
@@ -42,6 +44,8 @@ export default {
         
         readerWordSelection: '#B6B6B6',
         highlightedWordText: '#121212',
+        highlightedWordBackground: '#71EB7A',
+        newWordBackground: '#71EB7A',
     },
     eink: {
         name: '#000000',
@@ -65,5 +69,7 @@ export default {
 
         readerWordSelection: '#888888',
         highlightedWordText: '#FFFFFF',
+        highlightedWordBackground: '#71EB7A',
+        newWordBackground: '#71EB7A',
     },
 }

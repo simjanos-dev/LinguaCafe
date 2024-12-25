@@ -34,7 +34,18 @@
                 </thead>
                 <tbody>
                     <tr v-for="(color, index) in (selectedTheme == 'light' ? lightTheme : darkTheme)" :key="selectedTheme + color.name">
-                        <td>{{ color.name }}</td>
+                        <td>
+                            {{ color.name }}
+                            
+                            <v-menu offset-y nudge-top="-12px" v-if="colorInformations[color.name] !== undefined">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon class="ml-1" v-bind="attrs" v-on="on">mdi-help-circle</v-icon>
+                                </template>
+                                <v-card outlined class="rounded-lg pa-4" width="320px">
+                                    {{ colorInformations[color.name] }}
+                                </v-card>
+                            </v-menu>
+                        </td>
                         <td>
                             <v-menu
                                 v-model="color.opened"
@@ -144,6 +155,11 @@
                 ],
                 lightTheme: [],
                 darkTheme: [],
+                colorInformations: {
+                    newWordBackground: 'Used as background for indicating or displaying a new word outside of the interactive text areas.',
+                    highlightedWordBackground: 'Used as background for indicating or displaying a highlighted word outside of the interactive text areas.',
+                    highlightedWordText: 'Used as background for indicating or displaying a highlighted word outside of the interactive text areas.',
+                },
 
                 wordStyling: {
                     level1: {
@@ -215,8 +231,15 @@
                 themeSettingNames.forEach((themeSettingName) => {
                     var colorName = themeSettingName;
                     
-                    var lightColorValue = savedColors ? savedColors['light'][themeSettingName] : defaultThemes['light'][themeSettingName];
-                    var darkColorValue = savedColors ? savedColors['dark'][themeSettingName] : defaultThemes['dark'][themeSettingName];
+                    var lightColorValue, darkColorValue
+                    if (!savedColors || !savedColors['light'][themeSettingName]) {
+                        lightColorValue = defaultThemes['light'][themeSettingName];
+                        darkColorValue = defaultThemes['dark'][themeSettingName];
+                    } else {
+                        lightColorValue = savedColors['light'][themeSettingName];
+                        darkColorValue = savedColors['dark'][themeSettingName];
+                    }
+                    
 
                     this.lightTheme.push({
                         'name': colorName,

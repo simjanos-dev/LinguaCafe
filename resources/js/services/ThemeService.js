@@ -37,9 +37,10 @@ class ThemeService {
             if (localStorageManager.loadSetting('theme') === 'eink') {
                 vuetifyHandler.theme.themes['light'][name] = JSON.parse(JSON.stringify(defaultThemes['eink'][name]));
             } else {
-                vuetifyHandler.theme.themes['light'][name] = vuetifyThemeSettings['light'][name];
+                vuetifyHandler.theme.themes['light'][name] = vuetifyThemeSettings['light'][name] ?? JSON.parse(JSON.stringify(defaultThemes['light'][name]));
             }
-            vuetifyHandler.theme.themes['dark'][name] = vuetifyThemeSettings['dark'][name];
+
+            vuetifyHandler.theme.themes['dark'][name] = vuetifyThemeSettings['dark'][name] ?? JSON.parse(JSON.stringify(defaultThemes['dark'][name]));
         });
     }
 
