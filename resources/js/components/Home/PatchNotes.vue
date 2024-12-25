@@ -5,7 +5,7 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.14.beta<v-spacer /> 2024.09.29.</v-card-title>
+            <v-card-title>v0.14.beta<v-spacer /> 2024.12.25.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -23,6 +23,7 @@
                     <li>Added a change password button to the user settings.</li>
                     <li>Added a button that lets users delete all their data related to their selected language.</li>
                     <li>Added a statistic that shows the users known unique lemmas.</li>
+                    <li>Added fully customizable interactive text styling.</li>
                 </ul>
 
                 <b>Bug fixes:</b>
