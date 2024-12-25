@@ -98,7 +98,6 @@ jobs:
           file: "./docker/PythonDockerfile"
           platforms: |
             linux/amd64
-            linux/arm64
           # Note: tags have to be all lower-case
           tags: ${{ steps.meta_python.outputs.tags }}
           labels: ${{ steps.meta_python.outputs.labels }}
