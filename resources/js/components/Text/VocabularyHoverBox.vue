@@ -17,7 +17,7 @@
     >
         <div class="header d-flex justify-space-between">
             <!-- Reading -->
-            <div v-if="reading.length">
+            <div v-if="reading.length" class="selected-font">
                 {{ reading }}
             </div>
 

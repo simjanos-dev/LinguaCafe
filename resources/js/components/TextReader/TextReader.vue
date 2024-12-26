@@ -68,7 +68,7 @@
                     'pt-4': $vuetify.breakpoint.smAndUp,
                     'pt-3': $vuetify.breakpoint.xsOnly,
                 }">
-                    <div id="chapter-name" class="mb-4" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
+                    <div id="chapter-name" class="mb-4 selected-font" :style="{'font-size': (settings.fontSize + 4) + 'px'}">
                         {{ chapterName }}
                     </div>
 
