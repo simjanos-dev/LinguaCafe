@@ -4,8 +4,7 @@
             id="vocabulary-edit-dialog" 
             :class="{
                     'rounded-lg': true, 
-                    'phrase': $props.itemType == 'Phrase',
-                    'chinese-font': $props.language == 'chinese'
+                    'phrase': $props.itemType == 'Phrase'
             }" 
             :loading="loading || saving"
         >

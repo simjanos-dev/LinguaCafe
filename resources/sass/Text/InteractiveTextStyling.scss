@@ -145,30 +145,11 @@
         }
     }
 
-    // padding for spaceless languages (Chinese, Japanese, Thai...)
-    &.spaceless-language {
-        .word {
-            @for $wordLevel from -7 through 2 {
-                &[stage="#{$wordLevel}"] {
-                    padding-left: var(--interactive-text-wordLevel#{$wordLevel}-spaceless-language-padding-left) !important;
-                    padding-right: var(--interactive-text-wordLevel#{$wordLevel}-spaceless-language-padding-right) !important;
-                }
-            }
-    
-            @for $phraseLevel from -7 through 0 {
-                &.phrase[phrasestage="#{$phraseLevel}"] {
-                    &.phrase-start {
-                        padding-left: var(--interactive-text-phraseLevel#{$phraseLevel}-spaceless-language-padding-left) !important;
-                    }
+}
 
-                    &.phrase-end {
-                        padding-right: var(--interactive-text-phraseLevel#{$phraseLevel}-spaceless-language-padding-right) !important;
-                    }
-                }
-            }
-        }
-    }
-
+// padding for spaceless languages (Chinese, Japanese, Thai...)
+.sample-text.spaceless-language .word, 
+.text-block-group.spaceless-language .word {
     @for $wordLevel from -7 through 2 {
         &[stage="#{$wordLevel}"] {
             padding-left: var(--interactive-text-wordLevel#{$wordLevel}-spaceless-language-padding-left) !important;
@@ -187,31 +168,32 @@
             }
         }
     }
+}
 
-    &.plain-text-mode .word, &.plain-text-mode .word:hover {
-        margin-left: none !important;
-        margin-right: none !important;
-        padding-left: none !important;
-        padding-right: none !important;
+.text-block-group.spaceless-language.plain-text-mode .word,
+.text-block-group.spaceless-language.plain-text-mode .word:hover {
+    margin-left: none !important;
+    margin-right: none !important;
+    padding-left: none !important;
+    padding-right: none !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+    color: var(--v-text-base) !important;
+    border: none !important;
+    cursor: default !important;
+    user-select: text !important;
+
+    &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], 
+    &[stage="-3"], &[stage="-2"], &[stage="-1"], &[stage="2"], 
+    &.phrase, &.phrase-start, &.phrase-end, &.highlighted, &:hover, 
+    &.space-after, &.space-after.highlighted, &.space-after.phrase {
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
         background-color: rgba(0, 0, 0, 0) !important;
         color: var(--v-text-base) !important;
         border: none !important;
         cursor: default !important;
         user-select: text !important;
-
-        &[stage="-7"], &[stage="-6"], &[stage="-5"], &[stage="-4"], 
-        &[stage="-3"], &[stage="-2"], &[stage="-1"], &[stage="2"], 
-        &.phrase, &.phrase-start, &.phrase-end, &.highlighted, &:hover, 
-        &.space-after, &.space-after.highlighted, &.space-after.phrase {
-            margin-left: 0px !important;
-            margin-right: 0px !important;
-            padding-left: 0px !important;
-            padding-right: 0px !important;
-            background-color: rgba(0, 0, 0, 0) !important;
-            color: var(--v-text-base) !important;
-            border: none !important;
-            cursor: default !important;
-            user-select: text !important;
-        }
     }
 }

@@ -3,8 +3,7 @@
         v-if="currentReviewIndex !== -1 || finished"
         id="review-box"
         :class="{
-            'pa-0': $vuetify.breakpoint.smAndDown,
-            'chinese-font': language == 'chinese'
+            'pa-0': $vuetify.breakpoint.smAndDown
         }"
     >
 

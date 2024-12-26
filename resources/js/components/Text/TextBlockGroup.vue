@@ -4,7 +4,7 @@
             'text-block-group': true,
             'plain-text-mode': plainTextMode,
             'w-100': true,
-            'chinese-font': language == 'chinese'
+            'spaceless-language': ['chinese', 'japanese', 'thai'].includes($props.language)
         }"
     >
         <!-- Delete phrase dialog -->

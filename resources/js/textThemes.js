@@ -2,7 +2,6 @@ export default {
     "light": {
         "Known word": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -22,7 +21,6 @@ export default {
         },
         "New word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -42,7 +40,6 @@ export default {
         },
         "Level 1 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -62,7 +59,6 @@ export default {
         },
         "Level 2 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -82,7 +78,6 @@ export default {
         },
         "Level 3 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -102,7 +97,6 @@ export default {
         },
         "Level 4 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -122,7 +116,6 @@ export default {
         },
         "Level 5 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -142,7 +135,6 @@ export default {
         },
         "Level 6 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -162,7 +154,6 @@ export default {
         },
         "Level 7 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -182,7 +173,6 @@ export default {
         },
         "Ignored word": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -201,8 +191,7 @@ export default {
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Known phrase": {
-            "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
+            "paddingHorizontal": 4,
             "paddingTop": 1,
             "paddingBottom": 1,
             "borderWidth": 1,
@@ -222,7 +211,6 @@ export default {
         },
         "Level 1 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -242,7 +230,6 @@ export default {
         },
         "Level 2 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -262,7 +249,6 @@ export default {
         },
         "Level 3 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -282,7 +268,6 @@ export default {
         },
         "Level 4 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -302,7 +287,6 @@ export default {
         },
         "Level 5 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -322,7 +306,6 @@ export default {
         },
         "Level 6 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -342,7 +325,6 @@ export default {
         },
         "Level 7 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -364,7 +346,6 @@ export default {
     "dark": {
         "Known word": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -384,7 +365,6 @@ export default {
         },
         "New word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -404,7 +384,6 @@ export default {
         },
         "Level 1 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -424,7 +403,6 @@ export default {
         },
         "Level 2 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -444,7 +422,6 @@ export default {
         },
         "Level 3 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -464,7 +441,6 @@ export default {
         },
         "Level 4 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -484,7 +460,6 @@ export default {
         },
         "Level 5 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -504,7 +479,6 @@ export default {
         },
         "Level 6 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -524,7 +498,6 @@ export default {
         },
         "Level 7 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -544,7 +517,6 @@ export default {
         },
         "Ignored word": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -563,8 +535,7 @@ export default {
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Known phrase": {
-            "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
+            "paddingHorizontal": 4,
             "paddingTop": 1,
             "paddingBottom": 1,
             "borderWidth": 1,
@@ -584,7 +555,6 @@ export default {
         },
         "Level 1 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -604,7 +574,6 @@ export default {
         },
         "Level 2 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -624,7 +593,6 @@ export default {
         },
         "Level 3 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -644,7 +612,6 @@ export default {
         },
         "Level 4 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -664,7 +631,6 @@ export default {
         },
         "Level 5 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -684,7 +650,6 @@ export default {
         },
         "Level 6 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -704,7 +669,6 @@ export default {
         },
         "Level 7 phrase": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -726,7 +690,6 @@ export default {
     "eink": {
         "Known word": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -746,7 +709,6 @@ export default {
         },
         "New word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 1,
@@ -766,7 +728,6 @@ export default {
         },
         "Level 1 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -786,7 +747,6 @@ export default {
         },
         "Level 2 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -806,7 +766,6 @@ export default {
         },
         "Level 3 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -826,7 +785,6 @@ export default {
         },
         "Level 4 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -846,7 +804,6 @@ export default {
         },
         "Level 5 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -866,7 +823,6 @@ export default {
         },
         "Level 6 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -886,7 +842,6 @@ export default {
         },
         "Level 7 word": {
             "paddingHorizontal": 4,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -906,7 +861,6 @@ export default {
         },
         "Ignored word": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 1,
@@ -926,7 +880,6 @@ export default {
         },
         "Known phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 1,
@@ -946,7 +899,6 @@ export default {
         },
         "Level 1 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -966,7 +918,6 @@ export default {
         },
         "Level 2 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -986,7 +937,6 @@ export default {
         },
         "Level 3 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -1006,7 +956,6 @@ export default {
         },
         "Level 4 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -1026,7 +975,6 @@ export default {
         },
         "Level 5 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -1046,7 +994,6 @@ export default {
         },
         "Level 6 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,
@@ -1066,7 +1013,6 @@ export default {
         },
         "Level 7 phrase": {
             "paddingHorizontal": 0,
-            "paddingHorizontalSpacelessLanguages": 0,
             "paddingTop": 2,
             "paddingBottom": 2,
             "borderWidth": 0,

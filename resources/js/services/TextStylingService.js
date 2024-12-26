@@ -80,10 +80,7 @@ class TextStylingService {
         // padding
         cssVariables[`--interactive-text-${levelMapping[level]}-padding-top`] = textStylingSettings[theme][level].paddingTop + 'px';
         cssVariables[`--interactive-text-${levelMapping[level]}-padding-bottom`] = textStylingSettings[theme][level].paddingBottom + 'px';
-        cssVariables[`--interactive-text-${levelMapping[level]}-padding-left`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
-        cssVariables[`--interactive-text-${levelMapping[level]}-padding-right`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
-        cssVariables[`--interactive-text-${levelMapping[level]}-spaceless-language-padding-left`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
-        cssVariables[`--interactive-text-${levelMapping[level]}-spaceless-language-padding-right`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
+        
         
         
 
@@ -91,6 +88,13 @@ class TextStylingService {
         if (textStylingSettings[theme][level].horizontalPaddingSpacelessLanguagesOnly) {
             cssVariables[`--interactive-text-${levelMapping[level]}-padding-left`] = '0px';
             cssVariables[`--interactive-text-${levelMapping[level]}-padding-right`] = '0px';
+            cssVariables[`--interactive-text-${levelMapping[level]}-spaceless-language-padding-left`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
+            cssVariables[`--interactive-text-${levelMapping[level]}-spaceless-language-padding-right`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
+        } else {
+            cssVariables[`--interactive-text-${levelMapping[level]}-padding-left`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
+            cssVariables[`--interactive-text-${levelMapping[level]}-padding-right`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
+            cssVariables[`--interactive-text-${levelMapping[level]}-spaceless-language-padding-left`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
+            cssVariables[`--interactive-text-${levelMapping[level]}-spaceless-language-padding-right`] = textStylingSettings[theme][level].paddingHorizontal + 'px';
         }
         
         // add colors 

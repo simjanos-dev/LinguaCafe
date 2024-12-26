@@ -12,6 +12,7 @@
                     <li>Highlighted and new word backgrounds/indicators were not working outside of the interactive text areas.</li>
                     <li>The selected font type was not applied to the hover vocabulary's reading section.</li>
                     <li>The selected font type was not applied to the text reader's title.</li>
+                    <li>Horizontal padding was not working correctly.</li>
                 </ul>
             </v-card-text>
         </v-card>
