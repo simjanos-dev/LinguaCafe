@@ -415,11 +415,11 @@ export default {
             "borderSides": true,
             "borderColor": "#dddddd",
             "backgroundColor": "#49A74F",
-            "backgroundTransparency": 60,
+            "backgroundTransparency": 35,
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 2 word": {
@@ -435,11 +435,11 @@ export default {
             "borderSides": true,
             "borderColor": "#dddddd",
             "backgroundColor": "#49A74F",
-            "backgroundTransparency": 50,
+            "backgroundTransparency": 35,
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 3 word": {
@@ -455,11 +455,11 @@ export default {
             "borderSides": true,
             "borderColor": "#dddddd",
             "backgroundColor": "#49A74F",
-            "backgroundTransparency": 40,
+            "backgroundTransparency": 35,
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 4 word": {
@@ -479,7 +479,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 5 word": {
@@ -499,7 +499,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 6 word": {
@@ -519,7 +519,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 7 word": {
@@ -539,7 +539,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Ignored word": {
@@ -595,11 +595,11 @@ export default {
             "borderSides": true,
             "borderColor": "#dddddd",
             "backgroundColor": "#49A74F",
-            "backgroundTransparency": 60,
+            "backgroundTransparency": 35,
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 2 phrase": {
@@ -615,11 +615,11 @@ export default {
             "borderSides": true,
             "borderColor": "#dddddd",
             "backgroundColor": "#49A74F",
-            "backgroundTransparency": 50,
+            "backgroundTransparency": 35,
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 3 phrase": {
@@ -635,11 +635,11 @@ export default {
             "borderSides": true,
             "borderColor": "#dddddd",
             "backgroundColor": "#49A74F",
-            "backgroundTransparency": 40,
+            "backgroundTransparency": 35,
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 4 phrase": {
@@ -659,7 +659,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 5 phrase": {
@@ -679,7 +679,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 6 phrase": {
@@ -699,7 +699,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         },
         "Level 7 phrase": {
@@ -719,7 +719,7 @@ export default {
             "bold": false,
             "italic": false,
             "wavyUnderline": false,
-            "textColor": "#dddddd",
+            "textColor": "#333333",
             "horizontalPaddingSpacelessLanguagesOnly": true
         }
     },
