@@ -19,7 +19,7 @@
     export default {
         data: function() {
             return {
-                tab: 1,
+                tab: 0,
             }
         },
         props: {
