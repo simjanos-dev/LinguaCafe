@@ -21,31 +21,27 @@ export default {
         readerWordSelection: '#D8D8D8',
         highlightedWordText: '#333333',
         highlightedWordBackground: '#71EB7A',
-        newWordBackground: '#71EB7A',
+        newWordBackground: '#ffD08B',
     },
     dark: {
         background: '#1C1B20',
         foreground: '#28272C',
         navigation: '#28272C',
         primary: '#C5947D',
-
         gray: '#39383D',
         gray2: '#414046',
         gray3: '#45444a',
         customBorder: '#2F2F2F',
-
         error: '#FF4F55',
         info: '#057CBC',
         success: '#3DCF59',
         warning: '#FFB448',
-        
         text: '#CACACA',
         textDark: '#141110',
-        
         readerWordSelection: '#B6B6B6',
         highlightedWordText: '#121212',
-        highlightedWordBackground: '#71EB7A',
-        newWordBackground: '#71EB7A',
+        highlightedWordBackground: '#49A74F',
+        newWordBackground: '#ffD08B'
     },
     eink: {
         name: '#000000',
@@ -69,7 +65,7 @@ export default {
 
         readerWordSelection: '#888888',
         highlightedWordText: '#FFFFFF',
-        highlightedWordBackground: '#71EB7A',
-        newWordBackground: '#71EB7A',
+        highlightedWordBackground: '#000000',
+        newWordBackground: '#000000',
     },
 }

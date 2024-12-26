@@ -5,7 +5,17 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.14.beta<v-spacer /> 2024.12.25.</v-card-title>
+            <v-card-title>v0.14.beta.2<v-spacer /> 2024.12.26.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Highlighted and new word backgrounds/indicators were not working outside of the interactive text areas.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.14.beta.1<v-spacer /> 2024.12.25.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>

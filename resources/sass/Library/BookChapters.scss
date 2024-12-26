@@ -1,6 +1,6 @@
 .book-chapters {
     .highlighted-words {
-        background-color: color-mix(in srgb, var(--interactive-text-wordLevel-7-background-color), transparent var(--interactive-text-wordLevel-7-background-transparency));
+        background-color: var(--v-highlightedWordBackground-base);
         color: var(--v-highlightedWordText-base);
         height: 24px;
         line-height: 24px;
@@ -9,7 +9,7 @@
     }
 
     .new-words {
-        background-color: color-mix(in srgb, var(--interactive-text-wordLevel2-background-color), transparent var(--interactive-text-wordLevel2-background-transparency));
+        background-color: var(--v-newWordBackground-base);
         color: var(--v-highlightedWordText-base);
         height: 24px;
         line-height: 24px;

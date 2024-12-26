@@ -78,11 +78,11 @@ div.v-list.filter-popup {
                 line-height: 26px;
 
                 &.highlighted-word {
-                    background-color: color-mix(in srgb, var(--interactive-text-wordLevel-7-background-color), transparent var(--interactive-text-wordLevel-7-background-transparency));
+                    background-color: var(--v-highlightedWordBackground-base);
                 }
 
                 &.new-word {
-                    background-color: color-mix(in srgb, var(--interactive-text-wordLevel2-background-color), transparent var(--interactive-text-wordLevel2-background-transparency));
+                    background-color: var(--v-newWordBackground-base);
                 }
             }
         }

@@ -34,7 +34,7 @@
         user-select: none;
 
         &[stage="2"] {
-            background-color: color-mix(in srgb, var(--interactive-text-wordLevel2-background-color), transparent var(--interactive-text-wordLevel2-background-transparency));
+            background-color: var(--v-newWordBackground-base);
             color: var(--v-highlightedWordText-base);
         }
 
