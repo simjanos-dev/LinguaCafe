@@ -32,7 +32,7 @@ services:
         extra_hosts:
             - "host.docker.internal:host-gateway"
     mysql:
-        image: mysql/mysql-server:8.0
+        image: mysql:8.0
         container_name: linguacafe-database
         restart: unless-stopped
         tty: true
