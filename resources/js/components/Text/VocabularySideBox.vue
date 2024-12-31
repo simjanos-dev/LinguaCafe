@@ -33,6 +33,16 @@
                 <span id="vocab-side-box-title" class="text-capitalize" v-else>{{ type }}</span>
                 <v-spacer />
 
+                <!-- Image search button -->
+                <v-btn 
+                    v-if="tab == 0"
+                    icon
+                    title="Add or edit image"
+                    @click="openWordImageSearch"
+                >
+                    <v-icon>mdi-image-search</v-icon>
+                </v-btn>
+
                 <!-- Inflections table button -->
                 <v-btn 
                     v-if="tab == 0 && inflections.length"
@@ -64,7 +74,7 @@
 
                 <!-- Back button -->
                 <v-btn 
-                    v-if="tab == 1"
+                    v-if="tab > 0"
                     icon
                     title="Back to word"
                     @click="tab = 0;"
@@ -283,6 +293,11 @@
                     </tbody>
                 </v-simple-table>
             </v-tab-item>
+
+            <!-- Image search tab -->
+            <v-tab-item :value="2">
+                <word-image-edit-box :height="(height - 180) + 'px'" v-if="tab === 2"/>
+            </v-tab-item>
         </v-tabs-items>
     </v-card>
 </template>
@@ -349,7 +364,11 @@
             
         },
         methods: {
+            openWordImageSearch() {
+                this.tab = 2;
+            },
             updateDataFromStore() {
+                this.tab = 0;
                 this.phraseCurrentlySaving = false;
                 this.phraseText = '';
 
