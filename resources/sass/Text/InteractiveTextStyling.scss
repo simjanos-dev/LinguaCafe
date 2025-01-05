@@ -144,8 +144,8 @@
             }
 
             &.highlighted.space-after:has(~ .highlighted) {
-                margin-right: 0px;
-                padding-right: 4px;
+                margin-right: 0px !important;
+                padding-right: 4px !important;
             }
         }
     }
