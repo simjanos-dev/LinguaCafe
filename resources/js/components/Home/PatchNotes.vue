@@ -5,6 +5,17 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.14.beta.3<v-spacer /> 2025.01.05.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Sentence selecting in languages with spaces did not highlight the gaps as well.</li>
+                    <li>Added missing authorization for horizon dashboard, now only admins can access it.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.14.beta.2<v-spacer /> 2024.12.26.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
