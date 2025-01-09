@@ -57,6 +57,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: "./docker/PhpDockerfile"
+          cache-from: type=gha
+          cache-to: type=gha
           # extra platforms can be added here:
           platforms: |
             linux/amd64
@@ -107,6 +109,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: "./docker/PythonDockerfile"
+          cache-from: type=gha
+          cache-to: type=gha
           platforms: |
             linux/amd64
           # Note: tags have to be all lower-case
