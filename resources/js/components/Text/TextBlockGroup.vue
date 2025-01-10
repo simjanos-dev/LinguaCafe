@@ -836,6 +836,9 @@
                         return;
                     }
 
+                    // Create context
+                    var exampleSentenceText = this.getExampleSentenceText(data.hoveredWords);
+
                     // call the hover vocabulary search function with a delay
                     this.hoverVocabularyDelayTimeout = setTimeout(() => {
                         this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'active', value: true });
@@ -864,7 +867,7 @@
                         }
 
 
-                        this.makeHoverVocabularyBoxSearchRequest(term);
+                        this.makeHoverVocabularyBoxSearchRequest(term, exampleSentenceText);
                     }, this.$props.vocabularyHoverBoxDelay);
                 }
             },
@@ -1216,6 +1219,8 @@
                 this.$store.commit('vocabularyBox/reset');
                 this.$store.commit('vocabularyBox/setActive', true);
 
+                var exampleSentenceText = this.getExampleSentenceText(this.selection);
+                this.$store.commit('vocabularyBox/setExampleSentenceText', exampleSentenceText);
                 if (this.selection.length == 1) {
                     var uniqueWord = this.uniqueWords[this.selection[0].uniqueWordIndex];
                     this.$store.commit('vocabularyBox/setType', 'word');
@@ -1283,7 +1288,7 @@
                 clearTimeout(this.hoverVocabularyDelayTimeout);
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoverVocabularyDelayTimeout', value: null });
             },
-            makeHoverVocabularyBoxSearchRequest(term) {
+            makeHoverVocabularyBoxSearchRequest(term, exampleSentenceText) {
                 if (!this.$props.vocabularyHoverBoxSearch) {
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'dictionaryTranslation', value: '' });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: this.anyApiDictionaryEnabled ? ['loading'] : [] });
@@ -1330,7 +1335,8 @@
                 if (this.anyApiDictionaryEnabled) {
                     axios.post('/dictionaries/api/search', {
                         language: this.$props.language,
-                        term: term
+                        term: term,
+                        context: exampleSentenceText,
                     }).then((response) => {
                         let apiDefinitions = [];
                         response.data.forEach((item) => {
@@ -1402,12 +1408,7 @@
                     return;
                 }
 
-                // get example sentence and add space.
-                var exampleSentence = this.getExampleSentence(true);
-                var exampleSentenceText = '';
-                for (let wordIndex = 0; wordIndex < exampleSentence.length; wordIndex++) {
-                    exampleSentenceText += exampleSentence[wordIndex].word;
-                }
+                var exampleSentenceText = this.getExampleSentenceText(this.selection);
 
                 if (this.selection.length == 1) {
                     var data = {
@@ -1834,11 +1835,12 @@
                     this.$store.commit('vocabularyBox/setStage', undefined);
                 }
             },
-            getExampleSentence(withSpaces = false) {
+            getExampleSentence(words, withSpaces = false) {
                 var sentenceIndexes = [];
-                for (var i = 0; i < this.selection.length; i++) {
-                    if (sentenceIndexes.indexOf(this.selection[i].sentence_index) == -1) {
-                        sentenceIndexes.push(this.selection[i].sentence_index);
+
+                for (var i = 0; i < words.length; i++) {
+                    if (sentenceIndexes.indexOf(words[i].sentence_index) == -1) {
+                        sentenceIndexes.push(words[i].sentence_index);
                     }
                 }
 
@@ -1861,8 +1863,17 @@
 
                 return exampleSentence;
             },
+            getExampleSentenceText(words) {
+                // get example sentence and add space.
+                var exampleSentence = this.getExampleSentence(words, true);
+                var exampleSentenceText = '';
+                for (let wordIndex = 0; wordIndex < exampleSentence.length; wordIndex++) {
+                    exampleSentenceText += exampleSentence[wordIndex].word;
+                }
+                return exampleSentenceText;
+            },
             updateExampleSentence() {
-                var exampleSentence = this.getExampleSentence();
+                var exampleSentence = this.getExampleSentence(this.selection);
 
                 var targetType = this.selection.length > 1 ? 'phrase' : 'word';
                 var targetId = this.uniqueWords[this.selection[0].uniqueWordIndex].id;

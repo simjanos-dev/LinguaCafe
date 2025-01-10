@@ -188,7 +188,7 @@ class DictionaryService {
         return $result;
     }
     
-    public function searchApiDictionaries(string $sourceLanguage, string $term): array
+    public function searchApiDictionaries(string $sourceLanguage, string $term, string $context): array
     {
         $definitions = [];
         $termHash = md5(mb_strtolower($term, 'UTF-8'));
@@ -203,6 +203,7 @@ class DictionaryService {
                 $apiDictionaries, 
                 $term,
                 $termHash,
+                $context,
                 &$definitions,
                 &$responseAdditionalInfo,
         ) {
@@ -268,9 +269,10 @@ class DictionaryService {
                         'dictionaryColor' => $dictionary->color,
                         'dictionaryType' => $dictionary->type,
                         'term' => $term,
+                        'context' => $context,
                     ];
 
-                    $this->buildCustomApiTranslateRequest($pool, $dictionary, $term);
+                    $this->buildCustomApiTranslateRequest($pool, $dictionary, $term, $context);
                 }
             }
         });
@@ -404,10 +406,11 @@ class DictionaryService {
         ]);
     }
 
-    private function buildCustomApiTranslateRequest(Pool $pool, Dictionary $dictionary, string $term): void
+    private function buildCustomApiTranslateRequest(Pool $pool, Dictionary $dictionary, string $term, string $context): void
     {
         $pool->post($dictionary->api_host, [
             'q' => $term,
+            'ctx' => $context,
             'source' => strtolower($dictionary->source_language),
             'target' => strtolower($dictionary->target_language),
         ]);

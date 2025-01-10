@@ -123,7 +123,8 @@
         props: {
             language: String,
             anyApiDictionaryEnabled: Boolean,
-            searchTerm: String
+            searchTerm: String,
+            exampleSentenceText: String
         },
         watch: { 
             searchTerm: function(newVal, oldVal) {
@@ -169,7 +170,8 @@
 
                     axios.post('/dictionaries/api/search', {
                         language: this.$props.language,
-                        term: this.$props.searchTerm
+                        term: this.$props.searchTerm,
+                        context: this.$props.exampleSentenceText
                     }).then((response) => {
                         this.dictionaryApiSearchLoading = false;
                         this.apiSearchResults = response.data;
