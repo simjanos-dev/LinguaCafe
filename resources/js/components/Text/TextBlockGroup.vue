@@ -347,18 +347,17 @@
         },
         methods: {
             wordImageChanged(newImage) {
-                console.log('wordImageChanged()')
                 if (!this.selection.length) {
                     return;
                 }
 
-                // if (this.selection.length === 1) {
-                //     const wordIndex = this.selection[0].wordIndex;
-                //     this.uniqueWords[wordIndex].image = newImage;
-                // } else {
-                //     const phraseIndex = this.selectedPhrase;
-                //     this.phrases[phraseIndex].image = newImage;
-                // }
+                if (this.selection.length === 1) {
+                    const wordIndex = this.selection[0].wordIndex;
+                    this.uniqueWords[wordIndex].image = newImage;
+                } else {
+                    const phraseIndex = this.selectedPhrase;
+                    this.phrases[phraseIndex].image = newImage;
+                }
             },
             textToSpeech() {
                 if (!this.selection.length) {
@@ -794,11 +793,12 @@
 
                 this.showHoverVocabBox(hoveredWords, hoveredPhraseIndex);
             },
-            showHoverVocabBox: function(hoveredWords, hoveredPhraseIndex) {
+            showHoverVocabBox: function(hoveredWords, hoveredPhraseIndex = -1) {
                 var data = {
                     hoveredWords: JSON.parse(JSON.stringify(hoveredWords)),
                     translation: '',
                     reading: '',
+                    hoveredPhrase: hoveredPhraseIndex,
                 };
 
                 if (hoveredWords !== null && hoveredWords.length === 1) {
@@ -809,12 +809,14 @@
                     data.reading = uniqueWord.reading;
                     data.stage = uniqueWord.stage < 0 ? uniqueWord.stage : null;
                     data.hoveredWords[0].lemma = uniqueWord.base_word;
+                    data.image = uniqueWord.image;
                 }
 
                 if (hoveredWords !== null && hoveredWords.length > 1) {
                     data.translation = this.phrases[hoveredPhraseIndex].translation;
                     data.reading = this.phrases[hoveredPhraseIndex].reading;
                     data.stage = this.phrases[hoveredPhraseIndex].stage < 0 ? this.phrases[hoveredPhraseIndex].stage : null;
+                    data.image = this.phrases[hoveredPhraseIndex].image;
                 }
 
                 this.updateHoverVocabularyBox(data);
@@ -831,6 +833,7 @@
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'apiTranslations', value: this.anyApiDictionaryEnabled ? ['loading'] : [] });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'reading', value: data.reading });
                     this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: data.stage });
+                    this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'image', value: data.image });
 
                     // clear previous delay timeout
                     if (this.hoverVocabularyDelayTimeout !== null) {
@@ -978,6 +981,7 @@
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'hoveredPhrase', value: -1 });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'stage', value: -1 });
                 this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'key', value: this.$store.state.hoverVocabularyBox.key + 1 });
+                this.$store.commit('hoverVocabularyBox/setValue', { propertyName: 'image', value: null });
             },
             preProcessWords() {
                 for (let i = 0; i < this.uniqueWords.length; i++) {

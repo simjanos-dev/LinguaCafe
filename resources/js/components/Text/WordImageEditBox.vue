@@ -7,7 +7,7 @@
                 id="no-image-box"
                 class="rounded-xl text-center mb-2"
                 :class="[
-                    this.$store.state.vocabularyBox.image ? 'pa-2' : 'py-2'
+                    this.$store.state.vocabularyBox.image ? 'pa-0' : 'py-2'
                 ]"
             >
                 <v-img

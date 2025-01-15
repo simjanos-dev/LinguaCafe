@@ -32,8 +32,6 @@ class WordImageController extends Controller
                 'image' => $fileName,
             ],
         ]);
-
-        return response()->json();
     }
     
     public function setPhraseImageFromUrl(SetPhraseImageFromUrlRequest $request, Phrase $phrase)

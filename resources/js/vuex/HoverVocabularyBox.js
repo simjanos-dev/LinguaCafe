@@ -16,6 +16,7 @@ export default {
         positionLeft: 0,
         positionTop: 0,
         arrowPosition: 'top',
+        image: null,
     }),
     mutations: {
         setValue (state, payload) {

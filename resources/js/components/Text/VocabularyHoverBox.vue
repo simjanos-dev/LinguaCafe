@@ -61,8 +61,17 @@
                     <v-progress-circular indeterminate class="mx-1" size="10" width="2" color="#92B9E2"></v-progress-circular> searching
                 </li>
             </template>
-            
         </ul>
+
+        <!-- Image -->
+        <div class="d-block w-100 my-2" v-if="image">
+            <v-img
+                :src="'/images/' + getImageTypeForUrl() + '/get/' + image"
+                width="100%"
+                :aspect-ratio="16/9"
+                class="rounded-lg"
+            />
+        </div>
     </v-card>
 </template>
 
@@ -84,6 +93,8 @@
             stage: state => state.hoverVocabularyBox.stage,
             dictionaryTranslation: state => state.hoverVocabularyBox.dictionaryTranslation,
             apiTranslations: state => state.hoverVocabularyBox.apiTranslations,
+            image: state => state.hoverVocabularyBox.image,
+            hoveredPhrase: state => state.hoverVocabularyBox.hoveredPhrase,
         }),
         props: {
         },
@@ -98,8 +109,17 @@
             if (this.$store.state.hoverVocabularyBox.dictionaryTranslation.length) {
                 this.dictionaryTranslationList = this.$store.state.hoverVocabularyBox.dictionaryTranslation.split(';');
             }
+
+            console.log('hover mounted', this.image, this.hoveredPhrase)
         },
         methods: {
+            getImageTypeForUrl() {
+                if (this.hoveredPhrase === -1) {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'
+            }
         }
     }
 </script>

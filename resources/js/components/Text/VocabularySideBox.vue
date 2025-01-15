@@ -46,8 +46,9 @@
                             <v-icon>mdi-image-search</v-icon>
                         </v-btn>
                     </template>
-                    <v-card outlined class="rounded-lg px-2" width="320px" v-if="this.$store.state.vocabularyBox.image">
+                    <v-card outlined class="px-2" width="320px">
                         <v-img
+                            v-if="this.$store.state.vocabularyBox.image"
                             :src="'/images/' + this.getImageTypeForUrl() + '/get/' + this.$store.state.vocabularyBox.id"
                             width="100%"
                             :aspect-ratio="16/9"
