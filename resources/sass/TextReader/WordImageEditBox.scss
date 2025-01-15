@@ -1,0 +1,46 @@
+#word-image-search {
+    .images-box {
+        box-sizing: border-box;
+        overflow-y: scroll;
+
+        .v-image {
+            cursor: pointer;
+            border: 3px solid transparent;
+
+            &:hover {
+                border: 3px solid var(--v-primary-base);
+            }
+        }
+
+        .v-image::before {
+            position: absolute;
+            top: 0;
+            left: -75%;
+            z-index: 2;
+            display: block;
+            content: '';
+            width: 50%;
+            height: 100%;
+            background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,.3) 100%);
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,.3) 100%);
+            -webkit-transform: skewX(-25deg);
+            transform: skewX(-25deg);
+        }
+        
+        .v-image:hover::before {
+            -webkit-animation: shine .75s;
+            animation: shine .75s;
+        }
+    }
+
+    #no-image-box {
+        background-color: var(--v-gray-base);
+        font-size: 16px;
+    }
+}
+
+@keyframes shine {
+	100% {
+		left: 125%;
+	}
+}

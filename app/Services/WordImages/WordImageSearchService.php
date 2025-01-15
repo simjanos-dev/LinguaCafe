@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services\Images;
+namespace App\Services\WordImages;
 
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class ImageSearchService 
+class WordImageSearchService 
 {
     private $maxTries;
     private $delayBetweenTries;
@@ -16,10 +17,10 @@ class ImageSearchService
         $this->delayBetweenTries = 1000;
     }
 
-    public function search($searchTerm)
+    public function search(string $searchTerm) : Collection
     {
         $bingUrl = "https://www.bing.com/images/search";
-        $searchUrl = $bingUrl . "?q=" . urlencode($searchTerm) . '&qft=+filterui:aspect-wide';
+        $searchUrl = $bingUrl . "?q=" . urlencode($searchTerm);
 
         $imageSearchResponse = $this->makeBingRequests($searchUrl);
 
@@ -53,7 +54,7 @@ class ImageSearchService
         return collect($urls)->take(20);
     }
 
-    private function makeBingRequests($url): Response
+    private function makeBingRequests(string $url): Response
     {
         $retries = 0;
         $response = null;

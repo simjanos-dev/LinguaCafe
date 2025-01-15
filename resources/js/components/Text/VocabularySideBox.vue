@@ -34,14 +34,28 @@
                 <v-spacer />
 
                 <!-- Image search button -->
-                <v-btn 
-                    v-if="tab == 0"
-                    icon
-                    title="Add or edit image"
-                    @click="openWordImageSearch"
-                >
-                    <v-icon>mdi-image-search</v-icon>
-                </v-btn>
+                <v-menu open-on-hover nudge-top="-44px" left v-if="tab == 0">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                            icon
+                            title="Add or edit image"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="openWordImageSearch"
+                        >
+                            <v-icon>mdi-image-search</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-card outlined class="rounded-lg px-2" width="320px" v-if="this.$store.state.vocabularyBox.image">
+                        <v-img
+                            :src="'/images/' + this.getImageTypeForUrl() + '/get/' + this.$store.state.vocabularyBox.id"
+                            width="100%"
+                            :aspect-ratio="16/9"
+                            class="rounded-lg my-4"
+                        />
+                    </v-card>
+                </v-menu>
+                
 
                 <!-- Inflections table button -->
                 <v-btn 
@@ -296,7 +310,11 @@
 
             <!-- Image search tab -->
             <v-tab-item :value="2">
-                <word-image-edit-box :height="(height - 180) + 'px'" v-if="tab === 2"/>
+                <word-image-edit-box
+                    v-if="tab === 2"
+                    :height="(height - 180) + 'px'"
+                    @imageChanged="$emit('imageChanged', $event)"
+                />
             </v-tab-item>
         </v-tabs-items>
     </v-card>
@@ -340,7 +358,6 @@
         data: function() {
             return {
                 tab: 0,
-
                 //temp, to be reviewed
                 phraseCurrentlySaving: false,
 
@@ -443,6 +460,13 @@
             },
             close() {
                 this.$emit('unselectAllWords');
+            },
+            getImageTypeForUrl() {
+                if (this.$store.state.vocabularyBox.type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'  
             }
         }
     }

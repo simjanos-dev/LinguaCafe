@@ -173,6 +173,7 @@
             @addNewPhrase="addNewPhrase"
             @deletePhrase="deletePhrase"
             @addSelectedWordToAnki="addSelectedWordToAnki"
+            @imageChanged="wordImageChanged"
         ></vocabulary-side-box>
     </div>
 </template>
@@ -345,6 +346,20 @@
             window.removeEventListener('mousemove', this.closeHoverBox);
         },
         methods: {
+            wordImageChanged(newImage) {
+                console.log('wordImageChanged()')
+                if (!this.selection.length) {
+                    return;
+                }
+
+                // if (this.selection.length === 1) {
+                //     const wordIndex = this.selection[0].wordIndex;
+                //     this.uniqueWords[wordIndex].image = newImage;
+                // } else {
+                //     const phraseIndex = this.selectedPhrase;
+                //     this.phrases[phraseIndex].image = newImage;
+                // }
+            },
             textToSpeech() {
                 if (!this.selection.length) {
                     return;
@@ -1218,7 +1233,9 @@
 
                 if (this.selection.length == 1) {
                     var uniqueWord = this.uniqueWords[this.selection[0].uniqueWordIndex];
+                    this.$store.commit('vocabularyBox/setId', uniqueWord.id);
                     this.$store.commit('vocabularyBox/setType', 'word');
+                    this.$store.commit('vocabularyBox/setImage', uniqueWord.image);
                     this.$store.commit('vocabularyBox/setWord', uniqueWord.word);
                     this.$store.commit('vocabularyBox/setReading', uniqueWord.reading);
                     this.$store.commit('vocabularyBox/setBaseWord', uniqueWord.base_word);
@@ -1233,11 +1250,14 @@
                 } else {
                     if (this.selectedPhrase !== -1) {
                         this.$store.commit('vocabularyBox/setType', 'phrase');
+                        this.$store.commit('vocabularyBox/setImage', this.phrases[this.selectedPhrase].image);
+                        this.$store.commit('vocabularyBox/setId', this.phrases[this.selectedPhrase].id);
                         this.$store.commit('vocabularyBox/setReading', this.phrases[this.selectedPhrase].reading);
                         this.$store.commit('vocabularyBox/setTranslationText', this.phrases[this.selectedPhrase].translation);
                         this.$store.commit('vocabularyBox/setStage', this.phrases[this.selectedPhrase].stage);
                     } else {
                         this.$store.commit('vocabularyBox/setType', 'new-phrase');
+                        this.$store.commit('vocabularyBox/setId', null);
                     }
 
                     for (let i = 0; i < this.selection.length; i++) {
