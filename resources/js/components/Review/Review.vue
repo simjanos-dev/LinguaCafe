@@ -266,7 +266,7 @@
                                     </template>
                                 </div>
                             </template>
-
+                            
                             <!-- Reveal button -->
                             <div class="review-button-box">
                                 <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
@@ -338,6 +338,16 @@
                             <div id="translation" v-if="reviews[currentReviewIndex] !== undefined" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 {{ reviews[currentReviewIndex].translation }}
                             </div>
+
+                            <!-- Image -->
+                            <v-img
+                                ref="currentImage"
+                                :src="'/images/' + getImageTypeForUrl(reviews[currentReviewIndex]) + '/get/' + reviews[currentReviewIndex].id"
+                                width="100%"
+                                max-width="400px"
+                                :aspect-ratio="16/9"
+                                class="rounded-lg mx-auto mt-2"
+                            />
 
                             <!-- Answer buttons -->
                             <div class="review-button-box">
@@ -689,6 +699,13 @@
             },
             finish() {
                 this.finished = true;
+            },
+            getImageTypeForUrl(reviewItem) {
+                if (reviewItem.type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'
             },
             formatNumber: formatNumber
         },
