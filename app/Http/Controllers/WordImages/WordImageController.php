@@ -65,13 +65,21 @@ class WordImageController extends Controller
 
     public function uploadPhraseImage(UploadPhraseImageRequest $request, Phrase $phrase)
     {
+        $imageFile = $request->file('imageFile');
+        $user = Auth::user();
 
+        $fileName = $this->wordImageService->uploadImage($user, $phrase, $imageFile);
+
+        return response()->json([
+            'data' => [
+                'image' => $fileName,
+            ],
+        ]);
     }
 
     public function getWordImage(EncounteredWord $word) 
     {
         $user = Auth::user();
-
         $imagePath = $this->wordImageService->getImagePath($user, $word);
 
         return response()->file($imagePath);
@@ -80,9 +88,26 @@ class WordImageController extends Controller
     public function getPhraseImage(Phrase $phrase) 
     {
         $user = Auth::user();
-
         $imagePath = $this->wordImageService->getImagePath($user, $phrase);
 
         return response()->file($imagePath);
+    }
+
+    public function deleteWordImage(EncounteredWord $word)
+    {
+        $user = Auth::user();
+
+        $this->wordImageService->deleteImage($user, $word);
+
+        return response()->json();
+    }
+
+    public function deletePhraseImage(Phrase $phrase)
+    {
+        $user = Auth::user();
+
+        $this->wordImageService->deleteImage($user, $phrase);
+
+        return response()->json();
     }
 }

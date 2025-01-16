@@ -69,4 +69,22 @@ class WordImageService
         
         return Storage::path('/images/word_images/' . $type . '/' . $user->id . '/' . $model->image);
     }
+
+    public function deleteImage(User $user, EncounteredWord|Phrase $model): void
+    {
+        if ($model->user_id !== $user->id) {
+            throw new \Exception('Image does not belong to this user.', 401);
+        }
+
+        if ($model->image === null) {
+            throw new \Exception('This word or phrase does not have an image.', 500);
+        }
+
+        $type = ($model instanceof EncounteredWord) ? 'words' : 'phrases';
+        
+        Storage::delete('/images/word_images/' . $type . '/' . $user->id . '/' . $model->image);
+
+        $model->image = null;
+        $model->save();
+    }
 }

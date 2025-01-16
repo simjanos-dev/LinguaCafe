@@ -24,6 +24,20 @@
             </div>
 
             <div class="d-flex">
+                <v-btn 
+                    v-if="this.$store.state.vocabularyBox.image"
+                    rounded 
+                    depressed 
+                    small
+                    color="error"
+                    class="mr-1"
+                    :loading="loading"
+                    :disabled="loading"
+                    @click="deleteImage"
+                >
+                    <v-icon>mdi-delete</v-icon>
+                    Delete
+                </v-btn>
                 <v-spacer/>
                 <v-btn 
                     rounded 
@@ -31,6 +45,7 @@
                     small
                     color="primary"
                     class="mr-1"
+                    :disabled="loading"
                     @click="currentStep = 'uploading'"
                 >
                     <v-icon>mdi-upload</v-icon>
@@ -41,6 +56,7 @@
                     depressed 
                     small
                     color="primary"
+                    :disabled="loading"
                     @click="searchImages"
                 >
                     <v-icon>mdi-magnify</v-icon>
@@ -65,7 +81,7 @@
                     accept=".jpg,.png"
                     placeholder="Select an image file"
                     prepend-icon="mdi-file"
-                    :disabled="uploading"
+                    :disabled="loading"
                     :rules="[rules.imageFileRule]"
                     @change="validateImage"
                 ></v-file-input>
@@ -77,7 +93,7 @@
                     text
                     small
                     @click="cancelUploading"
-                    :disabled="uploading"
+                    :disabled="loading"
                 >
                     Cancel
                 </v-btn>
@@ -88,7 +104,8 @@
                     color="primary"
                     class="ml-2"
                     @click="uploadImage"
-                    :disabled="!imageFileValid"
+                    :loading="loading"
+                    :disabled="!imageFileValid || loading"
                 >
                     <v-icon>mdi-upload</v-icon>
                     Upload
@@ -189,7 +206,6 @@
                 currentImageKey: 0,
                 images: [],
                 loading: false,
-                uploading: false,
                 currentStep: 'selecting-method',
                 searchError: false,
                 searchTerm: '',
@@ -252,6 +268,21 @@
                 this.resetImageFile()
                 this.currentStep = 'selecting-method';
                 this.imageFile = null;
+            },
+            deleteImage() {
+                this.loading = true
+
+                const targetType = this.getImageTypeForUrl()
+                const targetId = this.$store.state.vocabularyBox.id
+
+                axios.delete(`/images/${targetType}/delete/${targetId}`).then((response) => {
+                    this.$emit('imageChanged', null)
+                    this.currentStep = 'selecting-method';
+                    this.loading = false
+                }).catch((error) => {
+                    this.loading = false
+                    this.searchError = true
+                })
             },
             searchImages() {
                 if (this.loading || !this.searchTerm.length) {

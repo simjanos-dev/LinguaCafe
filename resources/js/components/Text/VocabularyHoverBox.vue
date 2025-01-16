@@ -66,7 +66,7 @@
         <!-- Image -->
         <div class="d-block w-100 my-2" v-if="image">
             <v-img
-                :src="'/images/' + getImageTypeForUrl() + '/get/' + image"
+                :src="'/images/' + getImageTypeForUrl() + '/get/' + image + '?rid=' + Math.random()"
                 width="100%"
                 :aspect-ratio="16/9"
                 class="rounded-lg"

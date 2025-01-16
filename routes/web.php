@@ -96,6 +96,9 @@ Route::group(['middleware' => ['auth', 'auth.session', 'web']], function () {
         Route::post('/word-image/upload/{word}', [App\Http\Controllers\WordImages\WordImageController::class, 'uploadWordImage']);
         Route::post('/phrase-image/set-from-url/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'setPhraseImageFromUrl']);
         Route::post('/phrase-image/upload/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'uploadPhraseImage']);
+
+        Route::delete('/word-image/delete/{word}', [App\Http\Controllers\WordImages\WordImageController::class, 'deleteWordImage']);
+        Route::delete('/phrase-image/delete/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'deletePhraseImage']);
     });
 
     // languages
