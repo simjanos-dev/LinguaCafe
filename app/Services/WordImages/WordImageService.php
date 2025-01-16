@@ -5,6 +5,7 @@ namespace App\Services\WordImages;
 use App\Models\User;
 use App\Models\Phrase;
 use App\Models\EncounteredWord;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class WordImageService 
@@ -36,12 +37,25 @@ class WordImageService
         return $fileName;
     }
     
-    public function uploadImage(EncounteredWord|Phrase $model): void
+    public function uploadImage(User $user, EncounteredWord|Phrase $model, UploadedFile $imageFile): string
     {
+        if ($model->user_id !== $user->id) {
+            throw new \Exception('Image does not belong to this user.', 401);
+        }
 
+        $extension = $imageFile->clientExtension();
+        $fileName = $model->id . '.' .  $extension;
+        $type = ($model instanceof EncounteredWord) ? 'words' : 'phrases';
+
+        $imageFile->move(storage_path('app/images/word_images/' . $type . '/' . $user->id), $fileName);
+
+        $model->image = $fileName;
+        $model->save();
+
+        return $fileName;
     }
 
-    public function getImagePath(User $user, EncounteredWord|Phrase $model) :string
+    public function getImagePath(User $user, EncounteredWord|Phrase $model): string
     {
         if ($model->user_id !== $user->id) {
             throw new \Exception('Image does not belong to this user.', 401);

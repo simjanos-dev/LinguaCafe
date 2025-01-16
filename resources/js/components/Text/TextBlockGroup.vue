@@ -351,8 +351,9 @@
                     return;
                 }
 
+                this.$store.commit('vocabularyBox/setImage', newImage);
                 if (this.selection.length === 1) {
-                    const wordIndex = this.selection[0].wordIndex;
+                    const wordIndex = this.selection[0].uniqueWordIndex;
                     this.uniqueWords[wordIndex].image = newImage;
                 } else {
                     const phraseIndex = this.selectedPhrase;

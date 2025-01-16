@@ -3,7 +3,6 @@
         <!-- Current image -->
         <div v-if="currentStep == 'selecting-method'">
             <div 
-                v-if="$props.currentImage === null"
                 id="no-image-box"
                 class="rounded-xl text-center mb-2"
                 :class="[
@@ -12,7 +11,8 @@
             >
                 <v-img
                     v-if="this.$store.state.vocabularyBox.image"
-                    :src="'/images/' + this.getImageTypeForUrl() + '/get/' + this.$store.state.vocabularyBox.id"
+                    ref="currentImage"
+                    :src="'/images/' + this.getImageTypeForUrl() + '/get/' + this.$store.state.vocabularyBox.id + '?rid=' + Math.random()"
                     width="100%"
                     :aspect-ratio="16/9"
                     class="rounded-lg"
@@ -22,9 +22,6 @@
                     <v-icon class="mr-1">mdi-image-remove</v-icon> No assigned image
                 </template>
             </div>
-            <template v-else>
-                {{ $props.currentImage }}
-            </template>
 
             <div class="d-flex">
                 <v-spacer/>
@@ -178,10 +175,6 @@
 <script>
     export default {
         props: {
-            currentImage: {
-                type: [String, null],
-                default: null,
-            },
             height: {
                 type: String,
                 default: '100%'
@@ -193,6 +186,7 @@
         },
         data: function() {
             return {
+                currentImageKey: 0,
                 images: [],
                 loading: false,
                 uploading: false,
@@ -241,12 +235,21 @@
                 const targetId = this.$store.state.vocabularyBox.id
 
                 axios.post(`/images/${targetType}/upload/${targetId}`, formData).then((response) => {
+                    this.$emit('imageChanged', response.data.data.image)
+                    this.currentStep = 'selecting-method';
+                    this.resetImageFile()
                     this.loading = false;
                 }).catch((error) => {
+                    this.resetImageFile()
                     this.loading = false;
                 });
             },
+            resetImageFile() {
+                this.imageFile = null
+                this.imageFileValid = false
+            },
             cancelUploading() {
+                this.resetImageFile()
                 this.currentStep = 'selecting-method';
                 this.imageFile = null;
             },
@@ -277,7 +280,6 @@
                     url: image.original,
                 }).then((response) => {
                     this.$emit('imageChanged', response.data.data.image)
-                    this.$store.state.vocabularyBox.image = response.data.data.image
                     this.currentStep = 'selecting-method';
                     this.loading = false
                 }).catch((error) => {

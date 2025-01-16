@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\EncounteredWord;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Services\WordImages\WordImageService;
-use App\Http\Requests\Images\WordImages\GetWordImageRequest;
+use App\Http\Requests\Images\WordImages\UploadWordImageRequest;
+use App\Http\Requests\Images\WordImages\UploadPhraseImageRequest;
 use App\Http\Requests\Images\WordImages\SetWordImageFromUrlRequest;
 use App\Http\Requests\Images\WordImages\SetPhraseImageFromUrlRequest;
 
@@ -20,6 +20,7 @@ class WordImageController extends Controller
     ) {
         //
     }
+
     public function setWordImageFromUrl(SetWordImageFromUrlRequest $request, EncounteredWord $word)
     {
         $url = $request->validated('url');
@@ -48,12 +49,21 @@ class WordImageController extends Controller
         ]);
     }
 
-    public function uploadWordImage(Request $request, EncounteredWord $word)
+    public function uploadWordImage(UploadWordImageRequest $request, EncounteredWord $word)
     {
+        $imageFile = $request->file('imageFile');
+        $user = Auth::user();
 
+        $fileName = $this->wordImageService->uploadImage($user, $word, $imageFile);
+
+        return response()->json([
+            'data' => [
+                'image' => $fileName,
+            ],
+        ]);
     }
 
-    public function uploadPhraseImage(Request $request, Phrase $phrase)
+    public function uploadPhraseImage(UploadPhraseImageRequest $request, Phrase $phrase)
     {
 
     }
