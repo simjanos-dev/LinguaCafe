@@ -55,6 +55,7 @@ services:
     redis:
         image: redis:7.2-alpine
         container_name: linguacafe-redis
+        restart: unless-stopped
         volumes: 
             - ./cache:/data
         ports:
