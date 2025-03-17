@@ -158,7 +158,7 @@
                 colorInformations: {
                     newWordBackground: 'Used as background for indicating or displaying a new word outside of the interactive text areas.',
                     highlightedWordBackground: 'Used as background for indicating or displaying a highlighted word outside of the interactive text areas.',
-                    highlightedWordText: 'Used as background for indicating or displaying a highlighted word outside of the interactive text areas.',
+                    highlightedWordText: 'Used as text color for indicating or displaying a highlighted word outside of the interactive text areas.',
                 },
 
                 wordStyling: {
