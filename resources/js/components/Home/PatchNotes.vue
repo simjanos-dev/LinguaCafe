@@ -5,6 +5,21 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.14.beta.4<v-spacer /> 2025.03.17.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Word level indicator's background color was incorrect in hover vocabulary.</li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>Set python to production environment.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.14.beta.3<v-spacer /> 2025.01.05.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
