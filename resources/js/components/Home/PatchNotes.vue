@@ -3,6 +3,17 @@
         <div class="subheader">
             Update notes
         </div>
+
+        <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.14.1<v-spacer /> 2025.03.19.</v-card-title>
+            <v-card-text>
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>v0.14 broke the database, and users only seen a blank page after login. This update should fix the issue.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
         <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.14<v-spacer /> 2025.03.18.</v-card-title>
             <v-card-text>
