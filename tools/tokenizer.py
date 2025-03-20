@@ -664,4 +664,4 @@ def model_remove():
             continue
     return HTTPResponse(status=500, body="Error: Model directory could not be removed in 5 retries")
 
-run(host='0.0.0.0', port=8678, reloader=True, debug=True)
+run(host='0.0.0.0', port=8678, reloader=False, debug=False)

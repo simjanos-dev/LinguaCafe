@@ -5,31 +5,17 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.14.beta.3<v-spacer /> 2025.01.05.</v-card-title>
+            <v-card-title>v0.14.1<v-spacer /> 2025.03.19.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
                 <ul>
-                    <li>Sentence selecting in languages with spaces did not highlight the gaps as well.</li>
-                    <li>Added missing authorization for horizon dashboard, now only admins can access it.</li>
+                    <li>v0.14 broke the database, and users only seen a blank page after login. This update should fix the issue.</li>
                 </ul>
             </v-card-text>
         </v-card>
 
         <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.14.beta.2<v-spacer /> 2024.12.26.</v-card-title>
-            <v-card-text>
-                <b>Bug fixes:</b>
-                <ul>
-                    <li>Highlighted and new word backgrounds/indicators were not working outside of the interactive text areas.</li>
-                    <li>The selected font type was not applied to the hover vocabulary's reading section.</li>
-                    <li>The selected font type was not applied to the text reader's title.</li>
-                    <li>Horizontal padding was not working correctly.</li>
-                </ul>
-            </v-card-text>
-        </v-card>
-
-        <v-card outlined class="rounded-lg mb-8">
-            <v-card-title>v0.14.beta.1<v-spacer /> 2024.12.25.</v-card-title>
+            <v-card-title>v0.14<v-spacer /> 2025.03.18.</v-card-title>
             <v-card-text>
                 <b>New features:</b>
                 <ul>
@@ -58,6 +44,8 @@
                     <li>Development tools page had incorrect background for light theme.</li>
                     <li>Book word count percentages were displayed incorrectly in empty books and chapters.</li>
                     <li>Fixed inconsistencies in custom themes when the user selected different foreground color.</li>
+                    <li>The selected font type was not applied to the hover vocabulary's reading section.</li>
+                    <li>The selected font type was not applied to the text reader's title.</li>
                 </ul>
 
                 <b>Other changes:</b>
