@@ -4,6 +4,7 @@ namespace App\Services\WordImages;
 
 use App\Models\User;
 use App\Models\Phrase;
+use Illuminate\Support\Carbon;
 use App\Models\EncounteredWord;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,8 @@ class WordImageService
     public function setImageFromUrl(EncounteredWord|Phrase $model, User $user, string $url): string
     {
         $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
-        $fileName = $model->id . '.' . $extension;
+        $timestamp = Carbon::now()->format('YmdHis');
+        $fileName = $model->id . '_' . $timestamp . '.' .  $extension;
         $type = ($model instanceof EncounteredWord) ? 'words' : 'phrases';
 
 
@@ -30,6 +32,10 @@ class WordImageService
         ]);
         $image = file_get_contents($url, false, $context);
         Storage::put('/images/word_images/' . $type . '/' . $user->id . '/' . $fileName, $image);
+
+        if ($model->image) {
+            $this->deleteImage($user, $model);
+        }
 
         $model->image = $fileName;
         $model->save();
@@ -44,11 +50,16 @@ class WordImageService
         }
 
         $extension = $imageFile->clientExtension();
-        $fileName = $model->id . '.' .  $extension;
+        $timestamp = Carbon::now()->format('YmdHis');
+        $fileName = $model->id . '_' . $timestamp . '.' .  $extension;
         $type = ($model instanceof EncounteredWord) ? 'words' : 'phrases';
 
         $imageFile->move(storage_path('app/images/word_images/' . $type . '/' . $user->id), $fileName);
 
+        if ($model->image) {
+            $this->deleteImage($user, $model);
+        }
+        
         $model->image = $fileName;
         $model->save();
 

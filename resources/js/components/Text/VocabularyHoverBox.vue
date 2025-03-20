@@ -66,9 +66,10 @@
         <!-- Image -->
         <div class="d-block w-100 my-2" v-if="image">
             <v-img
-                :src="'/images/' + getImageTypeForUrl() + '/get/' + image + '?rid=' + Math.random()"
+                :src="'/images/' + imageTypeUrlSlug + '/get/' + image + '?rid=' + Math.random()"
                 width="100%"
                 :aspect-ratio="16/9"
+                contain
                 class="rounded-lg"
             />
         </div>
@@ -85,17 +86,26 @@
                 dictionaryTranslationList: [],
             }
         },
-        computed: mapState({
-            arrowPosition: state => state.hoverVocabularyBox.arrowPosition,
-            positionLeft: state => state.hoverVocabularyBox.positionLeft,
-            positionTop: state => state.hoverVocabularyBox.positionTop,
-            reading: state => state.hoverVocabularyBox.reading,
-            stage: state => state.hoverVocabularyBox.stage,
-            dictionaryTranslation: state => state.hoverVocabularyBox.dictionaryTranslation,
-            apiTranslations: state => state.hoverVocabularyBox.apiTranslations,
-            image: state => state.hoverVocabularyBox.image,
-            hoveredPhrase: state => state.hoverVocabularyBox.hoveredPhrase,
-        }),
+        computed: {
+           ...mapState({
+                arrowPosition: state => state.hoverVocabularyBox.arrowPosition,
+                positionLeft: state => state.hoverVocabularyBox.positionLeft,
+                positionTop: state => state.hoverVocabularyBox.positionTop,
+                reading: state => state.hoverVocabularyBox.reading,
+                stage: state => state.hoverVocabularyBox.stage,
+                dictionaryTranslation: state => state.hoverVocabularyBox.dictionaryTranslation,
+                apiTranslations: state => state.hoverVocabularyBox.apiTranslations,
+                image: state => state.hoverVocabularyBox.image,
+                hoveredPhrase: state => state.hoverVocabularyBox.hoveredPhrase,
+            }),
+            imageTypeUrlSlug() {
+                if (this.hoveredPhrase === -1) {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'
+            }
+        },
         props: {
         },
         mounted() {
@@ -113,13 +123,7 @@
             console.log('hover mounted', this.image, this.hoveredPhrase)
         },
         methods: {
-            getImageTypeForUrl() {
-                if (this.hoveredPhrase === -1) {
-                    return 'word-image'
-                }
-
-                return 'phrase-image'
-            }
+            
         }
     }
 </script>

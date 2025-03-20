@@ -33,7 +33,6 @@
                 <span id="vocab-side-box-title" class="text-capitalize" v-else>{{ type }}</span>
                 <v-spacer />
 
-                <!-- Image search button -->
                 <v-menu open-on-hover nudge-top="-44px" left v-if="tab == 0">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn 
@@ -46,16 +45,16 @@
                             <v-icon>mdi-image-search</v-icon>
                         </v-btn>
                     </template>
-                    <v-card outlined class="px-2" width="320px" v-if="this.$store.state.vocabularyBox.image">
+                    <v-card outlined class="px-2" width="320px" v-if="$store.state.vocabularyBox.image">
                         <v-img
-                            :src="'/images/' + this.getImageTypeForUrl() + '/get/' + this.$store.state.vocabularyBox.id + '?rid=' + Math.random()"
+                            :src="'/images/' + imageTypeUrlSlug + '/get/' + $store.state.vocabularyBox.id + '?fileName=' + $store.state.vocabularyBox.image"
                             width="100%"
                             :aspect-ratio="16/9"
+                            contain
                             class="rounded-lg my-4"
                         />
                     </v-card>
-                </v-menu>
-                
+                </v-menu><!-- Image search button -->
 
                 <!-- Inflections table button -->
                 <v-btn 
@@ -330,23 +329,32 @@
             anyApiDictionaryEnabled: Boolean,
             textToSpeechAvailable: Boolean,
         },
-        computed: mapState({
-            active: state => state.vocabularyBox.active,
-            type: state => state.vocabularyBox.type,
-            word: state => state.vocabularyBox.word,
-            phrase: state => state.vocabularyBox.phrase,
-            stage: state => state.vocabularyBox.stage,
-            inflections: state => state.vocabularyBox.inflections,
-            _reading: state => state.vocabularyBox.reading,
-            _baseWord: state => state.vocabularyBox.baseWord,
-            _baseWordReading: state => state.vocabularyBox.baseWordReading,
-            _phraseReading: state => state.vocabularyBox.phraseReading,
-            _translationText: state => state.vocabularyBox.translationText,
-            _searchField: state => state.vocabularyBox.searchField,
-            positionLeft: state => state.vocabularyBox.positionLeft,
-            positionTop: state => state.vocabularyBox.positionTop,
-            height: state => state.vocabularyBox.height,
-        }),
+        computed: {
+            ...mapState({
+                active: state => state.vocabularyBox.active,
+                type: state => state.vocabularyBox.type,
+                word: state => state.vocabularyBox.word,
+                phrase: state => state.vocabularyBox.phrase,
+                stage: state => state.vocabularyBox.stage,
+                inflections: state => state.vocabularyBox.inflections,
+                _reading: state => state.vocabularyBox.reading,
+                _baseWord: state => state.vocabularyBox.baseWord,
+                _baseWordReading: state => state.vocabularyBox.baseWordReading,
+                _phraseReading: state => state.vocabularyBox.phraseReading,
+                _translationText: state => state.vocabularyBox.translationText,
+                _searchField: state => state.vocabularyBox.searchField,
+                positionLeft: state => state.vocabularyBox.positionLeft,
+                positionTop: state => state.vocabularyBox.positionTop,
+                height: state => state.vocabularyBox.height,
+            }),
+            imageTypeUrlSlug() {
+                if (this.$store.state.vocabularyBox.type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'  
+            }
+        },
         watch: {
             word: function () {
                 this.updateDataFromStore();
@@ -460,13 +468,6 @@
             },
             close() {
                 this.$emit('unselectAllWords');
-            },
-            getImageTypeForUrl() {
-                if (this.$store.state.vocabularyBox.type === 'word') {
-                    return 'word-image'
-                }
-
-                return 'phrase-image'  
             }
         }
     }

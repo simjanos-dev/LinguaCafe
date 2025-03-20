@@ -130,6 +130,7 @@
             @addNewPhrase="addNewPhrase"
             @showDeletePhraseDialog="showDeletePhraseDialog"
             @addSelectedWordToAnki="addSelectedWordToAnki"
+            @imageChanged="wordImageChanged"
         ></vocabulary-box>
 
         <!-- Vocabulary bottom sheet -->
@@ -347,6 +348,8 @@
         },
         methods: {
             wordImageChanged(newImage) {
+                console.log("wordImageChanged", newImage)
+                
                 if (!this.selection.length) {
                     return;
                 }

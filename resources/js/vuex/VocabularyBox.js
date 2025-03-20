@@ -58,7 +58,6 @@ export default {
             state.baseWordReading = '';
             state.stage = 2;
             state.type = 'empty';
-            state.image = null;
         },
         setId(state, value) {
             state.id = value;

@@ -1,26 +1,27 @@
 <template>
-    <div id="word-image-search" class="d-block w-full" @mouseup.stop.prevent="">
+    <div id="word-image-search" class="d-block" @mouseup.stop.prevent="">
         <!-- Current image -->
         <div v-if="currentStep == 'selecting-method'">
-            <div 
+            <v-img
+                    v-if="$store.state.vocabularyBox.image"
+                    ref="currentImage"
+                    :src="'/images/' + imageTypeUrlSlug + '/get/' + $store.state.vocabularyBox.id + '?fileName=' + $store.state.vocabularyBox.image"
+                    width="100%"
+                    max-width="600px"
+                    :aspect-ratio="16/9"
+                    contain
+                    class="rounded-lg mx-auto mb-2"
+                />
+
+            <div
+                v-else 
                 id="no-image-box"
                 class="rounded-xl text-center mb-2"
                 :class="[
                     this.$store.state.vocabularyBox.image ? 'pa-0' : 'py-2'
                 ]"
             >
-                <v-img
-                    v-if="this.$store.state.vocabularyBox.image"
-                    ref="currentImage"
-                    :src="'/images/' + this.getImageTypeForUrl() + '/get/' + this.$store.state.vocabularyBox.id + '?rid=' + Math.random()"
-                    width="100%"
-                    :aspect-ratio="16/9"
-                    class="rounded-lg"
-                />
-                
-                <template v-else>
-                    <v-icon class="mr-1">mdi-image-remove</v-icon> No assigned image
-                </template>
+                <v-icon class="mr-1">mdi-image-remove</v-icon> No assigned image
             </div>
 
             <div class="d-flex">
@@ -68,7 +69,7 @@
         <!-- Image upload -->
         <div 
             v-if="currentStep === 'uploading'"
-            class="d-block w-full" 
+            class="d-block" 
         >
             <v-form>
                 <v-file-input
@@ -180,6 +181,7 @@
                     :src="image.small"
                     width="100%"
                     :aspect-ratio="16/9"
+                    contain
                     class="rounded-lg my-4"
                     style="box-sizing: border-box;"
                     @click="setImageFromUrl(image)"
@@ -198,6 +200,13 @@
             }
         },
         computed: {
+            imageTypeUrlSlug(){
+                if (this.$store.state.vocabularyBox.type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'
+            }
         },
         watch: {
         },
@@ -233,6 +242,20 @@
             this.setSearchTerm()
         }, 
         methods: {
+            setImageFromUrl(image) {
+                const targetId = this.$store.state.vocabularyBox.id
+
+                this.loading = true
+                axios.post(`/images/${this.imageTypeUrlSlug}/set-from-url/${targetId}`, {
+                    url: image.original,
+                }).then((response) => {
+                    this.$emit('imageChanged', response.data.data.image)
+                    this.currentStep = 'selecting-method';
+                    this.loading = false
+                }).catch((error) => {
+                    this.loading = false
+                })
+            },
             validateImage() {
                 this.imageFileValid = this.$refs.imageFile.validate();
                 console.log('validateImage', this.$refs.imageFile.validate())
@@ -247,10 +270,9 @@
 
                 this.loading = true;
 
-                const targetType = this.getImageTypeForUrl()
                 const targetId = this.$store.state.vocabularyBox.id
 
-                axios.post(`/images/${targetType}/upload/${targetId}`, formData).then((response) => {
+                axios.post(`/images/${this.imageTypeUrlSlug}/upload/${targetId}`, formData).then((response) => {
                     this.$emit('imageChanged', response.data.data.image)
                     this.currentStep = 'selecting-method';
                     this.resetImageFile()
@@ -272,10 +294,9 @@
             deleteImage() {
                 this.loading = true
 
-                const targetType = this.getImageTypeForUrl()
                 const targetId = this.$store.state.vocabularyBox.id
 
-                axios.delete(`/images/${targetType}/delete/${targetId}`).then((response) => {
+                axios.delete(`/images/${this.imageTypeUrlSlug}/delete/${targetId}`).then((response) => {
                     this.$emit('imageChanged', null)
                     this.currentStep = 'selecting-method';
                     this.loading = false
@@ -300,21 +321,6 @@
                 }).catch((error) => {
                     this.loading = false
                     this.searchError = true
-                })
-            },
-            setImageFromUrl(image) {
-                const targetType = this.getImageTypeForUrl()
-                const targetId = this.$store.state.vocabularyBox.id
-
-                this.loading = true
-                axios.post(`/images/${targetType}/set-from-url/${targetId}`, {
-                    url: image.original,
-                }).then((response) => {
-                    this.$emit('imageChanged', response.data.data.image)
-                    this.currentStep = 'selecting-method';
-                    this.loading = false
-                }).catch((error) => {
-                    this.loading = false
                 })
             },
             setSearchTerm() {
@@ -349,13 +355,6 @@
                 })
 
                 return phraseString
-            },
-            getImageTypeForUrl() {
-                if (this.$store.state.vocabularyBox.type === 'word') {
-                    return 'word-image'
-                }
-
-                return 'phrase-image'
             }
         }
     }
