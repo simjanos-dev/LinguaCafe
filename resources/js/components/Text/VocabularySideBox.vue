@@ -239,6 +239,7 @@
                     :any-api-dictionary-enabled="$props.anyApiDictionaryEnabled"
                     :language="$props.language"
                     :searchTerm="searchField"
+                    :exampleSentenceText="exampleSentenceText"
                     @addDefinitionToInput="addDefinitionToInput"
                 ></vocabulary-search-box>
 
@@ -310,6 +311,7 @@
             _phraseReading: state => state.vocabularyBox.phraseReading,
             _translationText: state => state.vocabularyBox.translationText,
             _searchField: state => state.vocabularyBox.searchField,
+            _exampleSentenceText: state => state.vocabularyBox.exampleSentenceText,
             positionLeft: state => state.vocabularyBox.positionLeft,
             positionTop: state => state.vocabularyBox.positionTop,
             height: state => state.vocabularyBox.height,
@@ -338,6 +340,7 @@
 
                 // data for both
                 translationText: '',
+                exampleSentenceText: '',
 
                 // ui data
                 tab: 0,
@@ -359,6 +362,7 @@
                 this.baseWordReading = this._baseWordReading;
                 this.phraseReading = this._phraseReading;
                 this.searchField = this._searchField;
+                this.exampleSentenceText = this._exampleSentenceText;
 
                 // generate phrase text
                 for (let wordIndex = 0; wordIndex < this.$store.state.vocabularyBox.phrase.length; wordIndex++) {

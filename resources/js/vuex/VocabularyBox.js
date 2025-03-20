@@ -28,6 +28,7 @@ export default {
         inflections: [],
         kanjiList: [],
         translationText: '',
+        exampleSentenceText: '',
 
         // ui data
         tab: 0,
@@ -48,6 +49,7 @@ export default {
             state.searchField = '';
             state.translationText = '';
             state.word = '';
+            state.exampleSentenceText = '';
             state.phrase = [];
             state.reading = '';
             state.kanjiList = [];
@@ -76,6 +78,9 @@ export default {
         },
         setWord (state, value) {
             state.word = value;
+        },
+        setExampleSentenceText (state, value) {
+            state.exampleSentenceText = value;
         },
         setPhrase (state, value) {
             state.phrase = value;

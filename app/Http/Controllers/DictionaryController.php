@@ -157,9 +157,10 @@ class DictionaryController extends Controller
     public function searchApiDictionaries(SearchApiRequest $request) {
         $language = $request->post('language');
         $term = $request->post('term');
+        $context = $request->post('context') ? $request->post('context') : '';
 
         try {
-            $definitions = $this->dictionaryService->searchApiDictionaries($language, $term);
+            $definitions = $this->dictionaryService->searchApiDictionaries($language, $term, $context);
         } catch (\Exception $e) {
             abort(500, $e->getMessage());
         }

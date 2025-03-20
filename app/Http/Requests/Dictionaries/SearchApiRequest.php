@@ -26,6 +26,7 @@ class SearchApiRequest extends FormRequest
         return [
             'language' => 'required|string',
             'term' => 'required|string',
+            'context' => 'string',
         ];
     }
 }
