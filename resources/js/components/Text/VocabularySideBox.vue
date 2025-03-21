@@ -33,6 +33,29 @@
                 <span id="vocab-side-box-title" class="text-capitalize" v-else>{{ type }}</span>
                 <v-spacer />
 
+                <v-menu open-on-hover nudge-top="-44px" left v-if="tab == 0">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                            icon
+                            title="Add or edit image"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="openWordImageSearch"
+                        >
+                            <v-icon>mdi-image-search</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-card outlined class="px-2" width="320px" v-if="$store.state.vocabularyBox.image">
+                        <v-img
+                            :src="'/images/' + imageTypeUrlSlug + '/get/' + $store.state.vocabularyBox.id + '?fileName=' + $store.state.vocabularyBox.image"
+                            width="100%"
+                            :aspect-ratio="16/9"
+                            contain
+                            class="rounded-lg my-4"
+                        />
+                    </v-card>
+                </v-menu><!-- Image search button -->
+
                 <!-- Inflections table button -->
                 <v-btn 
                     v-if="tab == 0 && inflections.length"
@@ -64,7 +87,7 @@
 
                 <!-- Back button -->
                 <v-btn 
-                    v-if="tab == 1"
+                    v-if="tab > 0"
                     icon
                     title="Back to word"
                     @click="tab = 0;"
@@ -283,6 +306,15 @@
                     </tbody>
                 </v-simple-table>
             </v-tab-item>
+
+            <!-- Image search tab -->
+            <v-tab-item :value="2">
+                <word-image-edit-box
+                    v-if="tab === 2"
+                    :height="(height - 180) + 'px'"
+                    @imageChanged="$emit('imageChanged', $event)"
+                />
+            </v-tab-item>
         </v-tabs-items>
     </v-card>
 </template>
@@ -297,23 +329,32 @@
             anyApiDictionaryEnabled: Boolean,
             textToSpeechAvailable: Boolean,
         },
-        computed: mapState({
-            active: state => state.vocabularyBox.active,
-            type: state => state.vocabularyBox.type,
-            word: state => state.vocabularyBox.word,
-            phrase: state => state.vocabularyBox.phrase,
-            stage: state => state.vocabularyBox.stage,
-            inflections: state => state.vocabularyBox.inflections,
-            _reading: state => state.vocabularyBox.reading,
-            _baseWord: state => state.vocabularyBox.baseWord,
-            _baseWordReading: state => state.vocabularyBox.baseWordReading,
-            _phraseReading: state => state.vocabularyBox.phraseReading,
-            _translationText: state => state.vocabularyBox.translationText,
-            _searchField: state => state.vocabularyBox.searchField,
-            positionLeft: state => state.vocabularyBox.positionLeft,
-            positionTop: state => state.vocabularyBox.positionTop,
-            height: state => state.vocabularyBox.height,
-        }),
+        computed: {
+            ...mapState({
+                active: state => state.vocabularyBox.active,
+                type: state => state.vocabularyBox.type,
+                word: state => state.vocabularyBox.word,
+                phrase: state => state.vocabularyBox.phrase,
+                stage: state => state.vocabularyBox.stage,
+                inflections: state => state.vocabularyBox.inflections,
+                _reading: state => state.vocabularyBox.reading,
+                _baseWord: state => state.vocabularyBox.baseWord,
+                _baseWordReading: state => state.vocabularyBox.baseWordReading,
+                _phraseReading: state => state.vocabularyBox.phraseReading,
+                _translationText: state => state.vocabularyBox.translationText,
+                _searchField: state => state.vocabularyBox.searchField,
+                positionLeft: state => state.vocabularyBox.positionLeft,
+                positionTop: state => state.vocabularyBox.positionTop,
+                height: state => state.vocabularyBox.height,
+            }),
+            imageTypeUrlSlug() {
+                if (this.$store.state.vocabularyBox.type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'  
+            }
+        },
         watch: {
             word: function () {
                 this.updateDataFromStore();
@@ -325,7 +366,6 @@
         data: function() {
             return {
                 tab: 0,
-
                 //temp, to be reviewed
                 phraseCurrentlySaving: false,
 
@@ -349,7 +389,11 @@
             
         },
         methods: {
+            openWordImageSearch() {
+                this.tab = 2;
+            },
             updateDataFromStore() {
+                this.tab = 0;
                 this.phraseCurrentlySaving = false;
                 this.phraseText = '';
 

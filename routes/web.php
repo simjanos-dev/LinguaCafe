@@ -83,6 +83,24 @@ Route::group(['middleware' => ['auth', 'auth.session', 'web']], function () {
         Route::get('/jmdict/xml-to-text', [App\Http\Controllers\DictionaryController::class, 'jmdictXmlToText']);
     });
 
+    // images
+    Route::prefix('images')->group(function() {
+        Route::get('/search/{searchEngine}/{searchTerm}', [App\Http\Controllers\WordImages\WordImageSearchController::class, 'search']);
+        
+
+        Route::get('/word-image/get/{word}', [App\Http\Controllers\WordImages\WordImageController::class, 'getWordImage']);
+        Route::get('/phrase-image/get/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'getPhraseImage']);
+        
+
+        Route::post('/word-image/set-from-url/{word}', [App\Http\Controllers\WordImages\WordImageController::class, 'setWordImageFromUrl']);
+        Route::post('/word-image/upload/{word}', [App\Http\Controllers\WordImages\WordImageController::class, 'uploadWordImage']);
+        Route::post('/phrase-image/set-from-url/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'setPhraseImageFromUrl']);
+        Route::post('/phrase-image/upload/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'uploadPhraseImage']);
+
+        Route::delete('/word-image/delete/{word}', [App\Http\Controllers\WordImages\WordImageController::class, 'deleteWordImage']);
+        Route::delete('/phrase-image/delete/{phrase}', [App\Http\Controllers\WordImages\WordImageController::class, 'deletePhraseImage']);
+    });
+
     // languages
     Route::get('/languages/get-language-selection-dialog-data', [App\Http\Controllers\LanguageController::class, 'getLanguageSelectionDialogData']);
     Route::get('/languages/select/{language}', [App\Http\Controllers\LanguageController::class, 'selectLanguage']);

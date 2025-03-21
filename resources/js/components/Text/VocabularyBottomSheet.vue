@@ -127,7 +127,7 @@
             </v-tabs-items>
         </div>
 
-        <v-card-text class="searchBoxBorder mx-auto pa-3 rounded-lg border">
+        <v-card-text class="searchBoxBorder mx-auto pa-3 rounded-lg border" :class="[tab === 2 ? 'mt-2' : '']">
             <v-tabs-items v-model="tab">
                 <!-- Main tab -->
                 <v-tab-item :value="0">
@@ -167,6 +167,16 @@
                     </v-simple-table>
                 </v-tab-item>
 
+                <!-- Word image edit dialog -->
+                <v-tab-item :value="2">
+                    <div class="d-block py-2">
+                        <word-image-edit-box
+                            :height="'400px'"
+                            @imageChanged="$emit('imageChanged', $event)"
+                        />
+                    </div>
+                </v-tab-item>
+
             </v-tabs-items>
         </v-card-text>
         
@@ -204,6 +214,15 @@
                     <v-btn icon @click="addSelectedWordToAnki"><v-icon>mdi-cards</v-icon></v-btn>
                     <v-btn icon :disabled="!$props.textToSpeechAvailable" @click="textToSpeech"><v-icon>mdi-bullhorn</v-icon></v-btn>
                     <v-btn icon :disabled="!inflections.length" @click="tab = 1;"><v-icon>mdi-list-box</v-icon></v-btn>
+                    <v-btn 
+                        icon
+                        title="Add or edit image"
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="tab = 2"
+                    >
+                        <v-icon>mdi-image-search</v-icon>
+                    </v-btn>
                 </template>
 
                 <!-- Back arrow on other tabs -->

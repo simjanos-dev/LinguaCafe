@@ -1,0 +1,17 @@
+#word-image-search {
+    .v-image {
+        cursor: pointer;
+    }
+
+    .images-box {
+        box-sizing: border-box;
+        overflow-y: scroll;
+    }
+
+    #search-engine-select-box,
+    #image-type-select-box {
+        position: relative;
+        box-sizing: border-box;
+        width: 50%;
+    }
+}

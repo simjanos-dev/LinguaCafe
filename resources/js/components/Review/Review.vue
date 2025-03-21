@@ -266,7 +266,7 @@
                                     </template>
                                 </div>
                             </template>
-
+                            
                             <!-- Reveal button -->
                             <div class="review-button-box">
                                 <v-btn rounded id="review-reveal-button" color="success" @click="reveal" v-if="!revealed && !newCardAnimation && !backToDeckAnimation && !intoTheCorrectDeckAnimation"><v-icon>mdi-rotate-3d-variant</v-icon> Reveal</v-btn>
@@ -339,6 +339,17 @@
                                 {{ reviews[currentReviewIndex].translation }}
                             </div>
 
+                            <!-- Image -->
+                            <v-img
+                                ref="currentImage"
+                                :src="'/images/' + imageTypeUrlSlug + '/get/' + reviews[currentReviewIndex].id + '?rid=' + Math.random() + $store.state.vocabularyBox.image"
+                                width="100%"
+                                max-width="400px"
+                                :aspect-ratio="16/9"
+                                contain
+                                class="rounded-lg mx-auto mt-2"
+                            />
+
                             <!-- Answer buttons -->
                             <div class="review-button-box">
                                 <v-btn rounded id="review-correct-button" color="success" @click="correct" v-if="revealed">I was correct</v-btn>
@@ -402,6 +413,15 @@
                 finishedReviews: -1,
                 finished: false,
                 today: new moment().format('YYYY-MM-DD'), // CHANGE TO SERVER SIDE
+            }
+        },
+        computed: {
+            imageTypeUrlSlug(){
+                if (this.reviews[this.currentReviewIndex].type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'
             }
         },
         props: {

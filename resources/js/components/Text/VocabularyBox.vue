@@ -13,6 +13,7 @@
         }"
         @mouseup.stop=";"
     >   
+
         <!-- Vocab box content -->
         <div class="vocab-box-content pa-4 pb-1">
             <v-tabs-items v-model="tab">
@@ -273,6 +274,14 @@
                         </tbody>
                     </v-simple-table>
                 </v-tab-item>
+        
+                <!-- Word image edit dialog -->
+                <v-tab-item :value="3">
+                    <word-image-edit-box
+                            :height="'400px'"
+                            @imageChanged="$emit('imageChanged', $event)"
+                        />
+                </v-tab-item>
             </v-tabs-items>
         </div>
 
@@ -284,6 +293,30 @@
             <v-btn icon v-if="tab == 0 && $props.textToSpeechAvailable" title="Text to speech" @click="textToSpeech"><v-icon>mdi-bullhorn</v-icon></v-btn>
             <v-btn icon @click="tab = 2;" title="Show inflections" v-if="tab == 0 && inflections.length"><v-icon>mdi-list-box</v-icon></v-btn>
             <v-btn icon @click="tab = 0;" v-if="tab !== 0" title="Back"><v-icon>mdi-arrow-left</v-icon></v-btn>
+            
+            <!-- Image search button -->
+            <v-menu open-on-hover nudge-top="-44px" left v-if="tab == 0">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn 
+                        icon
+                        title="Add or edit image"
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="tab = 3"
+                    >
+                        <v-icon>mdi-image-search</v-icon>
+                    </v-btn>
+                </template>
+                <v-card outlined class="px-2" width="320px" v-if="$store.state.vocabularyBox.image">
+                    <v-img
+                        :src="'/images/' + imageTypeUrlSlug + '/get/' + $store.state.vocabularyBox.id + '?fileName=' + $store.state.vocabularyBox.image"
+                        width="100%"
+                        :aspect-ratio="16/9"
+                        contain
+                        class="rounded-lg my-4"
+                    />
+                </v-card>
+            </v-menu>
         </div>
     </v-card>
 </template>
@@ -298,24 +331,33 @@
             anyApiDictionaryEnabled: Boolean,
             textToSpeechAvailable: Boolean,
         },
-        computed: mapState({
-            active: state => state.vocabularyBox.active,
-            type: state => state.vocabularyBox.type,
-            word: state => state.vocabularyBox.word,
-            phrase: state => state.vocabularyBox.phrase,
-            stage: state => state.vocabularyBox.stage,
-            inflections: state => state.vocabularyBox.inflections,
-            _reading: state => state.vocabularyBox.reading,
-            _baseWord: state => state.vocabularyBox.baseWord,
-            _baseWordReading: state => state.vocabularyBox.baseWordReading,
-            _phraseReading: state => state.vocabularyBox.phraseReading,
-            _translationText: state => state.vocabularyBox.translationText,
-            _searchField: state => state.vocabularyBox.searchField,
-            positionLeft: state => state.vocabularyBox.positionLeft,
-            positionTop: state => state.vocabularyBox.positionTop,
-            width: state => state.vocabularyBox.width,
-            height: state => state.vocabularyBox.height,
-        }),
+        computed: {
+            ...mapState({
+                active: state => state.vocabularyBox.active,
+                type: state => state.vocabularyBox.type,
+                word: state => state.vocabularyBox.word,
+                phrase: state => state.vocabularyBox.phrase,
+                stage: state => state.vocabularyBox.stage,
+                inflections: state => state.vocabularyBox.inflections,
+                _reading: state => state.vocabularyBox.reading,
+                _baseWord: state => state.vocabularyBox.baseWord,
+                _baseWordReading: state => state.vocabularyBox.baseWordReading,
+                _phraseReading: state => state.vocabularyBox.phraseReading,
+                _translationText: state => state.vocabularyBox.translationText,
+                _searchField: state => state.vocabularyBox.searchField,
+                positionLeft: state => state.vocabularyBox.positionLeft,
+                positionTop: state => state.vocabularyBox.positionTop,
+                width: state => state.vocabularyBox.width,
+                height: state => state.vocabularyBox.height,
+            }),
+            imageTypeUrlSlug() {
+                if (this.$store.state.vocabularyBox.type === 'word') {
+                    return 'word-image'
+                }
+
+                return 'phrase-image'  
+            },
+        },
         data: function() {
             return {
                 // data for word
@@ -332,12 +374,16 @@
                 tab: 0,
                 searchField: '',
                 searchResults: [],
+                showWordImageEditBoxDialog: false,
             };
         },
         mounted: function() {
             this.updateDataFromStore();
         },
         methods: {
+            openWordImageSearch() {
+                this.showWordImageEditBoxDialog = true
+            },
             updateDataFromStore() {
                 this.translationText = this._translationText;
                 this.reading = this._reading;

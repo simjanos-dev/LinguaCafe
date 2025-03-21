@@ -149,7 +149,7 @@ class ChapterService {
 
         // get chapter word counts
         $uniqueWordsForWordCounts = EncounteredWord
-            ::select(['id', 'word', 'stage'])
+            ::select(['id', 'word', 'stage', 'image'])
             ->where('user_id', $userId)
             ->where('language', $chapter->language)
             ->get()
