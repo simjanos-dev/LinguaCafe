@@ -296,27 +296,27 @@
             
             <!-- Image search button -->
             <v-menu open-on-hover nudge-top="-44px" left v-if="tab == 0">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn 
-                            icon
-                            title="Add or edit image"
-                            v-bind="attrs"
-                            v-on="on"
-                            @click="tab = 3"
-                        >
-                            <v-icon>mdi-image-search</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-card outlined class="px-2" width="320px" v-if="$store.state.vocabularyBox.image">
-                        <v-img
-                            :src="'/images/' + imageTypeUrlSlug + '/get/' + $store.state.vocabularyBox.id + '?fileName=' + $store.state.vocabularyBox.image"
-                            width="100%"
-                            :aspect-ratio="16/9"
-                            contain
-                            class="rounded-lg my-4"
-                        />
-                    </v-card>
-                </v-menu>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn 
+                        icon
+                        title="Add or edit image"
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="tab = 3"
+                    >
+                        <v-icon>mdi-image-search</v-icon>
+                    </v-btn>
+                </template>
+                <v-card outlined class="px-2" width="320px" v-if="$store.state.vocabularyBox.image">
+                    <v-img
+                        :src="'/images/' + imageTypeUrlSlug + '/get/' + $store.state.vocabularyBox.id + '?fileName=' + $store.state.vocabularyBox.image"
+                        width="100%"
+                        :aspect-ratio="16/9"
+                        contain
+                        class="rounded-lg my-4"
+                    />
+                </v-card>
+            </v-menu>
         </div>
     </v-card>
 </template>

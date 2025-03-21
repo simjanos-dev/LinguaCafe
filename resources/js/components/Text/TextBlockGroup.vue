@@ -157,6 +157,7 @@
                 @addNewPhrase="addNewPhrase"
                 @deletePhrase="deletePhrase"
                 @addSelectedWordToAnki="addSelectedWordToAnki"
+                @imageChanged="wordImageChanged"
             ></vocabulary-bottom-sheet>
         </v-bottom-sheet>
 
