@@ -349,6 +349,9 @@ def tokenizeText(text, language, sentenceIndexStart = 0):
                             "pos": token.pos_,
                             "si": thaiSentenceIndex + sentenceIndexStart,
                             "g": gender,
+                            "ip": token.is_punct,
+                            "sb": space_before,
+                            "sa": bool(token.whitespace_),
                         }
                     )
             else:
