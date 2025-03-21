@@ -5,6 +5,21 @@
         </div>
 
         <v-card outlined class="rounded-lg mb-8">
+            <v-card-title>v0.15<v-spacer /> 2025.??.??.</v-card-title>
+            <v-card-text>
+                <b>New features:</b>
+                <ul>
+                    <li>Added attachable images for words and phrases.</li>
+                </ul>
+
+                <b>Bug fixes:</b>
+                <ul>
+                    <li>Fixed spaces spaces around symbols(punctuation marks, quote marks, parentheses) in text.</li>
+                </ul>
+            </v-card-text>
+        </v-card>
+
+        <v-card outlined class="rounded-lg mb-8">
             <v-card-title>v0.14.1<v-spacer /> 2025.03.19.</v-card-title>
             <v-card-text>
                 <b>Bug fixes:</b>
