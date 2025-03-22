@@ -19,7 +19,7 @@
 
                 <b>Other changes:</b>
                 <ul>
-                    <li>Theme user settings now has one single theme selection dropdown instead of two for different sections.</li>
+                    <li>Theme user settings now has one single theme selection dropdown instead of two for different sections. Its default value now will be the currently selected theme.</li>
                 </ul>
             </v-card-text>
         </v-card>
