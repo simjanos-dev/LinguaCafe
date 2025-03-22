@@ -82,14 +82,14 @@ If you are below v0.12, please use the migration guide provided [here](/migratio
 
 ### Download the latest docker-compose.yml file
 
-Download the latest [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/main/docker-compose.yml) file, and overwrite the old one. I did not want to introduce this to the updating process, but there were several features that required this additional step. In future updates I will provide a list of changes in the file, so users with custom configurations won't have to start over.
+Download the latest [docker-compose.yml](https://github.com/simjanos-dev/LinguaCafe/blob/main/docker-compose.yml) file, and overwrite the old one.
 
 ### Update to the latest docker image
 
 Run these commands to update and start your server:
 ```
 docker compose pull
-docker compose up -d
+docker compose up -d --force-recreate
 ```
 
 ##### Windows
