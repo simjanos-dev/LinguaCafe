@@ -3,11 +3,6 @@
         <!-- Reset text styling dialog -->
         <reset-text-styling-dialog v-model="resetTextStylingDialog" @reset="resetDefaultTextStyling"/>
 
-        <!-- Text header -->
-        <div class="subheader mt-4 d-flex">
-            Text
-        </div>
-
         <!-- Text content -->
         <v-card outlined class="rounded-lg mt-2" :loading="loading">
             <v-container class="pa-8" v-if="textStyling">
@@ -30,22 +25,6 @@
                         ></v-select>
                     </div>
 
-                    <div class="text-option-input">
-                        <label class="mb-0 mt-4">
-                            Theme
-                        </label>
-                        <v-select
-                            label="Theme"
-                            :value="selectedTheme"
-                            rounded
-                            dense
-                            filled
-                            single-line
-                            hide-details
-                            :items="themes"
-                            @change="selectedThemeInputChanged"
-                        ></v-select>
-                    </div>
                 </div>
 
                 <!-- Horizontal padding -->
@@ -446,7 +425,6 @@
                 loading: false,
                 resetTextStylingDialog: false,
                 selectedLevelIndex: 0,
-                selectedThemeIndex: 0,
                 textStyling: null,
                 themes: ['light', 'dark', 'eink'],
                 levels: [
@@ -497,17 +475,18 @@
                 highlightedStyling: {},
             }
         },
+        props: {
+            selectedTheme: String,
+        },
         computed: {
-            selectedTheme: function(){
-                return this.themes[this.selectedThemeIndex]
-            },
             selectedLevel: function(){
                 return this.levels[this.selectedLevelIndex]
             }
         },
         watch: {
-            selectedThemeIndex: {
+            selectedTheme: {
                 handler: function() {
+                    console.log('selected theme changed')
                     this.updateSampleTextStyling()
                 },
             },
@@ -546,7 +525,8 @@
                 this.selectedLevelIndex = this.levels.indexOf(value);
             },
             selectedThemeInputChanged(value) {
-                this.selectedThemeIndex = this.themes.indexOf(value);
+                console.log('selectedThemeInputChanged', value)
+                // this.selectedThemeIndex = this.themes.indexOf(value);
             },
             resetColor(colorName) {
                 this.textStyling[this.selectedTheme][this.selectedLevel][colorName] = JSON.parse(JSON.stringify(defaultTextThemes[this.selectedTheme][this.selectedLevel][colorName]));

@@ -14,7 +14,12 @@
 
                 <b>Bug fixes:</b>
                 <ul>
-                    <li>Fixed spaces spaces around symbols(punctuation marks, quote marks, parentheses) in text.</li>
+                    <li>Fixed spaces around symbols(punctuation marks, quote marks, parentheses) in text.</li>
+                </ul>
+
+                <b>Other changes:</b>
+                <ul>
+                    <li>Theme user settings now has one single theme selection dropdown instead of two for different sections.</li>
                 </ul>
             </v-card-text>
         </v-card>

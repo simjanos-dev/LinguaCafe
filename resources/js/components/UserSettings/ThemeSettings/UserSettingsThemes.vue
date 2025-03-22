@@ -1,19 +1,17 @@
 <template>
     <div id="user-settings-themes">
-        <user-settings-text-styling @update="updateTextStyling" />
-
-        <!-- Color header -->
-        <div class="subheader mt-4 d-flex">
-            Colors
-            <v-spacer />
-            <div id="theme-selection">
+        <!-- Text header -->
+        <div class="subheader mt-4 d-flex justify-space-between">
+            <div>Text styling</div>
+            <div>
                 <v-select
                     v-model="selectedTheme"
+                    label="Theme"
                     rounded
                     dense
                     filled
+                    single-line
                     hide-details
-                    width="140"
                     :items="themes"
                     item-text="name"
                     item-value="value"
@@ -21,8 +19,24 @@
             </div>
         </div>
 
+        <user-settings-text-styling
+            :selected-theme="selectedTheme"
+             @update="updateTextStyling" 
+        />
+
+        <!-- Color header -->
+        <div class="subheader mt-4 d-flex">
+            UI colors
+        </div>
+
         <!-- Color table -->
-        <v-form v-model="isFormValid">
+        <v-card v-if="selectedTheme === 'eink'" outlined class="rounded-lg mt-2" :loading="loading">
+            <v-card-text>
+                E-ink UI colors are not modifiable.
+            </v-card-text>
+        </v-card>
+
+        <v-form v-else v-model="isFormValid">
             <v-simple-table class="rounded-lg no-hover border mt-2" v-if="!loading">
                 <thead>
                     <tr>
@@ -122,7 +136,7 @@
                 rounded
                 color="primary"
                 :loading="saving"
-                :disabled="saving || !isFormValid"
+                :disabled="saving || (!isFormValid && selectedTheme !== 'eink')"
                 @click="save"
             >
                 Save
@@ -142,7 +156,7 @@
                 saving: false,
                 saveResult: '',
                 textStyling: null,
-                selectedTheme: ThemeService.getCurrentTheme() === 'dark' ? 'dark' : 'light',
+                selectedTheme: ThemeService.getCurrentTheme() === 'auto' ? ThemeService.getAutoTheme() : ThemeService.getCurrentTheme(),
                 themes: [
                     {
                         name: 'Light theme',
@@ -151,6 +165,10 @@
                     {
                         name: 'Dark theme',
                         value: 'dark'
+                    },
+                    {
+                        name: 'E-ink theme',
+                        value: 'eink'
                     }
                 ],
                 lightTheme: [],
