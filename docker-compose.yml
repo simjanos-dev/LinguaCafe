@@ -37,7 +37,7 @@ services:
         restart: unless-stopped
         tty: true
         healthcheck:
-            test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$MYSQL_ROOT_PASSWORD']
+            test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${DB_ROOT_PASSWORD:-linguacafe}']
             interval: 10s
             timeout: 5s
             retries: 10
@@ -56,7 +56,7 @@ services:
         image: redis:7.2-alpine
         container_name: linguacafe-redis
         restart: unless-stopped
-        volumes: 
+        volumes:
             - ./cache:/data
         ports:
             - "6379:6379"

@@ -43,7 +43,7 @@ services:
         restart: unless-stopped
         tty: true
         healthcheck:
-            test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$MYSQL_ROOT_PASSWORD']
+            test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-plinguacafe-dev']
             interval: 5s
             timeout: 5s
             retries: 10
@@ -63,7 +63,7 @@ services:
         image: redis:7.2-alpine
         container_name: linguacafe-redis-dev
         restart: unless-stopped
-        volumes: 
+        volumes:
             - ./cache:/data
         ports:
             - "6379:6379"
@@ -82,6 +82,10 @@ services:
             - "8678:8678"
         build:
             dockerfile: ./docker/PythonDockerfileDev
+# for testing arm build            
+#            platforms:
+#                - linux/arm64
+#                - linux/amd64
         volumes:
             - ./tools:/app
             - ./storage/app:/var/www/html/storage/app
