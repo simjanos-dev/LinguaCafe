@@ -508,9 +508,8 @@ class VocabularyService {
                 $encounteredWord->word = $lowerCaseWord;
                 $encounteredWord->translation = '';
                 $encounteredWord->lemma = '';
-                $encounteredWord->base_word = '';
+                $encounteredWord->lemma_reading = '';
                 $encounteredWord->reading = '';
-                $encounteredWord->base_word_reading = '';
                 $encounteredWord->stage = 0;
                 $encounteredWord->kanji = '';
 
@@ -526,7 +525,7 @@ class VocabularyService {
             
             // set lemma
             if (isset($record[2])) {
-                $encounteredWord->base_word = $record[2];
+                $encounteredWord->lemma = $record[2];
             }
             
             // set reading
@@ -536,7 +535,7 @@ class VocabularyService {
             
             // set lemma reading
             if (isset($record[4])) {
-                $encounteredWord->base_word_reading = $record[4];
+                $encounteredWord->lemma_reading = $record[4];
             }
 
             // set stage
@@ -613,7 +612,7 @@ class VocabularyService {
 
         // search for words and apply filters
         $wordSearch = EncounteredWord
-            ::select('id', 'base_word', 'word', DB::raw("'' AS words_searchable"), 'reading', 'base_word_reading', 'stage', 'translation', 'read_count', 'lookup_count', 'added_to_srs', DB::raw("'word' AS type"))->where('user_id', $userId)
+            ::select('id', 'lemma', 'word', DB::raw("'' AS words_searchable"), 'reading', 'lemma_reading', 'stage', 'translation', 'read_count', 'lookup_count', 'added_to_srs', DB::raw("'word' AS type"))->where('user_id', $userId)
             ->where('language', $language)
             ->whereNotIn('word', $wordsToSkip);
 
@@ -638,7 +637,7 @@ class VocabularyService {
         
         // search for phrases and apply filters
         $phraseSearch = Phrase
-            ::select('id', DB::raw("'' AS base_word"), 'words as word', 'words_searchable', 'reading', DB::raw("'' AS base_word_reading"), 'stage', 'translation', DB::raw("-1 AS read_count"), DB::raw("-1 AS lookup_count"), 'added_to_srs', DB::raw("'phrase' AS type"))
+            ::select('id', DB::raw("'' AS lemma"), 'words as word', 'words_searchable', 'reading', DB::raw("'' AS lemma_reading"), 'stage', 'translation', DB::raw("-1 AS read_count"), DB::raw("-1 AS lookup_count"), 'added_to_srs', DB::raw("'phrase' AS type"))
             ->where('user_id', $userId)
             ->where('language', $language);
 

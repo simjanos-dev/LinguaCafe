@@ -126,7 +126,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(sampleWord, wordIndex) in $props.sampleWords.slice(0, 10)" :key="wordIndex">
-                            <td class="default-font" v-if="fields.lemma">{{ sampleWord.base_word }}</td>
+                            <td class="default-font" v-if="fields.lemma">{{ sampleWord.lemma }}</td>
                             <td class="default-font" v-if="fields.word">
                                 <!-- Word -->
                                 <template v-if="sampleWord.type == 'word'">
@@ -143,7 +143,7 @@
                                     {{ JSON.parse(sampleWord.word).join('') }}
                                 </template>
                             </td>
-                            <td class="default-font" v-if="fields.lemmaReading">{{ sampleWord.base_word_reading }}</td>
+                            <td class="default-font" v-if="fields.lemmaReading">{{ sampleWord.lemma_reading }}</td>
                             <td class="default-font" v-if="fields.reading">{{ sampleWord.reading }}</td>
                             <td v-if="fields.translation">{{ sampleWord.translation }}</td>
                             <td v-if="fields.stage">{{ sampleWord.stage }}</td>
@@ -256,7 +256,7 @@
                     lemma: {
                         export: this.fields.lemma,
                         headerName: 'Lemma',
-                        searchObjectProperty: 'base_word'
+                        searchObjectProperty: 'lemma'
                     },
                     word: {
                         export: this.fields.word,
@@ -266,7 +266,7 @@
                     lemmaReading: {
                         export: this.fields.lemmaReading,
                         headerName: 'Lemma reading',
-                        searchObjectProperty: 'base_word_reading'
+                        searchObjectProperty: 'lemma_reading'
                     },
                     reading: {
                         export: this.fields.reading,

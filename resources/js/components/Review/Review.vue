@@ -182,7 +182,7 @@
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                                 <!-- Example sentence mode -->
                                 <div :style="{'font-size': (settings.fontSize) + 'px'}" class="selected-font">
-                                    <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                    <template v-if="reviews[currentReviewIndex].lemma !== ''">{{ reviews[currentReviewIndex].lemma }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                     {{ reviews[currentReviewIndex].word }}<hr>
 
                                     <!-- Example sentence interactive text mode -->
@@ -219,7 +219,7 @@
 
                                 <!-- Single word  mode -->
                                 <div class="single-word selected-font" v-if="!settings.reviewSentenceMode" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                    <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                    <template v-if="reviews[currentReviewIndex].lemma !== ''">{{ reviews[currentReviewIndex].lemma }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                     {{ reviews[currentReviewIndex].word }}
                                 </div>
                             </template>
@@ -279,7 +279,7 @@
                             <template v-if="reviews[currentReviewIndex] !== undefined && reviews[currentReviewIndex].type == 'word'">
                                 <!-- Single word  mode -->
                                 <div class="word selected-font" :style="{'font-size': (settings.fontSize) + 'px'}">
-                                    <template v-if="reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                    <template v-if="reviews[currentReviewIndex].lemma !== ''">{{ reviews[currentReviewIndex].lemma }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                     {{ reviews[currentReviewIndex].word }}
                                 </div>
                             </template>
@@ -299,7 +299,7 @@
                             <!-- Reading -->
                             <div class="reading selected-font" v-if="reviews[currentReviewIndex] !== undefined && (language == 'japanese' || language == 'chinese')" :style="{'font-size': (settings.fontSize) + 'px'}">
                                 <hr>
-                                <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].base_word !== ''">{{ reviews[currentReviewIndex].base_word_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
+                                <template v-if="reviews[currentReviewIndex].type == 'word' && reviews[currentReviewIndex].lemma !== ''">{{ reviews[currentReviewIndex].lemma_reading }} <v-icon>mdi-arrow-right-thick</v-icon> </template>
                                 {{ reviews[currentReviewIndex].reading }}
                             </div>
 

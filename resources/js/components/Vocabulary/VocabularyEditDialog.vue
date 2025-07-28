@@ -82,7 +82,7 @@
                 <!-- Lemma -->
                 <div class="vocabulary-edit-side" v-if="$props.itemType == 'Word'">
                     <v-text-field 
-                        v-model="item.base_word"
+                        v-model="item.lemma"
                         class="default-font"
                         filled
                         dense
@@ -93,7 +93,7 @@
 
                     <v-text-field 
                         v-if="['chinese', 'japanese'].includes($props.language)"
-                        v-model="item.base_word_reading"
+                        v-model="item.lemma_reading"
                         class="default-font"
                         filled
                         dense
@@ -261,8 +261,8 @@
                     id: this.item.id,
                     translation: this.item.translation,
                     reading: this.item.reading,
-                    base_word: this.item.base_word,
-                    base_word_reading: this.item.base_word_reading,
+                    lemma: this.item.lemma,
+                    lemma_reading: this.item.lemma_reading,
                     stage: this.item.stage,
                 };
 

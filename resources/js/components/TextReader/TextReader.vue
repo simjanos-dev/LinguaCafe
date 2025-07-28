@@ -429,8 +429,8 @@
                             word: phrases[i].words.join(''),
                             stage: phrases[i].stage,
                             reading: phrases[i].reading,
-                            base_word: '',
-                            base_word_reading: '',
+                            lemma: '',
+                            lemma_reading: '',
                             translation: phrases[i].translation,
                         });
                     }
@@ -443,8 +443,8 @@
                             word: uniqueWords[i].word,
                             stage: uniqueWords[i].stage,
                             reading: uniqueWords[i].reading,
-                            base_word: uniqueWords[i].base_word,
-                            base_word_reading: uniqueWords[i].base_word_reading,
+                            lemma: uniqueWords[i].lemma,
+                            lemma_reading: uniqueWords[i].lemma_reading,
                             translation: uniqueWords[i].translation,
                         });
                     }

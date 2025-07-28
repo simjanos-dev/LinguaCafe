@@ -665,7 +665,7 @@
 
                     // update lookup counts
                     if (this.selection.length == 1) {
-                        var inflectionSearchTerm = this.uniqueWords[uniqueWordIndex].base_word.length ? this.uniqueWords[uniqueWordIndex].base_word : this.uniqueWords[uniqueWordIndex].word;
+                        var inflectionSearchTerm = this.uniqueWords[uniqueWordIndex].lemma.length ? this.uniqueWords[uniqueWordIndex].lemma : this.uniqueWords[uniqueWordIndex].word;
                         this.requestInflections(inflectionSearchTerm);
                         this.updateWordLookupCount(this.selection[0].word);
                     } else if (this.selectedPhrase !== -1) {
@@ -813,7 +813,7 @@
                     data.translation = uniqueWord.translation;
                     data.reading = uniqueWord.reading;
                     data.stage = uniqueWord.stage < 0 ? uniqueWord.stage : null;
-                    data.hoveredWords[0].lemma = uniqueWord.base_word;
+                    data.hoveredWords[0].lemma = uniqueWord.lemma;
                     data.image = uniqueWord.image;
                 }
 
@@ -1252,12 +1252,12 @@
                     this.$store.commit('vocabularyBox/setImage', uniqueWord.image);
                     this.$store.commit('vocabularyBox/setWord', uniqueWord.word);
                     this.$store.commit('vocabularyBox/setReading', uniqueWord.reading);
-                    this.$store.commit('vocabularyBox/setBaseWord', uniqueWord.base_word);
-                    this.$store.commit('vocabularyBox/setBaseWordReading', uniqueWord.base_word_reading);
+                    this.$store.commit('vocabularyBox/setBaseWord', uniqueWord.lemma);
+                    this.$store.commit('vocabularyBox/setBaseWordReading', uniqueWord.lemma_reading);
                     this.$store.commit('vocabularyBox/setTranslationText', uniqueWord.translation);
                     this.$store.commit('vocabularyBox/setStage', uniqueWord.stage);
-                    if (uniqueWord.base_word !== '') {
-                        this.$store.commit('vocabularyBox/setSearchField', this.trimSearchTerm(uniqueWord.base_word));
+                    if (uniqueWord.lemma !== '') {
+                        this.$store.commit('vocabularyBox/setSearchField', this.trimSearchTerm(uniqueWord.lemma));
                     } else {
                         this.$store.commit('vocabularyBox/setSearchField', uniqueWord.word);
                     }
@@ -1728,8 +1728,8 @@
                     if (this.uniqueWords[i].word.toLowerCase() == selectedWord.word.toLowerCase()) {
                         this.uniqueWords[i].translation = this.$store.state.vocabularyBox.translationText;
                         this.uniqueWords[i].reading = this.$store.state.vocabularyBox.reading;
-                        this.uniqueWords[i].base_word = this.$store.state.vocabularyBox.baseWord;
-                        this.uniqueWords[i].base_word_reading = this.$store.state.vocabularyBox.baseWordReading;
+                        this.uniqueWords[i].lemma = this.$store.state.vocabularyBox.baseWord;
+                        this.uniqueWords[i].lemma_reading = this.$store.state.vocabularyBox.baseWordReading;
                         this.uniqueWords[i].stage = selectedWord.stage;
                     }
                 }
@@ -1746,8 +1746,8 @@
                     id: selectedWord.id,
                     translation: this.$store.state.vocabularyBox.translationText,
                     reading: this.$store.state.vocabularyBox.reading,
-                    base_word: this.$store.state.vocabularyBox.baseWord,
-                    base_word_reading: this.$store.state.vocabularyBox.baseWordReading,
+                    lemma: this.$store.state.vocabularyBox.baseWord,
+                    lemma_reading: this.$store.state.vocabularyBox.baseWordReading,
                     lookup_count: selectedWord.lookup_count,
                 };
 

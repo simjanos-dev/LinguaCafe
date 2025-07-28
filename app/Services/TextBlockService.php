@@ -330,10 +330,10 @@ class TextBlockService
                 $encounteredWord['language'] = $this->language;
                 $encounteredWord['word'] = mb_strtolower($this->processedWords[$wordIndex]->word, 'UTF-8');
                 $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
-                $encounteredWord['base_word'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
+                $encounteredWord['lemma'] = mb_strtolower($this->processedWords[$wordIndex]->lemma);
                 $encounteredWord['reading'] = $this->processedWords[$wordIndex]->reading;
                 $encounteredWord['kanji'] = $this->language == 'japanese' || $this->language == 'chinese' ? implode('', $kanji) : '';
-                $encounteredWord['base_word_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
+                $encounteredWord['lemma_reading'] = $this->processedWords[$wordIndex]->lemma_reading;
                 $encounteredWord['stage'] = 2;
                 $encounteredWord['translation'] = '';
                 $encounteredWord['created_at'] =  Carbon::now();
@@ -342,16 +342,16 @@ class TextBlockService
                 
                 if (in_array($this->processedWords[$wordIndex]->word, $wordsToSkip, true) || is_numeric($this->processedWords[$wordIndex]->word)) {
                     $encounteredWord['stage'] = 1;
-                    $encounteredWord['base_word'] = '';
+                    $encounteredWord['lemma'] = '';
                     $encounteredWord['lemma'] = '';
                     $encounteredWord['reading'] = '';
-                    $encounteredWord['base_word_reading'] = '';
+                    $encounteredWord['lemma_reading'] = '';
                 }
 
-                if ($encounteredWord['base_word'] == $encounteredWord['word']) {
-                    $encounteredWord['base_word'] = '';
+                if ($encounteredWord['lemma'] == $encounteredWord['word']) {
                     $encounteredWord['lemma'] = '';
-                    $encounteredWord['base_word_reading'] = '';
+                    $encounteredWord['lemma'] = '';
+                    $encounteredWord['lemma_reading'] = '';
                 }
 
                 $encounteredWordsToInsert[] = $encounteredWord;

@@ -60,12 +60,12 @@ class VocabularyController extends Controller {
             $wordData['reading'] = $request->reading === NULL ? '' : $request->reading;
         }
 
-        if ($request->has('base_word')) {
-            $wordData['base_word'] = $request->base_word === NULL ? '' : $request->base_word;
+        if ($request->has('lemma')) {
+            $wordData['lemma'] = $request->lemma === NULL ? '' : $request->lemma;
         }
 
-        if ($request->has('base_word_reading')) {
-            $wordData['base_word_reading'] = $request->base_word_reading === NULL ? '' : $request->base_word_reading;
+        if ($request->has('lemma_reading')) {
+            $wordData['lemma_reading'] = $request->lemma_reading === NULL ? '' : $request->lemma_reading;
         }
 
         if (isset($request->lookup_count)) {

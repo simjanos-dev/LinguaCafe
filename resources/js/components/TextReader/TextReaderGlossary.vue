@@ -22,11 +22,11 @@
                             </div>
                             
                             <!-- Glossary entry word-->
-                            <div class="word default-font" v-if="word.base_word == ''">
+                            <div class="word default-font" v-if="word.lemma == ''">
                                 {{ word.word }} <template v-if="word.reading.length">({{ word.reading }})</template>
                             </div>
-                            <div class="word default-font" v-if="word.base_word !== ''">
-                                {{ word.base_word }} <template v-if="word.base_word_reading.length">({{ word.base_word_reading }})</template>
+                            <div class="word default-font" v-if="word.lemma !== ''">
+                                {{ word.lemma }} <template v-if="word.lemma_reading.length">({{ word.lemma_reading }})</template>
                                 <i class="fas fa-long-arrow-alt-right mx-2"></i> 
                                 {{ word.word }} <template v-if="word.reading.length">({{ word.reading }})</template>
                             </div>
