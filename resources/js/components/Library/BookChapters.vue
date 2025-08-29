@@ -250,31 +250,50 @@
         },
         mounted() {
             this.loadChapters();
-
-            // retrieve word counts
-            this.$store.getters['shared/echo'].private('chapter-status-update.' + this.$store.getters['shared/userUuid']).listen('ChapterStateUpdatedEvent', (message) => {
-                this.chapterStatusUpdate(JSON.parse(message.chapters));
-            });
         },
         beforeDestroy() {
-            this.$store.getters['shared/echo'].private('chapter-status-update.' + this.$store.getters['shared/userUuid']).stopListening('ChapterStateUpdatedEvent');
+            if (this.wordCountPollingInterval) {
+                clearInterval(this.wordCountPollingInterval);
+            }
         },
         methods: {
-            chapterStatusUpdate(chapters) {
-                this.chapters.forEach((currentChapter) => {
-                    if (!chapters[currentChapter.id]) {
-                        return;
-                    }
-
-                    if ('wordCount' in chapters[currentChapter.id] && chapters[currentChapter.id].wordCount !== null) {
-                        currentChapter.wordCount = chapters[currentChapter.id].wordCount
-                        currentChapter.wordCountsLoaded = true;
-                    }
-
-                    if ('processing_status' in chapters[currentChapter.id]) {
-                        currentChapter.processing_status = chapters[currentChapter.id].processing_status;
-                    }
-                });
+            // Function that periodically checks if word counts are available for chapters
+            startWordCountPolling() {
+                // Poll every 2 seconds
+                this.wordCountPollingInterval = setInterval(() => {
+                    // Reqest for the word counts
+                    axios.get('/chapters/word-counts/' + this.$props.bookId)
+                        .then((response) => {
+                            // Update chapters with new word counts
+                            // - Extract chapters from response
+                            const chapters = response.data || {};
+                            
+                            // - fill in the values
+                            this.chapters.forEach((currentChapter) => {
+                                // - If empty return
+                                if (!chapters[currentChapter.id]) {
+                                    return;
+                                }
+                                // - Fill in the numbers
+                                if ('wordCount' in chapters[currentChapter.id] && chapters[currentChapter.id].wordCount !== null) {
+                                    currentChapter.wordCount = chapters[currentChapter.id].wordCount;
+                                    currentChapter.wordCountsLoaded = true;
+                                }
+                                // - Fill in the processing status
+                                if ('processing_status' in chapters[currentChapter.id]) {
+                                    currentChapter.processing_status = chapters[currentChapter.id].processing_status;
+                                }
+                            });
+                            // Stop polling if all chapters are loaded
+                            if (this.chapters.every(ch => ch.wordCountsLoaded || ch.processing_status !== 'processed')) {
+                                clearInterval(this.wordCountPollingInterval);
+                                this.wordCountPollingInterval = null;
+                            }
+                        });
+                }, 
+                // time interval
+                2000
+            );
             },
             chapterSaved() {
                 this.$emit('word-count-changed');
@@ -320,9 +339,11 @@
                     }
 
                     this.chaptersLoading = false;
+
+                    // Load chapter word counts
                     this.$nextTick(() => {
-                        axios.get('/chapters/word-counts/' + this.$props.bookId);
-                    }) 
+                        this.startWordCountPolling();
+                    });
                 }));
             },
             showStartReviewDialog(bookId, bookName, chapterId, chapterName) {

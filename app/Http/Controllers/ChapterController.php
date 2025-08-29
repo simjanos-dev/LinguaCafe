@@ -36,13 +36,13 @@ class ChapterController extends Controller {
         return new ChapterResourceCollection($chapters);
     }
 
-    public function getChaptersBookCount(Book $book)
+    public function getChaptersWordsCount(Book $book)
     {
         $user = Auth::user();
         
-        $this->chapterService->getChaptersBookCount($user, $book);
+        $chapters = $this->chapterService->getChaptersWordsCount($user, $book);
 
-        return response()->noContent();
+        return response()->json($chapters, 200);
     }
 
     public function getChapter(Chapter $chapter) {

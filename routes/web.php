@@ -199,7 +199,7 @@ Route::group(['middleware' => ['auth', 'auth.session', 'web']], function () {
     Route::get('/books/{book}', [App\Http\Controllers\BookController::class, 'getBook']);
 
     // chapters
-    Route::get ('/chapters/word-counts/{book}', [App\Http\Controllers\ChapterController::class, 'getChaptersBookCount']);
+    Route::get ('/chapters/word-counts/{book}', [App\Http\Controllers\ChapterController::class, 'getChaptersWordsCount']);
     Route::post('/chapters/get/reader/{chapter}', [App\Http\Controllers\ChapterController::class, 'getChapterForReader']);
     Route::post('/chapters/get/editor/{chapter}', [App\Http\Controllers\ChapterController::class, 'getChapter']);
     Route::delete('/chapters/delete/{chapter}', [App\Http\Controllers\ChapterController::class, 'deleteChapter']);

@@ -55,7 +55,8 @@ class ChapterService {
         return $chapters;
     }
 
-    public function getChaptersBookCount(User $user, Book $book): void
+    // Function that returns the different word counts for all chapters in an array
+    public function getChaptersWordsCount(User $user, Book $book): array
     {
         if ($book->user_id !== $user->id) {
             throw new Exception('Book not found or unauthorized.');
@@ -75,20 +76,17 @@ class ChapterService {
             ->keyBy('id')
             ->toArray();
 
+
         $chaptersWithWordCounts = [];
-        $chapterCount = $chapters->count();
-        $chapters->each(function(Chapter $chapter, $chapterIndex) use(&$chaptersWithWordCounts, $words, $user, $chapterCount) {
-            $currentChapterWordCounts = new \stdClass();
-            $currentChapterWordCounts->wordCount = $chapter->getWordCounts($words);
+        foreach ($chapters as $chapter) {
+            $chapterData = [
+                'wordCount' => $chapter->getWordCounts($words),
+                'processing_status' => $chapter->processing_status,
+            ];
+            $chaptersWithWordCounts[$chapter->id] = $chapterData;
+        }
 
-            $chaptersWithWordCounts[$chapter->id] = $currentChapterWordCounts;
-
-            // push data on websockets in 5 item chunks
-            if ($chapterIndex % 5 === 0 || $chapterIndex === $chapterCount - 1) {
-                event(new \App\Events\ChapterStateUpdatedEvent($user->uuid, $chaptersWithWordCounts));
-                $chaptersWithWordCounts = [];
-            }
-        });
+        return $chaptersWithWordCounts;
     }
     
     public function getChapterForEditor(User $user, Chapter $chapter): Chapter 
