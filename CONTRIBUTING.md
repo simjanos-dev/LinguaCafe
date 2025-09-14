@@ -145,13 +145,13 @@ cd linguacafe-dev
 Linux and regular MacOs:
 
 ```sh
-chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d --force-recreate
+docker compose -f ./docker-compose-dev.yml up -d --force-recreate
 ```
 
 MacOs with Apple silicon processors:
 
 ```sh
-chmod -R 777 ./ && docker compose -f ./docker-compose-dev-macos.yml up -d --force-recreate
+docker compose -f ./docker-compose-dev-macos.yml up -d --force-recreate
 ```
 
 Windows:
