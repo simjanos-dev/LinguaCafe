@@ -172,6 +172,36 @@ You can now reach your dev server on localhost:3000, it will auto reload when yo
 
 The developer environment does not copy the contents of the linguacafe folder into the docker image, instead it mounts the whole folder, so it is accessible for both the docker container and the developer.
 
+### Dev Containers
+
+It's not necessary, but if you're developing with VSCode, you might want to setup [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers).
+1. Install the offical [Dev Containers VSCode Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+2. There is an example devcontainer configuration file for both the `webserver` and `python` containers. Copy the example files and change the settings per your preference.
+    - Webserver: Copy the `.devcontainer/webserver/devcontainer.json.example` to `.devcontainer/webserver/devcontainer.json`
+    - Python: Copy the `.devcontainer/python/devcontainer.json.example` to `.devcontainer/python/devcontainer.json`
+3. You may need to restart VSCode at this point, but you should now have several Dev Container commands available in the command pallette.
+
+    <img width="597" height="239" alt="image" src="https://github.com/user-attachments/assets/0a55d6dc-b182-49bc-807e-1d2b37839d24" />
+5. If you've already spun up your environment with `docker compose` then you can attach to an existing container with the "Attach to Running Container" command.
+
+    <img width="599" height="173" alt="image" src="https://github.com/user-attachments/assets/b079be94-8a87-46ec-a705-09c7c58a8b6c" />
+7. Alternatively, once you've created a Dev Container for the first time, you should be able to run the "Reopen in container" command whenever you've opened the `linguacafe` directory in VSCode.
+    
+    - This will display a list of containers to reopen.
+        <img width="588" height="138" alt="image" src="https://github.com/user-attachments/assets/f598cf55-3e07-4ad8-a623-45cdd43b695e" />
+    - For example, both the python service and the Laravel web server.
+        <img width="587" height="82" alt="image" src="https://github.com/user-attachments/assets/8652f453-9178-4370-9c1f-7ee589905b54" />
+8. If you run into issues after you're up and running, try running the "Rebuild Container" and/or "Reload window". You may also sometimes need to rebuild the container without the cache using the "Rebuild Container Without Cache" command, but that should be a last resort since it will take quite a while to do a full rebuild and install all the spacy models. Rebuilding without cache should only be necessary after some major changes to the Docker files.
+
+### Debugging
+LC has 3 major components, the Vue frontend, the Laravel backend, and the Python Bottle microservice. Each requires their own configuration for debugging. As of now debugging is only configured for Laravel and python while using the Dev Containers mentioned above.
+
+#### Python
+If you're using the Dev Container configuration in VSCode, then Python debugging should work seamlessly via VSCode as long as you have the [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) installed which is included in the default python `devcontainer.json` config. 
+
+#### Laravel
+The Laravel backend can be be debugged via XDebug. See `socker/xdebug.ini`. Currently it is only configured to function within the Dev Container. It should work seamlessly via VSCode as long as the [PHP Debug Extension](https://marketplace.visualstudio.com/items?itemName=xdebug.php-debug) is installed which is included in the default webserver `devcontainer.json` config.
+
 ### Laravel Horizon
 
 Laravel Horizon is the process that runs Laravel jobs. For code changes to take effect in jobs, you will have to restart Horizon. Supervisor makes sure that the Horizon process is always running, so you can restart it with this command:
