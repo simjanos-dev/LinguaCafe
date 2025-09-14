@@ -1,12 +1,12 @@
-## Contributing
+# Contributing
 
 LinguaCafe used to be my personal project, but it got much more popular than I expected after I published it, and several people contributed to it since. I've created this guideline for anyone who wants to contribute. This is my first open-source project, and I have no experience with working on open-source software, so please feel free to give any feedback on it.
 
-#### Bug reports and small improvements
+## Bug reports and small improvements
 
 I appreciate any bug report, it is important to identify problems with LinguaCafe, so it can be improved. Please feel free to create a GitHub issue for any bug, this includes small problems on the UI as well.
 
-#### Feature requests
+## Feature requests
 
 In general I'm happy to add most feature requests to the list, but I would also like to keep the scope of LinguaCafe similar to when it's started. Currently I would like to avoid adding a few things:
 
@@ -22,39 +22,42 @@ I've created a **no pull requests** tag for GitHub issues that I would like to w
 
 If you made a bug fix, or a changed something small that is objectively an improvement like typos or small fixes, feel free to create a PR. If you would like to work on a larger part of the software, please comment on, or create an issue before so it can be discussed.
 
-#### Tests
+## Tests
 
 Tests are meant to be run with this command:
 
+```sh
 ./tests/run_tests.sh --with-language-installs
+```
 
 Running the tests will delete everything from the database and uninstall every installable package. After the tests are finished, the test data will remain in the database and can be used for manual testing. The database will contain one user, with "password" set as password.
 
 Running the command without the `--with-language-installs` argument will skip uninstalling and installing language packages. If the language installs are skipped, the following tests will only test the installed languages.
 
-#### Styling/formatting/linting
 
+## Styling/formatting/linting
+Linguacafe uses several linters to maintain consistent code formatting. At the time of this writing, linting is not applied automatically and should be applied manually before making a PR.
 
-#### **PHP**
-For PHP LC uses Pint as a linter. You can run it with ./vendor/bin/pint command, or use the Laravel Pint vscode plugin to autoformat on save. Please also break lines that seem too long, start eloquent queries with ::query(), and put chained commands in new lines.
+### **PHP**
+For PHP LC uses Pint as a linter. You can run it with `./vendor/bin/pint` command, or use the Laravel Pint vscode plugin to autoformat on save. Please also break lines that seem too long, start eloquent queries with `::query()`, and put chained commands in new lines.
 
+```php
+$nextChapter = Chapter::query()
+    ->where('book_id', '=', $currentChapter->book_id)
+    ->where('id', '>', $currentChapter->id)
+    ->orderBy('id', 'asc')
+    ->first();
 ```
-    $nextChapter = Chapter::query()
-        ->where('book_id', '=', $currentChapter->book_id)
-        ->where('id', '>', $currentChapter->id)
-        ->orderBy('id', 'asc')
-        ->first();
-```
 
-#### **HTML, JS and Vue**
+### **HTML, JS and Vue**
 Prettier. 
 
-#### **Python**
+### **Python**
 Ruff
 
-#### **My VSCode config**
+### **My VSCode config**
 
-```
+```json
 "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false
@@ -73,19 +76,19 @@ Ruff
 },
 ```
 
-#### Adding a new language
+## Adding a new language
 
 The code must be modified at several points to add new languages, I would recommend just making a feature request for it. There is an ongoing issue (#3) for adding languages. If you would like to try to add a language yourself, you can take a look at the latest commit that added support for new languages.
 
-#### Documentation for devs
+## Documentation for devs
 
 I'm planning on adding some basic dev documentation for the code, but I am busy with a lot of things, so it will take a long time.
 
-#### Codebase
+## Codebase
 
 LinguaCafe is written with Laravel, Vue and Vuetify. My code is not great, I have an ongoing issue (#103) for improving and refactoring the back-end code to make it more readable and up to standards. Front-end is stuck on Vue 2 currently. I will rewrite it with the latest Vue in the future, but it will take a lot of time. Until that I will be working on separating complex logic into a separate service class files, and possibly breaking large components down into smaller ones.
 
-#### Starting point and basic structure
+### Starting point and basic structure
 
 **Servers**
 LinguaCafe has two servers:
@@ -99,7 +102,17 @@ Vue is broken down into separate files for different pages and dialogs. Pages ar
 **Back-end**
 Back-end follows the standard Laravel structure. You can take a look at the url routes: `linguacafe/routes/web.php` or controllers: `linguacafe/app/Http/Controllers` to find a starting point.
 
-#### User manual
+### Branches
+
+-   main: Only gets updates when a new version is released. Do not open PR into this branch, except if it's an important bugfix that must be released before the next version.
+-   dev: The branch I use for development. Please open every PR into this branch (except ones that must go into deploy branch, or to the main as a hotfix).
+-   deploy: A branch that contains the docker-compose.yml file, a mostly empty default folder structure and some default files.
+-   feature/feature-name: these will be merged into dev.
+
+If there are other branches, they are not used anymore. Dev branch will be merged into main when a new version update is ready.
+
+
+## User manual
 
 We have a work in progress user manual. It is written with Markdown, and it is accessible on the GitHub wiki online, as well as inside the software with the help of `vue-showdown` library.
 
@@ -115,22 +128,13 @@ If you would like to create a sub-page inside one of the pages, you can add one 
 **User manual menu naming rules**:
 Can only contain lower and uppercase letters, numbers, `,`, `.`, `?` characters and spaces. Don't use the same name for two different pages or sub-pages. If these naming rules are not followed, the sub page scrolling will not work inside LinguaCafe. If you would like more characters to be added, please open a GitHub issue.
 
-#### Branches
-
--   main: Only gets updates when a new version is released. Do not open PR into this branch, except if it's an important bugfix that must be released before the next version.
--   dev: The branch I use for development. Please open every PR into this branch (except ones that must go into deploy branch, or to the main as a hotfix).
--   deploy: A branch that contains the docker-compose.yml file, a mostly empty default folder structure and some default files.
--   feature/feature-name: these will be merged into dev.
-
-If there are other branches, they are not used anymore. Dev branch will be merged into main when a new version update is ready.
-
-#### Developer environment
+## Developer environment
 
 Follow these steps to setup your developer environment.
 
 **Step 1:** Run these commands to clone LinguaCafe into a dev folder:
 
-```
+```sh
 git clone -b dev https://github.com/simjanos-dev/LinguaCafe.git linguacafe-dev
 
 cd linguacafe-dev
@@ -140,19 +144,19 @@ cd linguacafe-dev
 
 Linux and regular MacOs:
 
-```
+```sh
 chmod -R 777 ./ && docker compose -f ./docker-compose-dev.yml up -d --force-recreate
 ```
 
 MacOs with Apple silicon processors:
 
-```
+```sh
 chmod -R 777 ./ && docker compose -f ./docker-compose-dev-macos.yml up -d --force-recreate
 ```
 
 Windows:
 
-```
+```sh
 docker compose -f ./docker-compose-dev.yml up -d --force-recreate
 ```
 
@@ -168,34 +172,34 @@ You can now reach your dev server on localhost:3000, it will auto reload when yo
 
 The developer environment does not copy the contents of the linguacafe folder into the docker image, instead it mounts the whole folder, so it is accessible for both the docker container and the developer.
 
-#### Laravel Horizon
+### Laravel Horizon
 
 Laravel Horizon is the process that runs Laravel jobs. For code changes to take effect in jobs, you will have to restart Horizon. Supervisor makes sure that the Horizon process is always running, so you can restart it with this command:
 
-```
+```sh
 docker exec -ti linguacafe-webserver-dev php artisan horizon:terminate
 ```
 
-#### Developer environment update
+### Updating the development environment
 
 If there is a change in docker-compose yml file, or in one of the dockerfiles, you can use these commands to update your docker image in your developer environment.
 
 Windows, Linux and regular MacOs:
 
-```
+```sh
 docker compose -f ./docker-compose-dev.yml build --no-cache
 ```
 
 MacOs with Apple silicon processors
 
-```
+```sh
 docker compose -f ./docker-compose-dev-macos.yml build --no-cache
 ```
 
-#### Testing http requests
+## Testing http requests
 
 I've made a simple tool to test http requests from the context of the logged in user. You can reach it at the `/dev` url.
 
-#### Thank you!
+## Thank you!
 
 Thank you for everyone who contributes to LinguaCafe in any way. I really appreciate it!
