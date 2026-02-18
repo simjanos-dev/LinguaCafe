@@ -11,7 +11,6 @@ use App\Helpers\Language\LanguageConfig;
 use App\Models\Book;
 use App\Models\Chapter;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -179,7 +178,7 @@ class ImportService
 
             // Save cover image if available
             if ($coverImageBase64) {
-                $this->saveCoverImage($book, $coverImageBase64);
+                $this->saveCoverImage($book, $coverImageBase64, $bookName);
             }
         }
 
@@ -204,7 +203,7 @@ class ImportService
         }
     }
 
-    private function saveCoverImage(Book $book, string $coverImageBase64): void
+    private function saveCoverImage(Book $book, string $coverImageBase64, string $bookName): void
     {
         try {
             // Decode base64 image
@@ -227,9 +226,16 @@ class ImportService
                 default => 'jpg', // Default to jpg if unknown
             };
 
-            // Generate filename
-            $timestamp = implode('_', explode(' ', Carbon::now()->toDateTimeString()));
-            $fileName = $book->id . '_' . $timestamp . '.' . $extension;
+            // Sanitize book name for filesystem
+            $sanitizedName = preg_replace('/[^A-Za-z0-9-\. ]/', '', $bookName); // Remove all non-alphanumeric except .- and space
+            $sanitizedName = preg_replace('/\.+/', '', $sanitizedName); // Remove all but last .
+            $sanitizedName = preg_replace('/-+/', '-', $sanitizedName); // Replace any more than one - in a row
+            $sanitizedName = preg_replace('/\s+/', ' ', $sanitizedName); // Replace any more than one space in a row
+            $sanitizedName = trim($sanitizedName, '- '); // Remove leading and trailing - and spaces
+            $sanitizedName = strtolower($sanitizedName); // Lowercase
+            
+            // Generate filename: {bookId}_{sanitizedBookName}.{extension}
+            $fileName = $book->id . '_' . $sanitizedName . '.' . $extension;
             
             // Save image to storage
             Storage::put('/images/book_images/' . $fileName, $imageData);
