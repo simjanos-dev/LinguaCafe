@@ -11,9 +11,11 @@ use App\Helpers\Language\LanguageConfig;
 use App\Models\Book;
 use App\Models\Chapter;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class ImportService
 {
@@ -62,9 +64,19 @@ class ImportService
             );
 
             $text = Http::post($requestUrl, $requestPayload);
-            $chunks = json_decode($text);
+            $response = json_decode($text);
 
-            $this->importChapters($chunks, $user, $language, $bookName, $book, $chapterName, $importSubtitles !== null);
+            // Grab cover if EPUB
+            $coverImageBase64 = null;
+            if ($importType === ImportTypeEnum::E_BOOK && is_object($response) && property_exists($response, 'chunks')) {
+                $chunks = $response->chunks;
+                $coverImageBase64 = $response->coverImage ?? null;
+            } else {
+                // Handle other import formats
+                $chunks = $response;
+            }
+
+            $this->importChapters($chunks, $user, $language, $bookName, $book, $chapterName, $importSubtitles !== null, $coverImageBase64);
         } catch (\Exception $e) {
             if ($importFile) {
                 $this->tempFileService->deleteTempFile($fileName);
@@ -154,7 +166,8 @@ class ImportService
         ?string $bookName,
         ?Book $book,
         $chapterName,
-        $isSubtitle = false
+        $isSubtitle = false,
+        ?string $coverImageBase64 = null
     ): void {
         if (!$book) {
             $book = new Book;
@@ -163,6 +176,11 @@ class ImportService
             $book->language = $language->name;
             $book->name = $bookName;
             $book->save();
+
+            // Save cover image if available
+            if ($coverImageBase64) {
+                $this->saveCoverImage($book, $coverImageBase64);
+            }
         }
 
         foreach ($chunks as $chunkIndex => $chunk) {
@@ -183,6 +201,45 @@ class ImportService
             $chapter->save();
 
             \App\Jobs\ProcessChapter::dispatch($user->id, $user->uuid, $chapter->id, $language->name);
+        }
+    }
+
+    private function saveCoverImage(Book $book, string $coverImageBase64): void
+    {
+        try {
+            // Decode base64 image
+            $imageData = base64_decode($coverImageBase64);
+            
+            if ($imageData === false) {
+                return; // Invalid base64 data, skip saving
+            }
+
+            // Detect image format
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->buffer($imageData);
+            
+            // Set file format
+            $extension = match($mimeType) {
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/gif' => 'gif',
+                'image/webp' => 'webp',
+                default => 'jpg', // Default to jpg if unknown
+            };
+
+            // Generate filename using timestamp (matches existing pattern)
+            $timestamp = Carbon::now()->format('YmdHis');
+            $fileName = $book->id . '_' . $timestamp . '.' . $extension;
+            
+            // Save image to storage
+            Storage::put('/images/book_images/' . $fileName, $imageData);
+            
+            // Update book record
+            $book->cover_image = $fileName;
+            $book->save();
+        } catch (\Exception $e) {
+            // Log and skip on exception
+            \Log::warning("Failed to save cover image for book {$book->id}: " . $e->getMessage());
         }
     }
 }

@@ -4,6 +4,7 @@ from lxml.html import html5parser
 from ebooklib import epub
 import ebooklib
 import re
+import base64
 from enum import Enum, auto
 
 from . import TokenizerConfig
@@ -38,8 +39,13 @@ class EbookService:
             chunks[-1] = chunks[-1].replace(' NEWLINE ', '\r\n')
             chunks[-1] = chunks[-1].replace('\xa0', ' ')
 
+        # Extract cover image
+        coverImage = self.extractCoverImage(importFile)
 
-        return chunks
+        return {
+            'chunks': chunks,
+            'coverImage': coverImage
+        }
 
     def processPage(self, page: str, textProcessingMethod: TextProcessingMethod) -> str:
         content = ''
@@ -112,3 +118,48 @@ class EbookService:
                 content += self.processPage(epubPage, textProcessingMethod)
 
         return content
+
+    def extractCoverImage(self, file):
+        """
+        Extract cover image from epub file and return as base64 string
+        Uses ebooklib's built-in cover handling
+        """
+        try:
+            book = epub.read_epub(file)
+            
+            # Try to get cover image using ebooklib's metadata
+            cover_image_data = None
+            
+            # Attempt to find cover image using metadata
+            cover_metadata = book.get_metadata('OPF', 'cover')
+            if cover_metadata:
+                cover_id = cover_metadata[0][1].get('content')
+                if cover_id:
+                    cover_item = book.get_item_with_id(cover_id)
+                    if cover_item:
+                        cover_image_data = cover_item.get_content()
+            
+            # Attempt to find cover image by looking for items of type ITEM_COVER
+            if not cover_image_data:
+                for item in book.get_items_of_type(ebooklib.ITEM_COVER):
+                    cover_image_data = item.get_content()
+                    break
+            
+            # Attempt to find cover images by type ITEM_IMAGE with 'cover' in the name
+            if not cover_image_data:
+                for item in book.get_items_of_type(ebooklib.ITEM_IMAGE):
+                    item_name = item.get_name().lower()
+                    if 'cover' in item_name:
+                        cover_image_data = item.get_content()
+                        break
+            
+            # Encode to base64 if found
+            if cover_image_data:
+                return base64.b64encode(cover_image_data).decode('utf-8')
+            
+            return None
+            
+        except Exception as e:
+            # If any error occurs log and return
+            print(f"Error extracting cover image: {str(e)}")
+            return None
