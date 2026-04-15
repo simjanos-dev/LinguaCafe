@@ -85,7 +85,7 @@ class UserController extends Controller
         $selectedLanguage = Auth::user()->selected_language;
         $userName = Auth::user()->name;
         $userEmail = Auth::user()->email;
-        $isAdmin = Auth::user()->is_admin === 1;
+        $isAdmin = (bool) Auth::user()->is_admin;
         $theme = $_COOKIE['theme'] ?? 'dark';
         $user = User::query()
             ->select([
