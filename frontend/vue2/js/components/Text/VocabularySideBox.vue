@@ -293,7 +293,25 @@
                     :value="searchField"
                     @change="searchFieldChanged"
                     @keydown.stop=""
-                ></v-text-field>
+                >
+                    <template v-slot:append v-if="word && lemma && word !== lemma">
+                        <v-menu offset-y left v-model="formMenuOpen" :close-on-click="false">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn icon x-small v-bind="attrs" v-on="on" title="Select word form" @mouseup.stop="">
+                                    <v-icon small>mdi-chevron-down</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list dense>
+                                <v-list-item @click.stop="selectForm(lemma, 'lemma')" @mouseup.stop="">
+                                    <v-list-item-title>{{ lemma }} <span class="grey--text text-caption">(lemma)</span></v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click.stop="selectForm(word, 'exact')" @mouseup.stop="">
+                                    <v-list-item-title>{{ word }} <span class="grey--text text-caption">(exact)</span></v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </template>
+                </v-text-field>
 
                 <!-- Search box -->
                 <vocabulary-search-box
@@ -421,6 +439,7 @@ export default {
             // ui data
             tab: 0,
             searchField: '',
+            formMenuOpen: false,
             searchResults: [],
         }
     },
@@ -440,6 +459,9 @@ export default {
             this.lemmaReading = this._lemmaReading
             this.phraseReading = this._phraseReading
             this.searchField = this._searchField
+            if (localStorage.getItem('linguacafe_search_form_preference') === 'exact' && this.word && this.word !== this._searchField) {
+                this.searchField = this.word
+            }
             this.exampleSentenceText = this._exampleSentenceText
 
             // generate phrase text
@@ -461,6 +483,12 @@ export default {
         },
         textToSpeech() {
             this.$emit('textToSpeech')
+        },
+        selectForm(value, type) {
+            localStorage.setItem('linguacafe_search_form_preference', type)
+            this.formMenuOpen = false
+            this.searchField = value
+            this.searchFieldChanged(value)
         },
         searchFieldChanged(event) {
             if (event === '') {
