@@ -4,7 +4,7 @@ export default {
         foreground: '#FFFFFF',
         navigation: '#FFFFFF',
         primary: '#AB8875',
-        
+
         gray: '#E9EAEC',
         gray2: '#E4E4E4',
         gray3: '#F0F0F0',
@@ -14,7 +14,7 @@ export default {
         info: '#057CBC',
         success: '#3DCF59',
         warning: '#FFA73C',
-        
+
         text: '#333333',
         textDark: '#333333',
 
@@ -22,6 +22,8 @@ export default {
         highlightedWordText: '#333333',
         highlightedWordBackground: '#71EB7A',
         newWordBackground: '#ffD08B',
+        chapterReadBorder: '#8BC68F',
+        chapterLastReadBackground: '#E8F5E9',
     },
     dark: {
         background: '#1C1B20',
@@ -41,7 +43,9 @@ export default {
         readerWordSelection: '#B6B6B6',
         highlightedWordText: '#121212',
         highlightedWordBackground: '#49A74F',
-        newWordBackground: '#ffD08B'
+        newWordBackground: '#ffD08B',
+        chapterReadBorder: '#4A8B4F',
+        chapterLastReadBackground: '#1B3A1D',
     },
     eink: {
         name: '#000000',
@@ -59,7 +63,7 @@ export default {
         info: '#057CBC',
         success: '#000000',
         warning: '#000000',
-        
+
         text: '#000000',
         textDark: '#000000',
 
@@ -67,5 +71,7 @@ export default {
         highlightedWordText: '#FFFFFF',
         highlightedWordBackground: '#000000',
         newWordBackground: '#000000',
+        chapterReadBorder: '#888888',
+        chapterLastReadBackground: '#F0F0F0',
     },
 }

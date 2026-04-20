@@ -1,4 +1,13 @@
 #text-reader-chapter-list {
+    tr.chapter-read {
+        border-left: 4px solid var(--v-chapterReadBorder-base);
+    }
+
+    tr.chapter-last-read {
+        border-left: 4px solid var(--v-success-base);
+        background-color: var(--v-chapterLastReadBackground-base) !important;
+    }
+
     span.highlighted{
         display: block;
         margin: auto;

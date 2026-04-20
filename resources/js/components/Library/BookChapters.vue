@@ -3,14 +3,14 @@
         <!-- Error dialog -->
         <error-dialog
             v-if="errorDialog.active"
-            v-model="errorDialog.active" 
+            v-model="errorDialog.active"
             content="An error has occurred while deleting the chapter."
         ></error-dialog>
 
         <!-- Edit book chapter dialog -->
         <edit-book-chapter-dialog
             v-if="editBookChapterDialog.active"
-            v-model="editBookChapterDialog.active" 
+            v-model="editBookChapterDialog.active"
             :book-id="$props.bookId"
             :chapter-id="editBookChapterDialog.chapterId"
             @chapter-saved="chapterSaved"
@@ -20,22 +20,22 @@
         <!-- Delete book chapter dialog -->
         <delete-book-chapter-dialog
             v-if="deleteBookChapterDialog.active"
-            v-model="deleteBookChapterDialog.active" 
+            v-model="deleteBookChapterDialog.active"
             :chapter-id="deleteBookChapterDialog.chapterId"
             :chapter-name="deleteBookChapterDialog.chapterName"
             @confirm="deleteChapter"
         >
         </delete-book-chapter-dialog>
-        
+
         <!-- Review dialog -->
-        <start-review-dialog 
-            v-model="startReviewDialog.active" 
-            :book-id="startReviewDialog.bookId" 
+        <start-review-dialog
+            v-model="startReviewDialog.active"
+            :book-id="startReviewDialog.bookId"
             :book-name="startReviewDialog.bookName"
-            :chapter-id="startReviewDialog.chapterId" 
+            :chapter-id="startReviewDialog.chapterId"
             :chapter-name="startReviewDialog.chapterName">
         </start-review-dialog>
-        
+
 
         <!-- Chapter list -->
         <v-data-table
@@ -52,8 +52,22 @@
             :items="chapters"
             :loading="chaptersLoading"
             :items-per-page="-1"
+            :item-class="chapterRowClass"
             hide-default-footer
         >
+
+            <!-- Chapter name with read indicator -->
+            <template v-slot:item.name="{ item }">
+                <div class="d-flex align-center">
+                    <v-icon
+                        v-if="item.read_count > 0"
+                        small
+                        class="mr-2"
+                        :color="item.id === lastReadChapterId ? 'success' : 'grey'"
+                    >mdi-check-circle</v-icon>
+                    {{ item.name }}
+                </div>
+            </template>
 
             <!-- Total words -->
             <template v-slot:item.wordCount.total="{ item }">
@@ -248,6 +262,22 @@
             bookId: Number,
             wordCountDisplayType: Number,
         },
+        computed: {
+            lastReadChapterId() {
+                let lastRead = null;
+                let latestTime = null;
+                this.chapters.forEach((chapter) => {
+                    if (chapter.read_count > 0 && chapter.updated_at) {
+                        const time = new Date(chapter.updated_at).getTime();
+                        if (latestTime === null || time > latestTime) {
+                            latestTime = time;
+                            lastRead = chapter.id;
+                        }
+                    }
+                });
+                return lastRead;
+            },
+        },
         mounted() {
             this.loadChapters();
 
@@ -311,7 +341,7 @@
                     for (let chapterIndex = 0; chapterIndex < response.data.chapters.length; chapterIndex++) {
                         response.data.chapters[chapterIndex].wordCountsLoaded = false;
                     }
-                    
+
                     this.book = response.data.book;
                     this.chapters = response.data.chapters;
 
@@ -324,7 +354,7 @@
                     this.chaptersLoading = false;
                     this.$nextTick(() => {
                         axios.get('/chapters/word-counts/' + this.$props.bookId);
-                    }) 
+                    })
                 });
             },
             showStartReviewDialog(bookId, bookName, chapterId, chapterName) {
@@ -334,7 +364,16 @@
                 this.startReviewDialog.chapterId = chapterId;
                 this.startReviewDialog.active = true;
             },
-            formatNumber: formatNumber
+            formatNumber: formatNumber,
+            chapterRowClass(item) {
+                if (item.read_count > 0 && item.id === this.lastReadChapterId) {
+                    return 'chapter-last-read';
+                }
+                if (item.read_count > 0) {
+                    return 'chapter-read';
+                }
+                return '';
+            },
         }
     }
 </script>

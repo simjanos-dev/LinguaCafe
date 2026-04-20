@@ -1,4 +1,13 @@
 .book-chapters {
+    .chapter-read {
+        border-left: 4px solid var(--v-chapterReadBorder-base);
+    }
+
+    .chapter-last-read {
+        border-left: 4px solid var(--v-success-base);
+        background-color: var(--v-chapterLastReadBackground-base) !important;
+    }
+
     .highlighted-words {
         background-color: var(--v-highlightedWordBackground-base);
         color: var(--v-highlightedWordText-base);
