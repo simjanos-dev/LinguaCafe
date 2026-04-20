@@ -1,6 +1,6 @@
 <template>
     <v-dialog v-model="value" scrollable persistent max-width="1000" attach=".v-main">
-        <v-card 
+        <v-card
             id="text-reader-chapter-list"
             outlined
             class="rounded-lg"
@@ -25,8 +25,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(chapter, index) in chapters" :key="index">
-                                <td class="default-font">{{ chapter.name }}</td>
+                            <tr
+                                v-for="(chapter, index) in chapters"
+                                :key="index"
+                                :class="chapterRowClass(chapter)"
+                            >
+                                <td class="default-font">
+                                    <div class="d-flex align-center">
+                                        <v-icon
+                                            v-if="chapter.read_count > 0"
+                                            small
+                                            class="mr-2"
+                                            :color="chapter.id === lastReadChapterId ? 'success' : 'grey'"
+                                        >mdi-check-circle</v-icon>
+                                        {{ chapter.name }}
+                                    </div>
+                                </td>
                                 <td class="text-center">{{ chapter.wordCount.total }}</td>
                                 <td class="text-center">{{ chapter.wordCount.unique }}</td>
                                 <td class="text-center"><span class="rounded-pill highlighted">{{ chapter.wordCount.highlighted }}</span></td>
@@ -56,8 +70,8 @@
 </template>
 
 <script>
-    export default {    
-        emits: ['input'],   
+    export default {
+        emits: ['input'],
         data: function() {
             return {
             }
@@ -67,12 +81,37 @@
             chapters: Array,
             currentChapterId: Number
         },
+        computed: {
+            lastReadChapterId() {
+                let lastRead = null;
+                let latestTime = null;
+                this.chapters.forEach((chapter) => {
+                    if (chapter.read_count > 0 && chapter.updated_at) {
+                        const time = new Date(chapter.updated_at).getTime();
+                        if (latestTime === null || time > latestTime) {
+                            latestTime = time;
+                            lastRead = chapter.id;
+                        }
+                    }
+                });
+                return lastRead;
+            },
+        },
         mounted() {
         },
         methods: {
             close: function() {
                 this.$emit('input', false);
-            }
+            },
+            chapterRowClass(chapter) {
+                if (chapter.read_count > 0 && chapter.id === this.lastReadChapterId) {
+                    return 'chapter-last-read';
+                }
+                if (chapter.read_count > 0) {
+                    return 'chapter-read';
+                }
+                return '';
+            },
         }
     }
 </script>
