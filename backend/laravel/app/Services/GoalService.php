@@ -125,6 +125,7 @@ class GoalService
                 'id',
                 'name',
                 'type',
+                'quantity',
             ])
             ->where('user_id', '=', $user->id)
             ->where('language', '=', $language->name)

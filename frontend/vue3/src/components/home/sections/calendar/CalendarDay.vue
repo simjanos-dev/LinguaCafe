@@ -5,19 +5,15 @@ import Store from '@src/store/Store'
 
 import { CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
 import type { CalendarDay } from '@lctypes/calendar/CalendarDay'
-import type { Calendar } from '@lctypes/calendar/Calendar'
 import { formatGoalType } from '@src/helpers/GoalHelper'
 
-const emit = defineEmits(['goalsUpdated'])
-
 type Props = {
-    calendarData: Calendar
     selectedGoal: string
     day: CalendarDay
     mostDueReviews: number
 }
 
-const { calendarData, selectedGoal, day } = defineProps<Props>()
+const { selectedGoal, day } = defineProps<Props>()
 
 const modalOpened = ref<boolean>(false)
 const openModal = () => {
@@ -30,9 +26,9 @@ const isGoalAchieved = computed<boolean>(() => {
     }
 
     let achievedQuantity =
-        calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? 0
+        Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? 0
     let goalQuantity =
-        calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? 0
+        Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? 0
 
     return achievedQuantity >= goalQuantity
 })
@@ -43,7 +39,7 @@ const goalQuantity = computed<number>(() => {
     }
 
     let goalQuantity =
-        calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? 0
+        Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? 0
 
     return goalQuantity
 })
@@ -54,7 +50,7 @@ const achievedGoalQuantity = computed<number>(() => {
     }
 
     let achievedQuantity =
-        calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? 0
+        Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? 0
 
     return achievedQuantity
 })
@@ -65,15 +61,15 @@ const achievedGoalAdjustedToMax = computed<number>(() => {
     }
 
     let achievedQuantity =
-        calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? 0
+        Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? 0
     let goalQuantity =
-        calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? 0
+        Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? 0
 
     return achievedQuantity >= goalQuantity ? goalQuantity : achievedQuantity
 })
 
 const getDayTooltip = () => {
-    if (!calendarData) {
+    if (!Store.calendar) {
         return ''
     }
 
@@ -96,12 +92,7 @@ const getDayTooltip = () => {
         ]"
         @click="openModal()"
     >
-        <CalendarEditPopover
-            v-model="modalOpened"
-            :calendar-data="calendarData"
-            :day="day"
-            @goals-updated="emit('goalsUpdated')"
-        />
+        <CalendarEditPopover v-model="modalOpened" :day="day" />
 
         <!-- Achieved quantity text -->
         <div
@@ -109,7 +100,7 @@ const getDayTooltip = () => {
             v-if="!day.outsideMonth && isGoalType(selectedGoal)"
         >
             <div class="w-full font-bold text-xs sm:text-base mb-1">{{ day.day }}</div>
-            <template v-if="calendarData.goals[selectedGoal]?.goalAchievements[day.date]">
+            <template v-if="Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]">
                 <UTooltip
                     arrow
                     :content="{ side: 'top', sideOffset: 4 }"
@@ -134,7 +125,7 @@ const getDayTooltip = () => {
 
         <!-- Reviews due text -->
         <span v-if="!day.outsideMonth && selectedGoal === CalendarSelectableStatEnum.ReviewsDue">
-            {{ calendarData.reviews[day.date]?.quantity ?? '-' }}
+            {{ Store.calendar?.reviews[day.date]?.quantity ?? '-' }}
         </span>
     </div>
 </template>

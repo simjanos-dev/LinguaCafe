@@ -1,35 +1,63 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue'
-import GoalService from '@services/goals/GoalService'
+import { ref, computed } from 'vue'
+import CalendarService from '@services/calendar/CalendarService'
 import EditGoalPopup from '@components/popups/goals/EditGoalPopup.vue'
+import Store from '@src/store/Store'
+import { GoalType } from '@lctypes/goals/Goal'
+import moment from 'moment'
 
 import type { Goal } from '@lctypes/goals/Goal'
 
-const loading = ref<boolean>(false)
+const loading = ref<boolean>(true)
 const editedGoal = ref<null | Goal>(null)
 const showEditGoalPopup = ref<boolean>(false)
 
-const goalService = new GoalService()
-const goals = ref<Goal[]>([])
+const calendarService = new CalendarService()
 
-const openEditGoalPopup = function (goal: Goal) {
-    editedGoal.value = goal
+const openEditGoalPopup = function (goalType: GoalType) {
+    if (!Store.calendar?.goals[goalType]) {
+        return
+    }
+
+    editedGoal.value = Store.calendar.goals[goalType]
     showEditGoalPopup.value = true
 }
 
-const loadGoals = async function () {
-    loading.value = true
-    const goalResponse = await goalService.getGoals()
+const goals = computed(() => {
+    let today = moment().format('YYYY-MM-DD')
+    let todaysGoals = Object.values(GoalType).map((goalType: GoalType) => {
+        let achievedQuantity =
+            Store.calendar?.goals[goalType]?.goalAchievements[today]?.achieved_quantity ?? null
+
+        let correctedQuantity = achievedQuantity
+
+        let goalQuantity =
+            Store.calendar?.goals[goalType]?.goalAchievements[today]?.goal_quantity ?? null
+
+        if (achievedQuantity !== null && goalQuantity !== null && achievedQuantity > goalQuantity) {
+            correctedQuantity = goalQuantity
+        }
+
+        return [
+            goalType,
+            Store.calendar?.goals[goalType]?.goalAchievements[today]
+                ? {
+                      goalType: goalType,
+                      achievedQuantity: achievedQuantity,
+                      goalQuantity: goalQuantity,
+                      correctedQuantity: correctedQuantity,
+                  }
+                : null,
+        ]
+    })
+
     loading.value = false
-
-    if (goalResponse.ok && goalResponse.data) {
-        goals.value = goalResponse.data
-    }
-}
-
-onBeforeMount(async function () {
-    loadGoals()
+    return Object.fromEntries(todaysGoals)
 })
+
+const goalsUpdated = () => {
+    calendarService.loadCalendarData()
+}
 </script>
 
 <template>
@@ -38,57 +66,56 @@ onBeforeMount(async function () {
             v-if="showEditGoalPopup && editedGoal"
             v-model="showEditGoalPopup"
             :goal="editedGoal"
-            @goal-changed="loadGoals"
-            @updated="loadGoals"
+            @updated="goalsUpdated"
         />
 
-        <div v-for="(goal, goalIndex) in goals" :key="goalIndex">
-            <div class="flex items-center bg-elevated/50 rounded-lg p-4 my-4">
-                <div class="w-full shrink">
-                    <div class="flex justify-between text-sm text-tuned mb-0.5">
-                        <template v-if="loading">
-                            <USkeleton class="h-4 w-32" />
-                            <div class="flex">
-                                <USkeleton class="h-4 w-16 mr-1" /> /
-                                <USkeleton class="h-4 w-16 ml-1" />
-                            </div>
-                        </template>
+        <template v-for="(goalType, goalIndex) in GoalType" :key="goalIndex">
+            <div v-if="goals[goalType]">
+                <div class="flex items-center bg-elevated/50 rounded-lg p-4 my-4">
+                    <div class="w-full shrink">
+                        <div class="flex justify-between text-sm text-tuned mb-0.5">
+                            <template v-if="loading">
+                                <USkeleton class="h-4 w-32" />
+                                <div class="flex">
+                                    <USkeleton class="h-4 w-16 mr-1" /> /
+                                    <USkeleton class="h-4 w-16 ml-1" />
+                                </div>
+                            </template>
 
-                        <template v-else>
-                            <div>{{ goal.name }}</div>
-                            <div>{{ goal.todays_quantity }} / {{ goal.quantity }}</div>
-                        </template>
+                            <template v-else>
+                                <div>{{ goalType }}</div>
+                                <div>
+                                    {{ goals[goalType].achievedQuantity }} /
+                                    {{ goals[goalType].goalQuantity }}
+                                </div>
+                            </template>
+                        </div>
+                        <UProgress
+                            v-if="goals[goalType]"
+                            :model-value="goals[goalType].correctedQuantity"
+                            class="mb-4"
+                            :max="goals[goalType].goalQuantity"
+                            :color="
+                                goals[goalType].achievedQuantity >= goals[goalType].goalQuantity
+                                    ? 'success'
+                                    : 'primary'
+                            "
+                            size="lg"
+                        />
                     </div>
-                    <UProgress
-                        v-model="goal.todays_quantity"
-                        class="mb-4"
-                        :max="
-                            goal.quantity &&
-                            goal.todays_quantity &&
-                            goal.quantity > goal.todays_quantity
-                                ? goal.quantity
-                                : goal.todays_quantity
-                        "
-                        :color="
-                            (goal.todays_quantity ?? 0) >= (goal.quantity ?? 0)
-                                ? 'success'
-                                : 'primary'
-                        "
-                        size="lg"
+
+                    <UButton
+                        class="ml-1"
+                        :icon="loading ? '' : 'i-lucide-pen'"
+                        size="md"
+                        color="primary"
+                        variant="ghost"
+                        loading-icon="i-lucide-loader-circle"
+                        :loading="loading"
+                        @click="openEditGoalPopup(goalType)"
                     />
                 </div>
-
-                <UButton
-                    class="ml-1"
-                    :icon="loading ? '' : 'i-lucide-pen'"
-                    size="md"
-                    color="primary"
-                    variant="ghost"
-                    @click="openEditGoalPopup(goal)"
-                    loading-icon="i-lucide-loader-circle"
-                    :loading="loading"
-                />
             </div>
-        </div>
+        </template>
     </div>
 </template>

@@ -3,19 +3,16 @@ import { ref, onMounted, watch } from 'vue'
 import { useMoment } from '@composables/useMoment'
 
 import type { Moment } from 'moment'
-import type { Calendar, CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
+import type { CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
 import type { CalendarWeek } from '@lctypes/calendar/CalendarWeek'
 
-const emit = defineEmits(['goalsUpdated'])
-
 type Props = {
-    calendarData: Calendar
     month: Moment
     selectedGoal: CalendarSelectableStatEnum
     mostDueReviews: number
 }
 
-const { calendarData, month, selectedGoal } = defineProps<Props>()
+const { month, selectedGoal } = defineProps<Props>()
 const weeksOfMonth = ref<CalendarWeek[]>([])
 const moment = useMoment()
 
@@ -90,10 +87,8 @@ onMounted(() => {
                     v-for="(day, dayIndex) in week.days"
                     :key="dayIndex"
                     :day="day"
-                    :calendar-data="calendarData"
                     :selected-goal="selectedGoal"
                     :most-due-reviews="mostDueReviews"
-                    @goals-updated="emit('goalsUpdated')"
                 />
             </div>
         </div>

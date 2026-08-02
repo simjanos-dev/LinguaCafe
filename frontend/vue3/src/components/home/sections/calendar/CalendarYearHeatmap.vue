@@ -2,19 +2,18 @@
 import { ref, onMounted } from 'vue'
 import { useMoment } from '@composables/useMoment'
 
-import type { Calendar, CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
+import type { CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
 import type { CalendarWeek } from '@lctypes/calendar/CalendarWeek'
 import type { CalendarMonth } from '@lctypes/calendar/CalendarMonth'
 import type { Moment } from 'moment'
 
 type Props = {
-    calendarData: Calendar
     month: Moment
     selectedGoal: CalendarSelectableStatEnum
     mostDueReviews: number
 }
 
-const { calendarData, month, selectedGoal, mostDueReviews } = defineProps<Props>()
+const { month, selectedGoal, mostDueReviews } = defineProps<Props>()
 
 const moment = useMoment()
 const monthsOfYear = ref<CalendarMonth[]>([])
@@ -123,7 +122,6 @@ onMounted(() => {
                                     v-for="(day, dayIndex) in week.days"
                                     :key="dayIndex"
                                     :day="day"
-                                    :calendar-data="calendarData"
                                     :most-due-reviews="mostDueReviews"
                                     :selected-goal="selectedGoal"
                                 />

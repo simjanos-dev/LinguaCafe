@@ -5,12 +5,10 @@ import { useMoment } from '@composables/useMoment'
 import MonthPicker from '@components/custom/MonthPicker.vue'
 import { formatGoalType } from '@src/helpers/GoalHelper'
 import { toUpperCase } from '@src/helpers/StringHelper'
+import Store from '@src/store/Store'
 
 import { CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
-import type { Calendar } from '@lctypes/calendar/Calendar'
 import type { Moment } from 'moment'
-
-const emit = defineEmits(['goalsUpdated'])
 
 type Props = {
     isHeatmap: boolean
@@ -41,18 +39,17 @@ const calendarGoalTypes = ref([
 
 const calendarService = new CalendarService()
 const moment = useMoment()
-const calendarData = ref<Calendar | null>(null)
 const loading = ref<boolean>(false)
 const selectedDate = ref<Moment>(moment())
 
 const mostDueReviews = computed(() => {
     let mostDueReviews = 0
 
-    if (!calendarData.value) {
+    if (!Store.calendar) {
         return mostDueReviews
     }
 
-    Object.values(calendarData.value.reviews).forEach(review => {
+    Object.values(Store.calendar.reviews).forEach(review => {
         if (review.quantity > mostDueReviews) {
             mostDueReviews = review.quantity
         }
@@ -63,12 +60,8 @@ const mostDueReviews = computed(() => {
 
 const loadGoals = async function () {
     loading.value = true
-    const response = await calendarService.getCalendarData()
+    await calendarService.loadCalendarData()
     loading.value = false
-
-    if (response.ok && response.data) {
-        calendarData.value = response.data ?? null
-    }
 }
 
 onMounted(() => {
@@ -98,20 +91,17 @@ onMounted(() => {
 
         <div class="flex flex-wrap w-full justify-between gap-x-2 mt-2">
             <CalendarYearHeatmap
-                v-if="isHeatmap && calendarData"
-                :calendar-data="calendarData"
+                v-if="isHeatmap && Store.calendar"
                 :month="selectedDate"
                 :selected-goal="selectedCalendarGoalType"
                 :most-due-reviews="mostDueReviews"
             />
 
             <CalendarMonth
-                v-if="!isHeatmap && calendarData"
-                :calendar-data="calendarData"
+                v-if="!isHeatmap && Store.calendar"
                 :month="selectedDate"
                 :selected-goal="selectedCalendarGoalType"
                 :most-due-reviews="mostDueReviews"
-                @goals-updated="loadGoals"
             />
         </div>
     </div>

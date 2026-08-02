@@ -1,22 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { isGoalType } from '@lctypes/goals/Goal'
+import Store from '@src/store/Store'
 
 import type { CalendarDay } from '@lctypes/calendar/CalendarDay'
-import type { Calendar } from '@lctypes/calendar/Calendar'
 import { CalendarSelectableStatEnum } from '@lctypes/calendar/Calendar'
 import { formatGoalType } from '@src/helpers/GoalHelper'
 
-const emit = defineEmits(['goalsUpdated'])
-
 type Props = {
-    calendarData: Calendar
     selectedGoal: string
     day: CalendarDay
     mostDueReviews: number
 }
 
-const { calendarData, selectedGoal, day, mostDueReviews } = defineProps<Props>()
+const { selectedGoal, day, mostDueReviews } = defineProps<Props>()
 
 const modalOpened = ref<boolean>(false)
 const openModal = () => {
@@ -30,12 +27,13 @@ const openModal = () => {
 const getAchievedQuantity = (day: CalendarDay): number | null => {
     if (isGoalType(selectedGoal)) {
         return (
-            calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ?? null
+            Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.achieved_quantity ??
+            null
         )
     }
 
     if (selectedGoal === CalendarSelectableStatEnum.ReviewsDue) {
-        return calendarData.reviews[day.date]?.quantity ?? null
+        return Store.calendar?.reviews[day.date]?.quantity ?? null
     }
 
     return null
@@ -43,7 +41,9 @@ const getAchievedQuantity = (day: CalendarDay): number | null => {
 
 const getGoalQuantity = (day: CalendarDay): number | null => {
     if (isGoalType(selectedGoal)) {
-        return calendarData.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? null
+        return (
+            Store.calendar?.goals[selectedGoal]?.goalAchievements[day.date]?.goal_quantity ?? null
+        )
     }
 
     if (selectedGoal === CalendarSelectableStatEnum.ReviewsDue) {
@@ -108,12 +108,7 @@ const getDayTooltip = (day: CalendarDay): string => {
     >
         <template #content><div v-html="getDayTooltip(day)"></div> </template>
 
-        <CalendarEditPopover
-            v-model="modalOpened"
-            :calendar-data="calendarData"
-            :day="day"
-            @goals-updated="emit('goalsUpdated')"
-        />
+        <CalendarEditPopover v-model="modalOpened" :day="day" />
 
         <div
             :class="[

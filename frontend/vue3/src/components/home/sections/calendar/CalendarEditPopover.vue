@@ -3,23 +3,25 @@ import { computed, ref, watch } from 'vue'
 import { GoalType } from '@lctypes/goals/Goal'
 import { formatGoalType } from '@src/helpers/GoalHelper'
 import GoalService from '@services/goals/GoalService'
+import CalendarService from '@services/calendar/CalendarService'
+
+import Store from '@src/store/Store'
 
 import type { CalendarDay } from '@lctypes/calendar/CalendarDay'
-import type { Calendar } from '@lctypes/calendar/Calendar'
 import { toUpperCase } from '@src/helpers/StringHelper'
 import type { FormError } from '@nuxt/ui'
 
 const goalService = new GoalService()
+const calendarService = new CalendarService()
 
-const emit = defineEmits(['goalsUpdated', 'update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
 
 type Props = {
     modelValue: boolean
-    calendarData: Calendar
     day: CalendarDay
 }
 
-const { modelValue, calendarData, day } = defineProps<Props>()
+const { modelValue, day } = defineProps<Props>()
 
 const isOpen = computed({
     get: () => modelValue,
@@ -31,9 +33,10 @@ const goals = computed(() => {
         return {
             name: goalType,
             goalType: goalType,
-            id: calendarData.goals[goalType].goalAchievements[day.date]?.id,
+            id: Store.calendar?.goals[goalType].goalAchievements[day.date]?.id ?? null,
             achievedQuantity:
-                calendarData.goals[goalType].goalAchievements[day.date]?.achieved_quantity,
+                Store.calendar?.goals[goalType].goalAchievements[day.date]?.achieved_quantity ??
+                null,
         }
     })
 })
@@ -72,7 +75,7 @@ const updateGoal = async () => {
     let goalAchievementId = goals.value[editingGoalIndex.value]?.id
     let goalType = goals.value[editingGoalIndex.value]?.goalType
 
-    if (goalAchievementId === undefined || goalType === undefined) {
+    if (!goalAchievementId || !goalType) {
         return
     }
 
@@ -88,7 +91,7 @@ const updateGoal = async () => {
     if (achievementUpdateResponse.ok) {
         saving.value = false
         finished.value = true
-        emit('goalsUpdated')
+        calendarService.loadCalendarData()
     }
 
     if (!achievementUpdateResponse.ok && achievementUpdateResponse.errorMessages) {
