@@ -25,5 +25,4 @@ export default reactive<Store>({
     },
 
     calendar: null,
-    dailyGoals: null,
 })

@@ -3,7 +3,6 @@ import type { Language } from '@lctypes/Language'
 import type { Settings } from '@lctypes/settings/Settings'
 import type { WindowData } from '@lctypes/store/WindowData'
 import type { Calendar } from '@lctypes/calendar/Calendar'
-import type { Goal } from '@lctypes/goals/Goal'
 
 export type Store = {
     appDataInitialized: boolean
@@ -14,5 +13,4 @@ export type Store = {
     window: WindowData
     settings: Settings
     calendar: null | Calendar
-    dailyGoals: null | Goal[]
 }
