@@ -108,7 +108,7 @@ const getDayTooltip = (day: CalendarDay): string => {
     >
         <template #content><div v-html="getDayTooltip(day)"></div> </template>
 
-        <CalendarEditPopover v-model="modalOpened" :day="day" />
+        <CalendarEditPopup v-model="modalOpened" :day="day" />
 
         <div
             :class="[

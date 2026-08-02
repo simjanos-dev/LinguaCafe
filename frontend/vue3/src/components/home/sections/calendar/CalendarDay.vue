@@ -92,7 +92,7 @@ const getDayTooltip = () => {
         ]"
         @click="openModal()"
     >
-        <CalendarEditPopover v-model="modalOpened" :day="day" />
+        <CalendarEditPopup v-model="modalOpened" :day="day" />
 
         <!-- Achieved quantity text -->
         <div
