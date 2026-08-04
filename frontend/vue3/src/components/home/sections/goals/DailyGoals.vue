@@ -63,7 +63,7 @@ const goalsUpdated = () => {
 <template>
     <div>
         <EditGoalPopup
-            v-if="showEditGoalPopup && editedGoal"
+            v-if="editedGoal"
             v-model="showEditGoalPopup"
             :goal="editedGoal"
             @updated="goalsUpdated"

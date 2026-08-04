@@ -23,14 +23,6 @@ export default class GoalService {
                 },
             })
 
-            this.toastService.add({
-                title: 'Goal editing',
-                description: `A goal quantity has been successfully edited.`,
-                icon: 'i-lucide-triangle-alert',
-                color: 'success',
-                duration: 10000,
-            })
-
             return {
                 ok: true,
                 status: response.status,

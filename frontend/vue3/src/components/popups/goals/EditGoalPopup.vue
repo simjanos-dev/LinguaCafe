@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import * as zod from 'zod'
 import GoalService from '@services/goals/GoalService'
 
@@ -22,7 +22,34 @@ const modalOpened = computed({
 
 const emit = defineEmits(['update:modelValue', 'updated'])
 
+// reset form values on opening dialog
+watch(modalOpened, value => {
+    if (!value) {
+        return
+    }
+
+    resetForm()
+})
+
+watch(
+    () => goal,
+    value => {
+        if (!value) {
+            return
+        }
+
+        resetForm()
+    }
+)
+
+const resetForm = () => {
+    finished.value = false
+    editGoalErrors.value = []
+    editGoalFormState.quantity = goal.quantity
+}
+
 // form
+const finished = ref<boolean>(false)
 const editGoalErrors = ref<FormError[]>([])
 const editGoalFormSchema = zod.object({
     quantity: zod.number('Must be a number').gte(0, { message: 'Must be greater or equal to 0' }),
@@ -41,8 +68,8 @@ const updateGoalQuantity = async function () {
     )
 
     if (goalSericeUpdateResult.ok) {
-        modalOpened.value = false
         emit('updated')
+        finished.value = true
     }
 
     if (!goalSericeUpdateResult.ok && goalSericeUpdateResult.errorMessages) {
@@ -65,11 +92,10 @@ const updateGoalQuantity = async function () {
             variant=""
             title="Edit goal"
             v-model:open="modalOpened"
-            :dismissible="false"
             :close="!loading"
         >
             <template #body>
-                <div class="p-4">
+                <div class="p-4" v-if="!loading && !finished">
                     <UAlert
                         class="mb-4"
                         color="primary"
@@ -90,14 +116,30 @@ const updateGoalQuantity = async function () {
                     </UFormField>
                 </div>
 
+                <!-- Saving -->
+                <div v-if="loading" class="flex flex-wrap justify-center">
+                    <div class="w-full flex justify-center mb-4">Updating...</div>
+                    <UIcon
+                        name="i-lucide-loader-circle"
+                        class="size-12 animate-spin text-primary"
+                    />
+                </div>
+
+                <!-- Updated -->
+                <div v-if="finished" class="flex flex-wrap justify-center">
+                    <div class="w-full flex justify-center mb-4">Successful update</div>
+                    <UIcon name="i-lucide-circle-check" class="size-12 text-success" />
+                </div>
+
                 <FormResponseErrorAlert
+                    v-if="!finished && !loading"
                     class="mt-4"
                     :title="'Error'"
                     :error-messages="editGoalErrors"
                 />
             </template>
             <template #footer>
-                <div class="w-full mt-4 flex justify-end">
+                <div class="w-full mt-4 flex justify-end" v-if="!finished">
                     <UButton
                         class="justify-center font-normal mr-2"
                         label="Cancel"
@@ -115,6 +157,15 @@ const updateGoalQuantity = async function () {
                         form="edit-goal-form"
                         loading-icon="i-lucide-loader-circle"
                         loading-auto
+                    />
+                </div>
+
+                <div class="w-full mt-4 flex justify-end" v-if="finished">
+                    <UButton
+                        class="justify-center font-normal mr-2"
+                        label="Close"
+                        type="button"
+                        @click="modalOpened = false"
                     />
                 </div>
             </template>
