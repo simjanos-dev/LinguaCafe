@@ -104,7 +104,7 @@ const getDayTooltip = () => {
                 <UTooltip
                     arrow
                     :content="{ side: 'top', sideOffset: 4 }"
-                    :disabled="day.outsideYear"
+                    :disabled="day.outsideMonth"
                     :delay-duration="0"
                     :ui="{
                         content: 'h-full',

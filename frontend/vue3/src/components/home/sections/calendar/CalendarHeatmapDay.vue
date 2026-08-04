@@ -97,33 +97,34 @@ const getDayTooltip = (day: CalendarDay): string => {
 </script>
 
 <template>
-    <UTooltip
-        arrow
-        :content="{ side: 'top', sideOffset: 4 }"
-        :disabled="day.outsideYear"
-        :delay-duration="0"
-        :ui="{
-            content: 'h-full',
-        }"
-    >
-        <template #content><div v-html="getDayTooltip(day)"></div> </template>
-
+    <div>
         <CalendarEditPopup v-model="modalOpened" :day="day" />
-
-        <div
-            :class="[
-                'm-[1px] w-[17px] h-[17px]  overflow-hidden rounded-[3px] select-none',
-                day.outsideYear ? '' : 'bg-elevated hover:bg-success',
-            ]"
-            @click="openModal"
+        <UTooltip
+            arrow
+            :content="{ side: 'top', sideOffset: 4 }"
+            :disabled="day.outsideYear"
+            :delay-duration="0"
+            :ui="{
+                content: 'h-full',
+            }"
         >
+            <template #content><div v-html="getDayTooltip(day)"></div> </template>
+
             <div
-                :class="['m-0 p-0 w-[17px] h-[17px]', getBgColor(day)]"
-                :style="getOpacityStyle(day)"
+                :class="[
+                    'm-[1px] w-[17px] h-[17px]  overflow-hidden rounded-[3px] select-none',
+                    day.outsideYear ? '' : 'bg-elevated hover:bg-success',
+                ]"
                 @click="openModal"
             >
-                &nbsp;
+                <div
+                    :class="['m-0 p-0 w-[17px] h-[17px] hover:!opacity-0', getBgColor(day)]"
+                    :style="getOpacityStyle(day)"
+                    @click="openModal"
+                >
+                    &nbsp;
+                </div>
             </div>
-        </div>
-    </UTooltip>
+        </UTooltip>
+    </div>
 </template>
