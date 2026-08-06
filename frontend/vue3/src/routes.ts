@@ -1,10 +1,10 @@
 import type { RouteRecordRaw } from 'vue-router'
 
-import Home from '@components/home/HomePage.vue'
-import Attributions from '@components/home/Attributions.vue'
-import Login from '@components/auth/Login.vue'
-import UpdateHistory from '@components/home/updates/UpdateHistory.vue'
-import UpdateNote from '@components/home/updates/UpdateNote.vue'
+import Home from '@components/pages/home/HomePage.vue'
+import Attributions from '@components/pages/home/Attributions.vue'
+import Login from '@components/pages/auth/Login.vue'
+import UpdateHistory from '@components/pages/home/updates/UpdateHistory.vue'
+import UpdateNote from '@components/pages/home/updates/UpdateNote.vue'
 
 export const routes: RouteRecordRaw[] = [
     {

@@ -4,11 +4,11 @@ import PageSectionTitle from '@components/custom/PageSectionTitle.vue'
 import ContentSpacer from '@components/custom/ContentSpacer.vue'
 import Store from '@src/store/Store'
 
-import About from '@components/home/sections/about/About.vue'
-import Calendar from '@components/home/sections/calendar/Calendar.vue'
-import DailyGoals from '@components/home/sections/goals/DailyGoals.vue'
-import PasswordChange from '@components/home/sections/password/PasswordChange.vue'
-import Statistics from '@components/home/sections/statistics/Statistics.vue'
+import About from '@components/pages/home/sections/about/About.vue'
+import Calendar from '@components/pages/home/sections/calendar/Calendar.vue'
+import DailyGoals from '@components/pages/home/sections/goals/DailyGoals.vue'
+import PasswordChange from '@components/pages/home/sections/password/PasswordChange.vue'
+import Statistics from '@components/pages/home/sections/statistics/Statistics.vue'
 
 type HomePageSection = {
     title?: string
@@ -83,9 +83,7 @@ const homePageSections = computed<HomePageSection[]>(() => [
                 />
                 <DailyGoals v-if="homePageSection.component === 'HomePageDailyGoals'" />
                 <Statistics v-if="homePageSection.component === 'HomePageStatistics'" />
-                <PasswordChange
-                    v-if="homePageSection.component === 'HomePagePasswordChange'"
-                />
+                <PasswordChange v-if="homePageSection.component === 'HomePagePasswordChange'" />
             </template>
         </template>
     </ContentSpacer>
