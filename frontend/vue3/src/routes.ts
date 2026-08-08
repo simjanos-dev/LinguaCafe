@@ -6,6 +6,7 @@ import Login from '@components/pages/auth/Login.vue'
 import UpdateHistory from '@components/pages/home/updates/UpdateHistory.vue'
 import UpdateNote from '@components/pages/home/updates/UpdateNote.vue'
 import UserSettings from '@components/pages/settings/UserSettings.vue'
+import AdminSettings from '@components/pages/admin/AdminSettings.vue'
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -37,5 +38,10 @@ export const routes: RouteRecordRaw[] = [
         path: '/settings',
         name: 'UserSettings',
         component: UserSettings,
+    },
+    {
+        path: '/admin',
+        name: 'AdminSettings',
+        component: AdminSettings,
     },
 ]
