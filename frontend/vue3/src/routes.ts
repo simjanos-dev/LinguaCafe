@@ -5,6 +5,7 @@ import Attributions from '@components/pages/home/Attributions.vue'
 import Login from '@components/pages/auth/Login.vue'
 import UpdateHistory from '@components/pages/home/updates/UpdateHistory.vue'
 import UpdateNote from '@components/pages/home/updates/UpdateNote.vue'
+import UserSettings from '@components/pages/settings/UserSettings.vue'
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -31,5 +32,10 @@ export const routes: RouteRecordRaw[] = [
         path: '/login',
         name: 'Login',
         component: Login,
+    },
+    {
+        path: '/settings',
+        name: 'UserSettings',
+        component: UserSettings,
     },
 ]

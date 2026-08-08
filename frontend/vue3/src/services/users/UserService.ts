@@ -72,14 +72,6 @@ export default class AuthService {
                 Store.user.password_changed = true
             }
 
-            this.toastService.add({
-                title: 'Password change',
-                description: `Password has been successfully updated.`,
-                icon: 'i-lucide-triangle-alert',
-                color: 'success',
-                duration: 10000,
-            })
-
             return {
                 ok: true,
                 status: response.status,
