@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import * as zod from 'zod'
 import UserService from '@services/users/UserService'
 
@@ -20,7 +20,23 @@ const modalOpened = computed({
 
 const emit = defineEmits(['update:modelValue'])
 
+watch(
+    () => modelValue,
+    value => {
+        if (!value) {
+            loading.value = false
+            finished.value = false
+            formErrors.value = []
+
+            formState.password = undefined
+            formState.passwordConfirmation = undefined
+        }
+    }
+)
+
 // form
+const loading = ref<boolean>(false)
+const finished = ref<boolean>(false)
 const formErrors = ref<FormError[]>([])
 const showPassword = ref<boolean>(false)
 const formSchema = zod
@@ -44,17 +60,23 @@ const formState = reactive<Partial<Schema>>({
 })
 
 const changePassword = async function () {
+    formErrors.value = []
+    loading.value = true
+    finished.value = false
     const result = await userService.updatePassword(
         formState.password,
         formState.passwordConfirmation
     )
 
+    loading.value = false
+
     if (!result.ok && result.errorMessages) {
         formErrors.value = result.errorMessages
+        finished.value = false
     }
 
     if (result.ok) {
-        modalOpened.value = false
+        finished.value = true
     }
 }
 </script>
@@ -68,7 +90,7 @@ const changePassword = async function () {
         :dismissible="false"
     >
         <template #body>
-            <div class="p-4">
+            <div class="p-4" v-if="!loading && !finished">
                 <UForm
                     id="password-change-form"
                     :schema="formSchema"
@@ -139,11 +161,24 @@ const changePassword = async function () {
                 </UForm>
             </div>
 
+            <!-- Saving -->
+            <div v-if="loading" class="flex flex-wrap justify-center">
+                <div class="w-full flex justify-center mb-4">Updating...</div>
+                <UIcon name="i-lucide-loader-circle" class="size-12 animate-spin text-primary" />
+            </div>
+
+            <!-- Updated -->
+            <div v-if="finished" class="flex flex-wrap justify-center">
+                <div class="w-full flex justify-center mb-4">Successful password change</div>
+                <UIcon name="i-lucide-circle-check" class="size-12 text-success" />
+            </div>
+
             <FormResponseErrorAlert class="mt-4" :title="'Error'" :error-messages="formErrors" />
         </template>
         <template #footer>
             <div class="w-full mt-4 flex justify-end">
                 <UButton
+                    v-if="!finished"
                     class="justify-center font-normal mr-2"
                     label="Cancel"
                     variant="link"
@@ -153,13 +188,23 @@ const changePassword = async function () {
                 />
 
                 <UButton
+                    v-if="!finished"
                     class="justify-center font-normal"
                     label="Change password"
-                    color="error"
+                    color="primary"
                     type="submit"
                     form="password-change-form"
-                    loading-icon="i-lucide-loader-circle"
-                    loading-auto
+                    :disabled="loading"
+                />
+
+                <UButton
+                    v-if="finished"
+                    class="justify-center font-normal mr-2"
+                    label="Close"
+                    variant="link"
+                    color="neutral"
+                    type="button"
+                    @click="modalOpened = false"
                 />
             </div>
         </template>
