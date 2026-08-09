@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import * as zod from 'zod'
 import UserService from '@services/users/UserService'
 
@@ -10,18 +10,20 @@ const userService = new UserService()
 // modal dialog
 type Props = {
     modelValue: boolean
-    firstUser: boolean
+    firstUser?: boolean
 }
 
-const { modelValue, firstUser } = defineProps<Props>()
+const { modelValue, firstUser = false } = defineProps<Props>()
 const modalOpened = computed({
     get: () => modelValue,
     set: value => emit('update:modelValue', value),
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'user-created'])
 
 // form
+const loading = ref<boolean>(false)
+const finished = ref<boolean>(false)
 const createUserErrors = ref<FormError[]>([])
 const showPassword = ref<boolean>(false)
 const createUserFormSchema = zod
@@ -54,6 +56,10 @@ const createUserFormState = reactive<Partial<Schema>>({
 })
 
 const createUser = async function () {
+    createUserErrors.value = []
+    loading.value = true
+    finished.value = false
+
     const createUserResponse = await userService.createUser(
         createUserFormState.name,
         createUserFormState.email,
@@ -62,28 +68,45 @@ const createUser = async function () {
         createUserFormState.isAdmin
     )
 
+    loading.value = false
+
     if (!createUserResponse.ok && createUserResponse.errorMessages) {
         createUserErrors.value = createUserResponse.errorMessages
     }
 
     if (createUserResponse.ok) {
-        modalOpened.value = false
+        finished.value = true
+        emit('user-created')
     }
 }
+
+watch(
+    () => modelValue,
+    value => {
+        if (!value) {
+            return
+        }
+
+        createUserFormState.name = undefined
+        createUserFormState.email = undefined
+        createUserFormState.password = undefined
+        createUserFormState.passwordConfirmation = undefined
+        createUserFormState.isAdmin = true
+
+        createUserErrors.value = []
+        loading.value = false
+        finished.value = false
+    }
+)
 </script>
 
 <template>
-    <UModal
-        class="w-96"
-        variant=""
-        title="Create user"
-        v-model:open="modalOpened"
-        :dismissible="false"
-    >
+    <UModal class="w-96" variant="" title="Create user" v-model:open="modalOpened">
         <template #body>
-            <div class="p-4">
+            <div class="p-4" v-if="!loading && !finished">
                 <UForm
                     id="create-user-form"
+                    autocomplete="off"
                     :schema="createUserFormSchema"
                     :state="createUserFormState"
                     :validate-on="['change', 'input']"
@@ -92,6 +115,7 @@ const createUser = async function () {
                     <UFormField label="Name" name="name" required>
                         <UInput
                             v-model="createUserFormState.name"
+                            autocomplete="off"
                             size="lg"
                             variant="subtle"
                             class="w-full"
@@ -103,6 +127,7 @@ const createUser = async function () {
                     <UFormField class="mt-4" label="E-mail" name="email" required>
                         <UInput
                             v-model="createUserFormState.email"
+                            autocomplete="off"
                             size="lg"
                             variant="subtle"
                             class="w-full"
@@ -113,6 +138,7 @@ const createUser = async function () {
                     <UFormField class="mt-4" label="Password" name="password" required>
                         <UInput
                             v-model="createUserFormState.password"
+                            autocomplete="new-password"
                             size="lg"
                             variant="subtle"
                             class="w-full"
@@ -146,6 +172,7 @@ const createUser = async function () {
                     >
                         <UInput
                             v-model="createUserFormState.passwordConfirmation"
+                            autocomplete="off"
                             size="lg"
                             variant="subtle"
                             class="w-full"
@@ -179,32 +206,47 @@ const createUser = async function () {
                         />
                     </UFormField>
                 </UForm>
+
+                <FormResponseErrorAlert
+                    class="mt-4"
+                    :title="'Error'"
+                    :error-messages="createUserErrors"
+                />
             </div>
 
-            <FormResponseErrorAlert
-                class="mt-4"
-                :title="'Error'"
-                :error-messages="createUserErrors"
-            />
+            <!-- Saving -->
+            <div v-if="loading" class="flex flex-wrap justify-center">
+                <div class="w-full flex justify-center mb-4">Creating...</div>
+                <UIcon name="i-lucide-loader-circle" class="size-12 animate-spin text-primary" />
+            </div>
+
+            <!-- Updated -->
+            <div v-if="finished" class="flex flex-wrap justify-center">
+                <div class="w-full flex justify-center mb-4">User created</div>
+                <UIcon name="i-lucide-circle-check" class="size-12 text-success" />
+            </div>
         </template>
         <template #footer>
             <div class="w-full mt-4 flex justify-end">
                 <UButton
                     class="justify-center font-normal mr-2"
-                    label="Cancel"
+                    :label="finished ? 'Close' : 'Cancel'"
                     variant="link"
                     color="neutral"
                     type="button"
                     @click="modalOpened = false"
+                    :disabled="loading"
                 />
 
                 <UButton
+                    v-if="!finished"
                     class="justify-center font-normal"
                     label="Create user"
                     type="submit"
                     form="create-user-form"
                     loading-icon="i-lucide-loader-circle"
-                    loading-auto
+                    :lading="loading"
+                    :disabled="loading"
                 />
             </div>
         </template>

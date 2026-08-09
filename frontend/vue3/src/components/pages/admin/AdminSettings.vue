@@ -44,9 +44,9 @@ const tabs = [
     <ContentSpacer class="w-full">
         <!-- Tabs -->
         <UTabs :items="tabs" size="lg">
-            <!-- <template #account>
-                <Account />
-            </template> -->
+            <template #users>
+                <Users />
+            </template>
         </UTabs>
     </ContentSpacer>
 </template>
