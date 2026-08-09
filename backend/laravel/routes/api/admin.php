@@ -36,7 +36,8 @@ Route::prefix('/fonts')->group(function () {
 });
 
 Route::prefix('/languages')->group(function () {
-    Route::get('/', [LanguageController::class, 'indexForAdmin']);
+    Route::get('/', [LanguageController::class, 'indexInstallRequired']);
+    Route::get('/installed', [LanguageController::class, 'indexInstalled']);
     Route::post('/install', [LanguageController::class, 'install']);
     Route::delete('/', [LanguageController::class, 'uninstall']);
 });

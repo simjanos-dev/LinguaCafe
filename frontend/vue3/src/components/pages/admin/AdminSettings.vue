@@ -47,6 +47,10 @@ const tabs = [
             <template #users>
                 <Users />
             </template>
+
+            <template #languages>
+                <Languages />
+            </template>
         </UTabs>
     </ContentSpacer>
 </template>

@@ -7,6 +7,7 @@ use App\Http\Requests\Languages\ChangeLanguageRequest;
 use App\Http\Requests\Languages\InstallLanguageRequest;
 use App\Services\GoalService;
 use App\Services\LanguageService;
+use Carbon\Language;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Horizon\Http\Controllers\Controller;
 
@@ -38,16 +39,24 @@ class LanguageController extends Controller
         ]);
     }
 
-    public function indexForAdmin()
+    public function indexInstallRequired()
     {
-        $installableLanguages = LanguageConfig::all()->where('installRequired', '=', true)->pluck('name')->toArray();
-        $installedLanguages = $this->languageService->getInstalledLanguages();
+        $languages = LanguageConfig::all()->where('installRequired', '=', true);
 
         return response()->json([
-            'data' => [
-                'languages' => $installableLanguages,
-                'installedLanguages' => $installedLanguages,
-            ],
+            'data' => $languages->values()->toArray(),
+        ]);
+    }
+
+    public function indexInstalled()
+    {
+        $languages = $this->languageService->getInstalledLanguages();
+        $languages = $languages->map(function(string $language) {
+            return LanguageConfig::load($language);
+        });
+
+        return response()->json([
+            'data' => $languages->values()->toArray(),
         ]);
     }
 
