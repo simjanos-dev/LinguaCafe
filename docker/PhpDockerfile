@@ -29,10 +29,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # install php extensions for laravel
-RUN docker-php-ext-install pdo pdo_mysql fileinfo \
+# fileinfo is already enabled in the official PHP image.
+RUN php -r 'exit(extension_loaded("fileinfo") ? 0 : 1);' \
+    && docker-php-ext-install pdo pdo_mysql \
     && docker-php-ext-configure gd \
     && docker-php-ext-install "-j$(nproc)" gd \
-    && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install zip \
     && docker-php-ext-install pcntl \
