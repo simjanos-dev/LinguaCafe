@@ -74,6 +74,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: "./docker/PhpDockerfile"
+          pull: true
           # extra platforms can be added here:
           # linux/amd64
           # linux/arm/v6
