@@ -6,6 +6,9 @@ RUN npm install && npm run prod
 
 FROM php:8.2-apache
 
+# Require the PHP fixes for CVE-2026-109618 and CVE-2026-109619.
+RUN php -r 'if (PHP_VERSION_ID < 80235) { fwrite(STDERR, "PHP 8.2.35+ is required; rebuild with --pull.\n"); exit(1); }'
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         curl \
