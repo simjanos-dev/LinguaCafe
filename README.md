@@ -36,6 +36,10 @@ LinguaCafe uses RAM based on how many and which languages do you use. If you use
 
 You can find the installation guide on the [GitHub Wiki](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#installation) page.
 
+## One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/LinguaCafe/)
+
 ## Updating to the latest version 
 
 You can find the updating guide on the [GitHub Wiki](https://github.com/simjanos-dev/LinguaCafe/wiki/2.-Setup#updating) page.
